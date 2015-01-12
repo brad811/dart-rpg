@@ -3,27 +3,38 @@ import 'dart:html';
 var canvasWidth = 640,
   canvasHeight = 512;
 
-ImageElement spritesImage = new ImageElement();
+ImageElement spritesImage;
 var ctx;
+
+World world;
+Player player;
 
 void main() {
   CanvasElement c = querySelector('canvas');
   ctx = c.getContext("2d");
   ctx.imageSmoothingEnabled = false;
   
-  spritesImage.src = "sprite_sheet.png";
-  spritesImage.onLoad.listen((e) => start);
+  spritesImage = new ImageElement(src: "sprite_sheet.png");
+  spritesImage.onLoad.listen((e) {
+      start();
+  });
   
   ctx.fillStyle = "#333333";
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 }
 
 void start() {
-  World world = new World();
-  Player player = new Player();
+  world = new World();
+  player = new Player();
   
+  tick();
+}
+
+void tick() {
   world.render();
   player.render();
+  
+  //var timer = new Timer(new Duration(milliseconds: 33), () => print('done'));
 }
 
 class Tiles {
@@ -33,9 +44,9 @@ class Tiles {
 }
 
 class Sprite {
-  static final pixelsPerSprite = 16;
-  static final spriteSheetSize = 32;
-  static final spriteScale = 2;
+  static final pixelsPerSprite = 16,
+    spriteSheetSize = 32,
+    spriteScale = 2;
   
   static void render(id, sizeX, sizeY, posX, posY) {
     sizeX *= Sprite.pixelsPerSprite;
@@ -44,7 +55,7 @@ class Sprite {
     var spriteX = Sprite.pixelsPerSprite * (id%Sprite.spriteSheetSize - 1);
     var spriteY = Sprite.pixelsPerSprite * (id/Sprite.spriteSheetSize).floor();
   
-    ctx.drawImage(
+    ctx.drawImageScaledFromSource(
       spritesImage,
       spriteX, spriteY, // sx, sy
       sizeX, sizeY, // swidth, sheight
@@ -55,7 +66,8 @@ class Sprite {
 }
 
 class Player {
-  var x = 8, y = 5;
+  var x = 8,
+    y = 5;
 
   void render() {
     Sprite.render(Tiles.PLAYER, 1, 2, x, y-1);
@@ -63,32 +75,32 @@ class Player {
 }
 
 class World {
-  var map = [];
+  List<List<int>> map = [];
   
   World() {
-    map[0] = [];
+    map.add([]);
     for(var i=0; i<20; i++) {
-      map[0].push(Tiles.WALL);
+      map[0].add(Tiles.WALL);
     }
   
     for(var i=1; i<15; i++) {
-      map[i] = [];
-      map[i].push(Tiles.WALL);
+      map.add([]);
+      map[i].add(Tiles.WALL);
       for(var j=0; j<18; j++) {
-        map[i].push(Tiles.GROUND);
+        map[i].add(Tiles.GROUND);
       }
-      map[i].push(Tiles.WALL);
+      map[i].add(Tiles.WALL);
     }
   
-    map[15] = [];
+    map.add([]);
     for(var i=0; i<20; i++) {
-      map[15].push(Tiles.WALL);
+      map[15].add(Tiles.WALL);
     }
   }
 
   void render() {
-    for(var y in map) {
-      for(var x in map[y]) {
+    for(var y=0; y<map.length; y++) {
+      for(var x=0; x<map[y].length; x++) {
         Sprite.render(map[y][x], 1, 1, x, y);
       }
     }
