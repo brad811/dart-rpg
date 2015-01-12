@@ -1,0 +1,4 @@
+name: js-rpg
+description: A browser-based 2d rpg
+dependencies:
+  browser: any
