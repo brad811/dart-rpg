@@ -1,4 +1,4 @@
-name: js-rpg
+name: dart-rpg
 description: A browser-based 2d rpg
 dependencies:
   browser: any
