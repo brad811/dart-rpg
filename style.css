@@ -3,10 +3,8 @@
 }
 
 canvas {
-	width: 800px;
-	height: 720px;
 	border: 1px solid black;
 	position: absolute;
 	left: 50%;
-	margin-left: -400px;
+	margin-left: -320px;
 }

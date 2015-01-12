@@ -2,12 +2,8 @@ var c = $("canvas")[0];
 var ctx = c.getContext("2d");
 ctx.imageSmoothingEnabled = false;
 
-var canvasWidth = 800,
-	canvasHeight = 720;
-
-var spriteSize = 16,
-	spriteSheetSize = 32,
-	spriteScale = 5;
+var canvasWidth = 640,
+	canvasHeight = 512;
 
 var spritesImage = new Image();
 spritesImage.src = "sprite_sheet.png";
@@ -15,25 +11,77 @@ spritesImage.src = "sprite_sheet.png";
 ctx.fillStyle = "#333333";
 ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-spritesImage.onload = function() {
-	for(var i=0; i<canvasWidth/(spriteSize*spriteScale); i++) {
-		drawSprite(i+1, 16*spriteScale*i, 0);
-	}
-
-	for(var i=1; i<canvasHeight/(spriteSize*spriteScale); i++) {
-		drawSprite(i+1, 0, 16*spriteScale*i);
-	}
+var Tiles = {
+	GROUND: 67,
+	WALL: 68,
+	PLAYER: 129
 };
 
-function drawSprite(id, x, y) {
-	var sx = spriteSize * (id%spriteSheetSize - 1),
-		sy = spriteSize * Math.floor(id/spriteSheetSize);
+function Sprite() {
+}
+
+Sprite.pixelsPerSprite = 16;
+Sprite.spriteSheetSize = 32;
+Sprite.spriteScale = 2;
+
+Sprite.render = function(id, sizeX, sizeY, posX, posY) {
+	sizeX *= Sprite.pixelsPerSprite;
+	sizeY *= Sprite.pixelsPerSprite;
+
+	spriteX = Sprite.pixelsPerSprite * (id%Sprite.spriteSheetSize - 1);
+	spriteY = Sprite.pixelsPerSprite * Math.floor(id/Sprite.spriteSheetSize);
 
 	ctx.drawImage(
 		spritesImage,
-		sx, sy, // sx, sy
-		spriteSize, spriteSize, // swidth, sheight
-		x, y, // x, y
-		spriteSize * spriteScale, spriteSize * spriteScale // width, height
+		spriteX, spriteY, // sx, sy
+		sizeX, sizeY, // swidth, sheight
+		posX*Sprite.pixelsPerSprite*Sprite.spriteScale, posY*Sprite.pixelsPerSprite*Sprite.spriteScale, // x, y
+		sizeX*Sprite.spriteScale, sizeY*Sprite.spriteScale // width, height
 	);
 }
+
+function Player() {
+	var x = 8, y = 5;
+
+	this.render = function() {
+		Sprite.render(Tiles.PLAYER, 1, 2, x, y-1);
+	}
+};
+
+function World() {
+	var map = [];
+	map[0] = [];
+	for(var i=0; i<20; i++) {
+		map[0].push(Tiles.WALL);
+	}
+
+	for(var i=1; i<15; i++) {
+		map[i] = [];
+		map[i].push(Tiles.WALL);
+		for(var j=0; j<18; j++) {
+			map[i].push(Tiles.GROUND);
+		}
+		map[i].push(Tiles.WALL);
+	}
+
+	map[15] = [];
+	for(var i=0; i<20; i++) {
+		map[15].push(Tiles.WALL);
+	}
+
+	this.render = function() {
+		for(y in map) {
+			for(x in map[y]) {
+				Sprite.render(map[y][x], 1, 1, x, y);
+			}
+		}
+	}
+}
+
+var world = new World();
+var player = new Player();
+
+spritesImage.onload = function() {
+	world.render();
+	player.render();
+};
