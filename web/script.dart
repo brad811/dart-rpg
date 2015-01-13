@@ -52,11 +52,20 @@ void tick() {
   new Timer(new Duration(milliseconds: 33), () => tick());
 }
 
-class Tiles {
-  static final GROUND = 67,
-    WALL = 68,
-    PLAYER = 129;
+class Tile {
+  static final int GROUND = 67,
+      WALL = 68,
+      PLAYER = 129;
+  
+  final int type;
+  final bool solid;
+  
+  Tile(int type, bool solid)
+    : this.type = type,
+      this.solid = solid;
 }
+
+var tiles = new List<Tile>();
 
 class Sprite {
   static final pixelsPerSprite = 16,
@@ -89,14 +98,8 @@ class Input {
     
     switch(keys[0]) {
       case KeyCode.LEFT:
-        player.move(keys[0]);
-        break;
       case KeyCode.RIGHT:
-        player.move(keys[0]);
-        break;
       case KeyCode.UP:
-        player.move(keys[0]);
-        break;
       case KeyCode.DOWN:
         player.move(keys[0]);
         break;
@@ -117,11 +120,13 @@ class Player {
     motionY = 0,
     motionSpeed = 4,
     direction = DOWN,
-    x = 8 * motionAmount,
-    y = 5 * motionAmount;
+    mapX = 8,
+    mapY = 5,
+    x = mapX * motionAmount,
+    y = mapY * motionAmount;
 
   void render() {
-    Sprite.render(Tiles.PLAYER + direction, 1, 2, x/motionAmount, (y-1)/motionAmount);
+    Sprite.render(Tile.PLAYER + direction, 1, 2, x/motionAmount, (y/motionAmount)-1);
   }
   
   void move(motionDirection) {
@@ -145,51 +150,72 @@ class Player {
   void tick() {
     if(motionX < 0) {
       motionX += motionSpeed;
-      x -= motionSpeed;
+      print("Tile: ($mapX,$mapY) [${world.map[mapY][mapX-1].type}] ${world.map[mapY][mapX-1].solid}");
+      if(!world.map[mapY][mapX-1].solid) {
+        x -= motionSpeed;
+        
+        if(motionX == 0)
+          mapX -= 1;
+      }
     }
     else if(motionX > 0) {
       motionX -= motionSpeed;
-      x += motionSpeed;
+      if(!world.map[mapY][mapX+1].solid) {
+        x += motionSpeed;
+        
+        if(motionX == 0)
+          mapX += 1;
+      }
     }
     else if(motionY < 0) {
       motionY += motionSpeed;
-      y -= motionSpeed;
+      if(!world.map[mapY-1][mapX].solid) {
+        y -= motionSpeed;
+        
+        if(motionY == 0)
+          mapY -= 1;
+      }
     }
     else if(motionY > 0) {
       motionY -= motionSpeed;
-      y += motionSpeed;
+      if(!world.map[mapY+1][mapX].solid) {
+        y += motionSpeed;
+        
+        if(motionY == 0)
+          mapY += 1;
+      }
     }
   }
 }
 
 class World {
-  List<List<int>> map = [];
+  List<List<Tile>> map = [];
   
   World() {
     map.add([]);
     for(var i=0; i<20; i++) {
-      map[0].add(Tiles.WALL);
+      map[0].add(new Tile(Tile.WALL, true));
     }
   
     for(var i=1; i<15; i++) {
       map.add([]);
-      map[i].add(Tiles.WALL);
+      map[i].add(new Tile(Tile.WALL, true));
       for(var j=0; j<18; j++) {
-        map[i].add(Tiles.GROUND);
+        map[i].add(new Tile(Tile.GROUND, false));
       }
-      map[i].add(Tiles.WALL);
+      map[i].add(new Tile(Tile.WALL, true));
     }
   
     map.add([]);
     for(var i=0; i<20; i++) {
-      map[15].add(Tiles.WALL);
+      map[15].add(new Tile(Tile.WALL, true));
     }
   }
 
   void render() {
     for(var y=0; y<map.length; y++) {
       for(var x=0; x<map[y].length; x++) {
-        Sprite.render(map[y][x], 1, 1, x, y);
+        Sprite.render(map[y][x].type, 1, 1, x, y);
       }
     }
   }
