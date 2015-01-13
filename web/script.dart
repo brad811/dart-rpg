@@ -150,7 +150,6 @@ class Player {
   void tick() {
     if(motionX < 0) {
       motionX += motionSpeed;
-      print("Tile: ($mapX,$mapY) [${world.map[mapY][mapX-1].type}] ${world.map[mapY][mapX-1].solid}");
       if(!world.map[mapY][mapX-1].solid) {
         x -= motionSpeed;
         
