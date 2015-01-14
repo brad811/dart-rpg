@@ -98,10 +98,16 @@ class Input {
     
     switch(keys[0]) {
       case KeyCode.LEFT:
+        player.move(Player.LEFT);
+        break;
       case KeyCode.RIGHT:
+        player.move(Player.RIGHT);
+        break;
       case KeyCode.UP:
+        player.move(Player.UP);
+        break;
       case KeyCode.DOWN:
-        player.move(keys[0]);
+        player.move(Player.DOWN);
         break;
     }
   }
@@ -120,6 +126,7 @@ class Player {
     motionY = 0,
     motionSpeed = 4,
     direction = DOWN,
+    directionCooldown = 0,
     mapX = 8,
     mapY = 5,
     x = mapX * motionAmount,
@@ -131,23 +138,33 @@ class Player {
   
   void move(motionDirection) {
     if(motionX == 0 && motionY == 0) {
-      if(motionDirection == KeyCode.LEFT) {
-        direction = LEFT;
+      if(direction != motionDirection) {
+        direction = motionDirection;
+        directionCooldown = 4;
+        return;
+      }
+      
+      if(directionCooldown > 0)
+        return;
+      
+      if(motionDirection == LEFT) {
         motionX = -motionAmount;
-      } else if(motionDirection == KeyCode.RIGHT) {
-        direction = RIGHT;
+      } else if(motionDirection == RIGHT) {
         motionX = motionAmount;
-      } else if(motionDirection == KeyCode.UP) {
-        direction = UP;
+      } else if(motionDirection == UP) {
         motionY = -motionAmount;
-      } else if(motionDirection == KeyCode.DOWN) {
-        direction = DOWN;
+      } else if(motionDirection == DOWN) {
         motionY = motionAmount;
       }
     }
   }
   
   void tick() {
+    if(directionCooldown > 0) {
+      directionCooldown -= 1;
+      return;
+    }
+    
     if(motionX < 0) {
       motionX += motionSpeed;
       if(!world.map[mapY][mapX-1].solid) {
