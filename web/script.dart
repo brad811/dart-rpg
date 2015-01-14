@@ -1,7 +1,7 @@
 import 'dart:html';
 import 'dart:async';
 
-var canvasWidth = 640,
+int canvasWidth = 640,
   canvasHeight = 512;
 
 ImageElement spritesImage;
@@ -68,25 +68,27 @@ class Tile {
 var tiles = new List<Tile>();
 
 class Sprite {
-  static final pixelsPerSprite = 16,
+  static final int pixelsPerSprite = 16,
     spriteSheetSize = 32,
-    spriteScale = 2;
+    spriteScale = 2,
+    scaledSpriteSize = pixelsPerSprite*spriteScale;
   
   static void render(id, sizeX, sizeY, posX, posY) {
-    sizeX *= Sprite.pixelsPerSprite;
-    sizeY *= Sprite.pixelsPerSprite;
+    sizeX *= pixelsPerSprite;
+    sizeY *= pixelsPerSprite;
   
-    var spriteX = Sprite.pixelsPerSprite * (id%Sprite.spriteSheetSize - 1);
-    var spriteY = Sprite.pixelsPerSprite * (id/Sprite.spriteSheetSize).floor();
+    var spriteX = pixelsPerSprite * (id%spriteSheetSize - 1);
+    var spriteY = pixelsPerSprite * (id/spriteSheetSize).floor();
   
     ctx.drawImageScaledFromSource(
       spritesImage,
       spriteX, spriteY, // sx, sy
       sizeX, sizeY, // swidth, sheight
       
-      posX*Sprite.pixelsPerSprite*Sprite.spriteScale - Player.x + canvasWidth/2, // x
-      posY*Sprite.pixelsPerSprite*Sprite.spriteScale - Player.y + canvasHeight/2, // y
-      sizeX*Sprite.spriteScale, sizeY*Sprite.spriteScale // width, height
+      posX*scaledSpriteSize - Player.x + canvasWidth/2 - scaledSpriteSize, // x
+      posY*scaledSpriteSize - Player.y + canvasHeight/2, // y
+      
+      sizeX*spriteScale, sizeY*spriteScale // width, height
     );
   }
 }
@@ -116,7 +118,7 @@ class Input {
 }
 
 class Player {
-  static final
+  static final int
     DOWN = 0,
     RIGHT = 1,
     UP = 2,
@@ -126,7 +128,7 @@ class Player {
     motionAmount = Sprite.pixelsPerSprite * Sprite.spriteScale,
     directionCooldownAmount = 4;
   
-  static var 
+  static int 
     motionX = 0,
     motionY = 0,
     direction = DOWN,
