@@ -20,9 +20,6 @@ void main() {
   spritesImage.onLoad.listen((e) {
       start();
   });
-  
-  ctx.fillStyle = "#333333";
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 }
 
 void start() {
@@ -42,6 +39,9 @@ void start() {
 }
 
 void tick() {
+  ctx.fillStyle = "#333333";
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  
   world.render();
   player.render();
   
@@ -83,7 +83,9 @@ class Sprite {
       spritesImage,
       spriteX, spriteY, // sx, sy
       sizeX, sizeY, // swidth, sheight
-      posX*Sprite.pixelsPerSprite*Sprite.spriteScale, posY*Sprite.pixelsPerSprite*Sprite.spriteScale, // x, y
+      
+      posX*Sprite.pixelsPerSprite*Sprite.spriteScale - Player.x + canvasWidth/2, // x
+      posY*Sprite.pixelsPerSprite*Sprite.spriteScale - Player.y + canvasHeight/2, // y
       sizeX*Sprite.spriteScale, sizeY*Sprite.spriteScale // width, height
     );
   }
