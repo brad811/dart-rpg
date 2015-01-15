@@ -77,12 +77,12 @@ class Sprite {
     sizeX *= pixelsPerSprite;
     sizeY *= pixelsPerSprite;
   
-    var spriteX = pixelsPerSprite * (id%spriteSheetSize - 1);
-    var spriteY = pixelsPerSprite * (id/spriteSheetSize).floor();
-  
     ctx.drawImageScaledFromSource(
       spritesImage,
-      spriteX, spriteY, // sx, sy
+      
+      pixelsPerSprite * (id%spriteSheetSize - 1), // sx
+      pixelsPerSprite * (id/spriteSheetSize).floor(), // sy
+      
       sizeX, sizeY, // swidth, sheight
       
       posX*scaledSpriteSize - Player.x + canvasWidth/2 - scaledSpriteSize, // x
