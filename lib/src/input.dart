@@ -1,29 +1,15 @@
 library Input;
 
-import 'dart:html';
-
-import 'package:dart_rpg/src/player.dart';
+import 'package:dart_rpg/src/input_handler.dart';
+import 'package:dart_rpg/src/world.dart';
 
 class Input {
   static var keys = [];
   
-  static void handleKey(Player player) {
+  static void handleKey(InputHandler focusObject, World world) {
     if(keys.length == 0)
       return;
     
-    switch(keys[0]) {
-      case KeyCode.LEFT:
-        player.move(Player.LEFT);
-        break;
-      case KeyCode.RIGHT:
-        player.move(Player.RIGHT);
-        break;
-      case KeyCode.UP:
-        player.move(Player.UP);
-        break;
-      case KeyCode.DOWN:
-        player.move(Player.DOWN);
-        break;
-    }
+    focusObject.handleKey(keys[0], world);
   }
 }

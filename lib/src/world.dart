@@ -1,5 +1,6 @@
 library World;
 
+import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 
@@ -52,6 +53,28 @@ class World {
       6, 3,
       true
     );
+    
+    addInteractableObject(
+      Tile.HOUSE + 128 + 1,
+      11, 10, LAYER_BELOW,
+      1, 1,
+      true
+    );
+  }
+  
+  void addInteractableObject(
+      int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid) {
+    for(var y=0; y<sizeY; y++) {
+      for(var x=0; x<sizeX; x++) {
+        map[posY+y][posX+x][layer] = new InteractableTile(
+          solid,
+          new Sprite.int(
+            spriteId + x + (y*Sprite.spriteSheetSize),
+            posX+x, posY+y
+          )
+        );
+      }
+    }
   }
   
   void addObject(int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid) {
@@ -76,6 +99,26 @@ class World {
     }
     
     return false;
+  }
+  
+  bool isInteractable(int x, int y) {
+    for(int layer in layers) {
+      if(map[y][x][layer] is InteractableTile) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
+  void interact(int x, int y) {
+    for(int layer in layers) {
+      if(map[y][x][layer] is InteractableTile) {
+        InteractableTile tile = map[y][x][layer] as InteractableTile;
+        tile.interact();
+        return;
+      }
+    }
   }
 
   void render(List<List<Tile>> renderList) {

@@ -2,6 +2,7 @@ import 'dart:html';
 import 'dart:async';
 
 import 'package:dart_rpg/src/input.dart';
+import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
@@ -15,6 +16,7 @@ CanvasRenderingContext2D ctx;
 
 World world;
 Player player;
+InputHandler focusObject;
 
 void main() {
   c = querySelector('canvas');
@@ -30,6 +32,7 @@ void main() {
 void start() {
   world = new World();
   player = new Player();
+  focusObject = player;
 
   document.onKeyDown.listen((KeyboardEvent e) {
     if (!Input.keys.contains(e.keyCode))
@@ -58,7 +61,7 @@ void tick() {
     }
   }
   
-  Input.handleKey(player);
+  Input.handleKey(focusObject, world);
   
   player.tick(world);
   

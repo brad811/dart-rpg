@@ -1,10 +1,13 @@
 library Player;
 
+import 'dart:html';
+
+import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
-class Player {
+class Player implements InputHandler {
   static final int
     DOWN = 0,
     RIGHT = 1,
@@ -48,6 +51,38 @@ class Player {
         )
       )
     );
+  }
+  
+  void handleKey(int keyCode, World world) {
+    switch(keyCode) {
+      case KeyCode.LEFT:
+        move(Player.LEFT);
+        break;
+      case KeyCode.RIGHT:
+        move(Player.RIGHT);
+        break;
+      case KeyCode.UP:
+        move(Player.UP);
+        break;
+      case KeyCode.DOWN:
+        move(Player.DOWN);
+        break;
+      case KeyCode.X:
+        interact(world);
+        break;
+    }
+  }
+  
+  void interact(World world) {
+    if(direction == Player.LEFT && world.isInteractable(mapX-1, mapY)) {
+      world.interact(mapX-1, mapY);
+    } else if(direction == Player.RIGHT && world.isInteractable(mapX+1, mapY)) {
+      world.interact(mapX+1, mapY);
+    } else if(direction == Player.UP && world.isInteractable(mapX, mapY-1)) {
+      world.interact(mapX, mapY-1);
+    } else if(direction == Player.DOWN && world.isInteractable(mapX, mapY+1)) {
+      world.interact(mapX, mapY+1);
+    }
   }
   
   void move(motionDirection) {
