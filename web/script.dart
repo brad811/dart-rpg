@@ -11,6 +11,12 @@ var ctx;
 World world;
 Player player;
 
+final int
+  LAYER_GROUND = 0,
+  LAYER_BELOW = 1,
+  LAYER_PLAYER = 2,
+  LAYER_ABOVE = 3;
+
 void main() {
   c = querySelector('canvas');
   ctx = c.getContext("2d");
@@ -42,8 +48,33 @@ void tick() {
   ctx.fillStyle = "#333333";
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   
-  world.render();
-  player.render();
+  List<List<Sprite>> renderList = [ [], [], [], [] ];
+  
+  world.render(renderList);
+  
+  renderList[LAYER_ABOVE].add(
+    new Sprite(
+      Tile.HOUSE,
+      6, 2,
+      10, 6
+    )
+  );
+  
+  renderList[LAYER_BELOW].add(
+    new Sprite(
+      Tile.HOUSE + 64,
+      6, 3,
+      10, 8
+    )
+  );
+  
+  player.render(renderList);
+  
+  for(var layer in renderList) {
+    for(Sprite sprite in layer) {
+      sprite.render();
+    }
+  }
   
   Input.handleKey();
   
@@ -52,10 +83,16 @@ void tick() {
   new Timer(new Duration(milliseconds: 33), () => tick());
 }
 
+class WorldObject {
+  
+}
+
 class Tile {
-  static final int GROUND = 67,
-      WALL = 68,
-      PLAYER = 129;
+  static final int
+    GROUND = 67,
+    WALL = 68,
+    PLAYER = 129,
+    HOUSE = 225;
   
   final int type;
   final bool solid;
@@ -68,27 +105,35 @@ class Tile {
 var tiles = new List<Tile>();
 
 class Sprite {
-  static final int pixelsPerSprite = 16,
+  static final int
+    pixelsPerSprite = 16,
     spriteSheetSize = 32,
     spriteScale = 2,
     scaledSpriteSize = pixelsPerSprite*spriteScale;
   
-  static void render(id, sizeX, sizeY, posX, posY) {
-    sizeX *= pixelsPerSprite;
-    sizeY *= pixelsPerSprite;
+  var id, sizeX, sizeY, posX, posY;
   
+  Sprite(id, sizeX, sizeY, posX, posY) {
+    this.id = id;
+    this.sizeX = sizeX;
+    this.sizeY = sizeY;
+    this.posX = posX;
+    this.posY = posY;
+  }
+  
+  void render() {
     ctx.drawImageScaledFromSource(
       spritesImage,
       
       pixelsPerSprite * (id%spriteSheetSize - 1), // sx
       pixelsPerSprite * (id/spriteSheetSize).floor(), // sy
       
-      sizeX, sizeY, // swidth, sheight
+      sizeX*pixelsPerSprite, sizeY*pixelsPerSprite, // swidth, sheight
       
       posX*scaledSpriteSize - Player.x + canvasWidth/2 - scaledSpriteSize, // x
       posY*scaledSpriteSize - Player.y + canvasHeight/2, // y
       
-      sizeX*spriteScale, sizeY*spriteScale // width, height
+      sizeX*pixelsPerSprite*spriteScale, sizeY*pixelsPerSprite*spriteScale // width, height
     );
   }
 }
@@ -141,11 +186,13 @@ class Player {
     motionStep = 1,
     motionSpriteOffset = 0;
 
-  void render() {
-    Sprite.render(
-      Tile.PLAYER + direction + motionSpriteOffset,
-      1, 2,
-      x/motionAmount, (y/motionAmount)-1
+  void render(List<List<Sprite>> renderList) {
+    renderList[LAYER_PLAYER].add(
+      new Sprite(
+        Tile.PLAYER + direction + motionSpriteOffset,
+        1, 2,
+        x/motionAmount, (y/motionAmount)-1
+      )
     );
   }
   
@@ -285,10 +332,12 @@ class World {
     }
   }
 
-  void render() {
+  void render(List<List<Sprite>> renderList) {
     for(var y=0; y<map.length; y++) {
       for(var x=0; x<map[y].length; x++) {
-        Sprite.render(map[y][x].type, 1, 1, x, y);
+        renderList[LAYER_GROUND].add(
+          new Sprite(map[y][x].type, 1, 1, x, y)
+        );
       }
     }
   }
