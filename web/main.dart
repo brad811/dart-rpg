@@ -48,31 +48,37 @@ void tick() {
   ctx.fillStyle = "#333333";
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   
-  List<List<Sprite>> renderList = [ [], [], [], [] ];
+  List<List<Tile>> renderList = [ [], [], [], [] ];
   
   world.render(renderList);
   
   renderList[Sprite.LAYER_ABOVE].add(
-    new Sprite.int(
-      Tile.HOUSE,
-      6, 2,
-      10, 6
+    new Tile(
+      false,
+      new Sprite.int(
+        Tile.HOUSE,
+        6, 2,
+        10, 6
+      )
     )
   );
   
   renderList[Sprite.LAYER_BELOW].add(
-    new Sprite.int(
-      Tile.HOUSE + 64,
-      6, 3,
-      10, 8
+    new Tile(
+      true,
+      new Sprite.int(
+        Tile.HOUSE + 64,
+        6, 3,
+        10, 8
+      )
     )
   );
   
   player.render(renderList);
   
   for(var layer in renderList) {
-    for(Sprite sprite in layer) {
-      sprite.render(ctx, spritesImage, canvasWidth, canvasHeight);
+    for(Tile tile in layer) {
+      tile.sprite.render(ctx, spritesImage, canvasWidth, canvasHeight);
     }
   }
   
@@ -82,11 +88,3 @@ void tick() {
   
   new Timer(new Duration(milliseconds: 33), () => tick());
 }
-
-class WorldObject {
-  
-}
-
-var tiles = new List<Tile>();
-
-

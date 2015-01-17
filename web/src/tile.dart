@@ -1,5 +1,7 @@
 library Tile;
 
+import 'sprite.dart';
+
 class Tile {
   static final int
     GROUND = 67,
@@ -7,10 +9,8 @@ class Tile {
     PLAYER = 129,
     HOUSE = 225;
   
-  final int type;
   final bool solid;
+  final Sprite sprite;
   
-  Tile(int type, bool solid)
-    : this.type = type,
-      this.solid = solid;
+  Tile(this.solid, this.sprite);
 }

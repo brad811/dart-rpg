@@ -28,12 +28,15 @@ class Player {
     motionStep = 1,
     motionSpriteOffset = 0;
 
-  void render(List<List<Sprite>> renderList) {
+  void render(List<List<Tile>> renderList) {
     renderList[Sprite.LAYER_PLAYER].add(
-      new Sprite(
-        Tile.PLAYER + direction + motionSpriteOffset,
-        1, 2,
-        x/motionAmount, (y/motionAmount)-1
+      new Tile(
+        true,
+        new Sprite(
+          Tile.PLAYER + direction + motionSpriteOffset,
+          1, 2,
+          x/motionAmount, (y/motionAmount)-1
+        )
       )
     );
   }
