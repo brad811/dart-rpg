@@ -2,7 +2,7 @@ library Input;
 
 import 'dart:html';
 
-import 'player.dart';
+import 'package:dart_rpg/src/player.dart';
 
 class Input {
   static var keys = [];

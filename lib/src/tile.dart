@@ -1,6 +1,6 @@
 library Tile;
 
-import 'sprite.dart';
+import 'package:dart_rpg/src/sprite.dart';
 
 class Tile {
   static final int

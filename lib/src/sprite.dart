@@ -2,7 +2,7 @@ library Sprite;
 
 import 'dart:html';
 
-import 'player.dart';
+import 'package:dart_rpg/src/player.dart';
 
 class Sprite {
   static final int

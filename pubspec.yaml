@@ -1,4 +1,4 @@
-name: dart-rpg
+name: dart_rpg
 description: A browser-based 2d rpg
 dependencies:
   browser: any

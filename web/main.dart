@@ -1,10 +1,10 @@
 import 'dart:html';
 import 'dart:async';
 
-import 'src/input.dart';
-import 'src/player.dart';
-import 'src/tile.dart';
-import 'src/world.dart';
+import 'package:dart_rpg/src/input.dart';
+import 'package:dart_rpg/src/player.dart';
+import 'package:dart_rpg/src/tile.dart';
+import 'package:dart_rpg/src/world.dart';
 
 int canvasWidth = 640,
   canvasHeight = 512;

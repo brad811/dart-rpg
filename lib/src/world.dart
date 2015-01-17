@@ -1,7 +1,7 @@
 library World;
 
-import 'sprite.dart';
-import 'tile.dart';
+import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/tile.dart';
 
 class World {
   static final int
