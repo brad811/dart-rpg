@@ -1,3 +1,5 @@
+library Input;
+
 import 'dart:html';
 
 import 'player.dart';

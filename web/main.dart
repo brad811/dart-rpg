@@ -3,7 +3,6 @@ import 'dart:async';
 
 import 'src/input.dart';
 import 'src/player.dart';
-import 'src/sprite.dart';
 import 'src/tile.dart';
 import 'src/world.dart';
 
