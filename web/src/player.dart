@@ -29,13 +29,22 @@ class Player {
     motionSpriteOffset = 0;
 
   void render(List<List<Tile>> renderList) {
-    renderList[Sprite.LAYER_PLAYER].add(
+    renderList[World.LAYER_PLAYER].add(
       new Tile(
         true,
         new Sprite(
           Tile.PLAYER + direction + motionSpriteOffset,
-          1, 2,
           x/motionAmount, (y/motionAmount)-1
+        )
+      )
+    );
+    
+    renderList[World.LAYER_PLAYER].add(
+      new Tile(
+        true,
+        new Sprite(
+          Tile.PLAYER + direction + motionSpriteOffset + Sprite.spriteSheetSize,
+          x/motionAmount, y/motionAmount
         )
       )
     );
@@ -95,7 +104,7 @@ class Player {
     
     if(motionX < 0) {
       motionX += curSpeed;
-      if(!world.map[mapY][mapX-1].solid) {
+      if(!world.isSolid(mapX-1, mapY)) {
         x -= curSpeed;
         
         if(motionX == 0)
@@ -109,7 +118,7 @@ class Player {
         motionStep = 1;
     } else if(motionX > 0) {
       motionX -= curSpeed;
-      if(!world.map[mapY][mapX+1].solid) {
+      if(!world.isSolid(mapX+1, mapY)) {
         x += curSpeed;
         
         if(motionX == 0)
@@ -123,7 +132,7 @@ class Player {
         motionStep = 1;
     } else if(motionY < 0) {
       motionY += curSpeed;
-      if(!world.map[mapY-1][mapX].solid) {
+      if(!world.isSolid(mapX, mapY-1)) {
         y -= curSpeed;
         
         if(motionY == 0)
@@ -137,7 +146,7 @@ class Player {
         motionStep = 1;
     } else if(motionY > 0) {
       motionY -= curSpeed;
-      if(!world.map[mapY+1][mapX].solid) {
+      if(!world.isSolid(mapX, mapY+1)) {
         y += curSpeed;
         
         if(motionY == 0)

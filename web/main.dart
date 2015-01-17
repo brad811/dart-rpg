@@ -50,33 +50,10 @@ void tick() {
   
   List<List<Tile>> renderList = [ [], [], [], [] ];
   
+  player.render(renderList);
   world.render(renderList);
   
-  renderList[Sprite.LAYER_ABOVE].add(
-    new Tile(
-      false,
-      new Sprite.int(
-        Tile.HOUSE,
-        6, 2,
-        10, 6
-      )
-    )
-  );
-  
-  renderList[Sprite.LAYER_BELOW].add(
-    new Tile(
-      true,
-      new Sprite.int(
-        Tile.HOUSE + 64,
-        6, 3,
-        10, 8
-      )
-    )
-  );
-  
-  player.render(renderList);
-  
-  for(var layer in renderList) {
+  for(List<Tile> layer in renderList) {
     for(Tile tile in layer) {
       tile.sprite.render(ctx, spritesImage, canvasWidth, canvasHeight);
     }
