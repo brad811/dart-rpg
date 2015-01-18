@@ -54,16 +54,22 @@ class World {
       true
     );
     
+    void signFunction() {
+      print("You are reading a sign!");
+    }
+    
     addInteractableObject(
-      Tile.HOUSE + 128 + 1,
-      11, 10, LAYER_BELOW,
+      Tile.SIGN,
+      9, 10, LAYER_BELOW,
       1, 1,
-      true
+      true,
+      signFunction
     );
   }
   
   void addInteractableObject(
-      int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid) {
+      int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
+      void handler()) {
     for(var y=0; y<sizeY; y++) {
       for(var x=0; x<sizeX; x++) {
         map[posY+y][posX+x][layer] = new InteractableTile(
@@ -71,7 +77,8 @@ class World {
           new Sprite.int(
             spriteId + x + (y*Sprite.spriteSheetSize),
             posX+x, posY+y
-          )
+          ),
+          handler
         );
       }
     }

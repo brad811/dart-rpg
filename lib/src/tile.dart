@@ -7,6 +7,7 @@ class Tile {
     GROUND = 67,
     WALL = 68,
     PLAYER = 129,
+    SIGN = 193,
     HOUSE = 225;
   
   final bool solid;
