@@ -33,7 +33,23 @@ class Sprite {
       posX*scaledSpriteSize - Player.x + canvasWidth/2 - scaledSpriteSize, // x
       posY*scaledSpriteSize - Player.y + canvasHeight/2, // y
       
-      pixelsPerSprite*spriteScale, pixelsPerSprite*spriteScale // width, height
+      scaledSpriteSize, scaledSpriteSize // width, height
+    );
+  }
+  
+  void renderStatic(CanvasRenderingContext2D ctx, ImageElement spritesImage, int canvasWidth, int canvasHeight) {
+    ctx.drawImageScaledFromSource(
+      spritesImage,
+      
+      pixelsPerSprite * (id%spriteSheetSize - 1), // sx
+      pixelsPerSprite * (id/spriteSheetSize).floor(), // sy
+      
+      pixelsPerSprite, pixelsPerSprite, // swidth, sheight
+      
+      posX*scaledSpriteSize, // x
+      posY*scaledSpriteSize, // y
+      
+      scaledSpriteSize, scaledSpriteSize // width, height
     );
   }
 }

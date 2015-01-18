@@ -1,9 +1,11 @@
 import 'dart:html';
 import 'dart:async';
 
+import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/player.dart';
+import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
@@ -60,6 +62,11 @@ void tick() {
       tile.sprite.render(ctx, spritesImage, canvasWidth, canvasHeight);
     }
   }
+  
+  Gui.renderWindow(ctx, spritesImage, canvasWidth, canvasHeight, 1, 11, 18, 4);
+  Font.renderStaticText(ctx, spritesImage, canvasWidth, canvasHeight, 4, 23, "This seems to be working!");
+  Font.renderStaticText(ctx, spritesImage, canvasWidth, canvasHeight, 3, 26, "1234567890123456789012345678901234");
+  Font.renderStaticText(ctx, spritesImage, canvasWidth, canvasHeight, 4, 28, "12345678901234567890123456789012");
   
   Input.handleKey(focusObject, world);
   
