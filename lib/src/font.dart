@@ -1,7 +1,6 @@
 library Font;
 
-import 'dart:html';
-
+import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 
 class Font {
@@ -11,22 +10,18 @@ class Font {
     pixelsPerFontSprite = 8,
     scaledSpriteSize = pixelsPerFontSprite*Sprite.spriteScale;
   
-  static void renderStaticText(
-      CanvasRenderingContext2D ctx, ImageElement spritesImage, int canvasWidth, int canvasHeight,
-      double posX, double posY, String text) {
+  static void renderStaticText(double posX, double posY, String text) {
     for(int i=0; i<text.length; i++) {
-      renderStatic(ctx, spritesImage, canvasWidth, canvasHeight, text.codeUnits[i], posX + i*(6/8), posY - 0.25);
+      renderStatic(text.codeUnits[i], posX + i*(6/8), posY - 0.25);
     }
   }
   
-  static void renderStatic(
-      CanvasRenderingContext2D ctx, ImageElement spritesImage, int canvasWidth, int canvasHeight,
-      int id, double posX, double posY) {
+  static void renderStatic(int id, double posX, double posY) {
     
     num fontId = startId + ((id/fontSheetWidth).floor()*Sprite.spriteSheetSize) + (id%fontSheetWidth);
     
-    ctx.drawImageScaledFromSource(
-      spritesImage,
+    Main.ctx.drawImageScaledFromSource(
+        Main.spritesImage,
       
       pixelsPerFontSprite * (fontId%Sprite.spriteSheetSize), // sx
       pixelsPerFontSprite * (fontId/Sprite.spriteSheetSize).round(), // sy

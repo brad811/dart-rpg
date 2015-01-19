@@ -1,7 +1,6 @@
 library Sprite;
 
-import 'dart:html';
-
+import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 
 class Sprite {
@@ -21,25 +20,25 @@ class Sprite {
     this.posY = posY.toDouble();
   }
   
-  void render(CanvasRenderingContext2D ctx, ImageElement spritesImage, int canvasWidth, int canvasHeight) {
-    ctx.drawImageScaledFromSource(
-      spritesImage,
+  void render() {
+    Main.ctx.drawImageScaledFromSource(
+        Main.spritesImage,
       
       pixelsPerSprite * (id%spriteSheetSize - 1), // sx
       pixelsPerSprite * (id/spriteSheetSize).floor(), // sy
       
       pixelsPerSprite, pixelsPerSprite, // swidth, sheight
       
-      posX*scaledSpriteSize - Player.x + canvasWidth/2 - scaledSpriteSize, // x
-      posY*scaledSpriteSize - Player.y + canvasHeight/2, // y
+      posX*scaledSpriteSize - Player.x + Main.canvasWidth/2 - scaledSpriteSize, // x
+      posY*scaledSpriteSize - Player.y + Main.canvasHeight/2, // y
       
       scaledSpriteSize, scaledSpriteSize // width, height
     );
   }
   
-  void renderStatic(CanvasRenderingContext2D ctx, ImageElement spritesImage, int canvasWidth, int canvasHeight) {
-    ctx.drawImageScaledFromSource(
-      spritesImage,
+  void renderStatic() {
+    Main.ctx.drawImageScaledFromSource(
+      Main.spritesImage,
       
       pixelsPerSprite * (id%spriteSheetSize - 1), // sx
       pixelsPerSprite * (id/spriteSheetSize).floor(), // sy

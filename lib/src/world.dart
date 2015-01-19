@@ -11,7 +11,7 @@ class World {
     LAYER_PLAYER = 2,
     LAYER_ABOVE = 3;
   
-  List<int> layers = [
+  static final List<int> layers = [
     LAYER_GROUND,
     LAYER_BELOW,
     LAYER_PLAYER,

@@ -3,6 +3,7 @@ library Player;
 import 'dart:html';
 
 import 'package:dart_rpg/src/input_handler.dart';
+import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
@@ -53,7 +54,7 @@ class Player implements InputHandler {
     );
   }
   
-  void handleKey(int keyCode, World world) {
+  void handleKey(int keyCode) {
     switch(keyCode) {
       case KeyCode.LEFT:
         move(Player.LEFT);
@@ -68,20 +69,20 @@ class Player implements InputHandler {
         move(Player.DOWN);
         break;
       case KeyCode.X:
-        interact(world);
+        interact();
         break;
     }
   }
   
-  void interact(World world) {
-    if(direction == Player.LEFT && world.isInteractable(mapX-1, mapY)) {
-      world.interact(mapX-1, mapY);
-    } else if(direction == Player.RIGHT && world.isInteractable(mapX+1, mapY)) {
-      world.interact(mapX+1, mapY);
-    } else if(direction == Player.UP && world.isInteractable(mapX, mapY-1)) {
-      world.interact(mapX, mapY-1);
-    } else if(direction == Player.DOWN && world.isInteractable(mapX, mapY+1)) {
-      world.interact(mapX, mapY+1);
+  void interact() {
+    if(direction == Player.LEFT && Main.world.isInteractable(mapX-1, mapY)) {
+      Main.world.interact(mapX-1, mapY);
+    } else if(direction == Player.RIGHT && Main.world.isInteractable(mapX+1, mapY)) {
+      Main.world.interact(mapX+1, mapY);
+    } else if(direction == Player.UP && Main.world.isInteractable(mapX, mapY-1)) {
+      Main.world.interact(mapX, mapY-1);
+    } else if(direction == Player.DOWN && Main.world.isInteractable(mapX, mapY+1)) {
+      Main.world.interact(mapX, mapY+1);
     }
   }
   
@@ -111,7 +112,7 @@ class Player implements InputHandler {
     }
   }
   
-  void tick(World world) {
+  void tick() {
     if(directionCooldown > 0) {
       directionCooldown -= 1;
       
@@ -139,7 +140,7 @@ class Player implements InputHandler {
     
     if(motionX < 0) {
       motionX += curSpeed;
-      if(!world.isSolid(mapX-1, mapY)) {
+      if(!Main.world.isSolid(mapX-1, mapY)) {
         x -= curSpeed;
         
         if(motionX == 0)
@@ -153,7 +154,7 @@ class Player implements InputHandler {
         motionStep = 1;
     } else if(motionX > 0) {
       motionX -= curSpeed;
-      if(!world.isSolid(mapX+1, mapY)) {
+      if(!Main.world.isSolid(mapX+1, mapY)) {
         x += curSpeed;
         
         if(motionX == 0)
@@ -167,7 +168,7 @@ class Player implements InputHandler {
         motionStep = 1;
     } else if(motionY < 0) {
       motionY += curSpeed;
-      if(!world.isSolid(mapX, mapY-1)) {
+      if(!Main.world.isSolid(mapX, mapY-1)) {
         y -= curSpeed;
         
         if(motionY == 0)
@@ -181,7 +182,7 @@ class Player implements InputHandler {
         motionStep = 1;
     } else if(motionY > 0) {
       motionY -= curSpeed;
-      if(!world.isSolid(mapX, mapY+1)) {
+      if(!Main.world.isSolid(mapX, mapY+1)) {
         y += curSpeed;
         
         if(motionY == 0)
