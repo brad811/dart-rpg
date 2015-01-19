@@ -64,9 +64,11 @@ void tick() {
   }
   
   Gui.renderWindow(ctx, spritesImage, canvasWidth, canvasHeight, 1, 11, 18, 4);
-  Font.renderStaticText(ctx, spritesImage, canvasWidth, canvasHeight, 4, 23, "This seems to be working!");
-  Font.renderStaticText(ctx, spritesImage, canvasWidth, canvasHeight, 3, 26, "1234567890123456789012345678901234");
-  Font.renderStaticText(ctx, spritesImage, canvasWidth, canvasHeight, 4, 28, "12345678901234567890123456789012");
+  Gui.renderWindow(ctx, spritesImage, canvasWidth, canvasHeight, 1, 11, 4, 4);
+  Font.renderStaticText(ctx, spritesImage, canvasWidth, canvasHeight, 10.5, 23.5, "This seems to be working! This is  ");
+  Font.renderStaticText(ctx, spritesImage, canvasWidth, canvasHeight, 10.5, 25.0, "what a full screen of text would");
+  Font.renderStaticText(ctx, spritesImage, canvasWidth, canvasHeight, 10.5, 26.5, "look like given 4 lines and 35");
+  Font.renderStaticText(ctx, spritesImage, canvasWidth, canvasHeight, 10.5, 28.0, "characters per line.");
   
   Input.handleKey(focusObject, world);
   
