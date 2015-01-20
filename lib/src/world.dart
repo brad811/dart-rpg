@@ -1,6 +1,9 @@
 library World;
 
+import 'dart:html';
+
 import 'package:dart_rpg/src/interactable_tile.dart';
+import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 
@@ -21,9 +24,11 @@ class World {
   List<List<List<Tile>>> map = [];
   
   World() {
-    for(var y=0; y<16; y++) {
+    int xSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
+    int ySize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
+    for(var y=0; y<ySize; y++) {
       map.add([]);
-      for(var x=0; x<20; x++) {
+      for(var x=0; x<xSize; x++) {
         // TODO: I'd like to have this be like: map[y].add( [ new List(layers.length) ] );
         map[y].add( [ [], [], [], [] ] );
         if(y == 0 || y == 15 || x == 0 || x == 19) {
@@ -54,22 +59,22 @@ class World {
       true
     );
     
-    void signFunction() {
-      print("You are reading a sign!");
-    }
-    
     addInteractableObject(
       Tile.SIGN,
       9, 10, LAYER_BELOW,
       1, 1,
       true,
-      signFunction
+      (int keyCode) {
+        if(keyCode == KeyCode.X || keyCode == KeyCode.Z) {
+          return InteractableTile.ACTION_CLOSE;
+        }
+      }
     );
   }
   
   void addInteractableObject(
       int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
-      void handler()) {
+      void handler(int keyCode)) {
     for(var y=0; y<sizeY; y++) {
       for(var x=0; x<sizeX; x++) {
         map[posY+y][posX+x][layer] = new InteractableTile(

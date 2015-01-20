@@ -67,7 +67,7 @@ class Main {
       }
     }
     
-    Gui.renderConversationWindow();
+    Gui.render();
     
     Input.handleKey(focusObject);
     

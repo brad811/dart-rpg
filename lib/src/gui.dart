@@ -5,15 +5,15 @@ import 'package:dart_rpg/src/sprite.dart';
 
 class Gui {
   static final int
-      TOP_LEFT = 232,
-      TOP_MIDDLE = 233,
-      TOP_RIGHT = 234,
-      MIDDLE_LEFT = 264,
-      MIDDLE_MIDDLE = 265,
-      MIDDLE_RIGHT = 266,
-      BOTTOM_LEFT = 296,
-      BOTTOM_MIDDLE = 297,
-      BOTTOM_RIGHT = 298,
+      WINDOW_TOP_LEFT = 232,
+      WINDOW_TOP_MIDDLE = 233,
+      WINDOW_TOP_RIGHT = 234,
+      WINDOW_MIDDLE_LEFT = 264,
+      WINDOW_MIDDLE_MIDDLE = 265,
+      WINDOW_MIDDLE_RIGHT = 266,
+      WINDOW_BOTTOM_LEFT = 296,
+      WINDOW_BOTTOM_MIDDLE = 297,
+      WINDOW_BOTTOM_RIGHT = 298,
       
       charsPerLine = 35;
   
@@ -22,6 +22,16 @@ class Gui {
     textY = 23.5,
     verticalLineSpacing = 1.5;
   
+  static List<List<List<Sprite>>> screen;
+  static bool inConversation = false;
+  static String text = "";
+  
+  static void render() {
+    if(inConversation) {
+      renderConversationWindow();
+    }
+  }
+  
   static void renderConversationWindow() {
     // Text window
     Gui.renderWindow(4, 11, 15, 4);
@@ -29,6 +39,7 @@ class Gui {
     // Picture window
     Gui.renderWindow(1, 11, 3, 3);
     
+    // Picture
     new Sprite.int(235, 1, 11).renderStatic();
     new Sprite.int(236, 2, 11).renderStatic();
     new Sprite.int(237, 3, 11).renderStatic();
@@ -65,27 +76,27 @@ class Gui {
       for(int i=posX; i<posX+sizeX; i++) {
         if(j == posY) {
           if(i == posX)
-            id = TOP_LEFT;
+            id = WINDOW_TOP_LEFT;
           else if(i == posX + sizeX - 1)
-            id = TOP_RIGHT;
+            id = WINDOW_TOP_RIGHT;
           else
-            id = TOP_MIDDLE;
+            id = WINDOW_TOP_MIDDLE;
         }
         else if(j == posY + sizeY - 1) {
           if(i == posX)
-            id = BOTTOM_LEFT;
+            id = WINDOW_BOTTOM_LEFT;
           else if(i == posX + sizeX - 1)
-            id = BOTTOM_RIGHT;
+            id = WINDOW_BOTTOM_RIGHT;
           else
-            id = BOTTOM_MIDDLE;
+            id = WINDOW_BOTTOM_MIDDLE;
         }
         else {
           if(i == posX)
-            id = MIDDLE_LEFT;
+            id = WINDOW_MIDDLE_LEFT;
           else if(i == posX + sizeX - 1)
-            id = MIDDLE_RIGHT;
+            id = WINDOW_MIDDLE_RIGHT;
           else
-            id = MIDDLE_MIDDLE;
+            id = WINDOW_MIDDLE_MIDDLE;
         }
         
         Sprite window = new Sprite.int(id, i, j);
