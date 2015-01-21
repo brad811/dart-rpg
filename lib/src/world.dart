@@ -4,6 +4,7 @@ import 'dart:html';
 
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 
@@ -59,22 +60,31 @@ class World {
       true
     );
     
-    addInteractableObject(
+    // Sign
+    addSign(
       Tile.SIGN,
       9, 10, LAYER_BELOW,
       1, 1,
       true,
-      (int keyCode) {
-        if(keyCode == KeyCode.X || keyCode == KeyCode.Z) {
-          return InteractableTile.ACTION_CLOSE;
-        }
-      }
+      "This is only a test. This is a sign that has way too much text. " +
+        "We'll see how the sign handles having this much text on it. " +
+        "It really takes a lot of text to fill them up!"
+    );
+  }
+  
+  void addSign(
+      int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
+      String text) {
+    map[posY][posX][layer] = new Sign(
+      solid,
+      new Sprite.int(spriteId, posX, posY),
+      text
     );
   }
   
   void addInteractableObject(
       int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
-      void handler(int keyCode)) {
+      void handler(List<int> keyCodes)) {
     for(var y=0; y<sizeY; y++) {
       for(var x=0; x<sizeX; x++) {
         map[posY+y][posX+x][layer] = new InteractableTile(

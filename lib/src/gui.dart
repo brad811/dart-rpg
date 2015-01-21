@@ -15,7 +15,8 @@ class Gui {
       WINDOW_BOTTOM_MIDDLE = 297,
       WINDOW_BOTTOM_RIGHT = 298,
       
-      charsPerLine = 35;
+      charsPerLine = 35,
+      maxLines = 4;
   
   static final double
     textX = 9.75,
@@ -24,7 +25,7 @@ class Gui {
   
   static List<List<List<Sprite>>> screen;
   static bool inConversation = false;
-  static String text = "";
+  static List<String> textLines = [];
   
   static void render() {
     if(inConversation) {
@@ -40,33 +41,16 @@ class Gui {
     Gui.renderWindow(1, 11, 3, 3);
     
     // Picture
-    new Sprite.int(235, 1, 11).renderStatic();
-    new Sprite.int(236, 2, 11).renderStatic();
-    new Sprite.int(237, 3, 11).renderStatic();
-    new Sprite.int(267, 1, 12).renderStatic();
-    new Sprite.int(268, 2, 12).renderStatic();
-    new Sprite.int(269, 3, 12).renderStatic();
-    new Sprite.int(299, 1, 13).renderStatic();
-    new Sprite.int(300, 2, 13).renderStatic();
-    new Sprite.int(301, 3, 13).renderStatic();
-    
-    String text = "This seems to be working! This is what a full screen" +
-        " of text would look like given 4 lines and ${charsPerLine} characters per line.";
-    
-    List<String> tokens = text.split(" ");
-    int lineNumber = 0;
-    String curLine;
-    while(tokens.length > 0) {
-      curLine = "";
-      while(tokens.length > 0 && curLine.length + tokens[0].length < 35) {
-        if(curLine.length > 0) {
-          curLine += " ";
-        }
-        curLine += tokens[0];
-        tokens.removeAt(0);
+    int pictureId = 235;
+    for(int row=0; row<3; row++) {
+      for(int col=0; col<3; col++) {
+        new Sprite.int(pictureId + 32*row + col, 1 + col, 11 + row).renderStatic();
       }
-      Font.renderStaticText(textX, textY + verticalLineSpacing*lineNumber, curLine);
-      lineNumber++;
+    }
+    
+    // Text
+    for(int i=0; i<textLines.length && i<maxLines; i++) {
+      Font.renderStaticText(textX, textY + verticalLineSpacing*i, textLines[i]);
     }
   }
   

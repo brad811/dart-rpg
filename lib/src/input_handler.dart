@@ -1,5 +1,5 @@
 library InputHandler;
 
 abstract class InputHandler {
-  void handleKey(int keyCode);
+  void handleKeys(List<int> keyCode);
 }

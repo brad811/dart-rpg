@@ -9,11 +9,11 @@ import 'package:dart_rpg/src/tile.dart';
 
 class InteractableTile extends Tile implements Interactable, InputHandler {
   static final int
-    ACTION_CLOSE = 0;
+    ACTION_CONTINUE = 0;
   
   var handler;
   
-  InteractableTile(bool solid, Sprite sprite, void handler(int keyCode)) : super(solid, sprite) {
+  InteractableTile(bool solid, Sprite sprite, void handler(List<int> keyCodes)) : super(solid, sprite) {
     this.handler = handler;
   }
   
@@ -27,11 +27,7 @@ class InteractableTile extends Tile implements Interactable, InputHandler {
     Gui.inConversation = false;
   }
   
-  void handleKey(int keyCode) {
-    int action = handler(keyCode);
-    // TODO: change to switch statement when enums are more stable
-    if(action == ACTION_CLOSE) {
-      close();
-    }
+  void handleKeys(List<int> keyCodes) {
+    handler(keyCodes);
   }
 }

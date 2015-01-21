@@ -54,23 +54,27 @@ class Player implements InputHandler {
     );
   }
   
-  void handleKey(int keyCode) {
-    switch(keyCode) {
-      case KeyCode.LEFT:
+  void handleKeys(List<int> keyCodes) {
+    if(keyCodes.contains(KeyCode.X))
+      interact();
+    
+    for(int key in keyCodes) {
+      if(keyCodes.contains(KeyCode.LEFT)) {
         move(Player.LEFT);
-        break;
-      case KeyCode.RIGHT:
+        return;
+      }
+      if(keyCodes.contains(KeyCode.RIGHT)) {
         move(Player.RIGHT);
-        break;
-      case KeyCode.UP:
+        return;
+      }
+      if(keyCodes.contains(KeyCode.UP)) {
         move(Player.UP);
-        break;
-      case KeyCode.DOWN:
+        return;
+      }
+      if(keyCodes.contains(KeyCode.DOWN)) {
         move(Player.DOWN);
-        break;
-      case KeyCode.X:
-        interact();
-        break;
+        return;
+      }
     }
   }
   

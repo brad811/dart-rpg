@@ -11,7 +11,7 @@ class Input {
     if(keys.length == 0)
       return;
     
-    focusObject.handleKey(keys[0]);
+    focusObject.handleKeys(keys);
     
     List<int> toRemove = [];
     Iterator<int> it = keys.iterator;
