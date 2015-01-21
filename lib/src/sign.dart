@@ -9,16 +9,16 @@ import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/sprite.dart';
 
 class Sign extends InteractableTile implements Interactable, InputHandler {
-  static final int
-    ACTION_CONTINUE = 0;
-  
-  List<String> originalTextLines = [];
-  List<String> textLines = [];
+  List<String>
+    originalTextLines = [],
+    textLines = [];
   
   Sign(bool solid, Sprite sprite, String text) : super(solid, sprite, null) {
     List<String> tokens = text.split(" ");
     int lineNumber = 0;
     String curLine;
+    
+    // Split the text into lines of proper length
     while(tokens.length > 0) {
       curLine = "";
       while(tokens.length > 0 && curLine.length + tokens[0].length < 35) {
@@ -38,6 +38,7 @@ class Sign extends InteractableTile implements Interactable, InputHandler {
   
   void continueText() {
     if(textLines.length > Gui.maxLines) {
+      // Remove the top lines so the next lines will show
       textLines.removeRange(0, Gui.maxLines);
     } else {
       // Close the sign and reset the text

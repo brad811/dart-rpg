@@ -5,6 +5,7 @@ import 'package:dart_rpg/src/sprite.dart';
 
 class Gui {
   static final int
+      // sprite IDs for the window frame
       WINDOW_TOP_LEFT = 232,
       WINDOW_TOP_MIDDLE = 233,
       WINDOW_TOP_RIGHT = 234,

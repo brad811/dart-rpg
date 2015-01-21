@@ -46,6 +46,7 @@ class World {
       }
     }
     
+    // Top half of the house, which you can walk behind
     addObject(
       Tile.HOUSE,
       10, 6, LAYER_ABOVE,
@@ -53,6 +54,7 @@ class World {
       false
     );
     
+    // Bottom half of the house
     addObject(
       Tile.HOUSE + 64,
       10, 8, LAYER_BELOW,
