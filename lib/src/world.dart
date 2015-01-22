@@ -8,6 +8,7 @@ import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
+import 'package:dart_rpg/src/warp_tile.dart';
 
 class World {
   static final int
@@ -42,6 +43,11 @@ class World {
       for(var x=0; x<xSize; x++) {
         // TODO: I'd like to have this be like: map[y].add( [ new List(layers.length) ] );
         map[y].add( [ [], [], [], [] ] );
+      }
+    }
+    
+    for(int y=0; y<viewYSize; y++) {
+      for(int x=0; x<viewXSize; x++) {
         if(y == 0 || y == 15 || x == 0 || x == 19) {
           map[y][x][LAYER_GROUND] = new Tile(
             true,
@@ -55,8 +61,6 @@ class World {
         }
       }
     }
-    
-    map[18][0][LAYER_GROUND] = new Tile(true, new Sprite.int(Tile.WALL, 0, 18));
     
     // Top half of the house, which you can walk behind
     addObject(
@@ -74,6 +78,36 @@ class World {
       true
     );
     
+    for(int y=25; y<=32; y++) {
+      for(int x=0; x<=8; x++) {
+        if(x == 0 || x == 8 || y == 25 || y == 32) {
+          map[y][x][LAYER_GROUND] = new Tile(
+            true,
+            new Sprite.int(Tile.WALL, x, y)
+          );
+        } else {
+          map[y][x][LAYER_GROUND] = new Tile(
+            false,
+            new Sprite.int(Tile.GROUND, x, y)
+          );
+        }
+      }
+    }
+    
+    // Outside door warp
+    addWarp(
+      Tile.HOUSE + 128 + 1,
+      11, 10, // Pos
+      4, 32 // Dest
+    );
+    
+    // Inside door warp
+     addWarp(
+       Tile.HOUSE + 128 + 1,
+       4, 32, // Pos
+       11, 10 // Dest
+     );
+    
     // Sign
     addSign(
       Tile.SIGN,
@@ -86,6 +120,15 @@ class World {
     );
   }
   
+  void addWarp(int spriteId, int posX, int posY, int destX, int destY) {
+    map[posY][posX][LAYER_GROUND] = new WarpTile(
+      true,
+      new Sprite.int(spriteId, posX, posY),
+      destX, destY
+    );
+  }
+  
+  // TODO: take into account size
   void addSign(
       int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
       String text) {

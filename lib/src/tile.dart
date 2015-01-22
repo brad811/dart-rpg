@@ -14,4 +14,6 @@ class Tile {
   final Sprite sprite;
   
   Tile(this.solid, this.sprite);
+  
+  void enter() {}
 }
