@@ -1,7 +1,10 @@
 library World;
 
+import 'dart:math' as math;
+
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
@@ -22,9 +25,18 @@ class World {
   
   List<List<List<Tile>>> map = [];
   
+  // TODO: should be final
+  int
+    viewXSize,
+    viewYSize;
+  
   World() {
-    int xSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
-    int ySize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
+    viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
+    viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
+    
+    int xSize = 50;
+    int ySize = 50;
+    
     for(var y=0; y<ySize; y++) {
       map.add([]);
       for(var x=0; x<xSize; x++) {
@@ -43,6 +55,8 @@ class World {
         }
       }
     }
+    
+    map[18][0][LAYER_GROUND] = new Tile(true, new Sprite.int(Tile.WALL, 0, 18));
     
     // Top half of the house, which you can walk behind
     addObject(
@@ -144,8 +158,14 @@ class World {
   }
 
   void render(List<List<Tile>> renderList) {
-    for(var y=0; y<map.length; y++) {
-      for(var x=0; x<map[y].length; x++) {
+    for(
+        var y=math.max(Player.mapY-(viewYSize/2+1).round(), 0);
+        y<Player.mapY+(viewYSize/2+1).round() && y<map.length;
+        y++) {
+      for(
+          var x=math.max(Player.mapX-(viewXSize/2).round(), 0);
+          x<Player.mapX+(viewXSize/2+2).round() && x<map[y].length;
+          x++) {
         for(int layer in layers) {
           if(map[y][x][layer] is Tile) {
             renderList[layer].add(
