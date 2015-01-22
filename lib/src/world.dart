@@ -1,7 +1,5 @@
 library World;
 
-import 'dart:html';
-
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sign.dart';
