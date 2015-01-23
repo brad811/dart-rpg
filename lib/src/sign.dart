@@ -13,7 +13,9 @@ class Sign extends InteractableTile implements Interactable, InputHandler {
     originalTextLines = [],
     textLines = [];
   
-  Sign(bool solid, Sprite sprite, String text) : super(solid, sprite, null) {
+  final int pictureSpriteId;
+  
+  Sign(bool solid, Sprite sprite, this.pictureSpriteId, String text) : super(solid, sprite, null) {
     List<String> tokens = text.split(" ");
     int lineNumber = 0;
     String curLine;
@@ -34,6 +36,7 @@ class Sign extends InteractableTile implements Interactable, InputHandler {
     
     textLines = new List<String>.from(originalTextLines);
     Gui.textLines = textLines;
+    Gui.pictureSpriteId = pictureSpriteId;
   }
   
   void continueText() {

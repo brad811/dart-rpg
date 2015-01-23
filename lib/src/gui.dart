@@ -27,6 +27,7 @@ class Gui {
   static List<List<List<Sprite>>> screen;
   static bool inConversation = false;
   static List<String> textLines = [];
+  static int pictureSpriteId;
   
   static void render() {
     if(inConversation) {
@@ -42,10 +43,9 @@ class Gui {
     Gui.renderWindow(1, 11, 3, 3);
     
     // Picture
-    int pictureId = 235;
     for(int row=0; row<3; row++) {
       for(int col=0; col<3; col++) {
-        new Sprite.int(pictureId + 32*row + col, 1 + col, 11 + row).renderStatic();
+        new Sprite.int(pictureSpriteId + 32*row + col, 1 + col, 11 + row).renderStatic();
       }
     }
     

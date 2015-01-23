@@ -135,6 +135,7 @@ class World {
     map[posY][posX][layer] = new Sign(
       solid,
       new Sprite.int(spriteId, posX, posY),
+      235,
       text
     );
   }
