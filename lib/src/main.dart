@@ -23,6 +23,9 @@ class Main {
   static InputHandler focusObject;
   static List<List<Tile>> renderList;
   
+  static final int timeDelay = 33;
+  static double timeScale = 1.0;
+  
   static void init() {
     c = querySelector('canvas');
     ctx = c.getContext("2d");
@@ -69,10 +72,15 @@ class Main {
     
     Gui.render();
     
-    Input.handleKey(focusObject);
+    // Keeps the value from being set to 0 in between checking it and dividing by it
+    var curTimeScale = timeScale;
     
-    player.tick();
-    
-    new Timer(new Duration(milliseconds: 33), () => tick());
+    if(timeScale > 0.0) {
+      Input.handleKey(focusObject);
+      player.tick();
+      new Timer(new Duration(milliseconds: (timeDelay * (1/curTimeScale)).round()), () => tick());
+    } else {
+      new Timer(new Duration(milliseconds: timeDelay), () => tick());
+    }
   }
 }
