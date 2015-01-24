@@ -2,6 +2,7 @@ library Gui;
 
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/main.dart';
 
 class Gui {
   static final int
@@ -29,9 +30,23 @@ class Gui {
   static List<String> textLines = [];
   static int pictureSpriteId;
   
+  static int shadeSpriteId = 0;
+  
   static void render() {
     if(inConversation) {
       renderConversationWindow();
+    }
+    if(shadeSpriteId != 0) {
+      renderShade();
+    }
+  }
+  
+  static void renderShade() {
+    for(int j=0; j<Main.world.viewYSize; j++) {
+      for(int i=0; i<Main.world.viewXSize; i++) {
+        Sprite window = new Sprite.int(shadeSpriteId, i, j);
+        window.renderStatic();
+      }
     }
   }
   

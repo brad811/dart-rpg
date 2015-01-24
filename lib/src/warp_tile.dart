@@ -2,6 +2,7 @@ library WarpTile;
 
 import 'dart:async';
 
+import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sprite.dart';
@@ -21,20 +22,34 @@ class WarpTile extends Tile {
   void enter() {
     Main.timeScale = 0.0;
     
-    List<DelayedEvent> events = [
-      new DelayedEvent(0, () {
+    List<DelayedEvent> events = [];
+    events.add(new DelayedEvent(0, () {
         Main.timeScale = 0.0;
-      }),
-      new DelayedEvent(200, () {
+      })
+    );
+    
+    events.add(new DelayedEvent(100, () {
+        Gui.shadeSpriteId = 36;
+      })
+    );
+    
+    events.add(new DelayedEvent(100, () {
         Player.x = destX * Sprite.pixelsPerSprite * Sprite.spriteScale;
         Player.y = destY * Sprite.pixelsPerSprite * Sprite.spriteScale;
         Player.mapX = destX;
         Player.mapY = destY;
-      }),
-      new DelayedEvent(200, () {
+      })
+    );
+    
+    events.add(new DelayedEvent(200, () {
+        Gui.shadeSpriteId = 0;
+      })
+    );
+    
+    events.add(new DelayedEvent(100, () {
         Main.timeScale = 1.0;
       })
-    ];
+    );
     
     executeDelayedEvents(events);
   }
