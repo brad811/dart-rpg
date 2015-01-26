@@ -1,12 +1,13 @@
 library Main;
 
-import 'dart:html';
 import 'dart:async';
+import 'dart:html';
+import 'dart:math' as math;
 
+import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/player.dart';
-import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
@@ -55,11 +56,13 @@ class Main {
   }
   
   static void tick() {
-    ctx.fillStyle = "#333333";
+    ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     
-    // TODO: I'd like to have this be determined by layers.length
     renderList = [ [], [], [], [] ];
+    for(int i=0; i<World.layers.length; i++) {
+      renderList.add([]);
+    }
     
     player.render(renderList);
     world.render(renderList);
