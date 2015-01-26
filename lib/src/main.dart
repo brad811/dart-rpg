@@ -59,7 +59,7 @@ class Main {
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     
-    renderList = [ [], [], [], [] ];
+    renderList = [];
     for(int i=0; i<World.layers.length; i++) {
       renderList.add([]);
     }
@@ -74,12 +74,13 @@ class Main {
     }
     
     Gui.render();
+    Input.handleKey(focusObject);
     
     // Keeps the value from being set to 0 in between checking it and dividing by it
     var curTimeScale = timeScale;
-    
+
     if(timeScale > 0.0) {
-      Input.handleKey(focusObject);
+      
       player.tick();
       new Timer(new Duration(milliseconds: (timeDelay * (1/curTimeScale)).round()), () => tick());
     } else {
