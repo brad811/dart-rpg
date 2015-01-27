@@ -1,7 +1,6 @@
 library Sprite;
 
 import 'package:dart_rpg/src/main.dart';
-import 'package:dart_rpg/src/player.dart';
 
 class Sprite {
   static final int

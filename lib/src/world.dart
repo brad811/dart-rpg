@@ -5,7 +5,6 @@ import 'dart:math' as math;
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
-import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';

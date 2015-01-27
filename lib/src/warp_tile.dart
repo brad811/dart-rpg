@@ -4,7 +4,6 @@ import 'dart:async';
 
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/main.dart';
-import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 
