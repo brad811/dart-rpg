@@ -26,23 +26,21 @@ class World {
   
   List<List<List<Tile>>> map = [];
   
-  // TODO: should be final
-  int
-    viewXSize,
-    viewYSize;
+  final int
+    viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
+    viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
   
   World() {
-    viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
-    viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
-    
     int xSize = 50;
     int ySize = 50;
     
-    for(var y=0; y<ySize; y++) {
+    for(int y=0; y<ySize; y++) {
       map.add([]);
-      for(var x=0; x<xSize; x++) {
-        // TODO: I'd like to have this be like: map[y].add( [ new List(layers.length) ] );
-        map[y].add( [ [], [], [], [] ] );
+      for(int x=0; x<xSize; x++) {
+        map[y].add([]);
+        for(int i=0; i<layers.length; i++) {
+          map[y][x].add(null);
+        }
       }
     }
     
@@ -111,6 +109,7 @@ class World {
     // Sign
     addSign(
       Tile.SIGN,
+      235,
       9, 10, LAYER_BELOW,
       1, 1,
       true,
@@ -128,16 +127,20 @@ class World {
     );
   }
   
-  // TODO: take into account size
   void addSign(
-      int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
+      int spriteId, int pictureId,
+      int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
       String text) {
-    map[posY][posX][layer] = new Sign(
-      solid,
-      new Sprite.int(spriteId, posX, posY),
-      235,
-      text
-    );
+    for(int y=posY; y<posY+sizeY; y++) {
+      for(int x=posX; x<posX+sizeX; x++) {
+        map[y][x][layer] = new Sign(
+          solid,
+          new Sprite.int(spriteId, x, y),
+          pictureId,
+          text
+        );
+      }
+    }
   }
   
   void addInteractableObject(

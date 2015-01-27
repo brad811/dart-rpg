@@ -2,7 +2,6 @@ library Main;
 
 import 'dart:async';
 import 'dart:html';
-import 'dart:math' as math;
 
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input.dart';
