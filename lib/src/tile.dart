@@ -16,4 +16,8 @@ class Tile {
   Tile(this.solid, this.sprite);
   
   void enter() {}
+  
+  void render() {
+    sprite.render();
+  }
 }

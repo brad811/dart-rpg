@@ -24,36 +24,33 @@ class WarpTile extends Tile {
     Gui.fadeOutLevel = Gui.FADE_BLACK_LOW;
     List<DelayedEvent> events = [];
     
-    events.add(new DelayedEvent(100, () {
+    events.addAll([
+      new DelayedEvent(100, () {
         Gui.fadeOutLevel = Gui.FADE_BLACK_MED;
-      })
-    );
-    
-    events.add(new DelayedEvent(100, () {
+      }),
+      
+      new DelayedEvent(100, () {
         Gui.fadeOutLevel = Gui.FADE_BLACK_FULL;
         
-        Player.x = destX * Sprite.pixelsPerSprite * Sprite.spriteScale;
-        Player.y = destY * Sprite.pixelsPerSprite * Sprite.spriteScale;
-        Player.mapX = destX;
-        Player.mapY = destY;
-      })
-    );
-    
-    events.add(new DelayedEvent(100, () {
+        Main.player.x = destX * Sprite.pixelsPerSprite * Sprite.spriteScale;
+        Main.player.y = destY * Sprite.pixelsPerSprite * Sprite.spriteScale;
+        Main.player.mapX = destX;
+        Main.player.mapY = destY;
+      }),
+      
+      new DelayedEvent(100, () {
         Gui.fadeOutLevel = Gui.FADE_BLACK_MED;
-      })
-    );
-    
-    events.add(new DelayedEvent(100, () {
+      }),
+      
+      new DelayedEvent(100, () {
         Gui.fadeOutLevel = Gui.FADE_BLACK_LOW;
-      })
-    );
-    
-    events.add(new DelayedEvent(100, () {
+      }),
+      
+      new DelayedEvent(100, () {
         Gui.fadeOutLevel = Gui.FADE_NORMAL;
         Main.timeScale = 1.0;
       })
-    );
+    ]);
     
     executeDelayedEvents(events);
   }

@@ -29,8 +29,8 @@ class Sprite {
       
       pixelsPerSprite, pixelsPerSprite, // swidth, sheight
       
-      posX*scaledSpriteSize - Player.x + Main.canvasWidth/2 - scaledSpriteSize, // x
-      posY*scaledSpriteSize - Player.y + Main.canvasHeight/2, // y
+      posX*scaledSpriteSize - Main.player.x + Main.canvasWidth/2 - scaledSpriteSize, // x
+      posY*scaledSpriteSize - Main.player.y + Main.canvasHeight/2, // y
       
       scaledSpriteSize, scaledSpriteSize // width, height
     );

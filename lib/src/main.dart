@@ -3,6 +3,7 @@ library Main;
 import 'dart:async';
 import 'dart:html';
 
+import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/input_handler.dart';
@@ -39,7 +40,7 @@ class Main {
   
   static void start() {
     world = new World();
-    player = new Player();
+    player = new Player(8, 5);
     focusObject = player;
 
     document.onKeyDown.listen((KeyboardEvent e) {
@@ -68,7 +69,15 @@ class Main {
     
     for(List<Tile> layer in renderList) {
       for(Tile tile in layer) {
-        tile.sprite.render();
+        tile.render();
+      }
+    }
+    
+    for(Character character in world.characters) {
+      character.render(renderList);
+      
+      if(timeScale > 0.0) {
+        character.tick();
       }
     }
     
@@ -79,7 +88,6 @@ class Main {
     var curTimeScale = timeScale;
 
     if(timeScale > 0.0) {
-      
       player.tick();
       new Timer(new Duration(milliseconds: (timeDelay * (1/curTimeScale)).round()), () => tick());
     } else {

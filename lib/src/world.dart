@@ -2,6 +2,7 @@ library World;
 
 import 'dart:math' as math;
 
+import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
@@ -25,6 +26,7 @@ class World {
   ];
   
   List<List<List<Tile>>> map = [];
+  List<Character> characters = [];
   
   final int
     viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
@@ -206,12 +208,12 @@ class World {
 
   void render(List<List<Tile>> renderList) {
     for(
-        var y=math.max(Player.mapY-(viewYSize/2+1).round(), 0);
-        y<Player.mapY+(viewYSize/2+1).round() && y<map.length;
+        var y=math.max(Main.player.mapY-(viewYSize/2+1).round(), 0);
+        y<Main.player.mapY+(viewYSize/2+1).round() && y<map.length;
         y++) {
       for(
-          var x=math.max(Player.mapX-(viewXSize/2).round(), 0);
-          x<Player.mapX+(viewXSize/2+2).round() && x<map[y].length;
+          var x=math.max(Main.player.mapX-(viewXSize/2).round(), 0);
+          x<Main.player.mapX+(viewXSize/2+2).round() && x<map[y].length;
           x++) {
         for(int layer in layers) {
           if(map[y][x][layer] is Tile) {
