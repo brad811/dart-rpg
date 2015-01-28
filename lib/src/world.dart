@@ -87,7 +87,7 @@ class World {
         } else {
           map[y][x][LAYER_GROUND] = new Tile(
             false,
-            new Sprite.int(Tile.GROUND, x, y)
+            new Sprite.int(Tile.WOOD_FLOOR, x, y)
           );
         }
       }
@@ -118,6 +118,20 @@ class World {
         "We'll see how the sign handles having this much text on it. " +
         "It really takes a lot of text to fill them up!"
     );
+    
+    // Character
+    addCharacter(
+      Tile.PLAYER - 64,
+      238,
+      4, 10, LAYER_BELOW,
+      1, 2,
+      true);
+  }
+  
+  void addCharacter(
+      int spriteId, int pictureId,
+      int posX, int posY, int layer, int sizeX, int sizeY, bool solid) {
+    characters.add(new Character(spriteId, pictureId, posX, posY, layer, sizeX, sizeY, solid));
   }
   
   void addWarp(int spriteId, int posX, int posY, int destX, int destY) {
@@ -182,12 +196,24 @@ class World {
       }
     }
     
+    for(Character character in characters) {
+      if(character.mapX == x && character.mapY == y) {
+        return true;
+      }
+    }
+    
     return false;
   }
   
   bool isInteractable(int x, int y) {
     for(int layer in layers) {
       if(map[y][x][layer] is InteractableTile) {
+        return true;
+      }
+    }
+    
+    for(Character character in characters) {
+      if(character.mapX == x && character.mapY == y) {
         return true;
       }
     }
@@ -200,6 +226,13 @@ class World {
       if(map[y][x][layer] is InteractableTile) {
         InteractableTile tile = map[y][x][layer] as InteractableTile;
         tile.interact();
+        return;
+      }
+    }
+    
+    for(Character character in characters) {
+      if(character.mapX == x && character.mapY == y) {
+        character.interact();
         return;
       }
     }

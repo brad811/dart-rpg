@@ -67,17 +67,17 @@ class Main {
     player.render(renderList);
     world.render(renderList);
     
-    for(List<Tile> layer in renderList) {
-      for(Tile tile in layer) {
-        tile.render();
-      }
-    }
-    
     for(Character character in world.characters) {
       character.render(renderList);
       
       if(timeScale > 0.0) {
         character.tick();
+      }
+    }
+    
+    for(List<Tile> layer in renderList) {
+      for(Tile tile in layer) {
+        tile.render();
       }
     }
     

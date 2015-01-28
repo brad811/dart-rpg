@@ -19,7 +19,11 @@ class Character implements Interactable {
     motionAmount = Sprite.pixelsPerSprite * Sprite.spriteScale,
     directionCooldownAmount = 4;
   
-  int 
+  int
+    spriteId,
+    pictureId,
+    layer,
+    sizeX, sizeY,
     motionX = 0,
     motionY = 0,
     direction = DOWN,
@@ -27,15 +31,14 @@ class Character implements Interactable {
     curSpeed,
     motionStep = 1,
     motionSpriteOffset = 0,
-    mapX,
-    mapY,
-    x,
-    y;
+    mapX, mapY,
+    x, y;
   
-  Character(int posX, int posY) {
+  bool solid;
+  
+  Character(this.spriteId, this.pictureId,
+      this.mapX, this.mapY, this.layer, this.sizeX, this.sizeY, this.solid) {
     curSpeed = walkSpeed;
-    mapX = posX;
-    mapY = posY;
     x = mapX * motionAmount;
     y = mapY * motionAmount;
   }
@@ -156,21 +159,21 @@ class Character implements Interactable {
   }
   
   void render(List<List<Tile>> renderList) {
-    renderList[World.LAYER_PLAYER].add(
+    renderList[layer].add(
       new Tile(
         true,
         new Sprite(
-          Tile.PLAYER + direction + motionSpriteOffset,
+          spriteId + direction + motionSpriteOffset,
           x/motionAmount, (y/motionAmount)-1
         )
       )
     );
     
-    renderList[World.LAYER_PLAYER].add(
+    renderList[layer].add(
       new Tile(
         true,
         new Sprite(
-          Tile.PLAYER + direction + motionSpriteOffset + Sprite.spriteSheetSize,
+          spriteId + direction + motionSpriteOffset + Sprite.spriteSheetSize,
           x/motionAmount, y/motionAmount
         )
       )
@@ -178,6 +181,6 @@ class Character implements Interactable {
   }
   
   void interact() {
-    
+    print("You interacted with me!");
   }
 }

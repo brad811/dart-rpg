@@ -21,9 +21,8 @@ class WarpTile extends Tile {
   void enter() {
     Main.timeScale = 0.0;
     Gui.fadeOutLevel = Gui.FADE_BLACK_LOW;
-    List<DelayedEvent> events = [];
     
-    events.addAll([
+    List<DelayedEvent> events = [
       new DelayedEvent(100, () {
         Gui.fadeOutLevel = Gui.FADE_BLACK_MED;
       }),
@@ -49,7 +48,7 @@ class WarpTile extends Tile {
         Gui.fadeOutLevel = Gui.FADE_NORMAL;
         Main.timeScale = 1.0;
       })
-    ]);
+    ];
     
     executeDelayedEvents(events);
   }
