@@ -119,13 +119,24 @@ class World {
         "It really takes a lot of text to fill them up!"
     );
     
+    // Sign
+    addSign(
+      Tile.SIGN,
+      235,
+      8, 10, LAYER_BELOW,
+      1, 1,
+      true,
+      "This is a second sign."
+    );
+    
     // Character
     addCharacter(
       Tile.PLAYER - 64,
       238,
       4, 10, LAYER_BELOW,
       1, 2,
-      true);
+      true
+    );
   }
   
   void addCharacter(

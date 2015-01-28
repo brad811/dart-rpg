@@ -35,8 +35,6 @@ class Sign extends InteractableTile implements Interactable, InputHandler {
     }
     
     textLines = new List<String>.from(originalTextLines);
-    Gui.textLines = textLines;
-    Gui.pictureSpriteId = pictureSpriteId;
   }
   
   void continueText() {
@@ -55,5 +53,11 @@ class Sign extends InteractableTile implements Interactable, InputHandler {
     if(keyCodes.contains(KeyCode.X)) {
       continueText();
     }
+  }
+  
+  void interact() {
+    super.interact();
+    Gui.textLines = textLines;
+    Gui.pictureSpriteId = pictureSpriteId;
   }
 }
