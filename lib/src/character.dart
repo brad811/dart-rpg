@@ -1,12 +1,14 @@
 library Character;
 
+import 'package:dart_rpg/src/game_event.dart';
+import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
-class Character implements Interactable {
+class Character implements Interactable, InputHandler {
   static final int
     DOWN = 0,
     RIGHT = 1,
@@ -35,6 +37,7 @@ class Character implements Interactable {
     x, y;
   
   bool solid;
+  GameEvent gameEvent;
   
   Character(this.spriteId, this.pictureId,
       this.mapX, this.mapY, this.layer, this.sizeX, this.sizeY, this.solid) {
@@ -180,7 +183,16 @@ class Character implements Interactable {
     );
   }
   
+  void handleKeys(List<int> keyCodes) {
+    if(gameEvent != null) {
+      gameEvent.handleKeys(keyCodes);
+    }
+  }
+  
   void interact() {
-    print("You interacted with me!");
+    if(gameEvent != null) {
+      Main.focusObject = this;
+      gameEvent.trigger();
+    }
   }
 }

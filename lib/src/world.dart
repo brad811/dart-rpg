@@ -3,10 +3,12 @@ library World;
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/text_game_event.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 
@@ -130,19 +132,47 @@ class World {
     );
     
     // Character
-    addCharacter(
+    Character character = addCharacter(
       Tile.PLAYER - 64,
       238,
       4, 10, LAYER_BELOW,
       1, 2,
       true
     );
+    
+    List<GameEvent> gameEvents = [
+      new TextGameEvent(238, "I'm like a kid, right?", null),
+      new TextGameEvent(232, "I hate you.", null)
+    ];
+    
+    // Set each event to call the next event and update the character's
+    // attached game event so they can handle input
+    for(int i=1; i<gameEvents.length; i++) {
+      gameEvents[i-1].callback = () {
+        character.gameEvent = gameEvents[i];
+        gameEvents[i].trigger();
+      };
+    }
+    
+    // The last event should return focus to the player
+    // and re-attach the first event to the character
+    gameEvents.last.callback = () {
+      Main.focusObject = Main.player;
+      character.gameEvent = gameEvents[0];
+    };
+    
+    // Attach the first event to the character
+    character.gameEvent = gameEvents[0];
   }
   
-  void addCharacter(
+  Character addCharacter(
       int spriteId, int pictureId,
       int posX, int posY, int layer, int sizeX, int sizeY, bool solid) {
-    characters.add(new Character(spriteId, pictureId, posX, posY, layer, sizeX, sizeY, solid));
+    Character character = new Character(
+      spriteId, pictureId, posX, posY, layer, sizeX, sizeY, solid
+    );
+    characters.add(character);
+    return character;
   }
   
   void addWarp(int spriteId, int posX, int posY, int destX, int destY) {
@@ -186,7 +216,9 @@ class World {
     }
   }
   
-  void addObject(int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid) {
+  void addObject(
+      int spriteId,
+      int posX, int posY, int layer, int sizeX, int sizeY, bool solid) {
     for(var y=0; y<sizeY; y++) {
       for(var x=0; x<sizeX; x++) {
         map[posY+y][posX+x][layer] = new Tile(
