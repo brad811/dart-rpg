@@ -35,7 +35,7 @@ class TextGameEvent extends GameEvent {
     textLines = new List<String>.from(originalTextLines);
   }
   
-  void interact() {
+  void trigger() {
     // Take input focus and show the GUI window
     Gui.inConversation = true;
     Gui.textLines = textLines;

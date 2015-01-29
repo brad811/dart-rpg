@@ -20,7 +20,7 @@ class Sign extends InteractableTile implements Interactable, InputHandler {
   
   void interact() {
     Main.focusObject = this;
-    textEvent.interact();
+    textEvent.trigger();
   }
   
   void close() {
