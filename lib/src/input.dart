@@ -6,24 +6,31 @@ import 'package:dart_rpg/src/input_handler.dart';
 
 class Input {
   static List<int> keys = [];
+  static List<int> lastKeys = [];
+  static List<int> releasedKeys = [KeyCode.X, KeyCode.Z];
+  static List<int> validKeys = [];
   
   static void handleKey(InputHandler focusObject) {
-    if(keys.length == 0)
-      return;
-    
-    focusObject.handleKeys(keys);
-    
-    List<int> toRemove = [];
-    Iterator<int> it = keys.iterator;
-    while(it.moveNext()) {
-      if(it.current != KeyCode.LEFT && it.current != KeyCode.RIGHT &&
-          it.current != KeyCode.UP && it.current != KeyCode.DOWN) {
-        toRemove.add(it.current);
+    // find keys that have been released
+    for(int i=0; i<lastKeys.length; i++) {
+      if(!keys.contains(lastKeys[i]) && !releasedKeys.contains(lastKeys[i])) {
+        releasedKeys.add(lastKeys[i]);
       }
     }
     
-    for(int key in toRemove) {
-      keys.remove(key);
+    // find valid keys (only arrow keys can be held down)
+    validKeys = [];
+    for(int i=0; i<keys.length; i++) {
+      if(releasedKeys.contains(keys[i]) ||
+          keys[i] == KeyCode.LEFT || keys[i] == KeyCode.RIGHT ||
+          keys[i] == KeyCode.UP || keys[i] == KeyCode.DOWN ) {
+        validKeys.add(keys[i]);
+        releasedKeys.remove(keys[i]);
+      }
     }
+    
+    focusObject.handleKeys(validKeys);
+    
+    lastKeys = new List<int>.from(keys);
   }
 }
