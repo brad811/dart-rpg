@@ -12,7 +12,8 @@ import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 class Main {
-  static final int canvasWidth = 640,
+  static final int
+    canvasWidth = 640,
     canvasHeight = 512;
 
   static ImageElement spritesImage;

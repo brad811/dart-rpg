@@ -1,63 +1,29 @@
 library Sign;
 
-import 'dart:html';
-
-import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
+import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/text_game_event.dart';
 
 class Sign extends InteractableTile implements Interactable, InputHandler {
-  List<String>
-    originalTextLines = [],
-    textLines = [];
+  TextGameEvent textEvent;
   
-  final int pictureSpriteId;
-  
-  Sign(bool solid, Sprite sprite, this.pictureSpriteId, String text) : super(solid, sprite, null) {
-    List<String> tokens = text.split(" ");
-    int lineNumber = 0;
-    String curLine;
-    
-    // Split the text into lines of proper length
-    while(tokens.length > 0) {
-      curLine = "";
-      while(tokens.length > 0 && curLine.length + tokens[0].length < 35) {
-        if(curLine.length > 0) {
-          curLine += " ";
-        }
-        curLine += tokens[0];
-        tokens.removeAt(0);
-      }
-      originalTextLines.add(curLine);
-      lineNumber++;
-    }
-    
-    textLines = new List<String>.from(originalTextLines);
-  }
-  
-  void continueText() {
-    if(textLines.length > Gui.maxLines) {
-      // Remove the top lines so the next lines will show
-      textLines.removeRange(0, Gui.maxLines);
-    } else {
-      // Close the sign and reset the text
-      close();
-      textLines = new List<String>.from(originalTextLines);
-      Gui.textLines = textLines;
-    }
+  Sign(bool solid, Sprite sprite, int pictureSpriteId, String text) : super(solid, sprite, null) {
+    textEvent = new TextGameEvent(pictureSpriteId, text, close);
   }
   
   void handleKeys(List<int> keyCodes) {
-    if(keyCodes.contains(KeyCode.X)) {
-      continueText();
-    }
+    textEvent.handleKeys(keyCodes);
   }
   
   void interact() {
-    super.interact();
-    Gui.textLines = textLines;
-    Gui.pictureSpriteId = pictureSpriteId;
+    Main.focusObject = this;
+    textEvent.interact();
+  }
+  
+  void close() {
+    Main.focusObject = Main.player;
   }
 }
