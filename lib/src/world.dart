@@ -158,7 +158,15 @@ class World {
   }
   
   void chainCharacterMovement(Character character, List<int> directions, Function callback) {
-    // TODO
+    if(directions.length == 0) {
+      callback();
+    } else {
+      int direction = directions.removeAt(0);
+      character.move(direction);
+      character.motionCallback = () {
+        chainCharacterMovement(character, directions, callback);
+      };
+    }
   }
   
   Character addCharacter(
