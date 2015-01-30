@@ -88,6 +88,11 @@ class Gui {
     for(int i=0; i<textLines.length && i<maxLines; i++) {
       Font.renderStaticText(textX, textY + verticalLineSpacing*i, textLines[i]);
     }
+    
+    if(textLines.length > maxLines) {
+      // draw arrow indicating there is more text
+      Font.renderStaticText(36.25, 28.5, new String.fromCharCode(127));
+    }
   }
   
   static void renderWindow(int posX, int posY, int sizeX, int sizeY) {
