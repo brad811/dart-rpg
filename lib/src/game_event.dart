@@ -3,9 +3,9 @@ library GameEvent;
 import 'package:dart_rpg/src/input_handler.dart';
 
 class GameEvent implements InputHandler {
-  var callback;
+  dynamic callback;
   
-  GameEvent(this.callback);
+  GameEvent();
   
   void trigger() {}
   

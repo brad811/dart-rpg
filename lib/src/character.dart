@@ -3,12 +3,13 @@ library Character;
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable.dart';
+import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
-class Character implements Interactable, InputHandler {
+class Character implements InteractableInterface, InputHandler {
   static final int
     DOWN = 0,
     RIGHT = 1,
@@ -38,12 +39,17 @@ class Character implements Interactable, InputHandler {
   
   bool solid;
   GameEvent gameEvent;
+  Function motionCallback;
   
   Character(this.spriteId, this.pictureId,
       this.mapX, this.mapY, this.layer, this.sizeX, this.sizeY, this.solid) {
     curSpeed = walkSpeed;
     x = mapX * motionAmount;
     y = mapY * motionAmount;
+  }
+  
+  void setGameEvents(List<GameEvent> gameEvents) {
+    Interactable.chainGameEvents(this, gameEvents);
   }
   
   void move(motionDirection) {
@@ -77,6 +83,16 @@ class Character implements Interactable, InputHandler {
   }
   
   void tick() {
+    // call our motion callback if we have one and have stopped moving
+    if(motionCallback != null &&
+        directionCooldown == 0 &&
+        motionX == 0 && motionY == 0) {
+      Function curCallback = motionCallback;
+      motionCallback = null;
+      curCallback();
+      return;
+    }
+    
     if(directionCooldown > 0) {
       directionCooldown -= 1;
       

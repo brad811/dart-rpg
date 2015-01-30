@@ -2,8 +2,8 @@ library World;
 
 import 'dart:math' as math;
 
+import 'package:dart_rpg/src/animation_game_event.dart';
 import 'package:dart_rpg/src/character.dart';
-import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sign.dart';
@@ -133,36 +133,32 @@ class World {
     
     // Character
     Character character = addCharacter(
-      Tile.PLAYER - 64,
+      //Tile.PLAYER - 64,
+      Tile.PLAYER,
       238,
-      4, 10, LAYER_BELOW,
+      4, 6, LAYER_BELOW,
       1, 2,
       true
     );
     
-    List<GameEvent> gameEvents = [
-      new TextGameEvent(238, "I'm like a kid, right?", null),
-      new TextGameEvent(232, "I hate you.", null)
-    ];
+    character.direction = Character.RIGHT;
     
-    // Set each event to call the next event and update the character's
-    // attached game event so they can handle input
-    for(int i=1; i<gameEvents.length; i++) {
-      gameEvents[i-1].callback = () {
-        character.gameEvent = gameEvents[i];
-        gameEvents[i].trigger();
-      };
-    }
-    
-    // The last event should return focus to the player
-    // and re-attach the first event to the character
-    gameEvents.last.callback = () {
-      Main.focusObject = Main.player;
-      character.gameEvent = gameEvents[0];
-    };
-    
-    // Attach the first event to the character
-    character.gameEvent = gameEvents[0];
+    character.setGameEvents([
+      new TextGameEvent(238, "I'm like a kid, right?"),
+      new AnimationGameEvent((callback) {
+        chainCharacterMovement(
+          character,
+          [Character.LEFT, Character.LEFT, Character.LEFT,
+            Character.RIGHT, Character.RIGHT, Character.RIGHT],
+          callback
+        );
+      }),
+      new TextGameEvent(232, "I hate you.")
+    ]);
+  }
+  
+  void chainCharacterMovement(Character character, List<int> directions, Function callback) {
+    // TODO
   }
   
   Character addCharacter(
