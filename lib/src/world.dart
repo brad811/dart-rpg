@@ -4,6 +4,7 @@ import 'dart:math' as math;
 
 import 'package:dart_rpg/src/animation_game_event.dart';
 import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sign.dart';
@@ -143,6 +144,7 @@ class World {
     
     character.direction = Character.RIGHT;
     
+    // TODO: handle multi-tier choices?
     character.setGameEvents([
       new TextGameEvent(238, "I'm like a kid, right?"),
       new AnimationGameEvent((callback) {
@@ -153,7 +155,12 @@ class World {
           callback
         );
       }),
-      new TextGameEvent(232, "I hate you.")
+      new TextGameEvent.choice(238, "See?",
+        new ChoiceGameEvent(["Yes", "No"], [
+          new TextGameEvent(232, "That's fine."),
+          new TextGameEvent(232, "I hate you.")
+        ])
+      )
     ]);
   }
   

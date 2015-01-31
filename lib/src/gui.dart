@@ -33,6 +33,8 @@ class Gui {
   static List<String> textLines = [];
   static int pictureSpriteId;
   
+  static List<Function> windows = [];
+  
   static final int
     FADE_WHITE_FULL = 3,
     FADE_WHITE_MED = 2,
@@ -50,6 +52,10 @@ class Gui {
     }
     if(fadeOutLevel != FADE_NORMAL) {
       renderFade();
+    }
+    
+    for(Function window in windows) {
+      window();
     }
   }
   

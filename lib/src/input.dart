@@ -3,6 +3,7 @@ library Input;
 import 'dart:html';
 
 import 'package:dart_rpg/src/input_handler.dart';
+import 'package:dart_rpg/src/main.dart';
 
 class Input {
   static List<int> keys = [];
@@ -21,9 +22,15 @@ class Input {
     // find valid keys (only arrow keys can be held down)
     validKeys = [];
     for(int i=0; i<keys.length; i++) {
-      if(releasedKeys.contains(keys[i]) ||
-          keys[i] == KeyCode.LEFT || keys[i] == KeyCode.RIGHT ||
-          keys[i] == KeyCode.UP || keys[i] == KeyCode.DOWN ) {
+      if(
+        releasedKeys.contains(keys[i]) ||
+        // only allow holding arrow keys down if you're controlling the player
+        (Main.focusObject == Main.player &&
+          (keys[i] == KeyCode.LEFT || keys[i] == KeyCode.RIGHT ||
+          keys[i] == KeyCode.UP || keys[i] == KeyCode.DOWN
+          )
+        )
+      ) {
         validKeys.add(keys[i]);
         releasedKeys.remove(keys[i]);
       }

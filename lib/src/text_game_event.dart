@@ -2,12 +2,15 @@ library TextGameEvent;
 
 import 'dart:html';
 
+import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
+import 'package:dart_rpg/src/main.dart';
 
 class TextGameEvent extends GameEvent {
   int pictureSpriteId;
   String text;
+  ChoiceGameEvent choiceGameEvent;
   
   List<String>
       originalTextLines = [],
@@ -35,17 +38,34 @@ class TextGameEvent extends GameEvent {
     textLines = new List<String>.from(originalTextLines);
   }
   
+  factory TextGameEvent.choice(int pictureSpriteId, String text, ChoiceGameEvent choice) {
+    // derp
+    TextGameEvent textGameEvent = new TextGameEvent(pictureSpriteId, text);
+    textGameEvent.choiceGameEvent = choice;
+    return textGameEvent;
+  }
+  
   void trigger() {
     // Take input focus and show the GUI window
     Gui.inConversation = true;
     Gui.textLines = textLines;
     Gui.pictureSpriteId = pictureSpriteId;
+    Main.focusObject = this;
+    
+    if(textLines.length <= Gui.maxLines && choiceGameEvent != null) {
+      choiceGameEvent.trigger();
+    }
   }
   
   void continueText() {
     if(textLines.length > Gui.maxLines) {
       // Remove the top lines so the next lines will show
       textLines.removeRange(0, Gui.maxLines);
+      
+      if(textLines.length <= Gui.maxLines && choiceGameEvent != null) {
+        choiceGameEvent.callbacks = [callback];
+        choiceGameEvent.trigger();
+      }
     } else {
       // Close the text box and reset the text
       close();
@@ -62,6 +82,9 @@ class TextGameEvent extends GameEvent {
   void close() {
     // Set focus back on the player and hide the GUI window
     Gui.inConversation = false;
-    callback();
+    Main.focusObject = Main.player;
+    if(callback != null) {
+      callback();
+    }
   }
 }
