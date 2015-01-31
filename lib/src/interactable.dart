@@ -20,7 +20,6 @@ class Interactable {
      
      // The last event should return focus to the player
      // and re-attach the first event to the character
-     // TODO: this doesn't work properly for choice events
      gameEvents.last.callback = () {
        Main.focusObject = Main.player;
        interactable.gameEvent = gameEvents[0];

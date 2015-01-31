@@ -48,10 +48,6 @@ class Character implements InteractableInterface, InputHandler {
     y = mapY * motionAmount;
   }
   
-  void setGameEvents(List<GameEvent> gameEvents) {
-    Interactable.chainGameEvents(this, gameEvents);
-  }
-  
   void move(motionDirection) {
     // only move if we're not already moving
     if(motionX == 0 && motionY == 0) {

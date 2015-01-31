@@ -6,16 +6,19 @@ import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input_handler.dart';
+import 'package:dart_rpg/src/interactable.dart';
+import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 
 class ChoiceGameEvent extends GameEvent implements InputHandler {
+  InteractableInterface interactable;
   List<String> choices = [];
   int curChoice = 0;
-  List<GameEvent> callbacks = [];
+  List<List<GameEvent>> callbacks = [];
   Function window;
   int addWidth;
   
-  ChoiceGameEvent(this.choices, this.callbacks) : super() {
+  ChoiceGameEvent(this.interactable, this.choices, this.callbacks) : super() {
     int maxLength = 0;
     for(int i=0; i<choices.length; i++) {
       if(choices[i].length > maxLength)
@@ -64,7 +67,8 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
       }
     } else if(keyCodes.contains(KeyCode.X)) {
       Gui.windows.remove(window);
-      callbacks[curChoice].trigger();
+      Interactable.chainGameEvents(interactable, callbacks[curChoice]);
+      interactable.gameEvent.trigger();
     }
   }
 }
