@@ -66,6 +66,15 @@ class World {
       }
     }
     
+    for(int y=3; y<9; y++) {
+      for(int x=18; x<27; x++) {
+        map[y][x][LAYER_GROUND] = new Tile(
+          false,
+          new Sprite.int(Tile.TALL_GRASS, x, y)
+        );
+      }
+    }
+    
     // Top half of the house, which you can walk behind
     addObject(
       Tile.HOUSE,

@@ -6,6 +6,7 @@ class Tile {
   static final int
     WOOD_FLOOR = 66,
     GROUND = 67,
+    TALL_GRASS = 98,
     WALL = 68,
     PLAYER = 129,
     SIGN = 193,
