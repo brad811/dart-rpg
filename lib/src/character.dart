@@ -174,7 +174,7 @@ class Character implements InteractableInterface, InputHandler {
   }
   
   void render(List<List<Tile>> renderList) {
-    renderList[layer].add(
+    renderList[layer+1].add(
       new Tile(
         true,
         new Sprite(
