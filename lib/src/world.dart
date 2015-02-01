@@ -82,26 +82,26 @@ class World {
       true
     );
     
-    map[13][8][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_TOP_LEFT, 8, 13) );
-    map[13][9][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM_MIDDLE, 9, 13) );
-    map[13][10][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_TOP_MIDDLE, 10, 13) );
-    map[13][11][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM_MIDDLE, 11, 13) );
-    map[13][12][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_TOP_MIDDLE, 12, 13) );
-    map[13][13][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM_MIDDLE, 13, 13) );
-    map[13][14][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM_MIDDLE, 14, 13) );
-    map[13][15][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM_MIDDLE, 15, 13) );
-    map[13][16][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM_MIDDLE, 16, 13) );
-    map[13][17][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM_RIGHT, 17, 13) );
+    map[13][8][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_RIGHT_BOTTOM, 8, 13) );
+    map[13][9][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_RIGHT_LEFT, 9, 13) );
+    map[13][10][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_RIGHT_BOTTOM_LEFT, 10, 13) );
+    map[13][11][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_RIGHT_LEFT, 11, 13) );
+    map[13][12][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_RIGHT_BOTTOM_LEFT, 12, 13) );
+    map[13][13][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_RIGHT_LEFT, 13, 13) );
+    map[13][14][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_RIGHT_LEFT, 14, 13) );
+    map[13][15][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_RIGHT_LEFT, 15, 13) );
+    map[13][16][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_RIGHT_LEFT, 16, 13) );
+    map[13][17][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_TOP_LEFT, 17, 13) );
     
-    map[14][8][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_MIDDLE_LEFT, 8, 14) );
-    map[14][10][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_MIDDLE_RIGHT, 10, 14) );
-    map[15][8][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM_LEFT, 8, 15) );
-    map[15][9][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM_MIDDLE, 9, 15) );
-    map[15][10][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM_RIGHT, 10, 15) );
+    map[14][8][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_TOP_BOTTOM, 8, 14) );
+    map[14][10][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_TOP_BOTTOM, 10, 14) );
+    map[15][8][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_TOP_RIGHT, 8, 15) );
+    map[15][9][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_RIGHT_LEFT, 9, 15) );
+    map[15][10][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_TOP_LEFT, 10, 15) );
     
-    map[14][12][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM_POST, 12, 14) );
-    map[15][14][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_POST, 14, 15) );
-    map[12][17][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_TOP_POST, 17, 12) );
+    map[14][12][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_TOP, 12, 14) );
+    map[15][14][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE, 14, 15) );
+    map[12][17][LAYER_BELOW] = new Tile( true, new Sprite.int(Tile.FENCE_BOTTOM, 17, 12) );
     
     // Inside of house
     for(int y=25; y<=32; y++) {
