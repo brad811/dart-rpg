@@ -172,11 +172,15 @@ class World {
     characterGameEvents = [
       new TextGameEvent(238, "I'm like a kid, right?"),
       new AnimationGameEvent((callback) {
+        Main.player.inputEnabled = false;
         chainCharacterMovement(
           character,
           [Character.LEFT, Character.LEFT, Character.LEFT,
             Character.RIGHT, Character.RIGHT, Character.RIGHT],
-          callback
+          () {
+            Main.player.inputEnabled = true;
+            callback();
+          }
         );
       }),
       new TextGameEvent.choice(238, "See?",
