@@ -82,6 +82,18 @@ class World {
       true
     );
     
+    map[13][8][LAYER_BELOW] = new Tile( true, new Sprite.int(194, 8, 13) );
+    map[13][9][LAYER_BELOW] = new Tile( true, new Sprite.int(195, 9, 13) );
+    map[13][10][LAYER_BELOW] = new Tile( true, new Sprite.int(195, 10, 13) );
+    map[13][11][LAYER_BELOW] = new Tile( true, new Sprite.int(195, 11, 13) );
+    map[13][12][LAYER_BELOW] = new Tile( true, new Sprite.int(195, 12, 13) );
+    map[13][13][LAYER_BELOW] = new Tile( true, new Sprite.int(195, 13, 13) );
+    map[13][14][LAYER_BELOW] = new Tile( true, new Sprite.int(195, 14, 13) );
+    map[13][15][LAYER_BELOW] = new Tile( true, new Sprite.int(195, 15, 13) );
+    map[13][16][LAYER_BELOW] = new Tile( true, new Sprite.int(195, 16, 13) );
+    map[13][17][LAYER_BELOW] = new Tile( true, new Sprite.int(196, 17, 13) );
+    
+    // Inside of house
     for(int y=25; y<=32; y++) {
       for(int x=0; x<=8; x++) {
         if(x == 0 || x == 8 || y == 25 || y == 32) {
