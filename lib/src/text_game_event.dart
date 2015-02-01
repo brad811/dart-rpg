@@ -39,7 +39,6 @@ class TextGameEvent extends GameEvent {
   }
   
   factory TextGameEvent.choice(int pictureSpriteId, String text, ChoiceGameEvent choice) {
-    // derp
     TextGameEvent textGameEvent = new TextGameEvent(pictureSpriteId, text);
     textGameEvent.choiceGameEvent = choice;
     return textGameEvent;

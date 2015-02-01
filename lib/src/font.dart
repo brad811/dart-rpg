@@ -17,11 +17,10 @@ class Font {
   }
   
   static void renderStatic(int id, double posX, double posY) {
-    
-    num fontId = startId + ((id/fontSheetWidth).floor()*Sprite.spriteSheetSize) + (id%fontSheetWidth);
+    int fontId = startId + ((id/fontSheetWidth).floor()*Sprite.spriteSheetSize) + (id%fontSheetWidth);
     
     Main.ctx.drawImageScaledFromSource(
-        Main.spritesImage,
+      Main.spritesImage,
       
       pixelsPerFontSprite * (fontId%Sprite.spriteSheetSize), // sx
       pixelsPerFontSprite * (fontId/Sprite.spriteSheetSize).round(), // sy

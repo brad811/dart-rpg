@@ -6,10 +6,11 @@ import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/main.dart';
 
 class Input {
-  static List<int> keys = [];
-  static List<int> lastKeys = [];
-  static List<int> releasedKeys = [KeyCode.X, KeyCode.Z];
-  static List<int> validKeys = [];
+  static List<int>
+    keys = [],
+    lastKeys = [],
+    releasedKeys = [KeyCode.X, KeyCode.Z],
+    validKeys = [];
   
   static void handleKey(InputHandler focusObject) {
     // find keys that have been released

@@ -21,7 +21,7 @@ class Sprite {
   
   void render() {
     Main.ctx.drawImageScaledFromSource(
-        Main.spritesImage,
+      Main.spritesImage,
       
       pixelsPerSprite * (id%spriteSheetSize - 1), // sx
       pixelsPerSprite * (id/spriteSheetSize).floor(), // sy

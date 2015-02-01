@@ -2,7 +2,6 @@ library Character;
 
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/input_handler.dart';
-import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';

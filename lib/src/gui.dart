@@ -20,6 +20,14 @@ class Gui {
     WINDOW_BOTTOM_MIDDLE = 297,
     WINDOW_BOTTOM_RIGHT = 298,
     
+    FADE_WHITE_FULL = 3,
+    FADE_WHITE_MED = 2,
+    FADE_WHITE_LOW = 1,
+    FADE_NORMAL = 0,
+    FADE_BLACK_LOW = -1,
+    FADE_BLACK_MED = -2,
+    FADE_BLACK_FULL = -3,
+    
     charsPerLine = 35,
     maxLines = 4;
   
@@ -34,15 +42,6 @@ class Gui {
   static int pictureSpriteId;
   
   static List<Function> windows = [];
-  
-  static final int
-    FADE_WHITE_FULL = 3,
-    FADE_WHITE_MED = 2,
-    FADE_WHITE_LOW = 1,
-    FADE_NORMAL = 0,
-    FADE_BLACK_LOW = -1,
-    FADE_BLACK_MED = -2,
-    FADE_BLACK_FULL = -3;
   
   static int fadeOutLevel = FADE_NORMAL;
   
