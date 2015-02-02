@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:dart_rpg/src/animation_game_event.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
+import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
@@ -68,8 +69,7 @@ class World {
     
     for(int y=3; y<9; y++) {
       for(int x=18; x<27; x++) {
-        map[y][x][LAYER_GROUND] = new Tile(
-          false,
+        map[y][x][LAYER_GROUND] = new EncounterTile(
           new Sprite.int(Tile.TALL_GRASS, x, y)
         );
       }
