@@ -49,6 +49,7 @@ class Gui {
     if(inConversation) {
       renderConversationWindow();
     }
+    
     if(fadeOutLevel != FADE_NORMAL) {
       renderFade();
     }

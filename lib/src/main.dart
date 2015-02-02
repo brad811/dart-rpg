@@ -3,6 +3,7 @@ library Main;
 import 'dart:async';
 import 'dart:html';
 
+import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input.dart';
@@ -27,6 +28,7 @@ class Main {
   
   static final int timeDelay = 33;
   static double timeScale = 1.0;
+  static bool inBattle = false;
   
   static void init() {
     c = querySelector('canvas');
@@ -57,39 +59,47 @@ class Main {
   }
   
   static void tick() {
+    // Keeps the value from being set to 0 in between checking it and dividing by it
+    var curTimeScale = timeScale;
+ 
+    // Draw black background
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     
-    renderList = [];
-    for(int i=0; i<World.layers.length; i++) {
-      renderList.add([]);
-    }
-    
-    player.render(renderList);
-    world.render(renderList);
-    
-    for(Character character in world.characters) {
-      character.render(renderList);
+    if(!inBattle) {
+      renderList = [];
+      for(int i=0; i<World.layers.length; i++) {
+        renderList.add([]);
+      }
       
-      if(timeScale > 0.0) {
-        character.tick();
+      player.render(renderList);
+      world.render(renderList);
+      
+      for(Character character in world.characters) {
+        character.render(renderList);
+        
+        if(curTimeScale > 0.0) {
+          character.tick();
+        }
       }
-    }
-    
-    for(List<Tile> layer in renderList) {
-      for(Tile tile in layer) {
-        tile.render();
+      
+      for(List<Tile> layer in renderList) {
+        for(Tile tile in layer) {
+          tile.render();
+        }
       }
+      
+      if(curTimeScale > 0.0) {
+        player.tick();
+      }
+    } else {
+      Battle.tick();
     }
     
     Gui.render();
     Input.handleKey(focusObject);
-    
-    // Keeps the value from being set to 0 in between checking it and dividing by it
-    var curTimeScale = timeScale;
 
-    if(timeScale > 0.0) {
-      player.tick();
+    if(curTimeScale > 0.0) {
       new Timer(new Duration(milliseconds: (timeDelay * (1/curTimeScale)).round()), () => tick());
     } else {
       new Timer(new Duration(milliseconds: timeDelay), () => tick());
