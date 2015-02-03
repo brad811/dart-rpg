@@ -29,6 +29,7 @@ class Main {
   static final int timeDelay = 33;
   static double timeScale = 1.0;
   static bool inBattle = false;
+  static Battle battle;
   
   static void init() {
     c = querySelector('canvas');
@@ -93,7 +94,7 @@ class Main {
         player.tick();
       }
     } else {
-      Battle.tick();
+      battle.tick();
     }
     
     Gui.render();

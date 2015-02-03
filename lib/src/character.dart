@@ -62,24 +62,12 @@ class Character implements InteractableInterface, InputHandler {
         return;
       
       if(motionDirection == Character.LEFT) {
-        motionCallback = () {
-          Main.world.map[mapY][mapX-1][World.LAYER_GROUND].enter();
-        };
         motionX = -motionAmount;
       } else if(motionDirection == Character.RIGHT) {
-        motionCallback = () {
-          Main.world.map[mapY][mapX+1][World.LAYER_GROUND].enter();
-        };
         motionX = motionAmount;
       } else if(motionDirection == Character.UP) {
-        motionCallback = () {
-          Main.world.map[mapY-1][mapX][World.LAYER_GROUND].enter();
-        };
         motionY = -motionAmount;
       } else if(motionDirection == Character.DOWN) {
-        motionCallback = () {
-          Main.world.map[mapY+1][mapX][World.LAYER_GROUND].enter();
-        };
         motionY = motionAmount;
       }
     }
@@ -95,7 +83,7 @@ class Character implements InteractableInterface, InputHandler {
       curCallback();
       return;
     }
-    
+      
     if(directionCooldown > 0) {
       directionCooldown -= 1;
       
@@ -126,8 +114,10 @@ class Character implements InteractableInterface, InputHandler {
       if(!Main.world.isSolid(mapX-1, mapY)) {
         x -= curSpeed;
         
-        if(motionX == 0)
+        if(motionX == 0) {
           mapX -= 1;
+          Main.world.map[mapY][mapX][World.LAYER_GROUND].enter();
+        }
       }
       
       // reverse walk cycle foot
@@ -140,8 +130,10 @@ class Character implements InteractableInterface, InputHandler {
       if(!Main.world.isSolid(mapX+1, mapY)) {
         x += curSpeed;
         
-        if(motionX == 0)
+        if(motionX == 0) {
           mapX += 1;
+          Main.world.map[mapY][mapX][World.LAYER_GROUND].enter();
+        }
       }
       
       // reverse walk cycle foot
@@ -154,8 +146,10 @@ class Character implements InteractableInterface, InputHandler {
       if(!Main.world.isSolid(mapX, mapY-1)) {
         y -= curSpeed;
         
-        if(motionY == 0)
+        if(motionY == 0) {
           mapY -= 1;
+          Main.world.map[mapY][mapX][World.LAYER_GROUND].enter();
+        }
       }
       
       // reverse walk cycle foot
@@ -168,8 +162,10 @@ class Character implements InteractableInterface, InputHandler {
       if(!Main.world.isSolid(mapX, mapY+1)) {
         y += curSpeed;
         
-        if(motionY == 0)
+        if(motionY == 0) {
           mapY += 1;
+          Main.world.map[mapY][mapX][World.LAYER_GROUND].enter();
+        }
       }
       
       // reverse walk cycle foot

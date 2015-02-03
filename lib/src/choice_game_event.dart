@@ -13,10 +13,17 @@ import 'package:dart_rpg/src/main.dart';
 class ChoiceGameEvent extends GameEvent implements InputHandler {
   InteractableInterface interactable;
   List<String> choices = [];
-  int curChoice = 0;
   List<List<GameEvent>> callbacks = [];
   Function window;
-  int addWidth;
+  bool remove = true;
+  
+  int
+    curChoice = 0,
+    addWidth,
+    posX = 16,
+    posY = 9,
+    sizeX = 3,
+    sizeY = 2;
   
   ChoiceGameEvent(this.interactable, this.choices, this.callbacks) : super() {
     int maxLength = 0;
@@ -28,6 +35,20 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     addWidth = ((maxLength - 3) / 2).round();
   }
   
+  factory ChoiceGameEvent.custom(
+      InteractableInterface interactable,
+      List<String> choices,
+      List<List<GameEvent>> callbacks,
+      int posX, int posY, int sizeX, int sizeY) {
+    ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(interactable, choices, callbacks);
+    choiceGameEvent.addWidth = 0;
+    choiceGameEvent.posX = posX;
+    choiceGameEvent.posY = posY;
+    choiceGameEvent.sizeX = sizeX;
+    choiceGameEvent.sizeY = sizeY;
+    return choiceGameEvent;
+  }
+  
   void trigger() {
     Main.focusObject = this;
     
@@ -36,17 +57,17 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     
     window = () {
       Gui.renderWindow(
-        16 - (addWidth*0.75).round(), 9 - myChoices.length + 1,
-        3 + (addWidth*0.75).round(), 2 + myChoices.length - 1
+        posX - (addWidth*0.75).round(), posY - myChoices.length + 1,
+        sizeX + (addWidth*0.75).round(), sizeY + myChoices.length - 1
       );
       
       for(int i=myChoices.length-1; i>=0; i--) {
-        Font.renderStaticText(34.0 - addWidth*1.45, 18.0 - (i-1)*1.75, myChoices[i]);
+        Font.renderStaticText(posX*2 + 2 - addWidth*1.45, posY*2 - (i-1)*1.75, myChoices[i]);
       }
       
       Font.renderStaticText(
-        32.75 - addWidth*1.45,
-        19.75 - (myChoices.length - curChoice - 1)*1.75,
+        posX*2 + 0.75 - addWidth*1.45,
+        posY*2 + 1.75 - (myChoices.length - curChoice - 1)*1.75,
         new String.fromCharCode(128)
       );
     };
@@ -66,7 +87,9 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
         curChoice = 0;
       }
     } else if(keyCodes.contains(KeyCode.X)) {
-      Gui.windows.remove(window);
+      if(remove)
+        Gui.windows.remove(window);
+      
       Interactable.chainGameEvents(interactable, callbacks[curChoice]);
       interactable.gameEvent.trigger();
     }
