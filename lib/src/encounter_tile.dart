@@ -17,8 +17,10 @@ class EncounterTile extends Tile {
   void enter() {
     double chance = rand.nextDouble();
     if(chance < 0.1) {
-      Main.battle = new Battle();
-      Main.battle.start();
+      Main.player.motionCallback = () {
+        Main.battle = new Battle();
+        Main.battle.start();
+      };
     }
   }
 }

@@ -9,7 +9,7 @@ import 'package:dart_rpg/src/tile.dart';
 class WarpTile extends Tile {
   int destX, destY;
   
-  WarpTile(solid, sprite, this.destX, this.destY) : super(solid, sprite);
+  WarpTile(bool solid, Sprite sprite, this.destX, this.destY) : super(solid, sprite);
   
   void enter() {
     Main.timeScale = 0.0;
