@@ -94,6 +94,7 @@ class Main {
         player.tick();
       }
     } else {
+      battle.render();
       battle.tick();
     }
     
