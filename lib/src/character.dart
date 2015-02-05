@@ -47,7 +47,24 @@ class Character implements InteractableInterface, InputHandler {
     y = mapY * motionAmount;
   }
   
+  bool motionCallbackCheck() {
+    // call our motion callback if we have one and have stopped moving
+     if(motionCallback != null &&
+         directionCooldown == 0 &&
+         motionX == 0 && motionY == 0) {
+       Function curCallback = motionCallback;
+       motionCallback = null;
+       curCallback();
+       return true;
+     }
+     
+     return false;
+  }
+  
   void move(motionDirection) {
+    if(motionCallbackCheck())
+      return;
+    
     // only move if we're not already moving
     if(motionX == 0 && motionY == 0) {
       // allow the player to change directions without moving
@@ -78,15 +95,8 @@ class Character implements InteractableInterface, InputHandler {
   }
   
   void tick() {
-    // call our motion callback if we have one and have stopped moving
-    if(motionCallback != null &&
-        directionCooldown == 0 &&
-        motionX == 0 && motionY == 0) {
-      Function curCallback = motionCallback;
-      motionCallback = null;
-      curCallback();
+    if(motionCallbackCheck())
       return;
-    }
       
     if(directionCooldown > 0) {
       directionCooldown -= 1;
