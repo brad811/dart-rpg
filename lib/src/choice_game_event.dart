@@ -11,9 +11,10 @@ import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 
 class ChoiceGameEvent extends GameEvent implements InputHandler {
-  InteractableInterface interactable;
-  List<String> choices = [];
-  List<List<GameEvent>> callbacks = [];
+  final InteractableInterface interactable;
+  final List<String> choices;
+  final List<List<GameEvent>> callbacks;
+  GameEvent cancelEvent;
   Function window;
   bool remove = true;
   
@@ -91,6 +92,11 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
         Gui.windows.remove(window);
       
       Interactable.chainGameEvents(interactable, callbacks[curChoice]);
+      interactable.gameEvent.trigger();
+    } else if(keyCodes.contains(KeyCode.Z) && cancelEvent != null) {
+      Gui.windows.remove(window);
+      
+      Interactable.chainGameEvents(interactable, [cancelEvent]);
       interactable.gameEvent.trigger();
     }
   }

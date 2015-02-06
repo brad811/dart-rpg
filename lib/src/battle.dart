@@ -53,6 +53,9 @@ class Battle implements InteractableInterface {
     );
     main.remove = false;
     
+    // go back to the main screen from the fight screen
+    fight.cancelEvent = main;
+    
     Main.inBattle = true;
     main.trigger();
   }
