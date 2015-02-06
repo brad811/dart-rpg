@@ -13,11 +13,10 @@ class Battle implements InteractableInterface {
   GameEvent gameEvent;
   List<List<Tile>> tiles = [];
   
-  int
-    curChoiceX = 0,
-    curChoiceY = 0;
-  
   ChoiceGameEvent main, fight, powers, bag, run;
+  AnimationGameEvent exit;
+  
+  int health = 100;
   
   void start() {
     for(int y=0; y<Main.world.viewYSize; y++) {
@@ -27,7 +26,7 @@ class Battle implements InteractableInterface {
       }
     }
     
-    AnimationGameEvent exit = new AnimationGameEvent((callback) {
+    exit = new AnimationGameEvent((callback) {
       Main.focusObject = Main.player;
       Gui.windows.removeRange(0, Gui.windows.length);
       Main.inBattle = false;
@@ -35,8 +34,13 @@ class Battle implements InteractableInterface {
     
     fight = new ChoiceGameEvent.custom(
       this,
-      ["Fire Round Punch Fly", "Kick", "Throw", "Fire"],
-      [[exit],[exit],[exit],[exit]],
+      ["Punch", "Kick", "Throw", "Fire"],
+      [
+        [new AnimationGameEvent((callback) { attack(); })],
+        [new AnimationGameEvent((callback) { attack(); })],
+        [new AnimationGameEvent((callback) { attack(); })],
+        [new AnimationGameEvent((callback) { attack(); })],
+      ],
       5, 14, 10, 2
     );
     fight.remove = false;
@@ -53,6 +57,16 @@ class Battle implements InteractableInterface {
     main.trigger();
   }
   
+  void attack() {
+    health -= 10;
+    if(health <= 0) {
+      exit.trigger();
+    } else {
+      Gui.windows.removeRange(0, Gui.windows.length);
+      main.trigger();
+    }
+  }
+  
   void tick() {
     
   }
@@ -63,5 +77,10 @@ class Battle implements InteractableInterface {
         tiles[y][x].sprite.renderStatic();
       }
     }
+    
+    Main.ctx.fillRect(
+      10 * Sprite.spriteScale, 10 * Sprite.spriteScale,
+      health * Sprite.spriteScale, 4 * Sprite.spriteScale
+    );
   }
 }
