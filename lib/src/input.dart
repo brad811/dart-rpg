@@ -9,7 +9,7 @@ class Input {
   static List<int>
     keys = [],
     lastKeys = [],
-    releasedKeys = [KeyCode.X, KeyCode.Z],
+    releasedKeys = [KeyCode.X, KeyCode.Z, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.UP, KeyCode.DOWN],
     validKeys = [];
   
   static void handleKey(InputHandler focusObject) {
