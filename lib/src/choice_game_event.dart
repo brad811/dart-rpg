@@ -13,7 +13,7 @@ import 'package:dart_rpg/src/main.dart';
 class ChoiceGameEvent extends GameEvent implements InputHandler {
   final InteractableInterface interactable;
   final List<String> choices;
-  final List<List<GameEvent>> callbacks;
+  List<List<GameEvent>> callbacks;
   GameEvent cancelEvent;
   Function window;
   bool remove = true;

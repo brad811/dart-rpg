@@ -1,6 +1,7 @@
 library Battle;
 
 import 'package:dart_rpg/src/animation_game_event.dart';
+import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
@@ -15,10 +16,9 @@ class Battle implements InteractableInterface {
   
   ChoiceGameEvent main, fight, powers, bag, run;
   AnimationGameEvent exit;
+  Battler friendly, enemy;
   
-  int health = 100;
-  
-  void start() {
+  Battle(this.friendly, this.enemy) {
     for(int y=0; y<Main.world.viewYSize; y++) {
       tiles.add([]);
       for(int x=0; x<Main.world.viewXSize; x++) {
@@ -34,7 +34,7 @@ class Battle implements InteractableInterface {
     
     fight = new ChoiceGameEvent.custom(
       this,
-      ["Punch", "Kick", "Throw", "Fire"],
+      friendly.attacks,
       [
         [new AnimationGameEvent((callback) { attack(); })],
         [new AnimationGameEvent((callback) { attack(); })],
@@ -48,21 +48,23 @@ class Battle implements InteractableInterface {
     main = new ChoiceGameEvent.custom(
       this,
       ["Fight", "Powers", "Bag", "Run"],
-      [[fight], [fight], [fight], [fight]],
+      [[fight], [fight], [fight], [exit]],
       15, 14, 5, 2
     );
     main.remove = false;
     
     // go back to the main screen from the fight screen
     fight.cancelEvent = main;
-    
+  }
+  
+  void start() {
     Main.inBattle = true;
     main.trigger();
   }
   
   void attack() {
-    health -= 10;
-    if(health <= 0) {
+    enemy.health -= friendly.attack;
+    if(enemy.health <= 0) {
       exit.trigger();
     } else {
       Gui.windows.removeRange(0, Gui.windows.length);
@@ -75,15 +77,23 @@ class Battle implements InteractableInterface {
   }
   
   void render() {
+    // background
     for(int y=0; y<Main.world.viewYSize; y++) {
       for(int x=0; x<Main.world.viewXSize; x++) {
         tiles[y][x].sprite.renderStatic();
       }
     }
     
+    // enemy health bar
     Main.ctx.fillRect(
-      10 * Sprite.spriteScale, 10 * Sprite.spriteScale,
-      health * Sprite.spriteScale, 4 * Sprite.spriteScale
+      1*Sprite.scaledSpriteSize, 1*Sprite.scaledSpriteSize,
+      6*(enemy.health/enemy.baseHealth)*Sprite.scaledSpriteSize, 4 * Sprite.spriteScale
+    );
+    
+    // friendly health bar
+    Main.ctx.fillRect(
+      13*Sprite.scaledSpriteSize, 10*Sprite.scaledSpriteSize,
+      6*(friendly.health/friendly.baseHealth)*Sprite.scaledSpriteSize, 4 * Sprite.spriteScale
     );
   }
 }
