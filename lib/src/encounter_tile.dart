@@ -22,8 +22,8 @@ class EncounterTile extends Tile {
       Main.player.motionCallback = () {
         Main.battle = new Battle(
             new Battler(
-              238,
-              100, 10,
+              238, "Player",
+              100, 10, 5,
               [
                 new Attack("Punch", 10),
                 new Attack("Kick", 10),
@@ -32,8 +32,8 @@ class EncounterTile extends Tile {
               ]
             ),
             new Battler(
-              238,
-              100, 8,
+              238, "Monster",
+              100, 8, 5,
               [
                 new Attack("Poke", 8),
                 new Attack("Headbutt", 8),

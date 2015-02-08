@@ -13,9 +13,16 @@ class Attack {
     
   }
   
-  void use(Battler user, Function callback) {
-    textGameEvent = new TextGameEvent(241, "You attacked the enemy with ${name}!");
-    textGameEvent.callback = callback;
+  void use(Battler attacker, Battler receiver, bool enemy, Function callback) {
+    String text = "${attacker.name} attacked ${receiver.name} with ${this.name}!";
+    if(enemy) {
+      text = "Enemy ${text}";
+    }
+    textGameEvent = new TextGameEvent(241, text);
+    textGameEvent.callback = () {
+      receiver.health -= power;
+      callback();
+    };
     textGameEvent.trigger();
   }
 }

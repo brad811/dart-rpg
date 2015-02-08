@@ -1,5 +1,7 @@
 library Battle;
 
+import 'dart:math' as math;
+
 import 'package:dart_rpg/src/animation_game_event.dart';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
@@ -20,6 +22,8 @@ class Battle implements InteractableInterface {
   Sprite friendlySprite, enemySprite;
   
   AnimationGameEvent attackEvent;
+  
+  math.Random rand = new math.Random();
   
   Battle(this.friendly, this.enemy) {
     friendlySprite = new Sprite.int(friendly.spriteId, 3, 7);
@@ -42,10 +46,10 @@ class Battle implements InteractableInterface {
       this,
       friendly.attackNames,
       [
-        [new AnimationGameEvent((callback) { attack(friendly, 0, callback); })],
-        [new AnimationGameEvent((callback) { attack(friendly, 1, callback); })],
-        [new AnimationGameEvent((callback) { attack(friendly, 2, callback); })],
-        [new AnimationGameEvent((callback) { attack(friendly, 3, callback); })]
+        [new AnimationGameEvent((callback) { attack(friendly, 0); })],
+        [new AnimationGameEvent((callback) { attack(friendly, 1); })],
+        [new AnimationGameEvent((callback) { attack(friendly, 2); })],
+        [new AnimationGameEvent((callback) { attack(friendly, 3); })]
       ],
       5, 14, 10, 2
     );
@@ -68,15 +72,37 @@ class Battle implements InteractableInterface {
     main.trigger();
   }
   
-  void attack(Battler user, int attackNum, Function callback) {
+  void attack(Battler user, int attackNum) {
     Gui.windows = [];
-    friendly.attacks[attackNum].use(friendly, () {
-      enemy.health -= friendly.attack;
-      if(enemy.health <= 0) {
+    
+    Function callback = () {
+      Gui.windows.removeRange(0, Gui.windows.length);
+      main.trigger();
+    };
+    
+    // TODO: enemy decide action
+    if(
+        friendly.speed > enemy.speed || // friendly is faster
+        (friendly.speed == enemy.speed && rand.nextBool()) // speed tie breaker
+    ) {
+      doAttack(friendly, enemy, false, attackNum, () {
+        doAttack(enemy, friendly, true, rand.nextInt(enemy.attacks.length), callback);
+      });
+    } else {
+      doAttack(enemy, friendly, true, rand.nextInt(enemy.attacks.length), () {
+        doAttack(friendly, enemy, false, attackNum, callback);
+      });
+    }
+  }
+  
+  void doAttack(Battler attacker, Battler receiver, bool enemy, int attackNum, Function callback) {
+    Gui.windows.removeRange(0, Gui.windows.length);
+    attacker.attacks[attackNum].use(attacker, receiver, enemy, () {
+      if(receiver.health <= 0) {
+        // TODO: receiver dies
         exit.trigger();
       } else {
-        Gui.windows.removeRange(0, Gui.windows.length);
-        main.trigger();
+        callback();
       }
     });
   }

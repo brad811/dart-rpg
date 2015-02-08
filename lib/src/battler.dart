@@ -3,29 +3,29 @@ library Battler;
 import 'package:dart_rpg/src/attack.dart';
 
 class Battler {
-  int spriteId;
+  final String name;
   
   final int
     baseHealth,
-    baseAttack;
+    baseAttack,
+    baseSpeed;
   
   int
+    spriteId,
     health,
-    attack;
+    attack,
+    speed;
   
   List<Attack> attacks;
   List<String> attackNames = [];
   
-  Battler(this.spriteId, this.baseHealth, this.baseAttack, this.attacks) {
+  Battler(this.spriteId, this.name, this.baseHealth, this.baseAttack, this.baseSpeed, this.attacks) {
     health = baseHealth;
     attack = baseAttack;
+    speed = baseSpeed;
     
     for(Attack attack in attacks) {
       attackNames.add(attack.name);
     }
-  }
-  
-  getAttacked(Attack attack) {
-    health -= attack.power;
   }
 }
