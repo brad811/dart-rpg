@@ -1,5 +1,7 @@
 library Character;
 
+import 'dart:math' as math;
+
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
@@ -19,7 +21,7 @@ class Character implements InteractableInterface, InputHandler {
     walkSpeed = 4,
     runSpeed = 8,
     motionAmount = Sprite.pixelsPerSprite * Sprite.spriteScale,
-    directionCooldownAmount = 4;
+    directionCooldownAmount = 2;
   
   int
     spriteId,
@@ -34,7 +36,8 @@ class Character implements InteractableInterface, InputHandler {
     motionStep = 1,
     motionSpriteOffset = 0,
     mapX, mapY,
-    x, y;
+    x, y,
+    movementAmount;
   
   bool solid;
   GameEvent gameEvent;
@@ -70,7 +73,11 @@ class Character implements InteractableInterface, InputHandler {
       // allow the player to change directions without moving
       if(direction != motionDirection) {
         direction = motionDirection;
-        directionCooldown = directionCooldownAmount;
+        
+        // turn faster if we're running
+        if(curSpeed != runSpeed)
+          directionCooldown = directionCooldownAmount;
+        
         return;
       }
       
@@ -124,9 +131,11 @@ class Character implements InteractableInterface, InputHandler {
     }
     
     if(motionX < 0) {
-      motionX += curSpeed;
+      movementAmount = math.min(motionX.abs(), curSpeed);
+      motionX += movementAmount;
+      
       if(!Main.world.isSolid(mapX-1, mapY)) {
-        x -= curSpeed;
+        x -= movementAmount;
         
         if(motionX == 0) {
           mapX -= 1;
@@ -139,9 +148,11 @@ class Character implements InteractableInterface, InputHandler {
       else if(motionX == 0 && motionStep == 2)
         motionStep = 1;
     } else if(motionX > 0) {
-      motionX -= curSpeed;
+      movementAmount = math.min(motionX.abs(), curSpeed);
+      motionX -= movementAmount;
+      
       if(!Main.world.isSolid(mapX+1, mapY)) {
-        x += curSpeed;
+        x += movementAmount;
         
         if(motionX == 0) {
           mapX += 1;
@@ -154,9 +165,11 @@ class Character implements InteractableInterface, InputHandler {
       else if(motionX == 0 && motionStep == 2)
         motionStep = 1;
     } else if(motionY < 0) {
-      motionY += curSpeed;
+      movementAmount = math.min(motionY.abs(), curSpeed);
+      motionY += movementAmount;
+      
       if(!Main.world.isSolid(mapX, mapY-1)) {
-        y -= curSpeed;
+        y -= movementAmount;
         
         if(motionY == 0) {
           mapY -= 1;
@@ -169,9 +182,11 @@ class Character implements InteractableInterface, InputHandler {
       else if(motionY == 0 && motionStep == 2)
         motionStep = 1;
     } else if(motionY > 0) {
-      motionY -= curSpeed;
+      movementAmount = math.min(motionY.abs(), curSpeed);
+      motionY -= movementAmount;
+      
       if(!Main.world.isSolid(mapX, mapY+1)) {
-        y += curSpeed;
+        y += movementAmount;
         
         if(motionY == 0) {
           mapY += 1;

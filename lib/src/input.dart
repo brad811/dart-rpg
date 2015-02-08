@@ -28,7 +28,8 @@ class Input {
         // only allow holding arrow keys down if you're controlling the player
         (Main.focusObject == Main.player &&
           (keys[i] == KeyCode.LEFT || keys[i] == KeyCode.RIGHT ||
-          keys[i] == KeyCode.UP || keys[i] == KeyCode.DOWN
+          keys[i] == KeyCode.UP || keys[i] == KeyCode.DOWN ||
+          keys[i] == KeyCode.Z
           )
         )
       ) {

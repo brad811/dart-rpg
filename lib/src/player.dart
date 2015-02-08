@@ -21,6 +21,11 @@ class Player extends Character implements InputHandler {
       interact();
     
     for(int key in keyCodes) {
+      if(keyCodes.contains(KeyCode.Z))
+        curSpeed = runSpeed;
+      else
+        curSpeed = walkSpeed;
+      
       if(keyCodes.contains(KeyCode.LEFT)) {
         move(Character.LEFT);
         return;
