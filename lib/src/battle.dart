@@ -17,8 +17,14 @@ class Battle implements InteractableInterface {
   ChoiceGameEvent main, fight, powers, bag, run;
   AnimationGameEvent exit;
   Battler friendly, enemy;
+  Sprite friendlySprite, enemySprite;
+  
+  AnimationGameEvent attackEvent;
   
   Battle(this.friendly, this.enemy) {
+    friendlySprite = new Sprite.int(friendly.spriteId, 3, 7);
+    enemySprite = new Sprite.int(enemy.spriteId, 14, 1);
+    
     for(int y=0; y<Main.world.viewYSize; y++) {
       tiles.add([]);
       for(int x=0; x<Main.world.viewXSize; x++) {
@@ -34,16 +40,16 @@ class Battle implements InteractableInterface {
     
     fight = new ChoiceGameEvent.custom(
       this,
-      friendly.attacks,
+      friendly.attackNames,
       [
-        [new AnimationGameEvent((callback) { attack(); })],
-        [new AnimationGameEvent((callback) { attack(); })],
-        [new AnimationGameEvent((callback) { attack(); })],
-        [new AnimationGameEvent((callback) { attack(); })],
+        [new AnimationGameEvent((callback) { attack(friendly, 0, callback); })],
+        [new AnimationGameEvent((callback) { attack(friendly, 1, callback); })],
+        [new AnimationGameEvent((callback) { attack(friendly, 2, callback); })],
+        [new AnimationGameEvent((callback) { attack(friendly, 3, callback); })]
       ],
       5, 14, 10, 2
     );
-    fight.remove = false;
+    fight.remove = true;
     
     main = new ChoiceGameEvent.custom(
       this,
@@ -62,14 +68,17 @@ class Battle implements InteractableInterface {
     main.trigger();
   }
   
-  void attack() {
-    enemy.health -= friendly.attack;
-    if(enemy.health <= 0) {
-      exit.trigger();
-    } else {
-      Gui.windows.removeRange(0, Gui.windows.length);
-      main.trigger();
-    }
+  void attack(Battler user, int attackNum, Function callback) {
+    Gui.windows = [];
+    friendly.attacks[attackNum].use(friendly, () {
+      enemy.health -= friendly.attack;
+      if(enemy.health <= 0) {
+        exit.trigger();
+      } else {
+        Gui.windows.removeRange(0, Gui.windows.length);
+        main.trigger();
+      }
+    });
   }
   
   void tick() {
@@ -84,16 +93,19 @@ class Battle implements InteractableInterface {
       }
     }
     
+    friendlySprite.renderStaticSized(3,3);
+    enemySprite.renderStaticSized(3,3);
+    
     // enemy health bar
     Main.ctx.fillRect(
       1*Sprite.scaledSpriteSize, 1*Sprite.scaledSpriteSize,
-      6*(enemy.health/enemy.baseHealth)*Sprite.scaledSpriteSize, 4 * Sprite.spriteScale
+      8*(enemy.health/enemy.baseHealth)*Sprite.scaledSpriteSize, 4*Sprite.spriteScale
     );
     
     // friendly health bar
     Main.ctx.fillRect(
-      13*Sprite.scaledSpriteSize, 10*Sprite.scaledSpriteSize,
-      6*(friendly.health/friendly.baseHealth)*Sprite.scaledSpriteSize, 4 * Sprite.spriteScale
+      11*Sprite.scaledSpriteSize, 10*Sprite.scaledSpriteSize,
+      8*(friendly.health/friendly.baseHealth)*Sprite.scaledSpriteSize, 4*Sprite.spriteScale
     );
   }
 }

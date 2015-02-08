@@ -50,4 +50,24 @@ class Sprite {
       scaledSpriteSize, scaledSpriteSize // width, height
     );
   }
+  
+  void renderStaticSized(int sizeX, int sizeY) {
+    int originalId = id;
+    double originalPosX = posX;
+    double originalPosY = posY;
+    
+    for(int j=0; j<sizeY; j++) {
+      posX = originalPosX;
+      for(int i=0; i<sizeX; i++) {
+        id = originalId + (j*spriteSheetSize) + i;
+        renderStatic();
+        posX++;
+      }
+      posY++;
+    }
+    
+    id = originalId;
+    posX = originalPosX;
+    posY = originalPosY;
+  }
 }
