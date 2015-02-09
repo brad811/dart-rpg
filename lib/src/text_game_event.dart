@@ -16,7 +16,7 @@ class TextGameEvent extends GameEvent {
       originalTextLines = [],
       textLines = [];
   
-  TextGameEvent(this.pictureSpriteId, this.text) : super() {
+  TextGameEvent(this.pictureSpriteId, this.text, [Function callback]) : super(null, callback) {
     List<String> tokens = text.split(" ");
     int lineNumber = 0;
     String curLine;

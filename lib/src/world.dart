@@ -2,7 +2,6 @@ library World;
 
 import 'dart:math' as math;
 
-import 'package:dart_rpg/src/animation_game_event.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
@@ -180,7 +179,7 @@ class World {
     List<GameEvent> characterGameEvents = [];
     characterGameEvents = [
       new TextGameEvent(238, "I'm like a kid, right?"),
-      new AnimationGameEvent((callback) {
+      new GameEvent((callback) {
         Main.player.inputEnabled = false;
         chainCharacterMovement(
           character,
@@ -197,7 +196,7 @@ class World {
           [
             new TextGameEvent(232, "That's fine."),
             new TextGameEvent(238, "If you say so!"),
-            new AnimationGameEvent((callback) {
+            new GameEvent((callback) {
               character.gameEvent = characterGameEvents[0];
             })
           ],

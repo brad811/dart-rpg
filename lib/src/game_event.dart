@@ -3,11 +3,13 @@ library GameEvent;
 import 'package:dart_rpg/src/input_handler.dart';
 
 class GameEvent implements InputHandler {
-  dynamic callback;
+  Function function, callback;
   
-  GameEvent();
+  GameEvent([this.function, this.callback]);
   
-  void trigger() {}
+  void trigger() {
+    function(callback);
+  }
   
   void handleKeys(List<int> keyCodes) {}
   

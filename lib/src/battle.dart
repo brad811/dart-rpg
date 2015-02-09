@@ -2,7 +2,6 @@ library Battle;
 
 import 'dart:math' as math;
 
-import 'package:dart_rpg/src/animation_game_event.dart';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/delayed_game_event.dart';
@@ -19,11 +18,11 @@ class Battle implements InteractableInterface {
   List<List<Tile>> tiles = [];
   
   ChoiceGameEvent main, fight, powers, bag, run;
-  AnimationGameEvent exit;
+  GameEvent exit;
   Battler friendly, enemy;
   Sprite friendlySprite, enemySprite;
   
-  AnimationGameEvent attackEvent;
+  GameEvent attackEvent;
   
   math.Random rand = new math.Random();
   
@@ -38,7 +37,7 @@ class Battle implements InteractableInterface {
       }
     }
     
-    exit = new AnimationGameEvent((callback) {
+    exit = new GameEvent((callback) {
       Main.focusObject = Main.player;
       Gui.windows.removeRange(0, Gui.windows.length);
       Main.inBattle = false;
@@ -48,10 +47,10 @@ class Battle implements InteractableInterface {
       this,
       friendly.attackNames,
       [
-        [new AnimationGameEvent((callback) { attack(friendly, 0); })],
-        [new AnimationGameEvent((callback) { attack(friendly, 1); })],
-        [new AnimationGameEvent((callback) { attack(friendly, 2); })],
-        [new AnimationGameEvent((callback) { attack(friendly, 3); })]
+        [new GameEvent((callback) { attack(friendly, 0); })],
+        [new GameEvent((callback) { attack(friendly, 1); })],
+        [new GameEvent((callback) { attack(friendly, 2); })],
+        [new GameEvent((callback) { attack(friendly, 3); })]
       ],
       5, 14, 10, 2
     );

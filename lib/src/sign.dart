@@ -10,8 +10,7 @@ class Sign extends InteractableTile implements InputHandler {
   TextGameEvent textEvent;
   
   Sign(bool solid, Sprite sprite, int pictureSpriteId, String text) : super(solid, sprite, null) {
-    textEvent = new TextGameEvent(pictureSpriteId, text);
-    textEvent.callback = close;
+    textEvent = new TextGameEvent(pictureSpriteId, text, close);
   }
   
   void handleKeys(List<int> keyCodes) {
