@@ -13,6 +13,7 @@ class Battler {
   int
     spriteId,
     health,
+    displayHealth,
     attack,
     speed;
   
@@ -21,6 +22,7 @@ class Battler {
   
   Battler(this.spriteId, this.name, this.baseHealth, this.baseAttack, this.baseSpeed, this.attacks) {
     health = baseHealth;
+    displayHealth = baseHealth;
     attack = baseAttack;
     speed = baseSpeed;
     

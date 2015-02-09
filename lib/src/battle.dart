@@ -5,6 +5,8 @@ import 'dart:math' as math;
 import 'package:dart_rpg/src/animation_game_event.dart';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
+import 'package:dart_rpg/src/delayed_game_event.dart';
+import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
@@ -97,13 +99,32 @@ class Battle implements InteractableInterface {
   
   void doAttack(Battler attacker, Battler receiver, bool enemy, int attackNum, Function callback) {
     Gui.windows.removeRange(0, Gui.windows.length);
+    
     attacker.attacks[attackNum].use(attacker, receiver, enemy, () {
-      if(receiver.health <= 0) {
-        // TODO: receiver dies
-        exit.trigger();
-      } else {
-        callback();
+      List<DelayedGameEvent> healthDrains = [];
+      for(int i=0; i<(receiver.displayHealth - receiver.health).abs(); i++) {
+        healthDrains.add(
+          new DelayedGameEvent(50, () {
+            if(receiver.displayHealth > receiver.health)
+              receiver.displayHealth--;
+            else
+              receiver.displayHealth++;
+          })
+        );
       }
+      
+      healthDrains.add(
+        new DelayedGameEvent(200, () {
+          if(receiver.health <= 0) {
+            // TODO: receiver dies
+            exit.trigger();
+          } else {
+            callback();
+          }
+        })
+      );
+      
+      DelayedGameEvent.executeDelayedEvents(healthDrains);
     });
   }
   
@@ -111,10 +132,30 @@ class Battle implements InteractableInterface {
     
   }
   
+  void drawHealthBar(int x, int y, double health) {
+    Main.ctx.setFillColorRgb(0, 0, 0);
+    Main.ctx.fillRect(
+      x*Sprite.scaledSpriteSize - Sprite.spriteScale, y*Sprite.scaledSpriteSize - Sprite.spriteScale,
+      8*Sprite.scaledSpriteSize + Sprite.spriteScale*2, 4*Sprite.spriteScale + Sprite.spriteScale*2
+    );
+    
+    Main.ctx.setFillColorRgb(255, 255, 255);
+    Main.ctx.fillRect(
+      x*Sprite.scaledSpriteSize, y*Sprite.scaledSpriteSize,
+      8*Sprite.scaledSpriteSize, 4*Sprite.spriteScale
+    );
+    
+    Main.ctx.setFillColorRgb(170, 170, 170);
+    Main.ctx.fillRect(
+      x*Sprite.scaledSpriteSize, y*Sprite.scaledSpriteSize,
+      (8*health*Sprite.pixelsPerSprite).round()*Sprite.spriteScale, 4*Sprite.spriteScale
+    );
+  }
+  
   void render() {
     // background
-    for(int y=0; y<Main.world.viewYSize; y++) {
-      for(int x=0; x<Main.world.viewXSize; x++) {
+    for(int y=0; y<tiles.length; y++) {
+      for(int x=0; x<tiles[0].length; x++) {
         tiles[y][x].sprite.renderStatic();
       }
     }
@@ -123,15 +164,18 @@ class Battle implements InteractableInterface {
     enemySprite.renderStaticSized(3,3);
     
     // enemy health bar
-    Main.ctx.fillRect(
-      1*Sprite.scaledSpriteSize, 1*Sprite.scaledSpriteSize,
-      8*(enemy.health/enemy.baseHealth)*Sprite.scaledSpriteSize, 4*Sprite.spriteScale
-    );
+    drawHealthBar(1, 1, enemy.displayHealth/enemy.baseHealth);
     
     // friendly health bar
+    Main.ctx.setFillColorRgb(255, 255, 255);
     Main.ctx.fillRect(
-      11*Sprite.scaledSpriteSize, 10*Sprite.scaledSpriteSize,
-      8*(friendly.health/friendly.baseHealth)*Sprite.scaledSpriteSize, 4*Sprite.spriteScale
+      175*Sprite.spriteScale, 145*Sprite.spriteScale,
+      130*Sprite.spriteScale, 14*Sprite.spriteScale
     );
+    
+    Font.renderStaticText(22.25, 18.75, "${friendly.displayHealth}");
+    Font.renderStaticText(37.6 - ("${friendly.baseHealth}".length)*0.75, 18.75, "${friendly.baseHealth}");
+    
+    drawHealthBar(11, 10, friendly.displayHealth/friendly.baseHealth);
   }
 }
