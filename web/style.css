@@ -2,9 +2,40 @@
 	width: 100%;
 }
 
-canvas {
+#main_canvas {
 	border: 1px solid black;
 	position: absolute;
 	left: 50%;
 	margin-left: -320px;
+}
+
+#editor_main_canvas {
+  border: 1px solid black;
+  position: absolute;
+  left: 0;
+  margin-left: 8px;
+}
+
+#editor_sprite_canvas, #editor_selected_sprite_canvas {
+  border: 1px solid black;
+}
+
+.sprite_container {
+  height: 256px;
+  width: 532px;
+  overflow-y: scroll;
+  position: absolute;
+  left: 50%;
+  margin-left: 20px;
+}
+
+.options {
+  background-color: #eee;
+  height: 248px;
+  width: 532px;
+  overflow-y: scroll;
+  position: absolute;
+  left: 50%;
+  margin-left: 20px;
+  margin-top: 266px;
 }
