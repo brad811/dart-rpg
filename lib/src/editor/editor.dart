@@ -95,6 +95,9 @@ class Editor {
       int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
       int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
       
+      if(y >= Main.world.map.length || x >= Main.world.map[0].length)
+        return;
+      
       Main.world.map[y][x][World.LAYER_GROUND] = new Tile(
         false,
         new Sprite.int(selectedTile, x, y)
