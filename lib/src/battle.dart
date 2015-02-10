@@ -103,7 +103,7 @@ class Battle implements InteractableInterface {
       List<DelayedGameEvent> healthDrains = [];
       for(int i=0; i<(receiver.displayHealth - receiver.health).abs(); i++) {
         healthDrains.add(
-          new DelayedGameEvent(50, () {
+          new DelayedGameEvent(Main.timeDelay, () {
             if(receiver.displayHealth > receiver.health)
               receiver.displayHealth--;
             else
