@@ -9,11 +9,16 @@
 	margin-left: -320px;
 }
 
+.editor_container {
+  width: 659px;
+  height: 532px;
+  background-color: #0000ff;
+  float: left;
+  overflow: scroll;
+}
+
 #editor_main_canvas {
   border: 1px solid black;
-  position: absolute;
-  left: 0;
-  margin-left: 8px;
 }
 
 #editor_sprite_canvas, #editor_selected_sprite_canvas {
@@ -25,8 +30,7 @@
   width: 532px;
   overflow-y: scroll;
   position: absolute;
-  left: 50%;
-  margin-left: 20px;
+  margin-left: 668px;
 }
 
 .options {
@@ -35,7 +39,6 @@
   width: 532px;
   overflow-y: scroll;
   position: absolute;
-  left: 50%;
-  margin-left: 20px;
+  margin-left: 668px;
   margin-top: 266px;
 }
