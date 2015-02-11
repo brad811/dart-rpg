@@ -2,6 +2,7 @@ library Character;
 
 import 'dart:math' as math;
 
+import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
@@ -42,6 +43,7 @@ class Character implements InteractableInterface, InputHandler {
   bool solid;
   GameEvent gameEvent;
   Function motionCallback;
+  Battler battler;
   
   Character(this.spriteId, this.pictureId,
       this.mapX, this.mapY, this.layer, this.sizeX, this.sizeY, this.solid) {

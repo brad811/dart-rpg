@@ -21,16 +21,7 @@ class EncounterTile extends Tile {
     if(chance < 0.8) {
       Main.player.motionCallback = () {
         Main.battle = new Battle(
-            new Battler(
-              238, "Player",
-              100, 10, 5,
-              [
-                new Attack("Punch", 10),
-                new Attack("Kick", 10),
-                new Attack("Meditate", 10),
-                new Attack("Flinch", 10)
-              ]
-            ),
+            Main.player.battler,
             new Battler(
               238, "Monster",
               100, 8, 5,

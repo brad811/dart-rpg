@@ -52,7 +52,7 @@ class Battle implements InteractableInterface {
         [new GameEvent((callback) { attack(friendly, 2); })],
         [new GameEvent((callback) { attack(friendly, 3); })]
       ],
-      5, 14, 10, 2
+      5, 11, 10, 5
     );
     fight.remove = true;
     
@@ -60,7 +60,7 @@ class Battle implements InteractableInterface {
       this,
       ["Fight", "Powers", "Bag", "Run"],
       [[fight], [fight], [fight], [exit]],
-      15, 14, 5, 2
+      15, 11, 5, 5
     );
     main.remove = false;
     
@@ -100,6 +100,9 @@ class Battle implements InteractableInterface {
     Gui.windows.removeRange(0, Gui.windows.length);
     
     attacker.attacks[attackNum].use(attacker, receiver, enemy, () {
+      if(receiver.health < 0)
+        receiver.health = 0;
+      
       List<DelayedGameEvent> healthDrains = [];
       for(int i=0; i<(receiver.displayHealth - receiver.health).abs(); i++) {
         healthDrains.add(

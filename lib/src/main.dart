@@ -44,7 +44,6 @@ class Main {
   
   static void start() {
     world = new World();
-    player = new Player(15, 4);
     focusObject = player;
 
     document.onKeyDown.listen((KeyboardEvent e) {

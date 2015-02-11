@@ -2,6 +2,8 @@ library World;
 
 import 'dart:math' as math;
 
+import 'package:dart_rpg/src/attack.dart';
+import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
@@ -9,6 +11,7 @@ import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/text_game_event.dart';
@@ -209,6 +212,16 @@ class World {
     ];
     
     Interactable.chainGameEvents(character, characterGameEvents);
+    
+    Main.player = new Player(15, 4);
+    Main.player.battler = new Battler(
+      238, "Player",
+      20, 4, 6,
+      [
+        new Attack("Punch", 10),
+        new Attack("Kick", 10),
+      ]
+    );
   }
   
   void chainCharacterMovement(Character character, List<int> directions, Function callback) {

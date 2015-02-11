@@ -16,7 +16,9 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
   List<List<GameEvent>> callbacks;
   GameEvent cancelEvent;
   Function window;
-  bool remove = true;
+  bool
+    remove = true,
+    isCustom = false;
   
   int
     curChoice = 0,
@@ -47,6 +49,9 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     choiceGameEvent.posY = posY;
     choiceGameEvent.sizeX = sizeX;
     choiceGameEvent.sizeY = sizeY;
+    
+    choiceGameEvent.isCustom = true;
+    
     return choiceGameEvent;
   }
   
@@ -57,20 +62,41 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     List<String> myChoices = choices.reversed.toList();
     
     window = () {
-      Gui.renderWindow(
-        posX - (addWidth*0.75).round(), posY - myChoices.length + 1,
-        sizeX + (addWidth*0.75).round(), sizeY + myChoices.length - 1
-      );
-      
-      for(int i=myChoices.length-1; i>=0; i--) {
-        Font.renderStaticText(posX*2 + 2 - addWidth*1.45, posY*2 - (i-1)*1.75, myChoices[i]);
+      if(isCustom) {
+        Gui.renderWindow(
+          posX, posY,
+          sizeX, sizeY
+        );
+        
+        for(int i=myChoices.length-1; i>=0; i--) {
+          Font.renderStaticText(
+            posX*2 + 2 - addWidth*1.45,
+            posY*2 - (i-myChoices.length-0.25)*1.75,
+            myChoices[i]
+          );
+        }
+        
+        Font.renderStaticText(
+          posX*2 + 0.75 - addWidth*1.45,
+          posY*2 + 1.75 + (curChoice+0.25)*1.75,
+          new String.fromCharCode(128)
+        );
+      } else {
+        Gui.renderWindow(
+          posX - (addWidth*0.75).round(), posY - myChoices.length + 1,
+          sizeX + (addWidth*0.75).round(), sizeY + myChoices.length - 1
+        );
+        
+        for(int i=myChoices.length-1; i>=0; i--) {
+          Font.renderStaticText(posX*2 + 2 - addWidth*1.45, posY*2 - (i-1)*1.75, myChoices[i]);
+        }
+        
+        Font.renderStaticText(
+          posX*2 + 0.75 - addWidth*1.45,
+          posY*2 + 1.75 - (myChoices.length - curChoice - 1)*1.75,
+          new String.fromCharCode(128)
+        );
       }
-      
-      Font.renderStaticText(
-        posX*2 + 0.75 - addWidth*1.45,
-        posY*2 + 1.75 - (myChoices.length - curChoice - 1)*1.75,
-        new String.fromCharCode(128)
-      );
     };
     
     Gui.windows.add(window);
