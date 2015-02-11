@@ -98,7 +98,9 @@ class Editor {
       if(y >= Main.world.map.length || x >= Main.world.map[0].length)
         return;
       
-      Main.world.map[y][x][World.LAYER_GROUND] = new Tile(
+      int layer = int.parse((querySelector("[name='layer']:checked") as RadioButtonInputElement).value);
+      
+      Main.world.map[y][x][layer] = new Tile(
         false,
         new Sprite.int(selectedTile, x, y)
       );

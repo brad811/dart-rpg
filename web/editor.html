@@ -13,7 +13,20 @@
         <canvas id="editor_sprite_canvas" width="1024" height="1024"></canvas>
       </div>
       <div class="options">
-        <canvas id="editor_selected_sprite_canvas" width="32" height="32"></canvas>
+        <table>
+          <tr>
+            <td>
+              <canvas id="editor_selected_sprite_canvas" width="32" height="32"></canvas>
+            </td>
+            <td>
+              <input type="radio" name="layer" value="0" checked="checked" /> Ground<br>
+              <input type="radio" name="layer" value="1" /> Below<br>
+              <input type="radio" name="layer" value="2" /> Player<br>
+              <input type="radio" name="layer" value="3" /> Above<br>
+            </td>
+          </tr>
+        </table>
+        
         <div id="size_x_buttons">
           Size X:
           <button id="size_x_down_button_pre">-</button>
