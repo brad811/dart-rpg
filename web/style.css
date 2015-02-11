@@ -9,6 +9,8 @@
 	margin-left: -320px;
 }
 
+/* Editor */
+
 .editor_container {
   width: 659px;
   height: 532px;
@@ -41,4 +43,12 @@
   position: absolute;
   margin-left: 668px;
   margin-top: 266px;
+  padding: 8px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+#size_x_buttons button, #size_y_buttons button {
+  width: 30px;
+  height: 30px;
 }

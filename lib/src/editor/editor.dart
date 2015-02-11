@@ -102,6 +102,7 @@ class Editor {
         false,
         new Sprite.int(selectedTile, x, y)
       );
+      
       updateMap();
     });
     
@@ -111,7 +112,177 @@ class Editor {
       selectSprite(y*Sprite.spriteSheetSize + x + 1);
     });
     
+    setUpSizeButtons();
+    
     updateMap();
+  }
+  
+  static void setUpSizeButtons() {
+    // size x down button
+    querySelector('#size_x_down_button').onClick.listen((MouseEvent e) {
+      if(Main.world.map[0].length == 1)
+        return;
+      
+      for(int y=0; y<Main.world.map.length; y++) {
+        Main.world.map[y].removeLast();
+        
+        for(int x=0; x<Main.world.map[y].length; x++) {
+          for(int k=0; k<Main.world.map[y][x].length; k++) {
+            if(Main.world.map[y][x][k] is Tile) {
+              Main.world.map[y][x][k].sprite.posX = x * 1.0;
+            }
+          }
+        }
+      }
+      
+      updateMap();
+    });
+     
+    // size x up button
+    querySelector('#size_x_up_button').onClick.listen((MouseEvent e) {
+      if(Main.world.map.length == 0)
+        Main.world.map.add([]);
+      
+      int width = Main.world.map[0].length;
+      
+      for(int y=0; y<Main.world.map.length; y++) {
+        List<Tile> array = [];
+        for(int k=0; k<World.layers.length; k++) {
+          array.add(null);
+        }
+        Main.world.map[y].add(array);
+      }
+      
+      updateMap();
+    });
+    
+    // size y down button
+    querySelector('#size_y_down_button').onClick.listen((MouseEvent e) {
+      if(Main.world.map.length == 1)
+        return;
+      
+      Main.world.map.removeLast();
+      
+      updateMap();
+    });
+     
+    // size y up button
+    querySelector('#size_y_up_button').onClick.listen((MouseEvent e) {
+      List<List<Tile>> rowArray = [];
+      
+      int height = Main.world.map.length;
+      
+      for(int x=0; x<Main.world.map[0].length; x++) {
+        List<Tile> array = [];
+        for(int k=0; k<World.layers.length; k++) {
+          array.add(null);
+        }
+        rowArray.add(array);
+      }
+      
+      Main.world.map.add(rowArray);
+      
+      updateMap();
+    });
+    
+    // ////////////////////////////////////////
+    // Pre buttons
+    // ////////////////////////////////////////
+    
+    // size x down button pre
+    querySelector('#size_x_down_button_pre').onClick.listen((MouseEvent e) {
+      if(Main.world.map[0].length == 1)
+        return;
+      
+      for(int i=0; i<Main.world.map.length; i++) {
+        Main.world.map[i] = Main.world.map[i].sublist(1);
+        
+        for(int j=0; j<Main.world.map[i].length; j++) {
+          for(int k=0; k<Main.world.map[i][j].length; k++) {
+            if(Main.world.map[i][j][k] is Tile) {
+              Main.world.map[i][j][k].sprite.posX = j * 1.0;
+            }
+          }
+        }
+      }
+      
+      updateMap();
+    });
+     
+    // size x up button pre
+    querySelector('#size_x_up_button_pre').onClick.listen((MouseEvent e) {
+      if(Main.world.map.length == 0)
+        Main.world.map.add([]);
+      
+      for(int y=0; y<Main.world.map.length; y++) {
+        List<Tile> array = [];
+        for(int k=0; k<World.layers.length; k++) {
+          array.add(null);
+        }
+        var temp = Main.world.map[y];
+        temp.insert(0, array);
+        Main.world.map[y] = temp;
+      }
+      
+      for(int y=0; y<Main.world.map.length; y++) {
+        for(int x=0; x<Main.world.map[y].length; x++) {
+          for(int k=0; k<Main.world.map[y][x].length; k++) {
+            if(Main.world.map[y][x][k] is Tile) {
+              Main.world.map[y][x][k].sprite.posX = x * 1.0;
+            }
+          }
+        }
+      }
+      
+      updateMap();
+    });
+    
+    // size y down button pre
+    querySelector('#size_y_down_button_pre').onClick.listen((MouseEvent e) {
+      if(Main.world.map.length == 1)
+        return;
+      
+      Main.world.map.removeAt(0);
+      
+      for(int y=0; y<Main.world.map.length; y++) {
+        for(int x=0; x<Main.world.map[0].length; x++) {
+          for(int k=0; k<Main.world.map[0][0].length; k++) {
+            if(Main.world.map[y][x][k] is Tile) {
+              Main.world.map[y][x][k].sprite.posY = y * 1.0;
+            }
+          }
+        }
+      }
+      
+      updateMap();
+    });
+     
+    // size y up button pre
+    querySelector('#size_y_up_button_pre').onClick.listen((MouseEvent e) {
+      List<List<Tile>> rowArray = [];
+      
+      for(int i=0; i<Main.world.map[0].length; i++) {
+        List<Tile> array = [];
+        for(int j=0; j<World.layers.length; j++) {
+          array.add(null);
+        }
+        rowArray.add(array);
+      }
+      
+      Main.world.map.insert(0, rowArray);
+      
+      for(int y=0; y<Main.world.map.length; y++) {
+        for(int x=0; x<Main.world.map[0].length; x++) {
+          for(int k=0; k<Main.world.map[0][0].length; k++) {
+            if(Main.world.map[y][x][k] is Tile) {
+              Main.world.map[y][x][k].sprite.posY = y * 1.0;
+            }
+          }
+        }
+      }
+      
+      updateMap();
+    });
   }
   
   static void updateMap() {
