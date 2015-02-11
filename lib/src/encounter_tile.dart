@@ -24,13 +24,14 @@ class EncounterTile extends Tile {
             Main.player.battler,
             new Battler(
               238, "Monster",
-              100, 8, 5,
+              14, 8, 5, // health, attack, speed
               [
-                new Attack("Poke", 8),
-                new Attack("Headbutt", 8),
-                new Attack("Flail", 8),
-                new Attack("Attack 74b", 8)
-              ]
+                new Attack("Poke", 2),
+                new Attack("Headbutt", 4),
+                new Attack("Flail", 3),
+                new Attack("Attack 74b", 5)
+              ],
+              12 // experiencePayout
             )
         );
         

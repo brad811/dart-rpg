@@ -119,7 +119,10 @@ class Battle implements InteractableInterface {
         new DelayedGameEvent(200, () {
           if(receiver.health <= 0) {
             // TODO: receiver dies
-            exit.trigger();
+            attacker.experience += receiver.experiencePayout;
+            showExperienceGain(() {
+              exit.trigger();
+            });
           } else {
             callback();
           }
@@ -132,6 +135,33 @@ class Battle implements InteractableInterface {
   
   void tick() {
     
+  }
+  
+  void showExperienceGain(callback) {
+    // TODO: next level
+    if(friendly.experience > friendly.nextLevel)
+      friendly.experience = friendly.nextLevel;
+    
+    List<DelayedGameEvent> experienceGains = [];
+    for(int i=0; i<(friendly.displayExperience - friendly.experience).abs(); i++) {
+      experienceGains.add(
+        new DelayedGameEvent(Main.timeDelay * 2, () {
+          if(friendly.displayExperience > friendly.experience)
+            friendly.displayExperience--;
+          else
+            friendly.displayExperience++;
+        })
+      );
+    }
+    
+    experienceGains.add(
+      new DelayedGameEvent(200, () {
+        // TODO: trigger level gain if enough experience
+        callback();
+      })
+    );
+    
+    DelayedGameEvent.executeDelayedEvents(experienceGains);
   }
   
   void drawHealthBar(int x, int y, double health) {
@@ -151,6 +181,15 @@ class Battle implements InteractableInterface {
     Main.ctx.fillRect(
       x*Sprite.scaledSpriteSize, y*Sprite.scaledSpriteSize,
       (8*health*Sprite.pixelsPerSprite).round()*Sprite.spriteScale, 4*Sprite.spriteScale
+    );
+  }
+  
+  void drawExperienceBar() {
+    Main.ctx.setFillColorRgb(85, 85, 85);
+    double ratio = Main.player.battler.displayExperience / friendly.nextLevel;
+    Main.ctx.fillRect(
+      11*Sprite.scaledSpriteSize - Sprite.spriteScale, 10.5*Sprite.scaledSpriteSize,
+      8*ratio*Sprite.scaledSpriteSize + Sprite.spriteScale*2, 2*Sprite.spriteScale + Sprite.spriteScale*2
     );
   }
   
@@ -179,5 +218,7 @@ class Battle implements InteractableInterface {
     Font.renderStaticText(37.6 - ("${friendly.baseHealth}".length)*0.75, 18.75, "${friendly.baseHealth}");
     
     drawHealthBar(11, 10, friendly.displayHealth/friendly.baseHealth);
+    
+    drawExperienceBar();
   }
 }

@@ -216,11 +216,12 @@ class World {
     Main.player = new Player(15, 4);
     Main.player.battler = new Battler(
       238, "Player",
-      20, 4, 6,
+      20, 4, 6, // health, attack, speed
       [
         new Attack("Punch", 10),
         new Attack("Kick", 10),
-      ]
+      ],
+      0 // experiencePayout
     );
   }
   
