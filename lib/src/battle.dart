@@ -189,7 +189,7 @@ class Battle implements InteractableInterface {
     double ratio = Main.player.battler.displayExperience / friendly.nextLevel;
     Main.ctx.fillRect(
       11*Sprite.scaledSpriteSize - Sprite.spriteScale, 10.5*Sprite.scaledSpriteSize,
-      8*ratio*Sprite.scaledSpriteSize + Sprite.spriteScale*2, 2*Sprite.spriteScale + Sprite.spriteScale*2
+      ratio*(8*Sprite.scaledSpriteSize + Sprite.spriteScale*2), 2*Sprite.spriteScale + Sprite.spriteScale*2
     );
   }
   
