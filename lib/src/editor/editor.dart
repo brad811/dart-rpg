@@ -331,6 +331,23 @@ class Editor {
         );
       }
     }
+    
+    List<List<List<int>>> jsonMap = [];
+    for(int y=0; y<Main.world.map.length; y++) {
+      jsonMap.add([]);
+      for(int x=0; x<Main.world.map[0].length; x++) {
+        jsonMap[y].add([]);
+        for(int k=0; k<Main.world.map[0][0].length; k++) {
+          if(Main.world.map[y][x][k] is Tile) {
+            jsonMap[y][x].add( Main.world.map[y][x][k].sprite.id );
+          } else {
+            jsonMap[y][x].add( -1 );
+          }
+        }
+      }
+    }
+    
+    print(jsonMap);
   }
   
   static void selectSprite(int id) {
