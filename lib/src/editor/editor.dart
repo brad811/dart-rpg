@@ -1,5 +1,6 @@
 library Editor;
 
+import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/character.dart';
@@ -91,7 +92,7 @@ class Editor {
     
     selectSprite(Tile.GROUND);
     
-    c.onClick.listen((MouseEvent e) {
+    Function tileChange = (MouseEvent e) {
       int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
       int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
       
@@ -106,6 +107,17 @@ class Editor {
       );
       
       updateMap();
+    };
+    
+    c.onClick.listen(tileChange);
+    
+    c.onMouseDown.listen((MouseEvent e) {
+      StreamSubscription mouseMoveStream = c.onMouseMove.listen((MouseEvent e) {
+        tileChange(e);
+      });
+
+      c.onMouseUp.listen((onData) => mouseMoveStream.cancel());
+      c.onMouseLeave.listen((onData) => mouseMoveStream.cancel());
     });
     
     sc.onClick.listen((MouseEvent e) {
