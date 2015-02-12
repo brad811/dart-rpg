@@ -11,6 +11,11 @@ class Tile {
     PLAYER = 129,
     SIGN = 193,
     
+    TREE = 70,
+    TREE_BOTTOM = 102,
+    TREES = 72,
+    TREES_BOTTOM = 104,
+    
     FENCE = 109,
     FENCE_TOP = 110,
     FENCE_RIGHT = 111,
