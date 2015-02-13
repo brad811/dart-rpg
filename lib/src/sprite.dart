@@ -23,7 +23,7 @@ class Sprite {
     Main.ctx.drawImageScaledFromSource(
       Main.spritesImage,
       
-      pixelsPerSprite * (id%spriteSheetSize - 1), // sx
+      pixelsPerSprite * (id%spriteSheetSize), // sx
       pixelsPerSprite * (id/spriteSheetSize).floor(), // sy
       
       pixelsPerSprite, pixelsPerSprite, // swidth, sheight
@@ -39,7 +39,7 @@ class Sprite {
     Main.ctx.drawImageScaledFromSource(
       Main.spritesImage,
       
-      pixelsPerSprite * (id%spriteSheetSize - 1), // sx
+      pixelsPerSprite * (id%spriteSheetSize), // sx
       pixelsPerSprite * (id/spriteSheetSize).floor(), // sy
       
       pixelsPerSprite, pixelsPerSprite, // swidth, sheight

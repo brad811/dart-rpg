@@ -81,7 +81,7 @@ class Editor {
       row = 0;
     for(int y=0; y<Sprite.spriteSheetSize; y++) {
       for(int x=0; x<Sprite.spriteSheetSize; x++) {
-        renderStaticSprite(sctx, y*Sprite.spriteSheetSize + (x+1), col, row);
+        renderStaticSprite(sctx, y*Sprite.spriteSheetSize + x, col, row);
         col++;
         if(col >= maxCol) {
           row++;
@@ -123,7 +123,7 @@ class Editor {
     sc.onClick.listen((MouseEvent e) {
       int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
       int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-      selectSprite(y*Sprite.spriteSheetSize + x + 1);
+      selectSprite(y*Sprite.spriteSheetSize + x);
     });
     
     setUpSizeButtons();
@@ -363,7 +363,7 @@ class Editor {
     ctx.drawImageScaledFromSource(
       spritesImage,
       
-      Sprite.pixelsPerSprite * (id%Sprite.spriteSheetSize - 1), // sx
+      Sprite.pixelsPerSprite * (id%Sprite.spriteSheetSize), // sx
       Sprite.pixelsPerSprite * (id/Sprite.spriteSheetSize).floor(), // sy
       
       Sprite.pixelsPerSprite, Sprite.pixelsPerSprite, // swidth, sheight

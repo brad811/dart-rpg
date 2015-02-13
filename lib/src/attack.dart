@@ -18,7 +18,7 @@ class Attack {
     if(enemy) {
       text = "Enemy ${text}";
     }
-    textGameEvent = new TextGameEvent(241, text, () {
+    textGameEvent = new TextGameEvent(240, text, () {
       receiver.health -= power;
       callback();
     });

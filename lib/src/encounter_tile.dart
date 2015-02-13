@@ -23,7 +23,7 @@ class EncounterTile extends Tile {
         Main.battle = new Battle(
             Main.player.battler,
             new Battler(
-              238, "Monster",
+              237, "Monster",
               14, 8, 5, // health, attack, speed
               [
                 new Attack("Poke", 2),

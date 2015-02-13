@@ -148,7 +148,7 @@ class World {
     // Sign
     addSign(
       Tile.SIGN,
-      235,
+      234,
       9, 10, LAYER_BELOW,
       1, 1,
       true,
@@ -160,7 +160,7 @@ class World {
     // Sign
     addSign(
       Tile.SIGN,
-      235,
+      234,
       8, 10, LAYER_BELOW,
       1, 1,
       true,
@@ -171,7 +171,7 @@ class World {
     Character character = addCharacter(
       //Tile.PLAYER - 64,
       Tile.PLAYER,
-      238,
+      237,
       4, 6, LAYER_BELOW,
       1, 2,
       true
@@ -181,7 +181,7 @@ class World {
     
     List<GameEvent> characterGameEvents = [];
     characterGameEvents = [
-      new TextGameEvent(238, "I'm like a kid, right?"),
+      new TextGameEvent(237, "I'm like a kid, right?"),
       new GameEvent((callback) {
         Main.player.inputEnabled = false;
         chainCharacterMovement(
@@ -194,18 +194,18 @@ class World {
           }
         );
       }),
-      new TextGameEvent.choice(238, "See?",
+      new TextGameEvent.choice(237, "See?",
         new ChoiceGameEvent(character, ["Yes", "No"], [
           [
-            new TextGameEvent(232, "That's fine."),
-            new TextGameEvent(238, "If you say so!"),
+            new TextGameEvent(231, "That's fine."),
+            new TextGameEvent(237, "If you say so!"),
             new GameEvent((callback) {
               character.gameEvent = characterGameEvents[0];
             })
           ],
           [
-            new TextGameEvent(232, "I hate you."),
-            new TextGameEvent(238, "::sniff sniff:: Meanie!")
+            new TextGameEvent(231, "I hate you."),
+            new TextGameEvent(237, "::sniff sniff:: Meanie!")
           ]
         ])
       )
@@ -215,7 +215,7 @@ class World {
     
     Main.player = new Player(15, 4);
     Main.player.battler = new Battler(
-      238, "Player",
+      237, "Player",
       20, 4, 6, // health, attack, speed
       [
         new Attack("Punch", 10),
