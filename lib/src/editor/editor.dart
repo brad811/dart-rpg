@@ -347,7 +347,9 @@ class Editor {
       }
     }
     
-    print(jsonMap);
+    TextAreaElement textarea = querySelector("textarea");
+    textarea.value = jsonMap.toString();
+    textarea.select();
   }
   
   static void selectSprite(int id) {

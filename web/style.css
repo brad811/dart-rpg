@@ -49,6 +49,15 @@
 }
 
 #size_x_buttons button, #size_y_buttons button {
+  margin-top: 8px;
   width: 30px;
   height: 30px;
 }
+
+textarea {
+  margin-top: 8px;
+  width: 100%;
+  height: 60px;
+}
+
+
