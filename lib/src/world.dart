@@ -90,14 +90,16 @@ class World {
       18 // experiencePayout
     );
     
+    List<BattlerChance> battlerChances = [
+      new BattlerChance(battlerCommon, 0.8),
+      new BattlerChance(battlerRare, 0.2)
+    ];
+    
     for(int y=3; y<9; y++) {
       for(int x=18; x<27; x++) {
         map[y][x][LAYER_GROUND] = new EncounterTile(
           new Sprite.int(Tile.TALL_GRASS, x, y),
-          [
-            new BattlerChance(battlerCommon, 0.8),
-            new BattlerChance(battlerRare, 0.2)
-          ]
+          battlerChances
         );
       }
     }
