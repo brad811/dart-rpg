@@ -23,17 +23,16 @@ class EncounterTile extends Tile {
   
   void enter() {
     double chance = rand.nextDouble();
-    if(chance < 0.2) {
+    if(chance < 0.15) {
       chance = rand.nextDouble();
       
-      // TODO: use a weighted random sampling algorithm
-      double minDiff = 1.0;
+      double curWeight = 0.0;
       Battler battler;
       for(BattlerChance battlerChance in battlerChances) {
-        // find the closest battler chance over the selected chance
-        if((1-battlerChance.chance) < chance && chance - (1-battlerChance.chance) < minDiff) {
-          minDiff = chance - (1-battlerChance.chance);
+        curWeight += battlerChance.chance;
+        if(curWeight > chance) {
           battler = battlerChance.battler;
+          break;
         }
       }
       
