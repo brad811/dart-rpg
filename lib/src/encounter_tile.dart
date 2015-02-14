@@ -26,6 +26,7 @@ class EncounterTile extends Tile {
     if(chance < 0.2) {
       chance = rand.nextDouble();
       
+      // TODO: use a weighted random sampling algorithm
       double minDiff = 1.0;
       Battler battler;
       for(BattlerChance battlerChance in battlerChances) {
