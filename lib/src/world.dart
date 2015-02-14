@@ -69,10 +69,35 @@ class World {
       }
     }
     
+    Battler battlerCommon = new Battler(
+      237, "Common Monster",
+      14, 8, 5, // health, attack, speed
+      [
+        new Attack("Poke", 2),
+        new Attack("Headbutt", 4),
+        new Attack("Flail", 3)
+      ],
+      12 // experiencePayout
+    );
+    
+    Battler battlerRare = new Battler(
+      237, "Rare Monster",
+      14, 8, 5, // health, attack, speed
+      [
+        new Attack("Jab", 4),
+        new Attack("Attack 74b", 6)
+      ],
+      18 // experiencePayout
+    );
+    
     for(int y=3; y<9; y++) {
       for(int x=18; x<27; x++) {
         map[y][x][LAYER_GROUND] = new EncounterTile(
-          new Sprite.int(Tile.TALL_GRASS, x, y)
+          new Sprite.int(Tile.TALL_GRASS, x, y),
+          [
+            new BattlerChance(battlerCommon, 0.8),
+            new BattlerChance(battlerRare, 0.2)
+          ]
         );
       }
     }
