@@ -48,87 +48,73 @@ class Editor {
     Main.world.map = [];
     Main.world.characters = [];
     
-    for(int y=0; y<10; y++) {
-      Main.world.map.add([]);
-      for(int x=0; x<10; x++) {
-        Main.world.map[y].add([]);
-        for(int i=0; i<World.layers.length; i++) {
-          Main.world.map[y][x].add(null);
-        }
-      }
-    }
-    
-    for(int y=0; y<10; y++) {
-      for(int x=0; x<10; x++) {
-        Main.world.map[y][x][World.LAYER_GROUND] = new Tile(
-          false,
-          new Sprite.int(Tile.GROUND, x, y)
-        );
-      }
-    }
-    
+    Main.world.loadMap(() {
+      setUpSpritePicker();
+      setUpSizeButtons();
+      updateMap();
+    });
+  }
+  
+  static void setUpSpritePicker() {
     sctx.fillStyle = "#ff00ff";
-    sctx.fillRect(
-      0, 0,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetSize,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetSize
-    );
-    
-    // render sprite picker
-    int
-      maxCol = 32,
-      col = 0,
-      row = 0;
-    for(int y=0; y<Sprite.spriteSheetSize; y++) {
-      for(int x=0; x<Sprite.spriteSheetSize; x++) {
-        renderStaticSprite(sctx, y*Sprite.spriteSheetSize + x, col, row);
-        col++;
-        if(col >= maxCol) {
-          row++;
-          col = 0;
-        }
-      }
-    }
-    
-    selectSprite(Tile.GROUND);
-    
-    Function tileChange = (MouseEvent e) {
-      int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
-      int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-      
-      if(y >= Main.world.map.length || x >= Main.world.map[0].length)
-        return;
-      
-      int layer = int.parse((querySelector("[name='layer']:checked") as RadioButtonInputElement).value);
-      
-      Main.world.map[y][x][layer] = new Tile(
-        false,
-        new Sprite.int(selectedTile, x, y)
+      sctx.fillRect(
+        0, 0,
+        Sprite.scaledSpriteSize*Sprite.spriteSheetSize,
+        Sprite.scaledSpriteSize*Sprite.spriteSheetSize
       );
       
-      updateMap();
-    };
-    
-    c.onClick.listen(tileChange);
-    
-    c.onMouseDown.listen((MouseEvent e) {
-      StreamSubscription mouseMoveStream = c.onMouseMove.listen((MouseEvent e) {
-        tileChange(e);
-      });
+      // render sprite picker
+      int
+        maxCol = 32,
+        col = 0,
+        row = 0;
+      for(int y=0; y<Sprite.spriteSheetSize; y++) {
+        for(int x=0; x<Sprite.spriteSheetSize; x++) {
+          renderStaticSprite(sctx, y*Sprite.spriteSheetSize + x, col, row);
+          col++;
+          if(col >= maxCol) {
+            row++;
+            col = 0;
+          }
+        }
+      }
+      
+      selectSprite(Tile.GROUND);
+      
+      Function tileChange = (MouseEvent e) {
+        int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+        int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+        
+        if(y >= Main.world.map.length || x >= Main.world.map[0].length)
+          return;
+        
+        int layer = int.parse((querySelector("[name='layer']:checked") as RadioButtonInputElement).value);
+        bool solid = (querySelector("#solid") as CheckboxInputElement).checked;
+        
+        Main.world.map[y][x][layer] = new Tile(
+          solid,
+          new Sprite.int(selectedTile, x, y)
+        );
+        
+        updateMap();
+      };
+      
+      c.onClick.listen(tileChange);
+      
+      c.onMouseDown.listen((MouseEvent e) {
+        StreamSubscription mouseMoveStream = c.onMouseMove.listen((MouseEvent e) {
+          tileChange(e);
+        });
 
-      c.onMouseUp.listen((onData) => mouseMoveStream.cancel());
-      c.onMouseLeave.listen((onData) => mouseMoveStream.cancel());
-    });
-    
-    sc.onClick.listen((MouseEvent e) {
-      int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
-      int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-      selectSprite(y*Sprite.spriteSheetSize + x);
-    });
-    
-    setUpSizeButtons();
-    
-    updateMap();
+        c.onMouseUp.listen((onData) => mouseMoveStream.cancel());
+        c.onMouseLeave.listen((onData) => mouseMoveStream.cancel());
+      });
+      
+      sc.onClick.listen((MouseEvent e) {
+        int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+        int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+        selectSprite(y*Sprite.spriteSheetSize + x);
+      });
   }
   
   static void setUpSizeButtons() {
@@ -332,6 +318,8 @@ class Editor {
       }
     }
     
+    // TODO: change to objects instead of ints
+    //   to handle properties like "solid"
     List<List<List<int>>> jsonMap = [];
     for(int y=0; y<Main.world.map.length; y++) {
       jsonMap.add([]);

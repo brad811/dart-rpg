@@ -257,10 +257,11 @@ class World {
     //loadMap();
   }
   
-  void loadMap() {
+  void loadMap(Function callback) {
     HttpRequest
       .getString("map.json")
       .then(parseMap)
+      .then((dynamic f) { if(callback != null) { callback(); } })
       .catchError((Error error) {
         print("Error loading map! (${error})");
       });
