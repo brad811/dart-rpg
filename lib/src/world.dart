@@ -1,6 +1,8 @@
 library World;
 
+import 'dart:html';
 import 'dart:math' as math;
+import 'dart:convert';
 
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler.dart';
@@ -250,6 +252,43 @@ class World {
       ],
       0 // experiencePayout
     );
+    
+    // TODO: improve editor so less is needed in world class
+    //loadMap();
+  }
+  
+  void loadMap() {
+    HttpRequest
+      .getString("map.json")
+      .then(parseMap)
+      .catchError((Error error) {
+        print("Error loading map! (${error})");
+      });
+  }
+  
+  void parseMap(String jsonString) {
+    List<List<List<int>>> obj = JSON.decode(jsonString);
+    
+    map = [];
+    
+    for(int y=0; y<obj.length; y++) {
+      map.add([]);
+      
+      for(int x=0; x<obj[y].length; x++) {
+        map[y].add([]);
+        
+        for(int k=0; k<obj[y][x].length; k++) {
+          map[y][x].add(null);
+          
+          if(obj[y][x][k] != -1) {
+            map[y][x][k] = new Tile(
+              false,
+              new Sprite.int(obj[y][x][k], x, y)
+            );
+          }
+        }
+      }
+    }
   }
   
   void chainCharacterMovement(Character character, List<int> directions, Function callback) {
