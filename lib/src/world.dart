@@ -1,8 +1,8 @@
 library World;
 
+import 'dart:convert';
 import 'dart:html';
 import 'dart:math' as math;
-import 'dart:convert';
 
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler.dart';
@@ -268,7 +268,7 @@ class World {
   }
   
   void parseMap(String jsonString) {
-    List<List<List<int>>> obj = JSON.decode(jsonString);
+    List<List<List<Map>>> obj = JSON.decode(jsonString);
     
     map = [];
     
@@ -281,10 +281,10 @@ class World {
         for(int k=0; k<obj[y][x].length; k++) {
           map[y][x].add(null);
           
-          if(obj[y][x][k] != -1) {
+          if(obj[y][x][k] != null) {
             map[y][x][k] = new Tile(
-              false,
-              new Sprite.int(obj[y][x][k], x, y)
+              obj[y][x][k]['solid'],
+              new Sprite.int(obj[y][x][k]['id'], x, y)
             );
           }
         }

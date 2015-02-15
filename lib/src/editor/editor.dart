@@ -1,6 +1,7 @@
 library Editor;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:html';
 
 import 'package:dart_rpg/src/character.dart';
@@ -318,25 +319,31 @@ class Editor {
       }
     }
     
-    // TODO: change to objects instead of ints
     //   to handle properties like "solid"
-    List<List<List<int>>> jsonMap = [];
+    List<List<List<Map>>> jsonMap = [];
     for(int y=0; y<Main.world.map.length; y++) {
       jsonMap.add([]);
       for(int x=0; x<Main.world.map[0].length; x++) {
         jsonMap[y].add([]);
         for(int k=0; k<Main.world.map[0][0].length; k++) {
           if(Main.world.map[y][x][k] is Tile) {
-            jsonMap[y][x].add( Main.world.map[y][x][k].sprite.id );
+            if(Main.world.map[y][x][k].sprite.id == -1) {
+              jsonMap[y][x].add(null);
+            } else {
+              jsonMap[y][x].add({
+                "id": Main.world.map[y][x][k].sprite.id,
+                "solid": Main.world.map[y][x][k].solid
+              });
+            }
           } else {
-            jsonMap[y][x].add( -1 );
+            jsonMap[y][x].add(null);
           }
         }
       }
     }
     
     TextAreaElement textarea = querySelector("textarea");
-    textarea.value = jsonMap.toString();
+    textarea.value = JSON.encode(jsonMap);
     textarea.select();
   }
   
