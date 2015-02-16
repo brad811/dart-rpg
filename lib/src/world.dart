@@ -262,8 +262,10 @@ class World {
       .getString("map.json")
       .then(parseMap)
       .then((dynamic f) { if(callback != null) { callback(); } })
-      .catchError((Error error) {
-        print("Error loading map! (${error})");
+      .catchError((err) {
+        print("Error loading map! (${err})");
+        if(callback != null)
+          callback();
       });
   }
   
