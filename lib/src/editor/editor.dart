@@ -323,8 +323,25 @@ class Editor {
           ctx, tile.sprite.id,
           tile.sprite.posX.round(), tile.sprite.posY.round()
         );
+        
+        // add pending strokes to be drawn around this tile if solid
+        if(tile.solid) {
+          int
+            x = (tile.sprite.posX * Sprite.scaledSpriteSize).round(),
+            y = (tile.sprite.posY * Sprite.scaledSpriteSize).round();
+          
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + Sprite.scaledSpriteSize, y);
+          ctx.lineTo(x + Sprite.scaledSpriteSize, y + Sprite.scaledSpriteSize);
+          ctx.lineTo(x, y + Sprite.scaledSpriteSize);
+          ctx.lineTo(x, y);
+        }
       }
     }
+    
+    // draw the strokes around the solid tiles
+    ctx.setStrokeColorRgb(255, 0, 0, 0.9);
+    ctx.stroke();
     
     //   to handle properties like "solid"
     List<List<List<Map>>> jsonMap = [];
