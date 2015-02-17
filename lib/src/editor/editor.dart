@@ -92,10 +92,14 @@ class Editor {
         int layer = int.parse((querySelector("[name='layer']:checked") as RadioButtonInputElement).value);
         bool solid = (querySelector("#solid") as CheckboxInputElement).checked;
         
-        Main.world.map[y][x][layer] = new Tile(
-          solid,
-          new Sprite.int(selectedTile, x, y)
-        );
+        if(selectedTile == 98) {
+          Main.world.map[y][x][layer] = null;
+        } else {
+          Main.world.map[y][x][layer] = new Tile(
+            solid,
+            new Sprite.int(selectedTile, x, y)
+          );
+        }
         
         updateMap();
       };
@@ -287,6 +291,9 @@ class Editor {
   }
   
   static void updateMap() {
+    if(Main.world.map.length == 0 || Main.world.map[0].length == 0)
+      return;
+    
     canvasHeight = Main.world.map.length * Sprite.scaledSpriteSize;
     canvasWidth = Main.world.map[0].length * Sprite.scaledSpriteSize;
     
