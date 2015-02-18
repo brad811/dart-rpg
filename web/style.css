@@ -72,6 +72,14 @@ body {
   float: left;
 }
 
+#warps_container input {
+  width: 30px;
+}
+
+#warps_container td {
+  text-align: center;
+}
+
 #size_buttons_container {
   float: right;
 }
@@ -87,5 +95,3 @@ textarea {
   height: 60px;
   width: 490px;
 }
-
-

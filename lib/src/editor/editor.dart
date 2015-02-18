@@ -9,6 +9,7 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
+import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 class Editor {
@@ -16,8 +17,8 @@ class Editor {
   static CanvasElement c, sc, ssc;
   static CanvasRenderingContext2D ctx, sctx, ssctx;
   static DivElement
-    mapTab, charactersTab, warpsTab,
-    mapTabHeader, charactersTabHeader, warpsTabHeader;
+    mapTab, charactersTab, warpsTab, signsTab,
+    mapTabHeader, charactersTabHeader, warpsTabHeader, signsTabHeader;
   
   static int
     canvasWidth = 100,
@@ -25,6 +26,8 @@ class Editor {
   
   static List<List<Tile>> renderList;
   static int selectedTile;
+  
+  static List<WarpTile> warps = [];
   
   static void init() {
     c = querySelector('#editor_main_canvas');
@@ -55,23 +58,55 @@ class Editor {
     Main.world.loadMap(() {
       setUpTabs();
       setUpSpritePicker();
-      setUpSizeButtons();
+      setUpMapSizeButtons();
+      setUpWarpsTab();
       updateMap();
     });
+  }
+  
+  static void setUpWarpsTab() {
+    querySelector("#add_warp_button").onClick.listen((MouseEvent e) {
+      warps.add( new WarpTile(false, new Sprite.int(0, 0, 0), 0, 0) );
+      updateWarpsTable();
+    });
+  }
+  
+  static void updateWarpsTable() {
+    String warpsHtml;
+    warpsHtml = "<table>"+
+      "  <tr>"+
+      "    <td>Num</td><td>X</td><td>Y</td><td>Dest X</td><td>Dest Y</td>"+
+      "  </tr>";
+    for(int i=0; i<warps.length; i++) {
+      warpsHtml +=
+        "<tr>"+
+        "  <td>${i}</td>"+
+        "  <td><input type='text' value='${ warps[i].sprite.posX.round() }' /></td>"+
+        "  <td><input type='text' value='${ warps[i].sprite.posY.round() }' /></td>"+
+        "  <td><input type='text' value='${ warps[i].destX }' /></td>"+
+        "  <td><input type='text' value='${ warps[i].destY }' /></td>"+
+        "</tr>";
+    }
+    warpsHtml += "</table>";
+    querySelector("#warps_container").innerHtml = warpsHtml;
+    updateMap();
   }
   
   static void setUpTabs() {
     mapTab = querySelector('#map_tab');
     charactersTab = querySelector('#characters_tab');
     warpsTab = querySelector('#warps_tab');
+    signsTab = querySelector('#signs_tab');
     
     mapTab.style.display = "none";
     charactersTab.style.display = "none";
     warpsTab.style.display = "none";
+    signsTab.style.display = "none";
     
     mapTabHeader = querySelector('#map_tab_header');
     charactersTabHeader = querySelector('#characters_tab_header');
     warpsTabHeader = querySelector('#warps_tab_header');
+    signsTabHeader = querySelector('#signs_tab_header');
     
     mapTabHeader.onClick.listen((MouseEvent e) {
       mapTab.style.display = "block";
@@ -82,6 +117,9 @@ class Editor {
       
       warpsTab.style.display = "none";
       warpsTabHeader.style.backgroundColor = "";
+      
+      signsTab.style.display = "none";
+      signsTabHeader.style.backgroundColor = "";
     });
     
     charactersTabHeader.onClick.listen((MouseEvent e) {
@@ -93,6 +131,9 @@ class Editor {
       
       warpsTab.style.display = "none";
       warpsTabHeader.style.backgroundColor = "";
+      
+      signsTab.style.display = "none";
+      signsTabHeader.style.backgroundColor = "";
     });
     
     warpsTabHeader.onClick.listen((MouseEvent e) {
@@ -104,6 +145,23 @@ class Editor {
       
       warpsTab.style.display = "block";
       warpsTabHeader.style.backgroundColor = "#eeeeee";
+      
+      signsTab.style.display = "none";
+      signsTabHeader.style.backgroundColor = "";
+    });
+    
+    signsTabHeader.onClick.listen((MouseEvent e) {
+      mapTab.style.display = "none";
+      mapTabHeader.style.backgroundColor = "";
+      
+      charactersTab.style.display = "none";
+      charactersTabHeader.style.backgroundColor = "";
+      
+      warpsTab.style.display = "none";
+      warpsTabHeader.style.backgroundColor = "";
+      
+      signsTab.style.display = "block";
+      signsTabHeader.style.backgroundColor = "#eeeeee";
     });
   }
   
@@ -173,7 +231,7 @@ class Editor {
       });
   }
   
-  static void setUpSizeButtons() {
+  static void setUpMapSizeButtons() {
     // size x down button
     querySelector('#size_x_down_button').onClick.listen((MouseEvent e) {
       if(Main.world.map[0].length == 1)
