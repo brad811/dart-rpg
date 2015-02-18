@@ -242,7 +242,7 @@ class World {
     
     Interactable.chainGameEvents(character, characterGameEvents);
     
-    Main.player = new Player(15, 4);
+    Main.player = new Player(15, 8);
     Main.player.battler = new Battler(
       237, "Player",
       20, 4, 6, // health, attack, speed
@@ -254,7 +254,7 @@ class World {
     );
     
     // TODO: improve editor so less is needed in world class
-    //loadMap();
+    loadMap(() {});
   }
   
   void loadMap(Function callback) {
