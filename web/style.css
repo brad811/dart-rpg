@@ -1,3 +1,8 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
 .container {
 	width: 100%;
 }
@@ -31,21 +36,44 @@
   height: 256px;
   width: 532px;
   overflow-y: scroll;
-  position: absolute;
-  margin-left: 668px;
+  float: left;
+  margin-left: 10px;
 }
 
-.options {
+.tab_headers {
+  height: 30px;
+  float: left;
+  margin-left: 10px;
+}
+
+.tab_header {
+  float: left;
+  line-height: 30px;
+  padding: 0 10px 0 10px;
+  cursor: pointer;
+  background-color: #bbbbbb;
+}
+
+.tab_header:hover {
+  background-color: #ffffff;
+}
+
+.tab {
   background-color: #eee;
-  height: 248px;
-  width: 532px;
+  height: 228px;
+  width: 522px;
   overflow-y: scroll;
-  position: absolute;
-  margin-left: 668px;
-  margin-top: 266px;
   padding: 8px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
+  float: left;
+  margin-left: 10px;
+}
+
+.tab table {
+  float: left;
+}
+
+#size_buttons_container {
+  float: right;
 }
 
 #size_x_buttons button, #size_y_buttons button {
@@ -56,8 +84,8 @@
 
 textarea {
   margin-top: 8px;
-  width: 100%;
   height: 60px;
+  width: 490px;
 }
 
 

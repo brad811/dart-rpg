@@ -15,6 +15,9 @@ class Editor {
   static ImageElement spritesImage;
   static CanvasElement c, sc, ssc;
   static CanvasRenderingContext2D ctx, sctx, ssctx;
+  static DivElement
+    mapTab, charactersTab, warpsTab,
+    mapTabHeader, charactersTabHeader, warpsTabHeader;
   
   static int
     canvasWidth = 100,
@@ -50,9 +53,57 @@ class Editor {
     Main.world.characters = [];
     
     Main.world.loadMap(() {
+      setUpTabs();
       setUpSpritePicker();
       setUpSizeButtons();
       updateMap();
+    });
+  }
+  
+  static void setUpTabs() {
+    mapTab = querySelector('#map_tab');
+    charactersTab = querySelector('#characters_tab');
+    warpsTab = querySelector('#warps_tab');
+    
+    mapTab.style.display = "none";
+    charactersTab.style.display = "none";
+    warpsTab.style.display = "none";
+    
+    mapTabHeader = querySelector('#map_tab_header');
+    charactersTabHeader = querySelector('#characters_tab_header');
+    warpsTabHeader = querySelector('#warps_tab_header');
+    
+    mapTabHeader.onClick.listen((MouseEvent e) {
+      mapTab.style.display = "block";
+      mapTabHeader.style.backgroundColor = "#eeeeee";
+      
+      charactersTab.style.display = "none";
+      charactersTabHeader.style.backgroundColor = "";
+      
+      warpsTab.style.display = "none";
+      warpsTabHeader.style.backgroundColor = "";
+    });
+    
+    charactersTabHeader.onClick.listen((MouseEvent e) {
+      mapTab.style.display = "none";
+      mapTabHeader.style.backgroundColor = "";
+      
+      charactersTab.style.display = "block";
+      charactersTabHeader.style.backgroundColor = "#eeeeee";
+      
+      warpsTab.style.display = "none";
+      warpsTabHeader.style.backgroundColor = "";
+    });
+    
+    warpsTabHeader.onClick.listen((MouseEvent e) {
+      mapTab.style.display = "none";
+      mapTabHeader.style.backgroundColor = "";
+      
+      charactersTab.style.display = "none";
+      charactersTabHeader.style.backgroundColor = "";
+      
+      warpsTab.style.display = "block";
+      warpsTabHeader.style.backgroundColor = "#eeeeee";
     });
   }
   
