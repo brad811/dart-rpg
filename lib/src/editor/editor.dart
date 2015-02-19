@@ -509,12 +509,14 @@ class Editor {
         x = warp.sprite.posX.round(),
         y = warp.sprite.posY.round();
       
-      jsonMap[y][x][0]["warp"] = {
-        "posX": x,
-        "posY": y,
-        "destX": warp.destX,
-        "destY": warp.destY
-      };
+      if(jsonMap[y][x][0] != null) {
+        jsonMap[y][x][0]["warp"] = {
+          "posX": x,
+          "posY": y,
+          "destX": warp.destX,
+          "destY": warp.destY
+        };
+      }
     }
     
     TextAreaElement textarea = querySelector("textarea");
