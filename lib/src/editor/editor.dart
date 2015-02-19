@@ -536,6 +536,9 @@ class Editor {
       ctx.lineTo(x + Sprite.scaledSpriteSize, y + Sprite.scaledSpriteSize);
       ctx.lineTo(x, y + Sprite.scaledSpriteSize);
       ctx.lineTo(x, y);
+      
+      ctx.setFillColorRgb(r, g, b, 0.1);
+      ctx.fillRect(x, y, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
     }
     
     // draw the strokes around the warp tiles
