@@ -7,6 +7,7 @@ import 'dart:html';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
+import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
@@ -28,6 +29,7 @@ class Editor {
   static int selectedTile;
   
   static List<WarpTile> warps = [];
+  static List<Sign> signs = [];
   
   static void init() {
     c = querySelector('#editor_main_canvas');
@@ -60,8 +62,77 @@ class Editor {
       setUpSpritePicker();
       setUpMapSizeButtons();
       setUpWarpsTab();
+      setUpSignsTab();
       updateMap();
     });
+  }
+  
+  static void setUpSignsTab() {
+    querySelector("#add_sign_button").onClick.listen((MouseEvent e) {
+      signs.add( new Sign(false, new Sprite.int(0, 0, 0), 234, "Text") );
+      updateSignsTable();
+    });
+    
+    for(var y=0; y<Main.world.map.length; y++) {
+      for(var x=0; x<Main.world.map[y].length; x++) {
+        for(int layer in World.layers) {
+          if(Main.world.map[y][x][layer] is Sign) {
+            signs.add(Main.world.map[y][x][layer]);
+          }
+        }
+      }
+    }
+    
+    updateSignsTable();
+  }
+  
+  static void updateSignsTable() {
+    String signsHtml;
+    signsHtml = "<table>"+
+      "  <tr>"+
+      "    <td>Num</td><td>X</td><td>Y</td><td>Pic</td><td>Text</td>"+
+      "  </tr>";
+    for(int i=0; i<signs.length; i++) {
+      signsHtml +=
+        "<tr>"+
+        "  <td>${i}</td>"+
+        "  <td><input id='signs_posx_${i}' type='text' value='${ signs[i].sprite.posX.round() }' /></td>"+
+        "  <td><input id='signs_posy_${i}' type='text' value='${ signs[i].sprite.posY.round() }' /></td>"+
+        "  <td><input id='signs_pic_${i}' type='text' value='${ signs[i].textEvent.pictureSpriteId }' /></td>"+
+        "  <td><textarea id='signs_text_${i}' />${ signs[i].textEvent.text }</textarea></td>"+
+        "</tr>";
+    }
+    signsHtml += "</table>";
+    querySelector("#signs_container").innerHtml = signsHtml;
+    
+    Function inputChangeFunction = (Event e) {
+      for(int i=0; i<signs.length; i++) {
+        try {
+          signs[i] = new Sign(
+            false,
+            new Sprite(
+              0,
+              double.parse((querySelector('#signs_posx_${i}') as InputElement).value),
+              double.parse((querySelector('#signs_posy_${i}') as InputElement).value)
+            ),
+            int.parse((querySelector('#signs_pic_${i}') as InputElement).value),
+            (querySelector('#signs_text_${i}') as TextAreaElement).value
+          );
+        } catch(e) {
+          // could not update this sign
+        }
+      }
+      updateMap();
+    };
+    
+    for(int i=0; i<signs.length; i++) {
+      querySelector('#signs_posx_${i}').onInput.listen(inputChangeFunction);
+      querySelector('#signs_posy_${i}').onInput.listen(inputChangeFunction);
+      querySelector('#signs_pic_${i}').onInput.listen(inputChangeFunction);
+      querySelector('#signs_text_${i}').onInput.listen(inputChangeFunction);
+    }
+    
+    updateMap();
   }
   
   static void setUpWarpsTab() {
@@ -475,11 +546,14 @@ class Editor {
       }
     }
     
-    // draw red boxes around the solid tiles
+    // draw red boxes around solid tiles
     outlineTiles(solids, 255, 0, 0);
     
-    // draw green boxes around the warp tiles
+    // draw green boxes around warp tiles
     outlineTiles(warps, 0, 255, 0);
+    
+    // draw yellow boxes around sign tiles
+    outlineTiles(signs, 255, 255, 0);
     
     // build the json
     List<List<List<Map>>> jsonMap = [];
@@ -515,6 +589,21 @@ class Editor {
           "posY": y,
           "destX": warp.destX,
           "destY": warp.destY
+        };
+      }
+    }
+    
+    for(Sign sign in signs) {
+      int
+        x = sign.sprite.posX.round(),
+        y = sign.sprite.posY.round();
+      
+      if(jsonMap[y][x][0] != null) {
+        jsonMap[y][x][0]["sign"] = {
+          "posX": x,
+          "posY": y,
+          "pic": sign.textEvent.pictureSpriteId,
+          "text": sign.textEvent.text
         };
       }
     }

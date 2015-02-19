@@ -291,6 +291,13 @@ class World {
                 obj[y][x][k]['warp']['destX'],
                 obj[y][x][k]['warp']['destY']
               );
+            } else if(obj[y][x][k]['sign'] != null) {
+              map[y][x][k] = new Sign(
+                obj[y][x][k]['solid'],
+                new Sprite.int(obj[y][x][k]['id'], x, y),
+                obj[y][x][k]['sign']['pic'],
+                obj[y][x][k]['sign']['text']
+              );
             } else {
               map[y][x][k] = new Tile(
                 obj[y][x][k]['solid'],
