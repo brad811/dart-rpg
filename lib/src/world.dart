@@ -284,10 +284,19 @@ class World {
           map[y][x].add(null);
           
           if(obj[y][x][k] != null) {
-            map[y][x][k] = new Tile(
-              obj[y][x][k]['solid'],
-              new Sprite.int(obj[y][x][k]['id'], x, y)
-            );
+            if(obj[y][x][k]['warp'] != null) {
+              map[y][x][k] = new WarpTile(
+                obj[y][x][k]['solid'],
+                new Sprite.int(obj[y][x][k]['id'], x, y),
+                obj[y][x][k]['warp']['destX'],
+                obj[y][x][k]['warp']['destY']
+              );
+            } else {
+              map[y][x][k] = new Tile(
+                obj[y][x][k]['solid'],
+                new Sprite.int(obj[y][x][k]['id'], x, y)
+              );
+            }
           }
         }
       }

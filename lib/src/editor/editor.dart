@@ -69,6 +69,18 @@ class Editor {
       warps.add( new WarpTile(false, new Sprite.int(0, 0, 0), 0, 0) );
       updateWarpsTable();
     });
+    
+    for(var y=0; y<Main.world.map.length; y++) {
+      for(var x=0; x<Main.world.map[y].length; x++) {
+        for(int layer in World.layers) {
+          if(Main.world.map[y][x][layer] is WarpTile) {
+            warps.add(Main.world.map[y][x][layer]);
+          }
+        }
+      }
+    }
+    
+    updateWarpsTable();
   }
   
   static void updateWarpsTable() {
@@ -81,14 +93,36 @@ class Editor {
       warpsHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input type='text' value='${ warps[i].sprite.posX.round() }' /></td>"+
-        "  <td><input type='text' value='${ warps[i].sprite.posY.round() }' /></td>"+
-        "  <td><input type='text' value='${ warps[i].destX }' /></td>"+
-        "  <td><input type='text' value='${ warps[i].destY }' /></td>"+
+        "  <td><input id='warps_posx_${i}' type='text' value='${ warps[i].sprite.posX.round() }' /></td>"+
+        "  <td><input id='warps_posy_${i}' type='text' value='${ warps[i].sprite.posY.round() }' /></td>"+
+        "  <td><input id='warps_destx_${i}' type='text' value='${ warps[i].destX }' /></td>"+
+        "  <td><input id='warps_desty_${i}' type='text' value='${ warps[i].destY }' /></td>"+
         "</tr>";
     }
     warpsHtml += "</table>";
     querySelector("#warps_container").innerHtml = warpsHtml;
+    
+    Function inputChangeFunction = (Event e) {
+      for(int i=0; i<warps.length; i++) {
+        try {
+          warps[i].sprite.posX = double.parse((querySelector('#warps_posx_${i}') as InputElement).value);
+          warps[i].sprite.posY = double.parse((querySelector('#warps_posy_${i}') as InputElement).value);
+          warps[i].destX = int.parse((querySelector('#warps_destx_${i}') as InputElement).value);
+          warps[i].destY = int.parse((querySelector('#warps_desty_${i}') as InputElement).value);
+        } catch(e) {
+          // could not update this warp
+        }
+      }
+      updateMap();
+    };
+    
+    for(int i=0; i<warps.length; i++) {
+      querySelector('#warps_posx_${i}').onInput.listen(inputChangeFunction);
+      querySelector('#warps_posy_${i}').onInput.listen(inputChangeFunction);
+      querySelector('#warps_destx_${i}').onInput.listen(inputChangeFunction);
+      querySelector('#warps_desty_${i}').onInput.listen(inputChangeFunction);
+    }
+    
     updateMap();
   }
   
@@ -426,6 +460,8 @@ class Editor {
       character.render(renderList);
     }
     
+    List<Tile> solids = [];
+    
     for(List<Tile> layer in renderList) {
       for(Tile tile in layer) {
         renderStaticSprite(
@@ -433,26 +469,19 @@ class Editor {
           tile.sprite.posX.round(), tile.sprite.posY.round()
         );
         
-        // add pending strokes to be drawn around this tile if solid
-        if(tile.solid) {
-          int
-            x = (tile.sprite.posX * Sprite.scaledSpriteSize).round(),
-            y = (tile.sprite.posY * Sprite.scaledSpriteSize).round();
-          
-          ctx.moveTo(x, y);
-          ctx.lineTo(x + Sprite.scaledSpriteSize, y);
-          ctx.lineTo(x + Sprite.scaledSpriteSize, y + Sprite.scaledSpriteSize);
-          ctx.lineTo(x, y + Sprite.scaledSpriteSize);
-          ctx.lineTo(x, y);
-        }
+        // add solid tiles to a list to have boxes drawn around them
+        if(tile.solid)
+          solids.add(tile);
       }
     }
     
-    // draw the strokes around the solid tiles
-    ctx.setStrokeColorRgb(255, 0, 0, 0.9);
-    ctx.stroke();
+    // draw red boxes around the solid tiles
+    outlineTiles(solids, 255, 0, 0);
     
-    //   to handle properties like "solid"
+    // draw green boxes around the warp tiles
+    outlineTiles(warps, 0, 255, 0);
+    
+    // build the json
     List<List<List<Map>>> jsonMap = [];
     for(int y=0; y<Main.world.map.length; y++) {
       jsonMap.add([]);
@@ -475,9 +504,42 @@ class Editor {
       }
     }
     
+    for(WarpTile warp in warps) {
+      int
+        x = warp.sprite.posX.round(),
+        y = warp.sprite.posY.round();
+      
+      jsonMap[y][x][0]["warp"] = {
+        "posX": x,
+        "posY": y,
+        "destX": warp.destX,
+        "destY": warp.destY
+      };
+    }
+    
     TextAreaElement textarea = querySelector("textarea");
     textarea.value = JSON.encode(jsonMap);
-    textarea.select();
+    //textarea.select();
+  }
+  
+  static void outlineTiles(List<Tile> tiles, int r, int g, int b) {
+    ctx.beginPath();
+    for(Tile tile in tiles) {
+      int
+        x = (tile.sprite.posX * Sprite.scaledSpriteSize).round(),
+        y = (tile.sprite.posY * Sprite.scaledSpriteSize).round();
+      
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + Sprite.scaledSpriteSize, y);
+      ctx.lineTo(x + Sprite.scaledSpriteSize, y + Sprite.scaledSpriteSize);
+      ctx.lineTo(x, y + Sprite.scaledSpriteSize);
+      ctx.lineTo(x, y);
+    }
+    
+    // draw the strokes around the warp tiles
+    ctx.closePath();
+    ctx.setStrokeColorRgb(r, g, b, 0.9);
+    ctx.stroke();
   }
   
   static void selectSprite(int id) {
