@@ -5,75 +5,79 @@
     <link rel='stylesheet' href='style.css' type='text/css' />
   </head>
   <body>
-    <div class="container">
-      <div class="editor_container">
-        <canvas id="editor_main_canvas" width="640" height="512"></canvas>
-      </div>
-      <div class="sprite_container">
-        <canvas id="editor_sprite_canvas" width="1024" height="1024"></canvas>
-      </div>
-      
-      <div class="tab_headers">
-        <div class="tab_header" id="map_tab_header">Map</div>
-        <div class="tab_header" id="characters_tab_header">Characters</div>
-        <div class="tab_header" id="warps_tab_header">Warps</div>
-        <div class="tab_header" id="signs_tab_header">Signs</div>
-      </div>
-      
-      <div id="map_tab" class="tab">
-        <table>
-          <tr>
-            <td>
-              <canvas id="editor_selected_sprite_canvas" width="32" height="32"></canvas>
-            </td>
-            <td>
-              <input type="radio" name="layer" value="0" checked="checked" /> Ground<br>
-              <input type="radio" name="layer" value="1" /> Below<br>
-              <input type="radio" name="layer" value="2" /> Player<br>
-              <input type="radio" name="layer" value="3" /> Above<br>
-            </td>
-            <td>
-              <input type="checkbox" id="solid">Solid</input>
-            </td>
-          </tr>
-        </table>
-        
-        <div id="size_buttons_container">
-          <div id="size_x_buttons">
-            Size X:
-            <button id="size_x_up_button_pre">+</button>
-            <button id="size_x_down_button_pre">-</button>
-            - - - -
-            <button id="size_x_down_button">-</button>
-            <button id="size_x_up_button">+</button>
+    <table id="container">
+      <tr>
+        <td id="left_half">
+          <canvas id="editor_main_canvas" width="640" height="512"></canvas>
+        </td>
+        <td id="right_half">
+          <div class="sprite_container">
+            <canvas id="editor_sprite_canvas" width="1024" height="1024"></canvas>
           </div>
-          <div id="size_y_buttons">
-            Size Y:
-            <button id="size_y_up_button_pre">+</button>
-            <button id="size_y_down_button_pre">-</button>
-            - - - -
-            <button id="size_y_down_button">-</button>
-            <button id="size_y_up_button">+</button>
+          
+          <div class="tab_headers">
+            <div class="tab_header" id="map_tab_header">Map</div>
+            <div class="tab_header" id="characters_tab_header">Characters</div>
+            <div class="tab_header" id="warps_tab_header">Warps</div>
+            <div class="tab_header" id="signs_tab_header">Signs</div>
           </div>
-        </div>
-        
-        <textarea></textarea>
-      </div>
-      
-      <div id="characters_tab" class="tab">
-        Characters go here.
-      </div>
-      
-      <div id="warps_tab" class="tab">
-        <button id="add_warp_button">Add new warp</button>
-        <div id="warps_container"></div>
-      </div>
-      
-      <div id="signs_tab" class="tab">
-        <button id="add_sign_button">Add new sign</button>
-        <div id="signs_container"></div>
-      </div>
-    </div>
+          
+          <div id="map_tab" class="tab">
+            <table>
+              <tr>
+                <td>
+                  <canvas id="editor_selected_sprite_canvas" width="32" height="32"></canvas>
+                </td>
+                <td>
+                  <input type="radio" name="layer" value="0" checked="checked" /> Ground<br>
+                  <input type="radio" name="layer" value="1" /> Below<br>
+                  <input type="radio" name="layer" value="2" /> Player<br>
+                  <input type="radio" name="layer" value="3" /> Above<br>
+                </td>
+                <td>
+                  <input type="checkbox" id="solid">Solid</input>
+                </td>
+              </tr>
+            </table>
+            
+            <div id="size_buttons_container">
+              <div id="size_x_buttons">
+                Size X:
+                <button id="size_x_up_button_pre">+</button>
+                <button id="size_x_down_button_pre">-</button>
+                - - - -
+                <button id="size_x_down_button">-</button>
+                <button id="size_x_up_button">+</button>
+              </div>
+              <div id="size_y_buttons">
+                Size Y:
+                <button id="size_y_up_button_pre">+</button>
+                <button id="size_y_down_button_pre">-</button>
+                - - - -
+                <button id="size_y_down_button">-</button>
+                <button id="size_y_up_button">+</button>
+              </div>
+            </div>
+            
+            <textarea></textarea>
+          </div>
+          
+          <div id="characters_tab" class="tab">
+            Characters go here.
+          </div>
+          
+          <div id="warps_tab" class="tab">
+            <button id="add_warp_button">Add new warp</button>
+            <div id="warps_container"></div>
+          </div>
+          
+          <div id="signs_tab" class="tab">
+            <button id="add_sign_button">Add new sign</button>
+            <div id="signs_container"></div>
+          </div>
+        </td>
+      </tr>
+    </table>
 
     <script type="application/dart" src="editor.dart"></script>
     <script src="packages/browser/dart.js"></script>

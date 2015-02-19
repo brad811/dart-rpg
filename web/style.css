@@ -16,12 +16,14 @@ body {
 
 /* Editor */
 
-.editor_container {
-  width: 659px;
-  height: 532px;
+#left_half {
   background-color: #ddddff;
   float: left;
   overflow: scroll;
+}
+
+#right_half {
+  vertical-align: top;
 }
 
 #editor_main_canvas {
