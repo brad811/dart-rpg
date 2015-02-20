@@ -18,8 +18,8 @@ class Editor {
   static CanvasElement c, sc, ssc;
   static CanvasRenderingContext2D ctx, sctx, ssctx;
   static DivElement
-    mapTab, charactersTab, warpsTab, signsTab,
-    mapTabHeader, charactersTabHeader, warpsTabHeader, signsTabHeader;
+    tilesTab, charactersTab, warpsTab, signsTab,
+    tilesTabHeader, charactersTabHeader, warpsTabHeader, signsTabHeader;
   
   static int
     canvasWidth = 100,
@@ -53,25 +53,23 @@ class Editor {
   static void start() {
     Main.player = new Player(0, 0);
     
-    Main.world = new World();
-    Main.world.map = [];
-    Main.world.characters = [];
-    
-    Main.world.loadMap(() {
-      setUpTabs();
-      setUpSpritePicker();
-      setUpMapSizeButtons();
-      setUpWarpsTab();
-      setUpSignsTab();
-      updateMap();
-      
-      Function resizeFunction = (Event e) {
-        querySelector('#left_half').style.width = "${window.innerWidth - 580}px";
-        querySelector('#left_half').style.height = "${window.innerHeight - 30}px";
-      };
-      
-      window.onResize.listen(resizeFunction);
-      resizeFunction(null);
+    Main.world = new World(() {
+      Main.world.loadMaps(() {
+        setUpTabs();
+        setUpSpritePicker();
+        setUpMapSizeButtons();
+        setUpWarpsTab();
+        setUpSignsTab();
+        updateMap();
+        
+        Function resizeFunction = (Event e) {
+          querySelector('#left_half').style.width = "${window.innerWidth - 580}px";
+          querySelector('#left_half').style.height = "${window.innerHeight - 30}px";
+        };
+        
+        window.onResize.listen(resizeFunction);
+        resizeFunction(null);
+      });
     });
   }
   
@@ -81,11 +79,13 @@ class Editor {
       updateSignsTable();
     });
     
-    for(var y=0; y<Main.world.map.length; y++) {
-      for(var x=0; x<Main.world.map[y].length; x++) {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    
+    for(var y=0; y<mapTiles.length; y++) {
+      for(var x=0; x<mapTiles[y].length; x++) {
         for(int layer in World.layers) {
-          if(Main.world.map[y][x][layer] is Sign) {
-            signs.add(Main.world.map[y][x][layer]);
+          if(mapTiles[y][x][layer] is Sign) {
+            signs.add(mapTiles[y][x][layer]);
           }
         }
       }
@@ -149,11 +149,13 @@ class Editor {
       updateWarpsTable();
     });
     
-    for(var y=0; y<Main.world.map.length; y++) {
-      for(var x=0; x<Main.world.map[y].length; x++) {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    
+    for(var y=0; y<mapTiles.length; y++) {
+      for(var x=0; x<mapTiles[y].length; x++) {
         for(int layer in World.layers) {
-          if(Main.world.map[y][x][layer] is WarpTile) {
-            warps.add(Main.world.map[y][x][layer]);
+          if(mapTiles[y][x][layer] is WarpTile) {
+            warps.add(mapTiles[y][x][layer]);
           }
         }
       }
@@ -206,24 +208,24 @@ class Editor {
   }
   
   static void setUpTabs() {
-    mapTab = querySelector('#map_tab');
+    tilesTab = querySelector('#tiles_tab');
     charactersTab = querySelector('#characters_tab');
     warpsTab = querySelector('#warps_tab');
     signsTab = querySelector('#signs_tab');
     
-    mapTab.style.display = "none";
+    tilesTab.style.display = "none";
     charactersTab.style.display = "none";
     warpsTab.style.display = "none";
     signsTab.style.display = "none";
     
-    mapTabHeader = querySelector('#map_tab_header');
+    tilesTabHeader = querySelector('#tiles_tab_header');
     charactersTabHeader = querySelector('#characters_tab_header');
     warpsTabHeader = querySelector('#warps_tab_header');
     signsTabHeader = querySelector('#signs_tab_header');
     
-    mapTabHeader.onClick.listen((MouseEvent e) {
-      mapTab.style.display = "block";
-      mapTabHeader.style.backgroundColor = "#eeeeee";
+    tilesTabHeader.onClick.listen((MouseEvent e) {
+      tilesTab.style.display = "block";
+      tilesTabHeader.style.backgroundColor = "#eeeeee";
       
       charactersTab.style.display = "none";
       charactersTabHeader.style.backgroundColor = "";
@@ -236,8 +238,8 @@ class Editor {
     });
     
     charactersTabHeader.onClick.listen((MouseEvent e) {
-      mapTab.style.display = "none";
-      mapTabHeader.style.backgroundColor = "";
+      tilesTab.style.display = "none";
+      tilesTabHeader.style.backgroundColor = "";
       
       charactersTab.style.display = "block";
       charactersTabHeader.style.backgroundColor = "#eeeeee";
@@ -250,8 +252,8 @@ class Editor {
     });
     
     warpsTabHeader.onClick.listen((MouseEvent e) {
-      mapTab.style.display = "none";
-      mapTabHeader.style.backgroundColor = "";
+      tilesTab.style.display = "none";
+      tilesTabHeader.style.backgroundColor = "";
       
       charactersTab.style.display = "none";
       charactersTabHeader.style.backgroundColor = "";
@@ -264,8 +266,8 @@ class Editor {
     });
     
     signsTabHeader.onClick.listen((MouseEvent e) {
-      mapTab.style.display = "none";
-      mapTabHeader.style.backgroundColor = "";
+      tilesTab.style.display = "none";
+      tilesTabHeader.style.backgroundColor = "";
       
       charactersTab.style.display = "none";
       charactersTabHeader.style.backgroundColor = "";
@@ -304,20 +306,22 @@ class Editor {
       
       selectSprite(Tile.GROUND);
       
+      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+      
       Function tileChange = (MouseEvent e) {
         int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
         int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
         
-        if(y >= Main.world.map.length || x >= Main.world.map[0].length)
+        if(y >= mapTiles.length || x >= mapTiles[0].length)
           return;
         
         int layer = int.parse((querySelector("[name='layer']:checked") as RadioButtonInputElement).value);
         bool solid = (querySelector("#solid") as CheckboxInputElement).checked;
         
         if(selectedTile == 98) {
-          Main.world.map[y][x][layer] = null;
+          mapTiles[y][x][layer] = null;
         } else {
-          Main.world.map[y][x][layer] = new Tile(
+          mapTiles[y][x][layer] = new Tile(
             solid,
             new Sprite.int(selectedTile, x, y)
           );
@@ -345,18 +349,20 @@ class Editor {
   }
   
   static void setUpMapSizeButtons() {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    
     // size x down button
     querySelector('#size_x_down_button').onClick.listen((MouseEvent e) {
-      if(Main.world.map[0].length == 1)
+      if(mapTiles[0].length == 1)
         return;
       
-      for(int y=0; y<Main.world.map.length; y++) {
-        Main.world.map[y].removeLast();
+      for(int y=0; y<mapTiles.length; y++) {
+        mapTiles[y].removeLast();
         
-        for(int x=0; x<Main.world.map[y].length; x++) {
-          for(int k=0; k<Main.world.map[y][x].length; k++) {
-            if(Main.world.map[y][x][k] is Tile) {
-              Main.world.map[y][x][k].sprite.posX = x * 1.0;
+        for(int x=0; x<mapTiles[y].length; x++) {
+          for(int k=0; k<mapTiles[y][x].length; k++) {
+            if(mapTiles[y][x][k] is Tile) {
+              mapTiles[y][x][k].sprite.posX = x * 1.0;
             }
           }
         }
@@ -367,17 +373,17 @@ class Editor {
      
     // size x up button
     querySelector('#size_x_up_button').onClick.listen((MouseEvent e) {
-      if(Main.world.map.length == 0)
-        Main.world.map.add([]);
+      if(mapTiles.length == 0)
+        mapTiles.add([]);
       
-      int width = Main.world.map[0].length;
+      int width = mapTiles[0].length;
       
-      for(int y=0; y<Main.world.map.length; y++) {
+      for(int y=0; y<mapTiles.length; y++) {
         List<Tile> array = [];
         for(int k=0; k<World.layers.length; k++) {
           array.add(null);
         }
-        Main.world.map[y].add(array);
+        mapTiles[y].add(array);
       }
       
       updateMap();
@@ -385,10 +391,10 @@ class Editor {
     
     // size y down button
     querySelector('#size_y_down_button').onClick.listen((MouseEvent e) {
-      if(Main.world.map.length == 1)
+      if(mapTiles.length == 1)
         return;
       
-      Main.world.map.removeLast();
+      mapTiles.removeLast();
       
       updateMap();
     });
@@ -397,9 +403,9 @@ class Editor {
     querySelector('#size_y_up_button').onClick.listen((MouseEvent e) {
       List<List<Tile>> rowArray = [];
       
-      int height = Main.world.map.length;
+      int height = mapTiles.length;
       
-      for(int x=0; x<Main.world.map[0].length; x++) {
+      for(int x=0; x<mapTiles[0].length; x++) {
         List<Tile> array = [];
         for(int k=0; k<World.layers.length; k++) {
           array.add(null);
@@ -407,7 +413,7 @@ class Editor {
         rowArray.add(array);
       }
       
-      Main.world.map.add(rowArray);
+      mapTiles.add(rowArray);
       
       updateMap();
     });
@@ -418,16 +424,16 @@ class Editor {
     
     // size x down button pre
     querySelector('#size_x_down_button_pre').onClick.listen((MouseEvent e) {
-      if(Main.world.map[0].length == 1)
+      if(mapTiles[0].length == 1)
         return;
       
-      for(int i=0; i<Main.world.map.length; i++) {
-        Main.world.map[i] = Main.world.map[i].sublist(1);
+      for(int i=0; i<mapTiles.length; i++) {
+        mapTiles[i] = mapTiles[i].sublist(1);
         
-        for(int j=0; j<Main.world.map[i].length; j++) {
-          for(int k=0; k<Main.world.map[i][j].length; k++) {
-            if(Main.world.map[i][j][k] is Tile) {
-              Main.world.map[i][j][k].sprite.posX = j * 1.0;
+        for(int j=0; j<mapTiles[i].length; j++) {
+          for(int k=0; k<mapTiles[i][j].length; k++) {
+            if(mapTiles[i][j][k] is Tile) {
+              mapTiles[i][j][k].sprite.posX = j * 1.0;
             }
           }
         }
@@ -438,24 +444,24 @@ class Editor {
      
     // size x up button pre
     querySelector('#size_x_up_button_pre').onClick.listen((MouseEvent e) {
-      if(Main.world.map.length == 0)
-        Main.world.map.add([]);
+      if(mapTiles.length == 0)
+        mapTiles.add([]);
       
-      for(int y=0; y<Main.world.map.length; y++) {
+      for(int y=0; y<mapTiles.length; y++) {
         List<Tile> array = [];
         for(int k=0; k<World.layers.length; k++) {
           array.add(null);
         }
-        var temp = Main.world.map[y];
+        var temp = mapTiles[y];
         temp.insert(0, array);
-        Main.world.map[y] = temp;
+        mapTiles[y] = temp;
       }
       
-      for(int y=0; y<Main.world.map.length; y++) {
-        for(int x=0; x<Main.world.map[y].length; x++) {
-          for(int k=0; k<Main.world.map[y][x].length; k++) {
-            if(Main.world.map[y][x][k] is Tile) {
-              Main.world.map[y][x][k].sprite.posX = x * 1.0;
+      for(int y=0; y<mapTiles.length; y++) {
+        for(int x=0; x<mapTiles[y].length; x++) {
+          for(int k=0; k<mapTiles[y][x].length; k++) {
+            if(mapTiles[y][x][k] is Tile) {
+              mapTiles[y][x][k].sprite.posX = x * 1.0;
             }
           }
         }
@@ -466,16 +472,16 @@ class Editor {
     
     // size y down button pre
     querySelector('#size_y_down_button_pre').onClick.listen((MouseEvent e) {
-      if(Main.world.map.length == 1)
+      if(mapTiles.length == 1)
         return;
       
-      Main.world.map.removeAt(0);
+      mapTiles.removeAt(0);
       
-      for(int y=0; y<Main.world.map.length; y++) {
-        for(int x=0; x<Main.world.map[0].length; x++) {
-          for(int k=0; k<Main.world.map[0][0].length; k++) {
-            if(Main.world.map[y][x][k] is Tile) {
-              Main.world.map[y][x][k].sprite.posY = y * 1.0;
+      for(int y=0; y<mapTiles.length; y++) {
+        for(int x=0; x<mapTiles[0].length; x++) {
+          for(int k=0; k<mapTiles[0][0].length; k++) {
+            if(mapTiles[y][x][k] is Tile) {
+              mapTiles[y][x][k].sprite.posY = y * 1.0;
             }
           }
         }
@@ -488,7 +494,7 @@ class Editor {
     querySelector('#size_y_up_button_pre').onClick.listen((MouseEvent e) {
       List<List<Tile>> rowArray = [];
       
-      for(int i=0; i<Main.world.map[0].length; i++) {
+      for(int i=0; i<mapTiles[0].length; i++) {
         List<Tile> array = [];
         for(int j=0; j<World.layers.length; j++) {
           array.add(null);
@@ -496,13 +502,13 @@ class Editor {
         rowArray.add(array);
       }
       
-      Main.world.map.insert(0, rowArray);
+      mapTiles.insert(0, rowArray);
       
-      for(int y=0; y<Main.world.map.length; y++) {
-        for(int x=0; x<Main.world.map[0].length; x++) {
-          for(int k=0; k<Main.world.map[0][0].length; k++) {
-            if(Main.world.map[y][x][k] is Tile) {
-              Main.world.map[y][x][k].sprite.posY = y * 1.0;
+      for(int y=0; y<mapTiles.length; y++) {
+        for(int x=0; x<mapTiles[0].length; x++) {
+          for(int k=0; k<mapTiles[0][0].length; k++) {
+            if(mapTiles[y][x][k] is Tile) {
+              mapTiles[y][x][k].sprite.posY = y * 1.0;
             }
           }
         }
@@ -513,11 +519,14 @@ class Editor {
   }
   
   static void updateMap() {
-    if(Main.world.map.length == 0 || Main.world.map[0].length == 0)
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    List<Character> characters = Main.world.maps[Main.world.curMap].characters;
+    
+    if(mapTiles.length == 0 || mapTiles[0].length == 0)
       return;
     
-    canvasHeight = Main.world.map.length * Sprite.scaledSpriteSize;
-    canvasWidth = Main.world.map[0].length * Sprite.scaledSpriteSize;
+    canvasHeight = mapTiles.length * Sprite.scaledSpriteSize;
+    canvasWidth = mapTiles[0].length * Sprite.scaledSpriteSize;
     
     c.width = canvasWidth;
     c.height = canvasHeight;
@@ -535,7 +544,7 @@ class Editor {
     
     renderWorld(renderList);
     
-    for(Character character in Main.world.characters) {
+    for(Character character in characters) {
       character.render(renderList);
     }
     
@@ -565,18 +574,18 @@ class Editor {
     
     // build the json
     List<List<List<Map>>> jsonMap = [];
-    for(int y=0; y<Main.world.map.length; y++) {
+    for(int y=0; y<mapTiles.length; y++) {
       jsonMap.add([]);
-      for(int x=0; x<Main.world.map[0].length; x++) {
+      for(int x=0; x<mapTiles[0].length; x++) {
         jsonMap[y].add([]);
-        for(int k=0; k<Main.world.map[0][0].length; k++) {
-          if(Main.world.map[y][x][k] is Tile) {
-            if(Main.world.map[y][x][k].sprite.id == -1) {
+        for(int k=0; k<mapTiles[0][0].length; k++) {
+          if(mapTiles[y][x][k] is Tile) {
+            if(mapTiles[y][x][k].sprite.id == -1) {
               jsonMap[y][x].add(null);
             } else {
               jsonMap[y][x].add({
-                "id": Main.world.map[y][x][k].sprite.id,
-                "solid": Main.world.map[y][x][k].solid
+                "id": mapTiles[y][x][k].sprite.id,
+                "solid": mapTiles[y][x][k].solid
               });
             }
           } else {
@@ -668,12 +677,14 @@ class Editor {
   }
   
   static void renderWorld(List<List<Tile>> renderList) {
-    for(var y=0; y<Main.world.map.length; y++) {
-      for(var x=0; x<Main.world.map[y].length; x++) {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    
+    for(var y=0; y<mapTiles.length; y++) {
+      for(var x=0; x<mapTiles[y].length; x++) {
         for(int layer in World.layers) {
-          if(Main.world.map[y][x][layer] is Tile) {
+          if(mapTiles[y][x][layer] is Tile) {
             renderList[layer].add(
-              Main.world.map[y][x][layer]
+              mapTiles[y][x][layer]
             );
           }
         }

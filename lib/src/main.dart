@@ -43,9 +43,6 @@ class Main {
   }
   
   static void start() {
-    world = new World();
-    focusObject = player;
-
     document.onKeyDown.listen((KeyboardEvent e) {
       if (!Input.keys.contains(e.keyCode))
         Input.keys.add(e.keyCode);
@@ -55,7 +52,10 @@ class Main {
       Input.keys.remove(e.keyCode);
     });
     
-    tick();
+    world = new World(() {
+      focusObject = player;
+      tick();
+    });
   }
   
   static void tick() {
@@ -75,7 +75,7 @@ class Main {
       player.render(renderList);
       world.render(renderList);
       
-      for(Character character in world.characters) {
+      for(Character character in world.maps[world.curMap].characters) {
         character.render(renderList);
         
         if(curTimeScale > 0.0) {

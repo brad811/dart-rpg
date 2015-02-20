@@ -89,16 +89,16 @@ class Character implements InteractableInterface, InputHandler {
       
       if(motionDirection == Character.LEFT) {
         motionX = -motionAmount;
-        Main.world.map[mapY][mapX-1][World.LAYER_GROUND].enter();
+        Main.world.maps[Main.world.curMap].tiles[mapY][mapX-1][World.LAYER_GROUND].enter();
       } else if(motionDirection == Character.RIGHT) {
         motionX = motionAmount;
-        Main.world.map[mapY][mapX+1][World.LAYER_GROUND].enter();
+        Main.world.maps[Main.world.curMap].tiles[mapY][mapX+1][World.LAYER_GROUND].enter();
       } else if(motionDirection == Character.UP) {
         motionY = -motionAmount;
-        Main.world.map[mapY-1][mapX][World.LAYER_GROUND].enter();
+        Main.world.maps[Main.world.curMap].tiles[mapY-1][mapX][World.LAYER_GROUND].enter();
       } else if(motionDirection == Character.DOWN) {
         motionY = motionAmount;
-        Main.world.map[mapY+1][mapX][World.LAYER_GROUND].enter();
+        Main.world.maps[Main.world.curMap].tiles[mapY+1][mapX][World.LAYER_GROUND].enter();
       }
     }
   }
