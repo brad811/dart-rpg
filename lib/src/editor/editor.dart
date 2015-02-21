@@ -22,6 +22,8 @@ class Editor {
   static Map<String, DivElement> tabDivs = {};
   static Map<String, DivElement> tabHeaderDivs = {};
   
+  static Map<String, StreamSubscription> listeners = {};
+  
   static int
     canvasWidth = 100,
     canvasHeight = 100;
@@ -29,8 +31,8 @@ class Editor {
   static List<List<Tile>> renderList;
   static int selectedTile;
   
-  static List<WarpTile> warps = [];
-  static List<Sign> signs = [];
+  static Map<String, List<WarpTile>> warps = {};
+  static Map<String, List<Sign>> signs = {};
   
   static void init() {
     c = querySelector('#editor_main_canvas');
@@ -58,11 +60,12 @@ class Editor {
       Main.world.loadMaps(() {
         setUpTabs();
         setUpSpritePicker();
+        setUpMapsTab();
         setUpMapSizeButtons();
-        updateMapsTable();
         setUpWarpsTab();
         setUpSignsTab();
-        updateMap();
+        
+        updateAllTables();
         
         Function resizeFunction = (Event e) {
           querySelector('#left_half').style.width = "${window.innerWidth - 580}px";
@@ -73,6 +76,13 @@ class Editor {
         resizeFunction(null);
       });
     });
+  }
+  
+  static void updateAllTables() {
+    updateMapsTable();
+    updateWarpsTable();
+    updateSignsTable();
+    setUpMapSizeButtons();
   }
   
   static void setUpTabs() {
@@ -97,6 +107,25 @@ class Editor {
     tabHeaderDivs[tabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
   }
   
+  static void setUpMapsTab() {
+    querySelector("#add_map_button").onClick.listen((MouseEvent e) {
+      List nulls = [];
+      for(int i=0; i<World.layers.length; i++)
+        nulls.add(null);
+      
+      Main.world.maps["new map"] = new GameMap(
+        "new map",
+        [ [ nulls ] ],
+        []
+      );
+      
+      warps["new map"] = [];
+      signs["new map"] = [];
+      
+      updateMapsTable();
+    });
+  }
+  
   static void updateMapsTable() {
     String mapsHtml;
     mapsHtml = "<table>"+
@@ -105,9 +134,13 @@ class Editor {
       "  </tr>";
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
+      mapsHtml += "<tr>";
+      if(Main.world.curMap != key)
+        mapsHtml += "  <td><button id='map_select_${i}'>${i}</button></td>";
+      else
+        mapsHtml += "  <td>${i}</td>";
+        
       mapsHtml +=
-        "<tr>"+
-        "  <td>${i}</td>"+
         "  <td><input id='maps_name_${i}' type='text' value='${ Main.world.maps[key].name }' /></td>"+
         "  <td>${ Main.world.maps[key].tiles[0].length }</td>"+
         "  <td>${ Main.world.maps[key].tiles.length }</td>"+
@@ -117,20 +150,128 @@ class Editor {
     mapsHtml += "</table>";
     querySelector("#maps_container").innerHtml = mapsHtml;
     
+    setMapSelectorButtonListeners();
+    
     Function inputChangeFunction = (Event e) {
       for(int i=0; i<Main.world.maps.length; i++) {
         String key = Main.world.maps.keys.elementAt(i);
         try {
-          Main.world.maps[key].name = (querySelector('#maps_name_${i}') as TextInputElement).value;
+          String newName = (querySelector('#maps_name_${i}') as TextInputElement).value;
+          Main.world.maps[key].name = newName;
+          
+          // if the map name has changed, move the key in the map to the new name
+          if(newName != key) {
+            Main.world.maps[newName] = Main.world.maps[key];
+            Main.world.maps.remove(key);
+            
+            warps[newName] = warps[key];
+            warps.remove(key);
+            
+            signs[newName] = signs[key];
+            signs.remove(key);
+            
+            if(Main.world.curMap == key)
+              Main.world.curMap = newName;
+          }
         } catch(e) {
           // could not update this map
+        }
+      }
+      
+      setMapSelectorButtonListeners();
+      updateMap();
+    };
+    
+    for(int i=0; i<Main.world.maps.length; i++) {
+      if(listeners["#maps_name_${i}"] != null)
+        listeners["#maps_name_${i}"].cancel();
+      
+      listeners["#maps_name_${i}"] = querySelector('#maps_name_${i}').onInput.listen(inputChangeFunction);
+    }
+    
+    updateMap();
+  }
+  
+  static void setMapSelectorButtonListeners() {
+    for(int i=0; i<Main.world.maps.length; i++) {
+      String key = Main.world.maps.keys.elementAt(i);
+      if(Main.world.curMap != key) {
+        if(listeners["#map_select_${i}"] != null)
+          listeners["#map_select_${i}"].cancel();
+        
+        listeners["#map_select_${i}"] = querySelector("#map_select_${i}").onClick.listen((MouseEvent e) {
+          Main.world.curMap = key;
+          updateAllTables();
+        });
+      }
+    }
+  }
+  
+  static void setUpWarpsTab() {
+    querySelector("#add_warp_button").onClick.listen((MouseEvent e) {
+      warps[Main.world.curMap].add( new WarpTile(false, new Sprite.int(0, 0, 0), 0, 0) );
+      updateWarpsTable();
+    });
+    
+    for(int i=0; i<Main.world.maps.length; i++) {
+      String key = Main.world.maps.keys.elementAt(i);
+      List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
+      warps[key] = [];
+      
+      for(var y=0; y<mapTiles.length; y++) {
+        for(var x=0; x<mapTiles[y].length; x++) {
+          for(int layer in World.layers) {
+            if(mapTiles[y][x][layer] is WarpTile) {
+              warps[key].add(mapTiles[y][x][layer]);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  static void updateWarpsTable() {
+    String warpsHtml;
+    warpsHtml = "<table>"+
+      "  <tr>"+
+      "    <td>Num</td><td>X</td><td>Y</td><td>Dest X</td><td>Dest Y</td>"+
+      "  </tr>";
+    for(int i=0; i<warps[Main.world.curMap].length; i++) {
+      warpsHtml +=
+        "<tr>"+
+        "  <td>${i}</td>"+
+        "  <td><input id='warps_posx_${i}' type='text' value='${ warps[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
+        "  <td><input id='warps_posy_${i}' type='text' value='${ warps[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
+        "  <td><input id='warps_destx_${i}' type='text' value='${ warps[Main.world.curMap][i].destX }' /></td>"+
+        "  <td><input id='warps_desty_${i}' type='text' value='${ warps[Main.world.curMap][i].destY }' /></td>"+
+        "</tr>";
+    }
+    warpsHtml += "</table>";
+    querySelector("#warps_container").innerHtml = warpsHtml;
+    
+    Function inputChangeFunction = (Event e) {
+      for(int i=0; i<warps[Main.world.curMap].length; i++) {
+        try {
+          warps[Main.world.curMap][i].sprite.posX = double.parse((querySelector('#warps_posx_${i}') as InputElement).value);
+          warps[Main.world.curMap][i].sprite.posY = double.parse((querySelector('#warps_posy_${i}') as InputElement).value);
+          warps[Main.world.curMap][i].destX = int.parse((querySelector('#warps_destx_${i}') as InputElement).value);
+          warps[Main.world.curMap][i].destY = int.parse((querySelector('#warps_desty_${i}') as InputElement).value);
+        } catch(e) {
+          // could not update this warp
         }
       }
       updateMap();
     };
     
-    for(int i=0; i<Main.world.maps.length; i++) {
-      querySelector('#maps_name_${i}').onInput.listen(inputChangeFunction);
+    for(int i=0; i<warps[Main.world.curMap].length; i++) {
+      List<String> attrs = ["posx", "posy", "destx", "desty"];
+      for(String attr in attrs) {
+        if(listeners["#warps_${attr}_${i}"] != null)
+          listeners["#warps_${attr}_${i}"].cancel();
+        
+        listeners["#warps_${attr}_${i}"] = 
+            querySelector('#warps_${attr}_${i}').onInput.listen(inputChangeFunction);
+      }
     }
     
     updateMap();
@@ -138,23 +279,25 @@ class Editor {
   
   static void setUpSignsTab() {
     querySelector("#add_sign_button").onClick.listen((MouseEvent e) {
-      signs.add( new Sign(false, new Sprite.int(0, 0, 0), 234, "Text") );
+      signs[Main.world.curMap].add( new Sign(false, new Sprite.int(0, 0, 0), 234, "Text") );
       updateSignsTable();
     });
     
-    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-    
-    for(var y=0; y<mapTiles.length; y++) {
-      for(var x=0; x<mapTiles[y].length; x++) {
-        for(int layer in World.layers) {
-          if(mapTiles[y][x][layer] is Sign) {
-            signs.add(mapTiles[y][x][layer]);
+    for(int i=0; i<Main.world.maps.length; i++) {
+      String key = Main.world.maps.keys.elementAt(i);
+      List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
+      signs[key] = [];
+      
+      for(var y=0; y<mapTiles.length; y++) {
+        for(var x=0; x<mapTiles[y].length; x++) {
+          for(int layer in World.layers) {
+            if(mapTiles[y][x][layer] is Sign) {
+              signs[key].add(mapTiles[y][x][layer]);
+            }
           }
         }
       }
     }
-    
-    updateSignsTable();
   }
   
   static void updateSignsTable() {
@@ -163,23 +306,23 @@ class Editor {
       "  <tr>"+
       "    <td>Num</td><td>X</td><td>Y</td><td>Pic</td><td>Text</td>"+
       "  </tr>";
-    for(int i=0; i<signs.length; i++) {
+    for(int i=0; i<signs[Main.world.curMap].length; i++) {
       signsHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input id='signs_posx_${i}' type='text' value='${ signs[i].sprite.posX.round() }' /></td>"+
-        "  <td><input id='signs_posy_${i}' type='text' value='${ signs[i].sprite.posY.round() }' /></td>"+
-        "  <td><input id='signs_pic_${i}' type='text' value='${ signs[i].textEvent.pictureSpriteId }' /></td>"+
-        "  <td><textarea id='signs_text_${i}' />${ signs[i].textEvent.text }</textarea></td>"+
+        "  <td><input id='signs_posx_${i}' type='text' value='${ signs[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
+        "  <td><input id='signs_posy_${i}' type='text' value='${ signs[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
+        "  <td><input id='signs_pic_${i}' type='text' value='${ signs[Main.world.curMap][i].textEvent.pictureSpriteId }' /></td>"+
+        "  <td><textarea id='signs_text_${i}' />${ signs[Main.world.curMap][i].textEvent.text }</textarea></td>"+
         "</tr>";
     }
     signsHtml += "</table>";
     querySelector("#signs_container").innerHtml = signsHtml;
     
     Function inputChangeFunction = (Event e) {
-      for(int i=0; i<signs.length; i++) {
+      for(int i=0; i<signs[Main.world.curMap].length; i++) {
         try {
-          signs[i] = new Sign(
+          signs[Main.world.curMap][i] = new Sign(
             false,
             new Sprite(
               0,
@@ -196,75 +339,15 @@ class Editor {
       updateMap();
     };
     
-    for(int i=0; i<signs.length; i++) {
-      querySelector('#signs_posx_${i}').onInput.listen(inputChangeFunction);
-      querySelector('#signs_posy_${i}').onInput.listen(inputChangeFunction);
-      querySelector('#signs_pic_${i}').onInput.listen(inputChangeFunction);
-      querySelector('#signs_text_${i}').onInput.listen(inputChangeFunction);
-    }
-    
-    updateMap();
-  }
-  
-  static void setUpWarpsTab() {
-    querySelector("#add_warp_button").onClick.listen((MouseEvent e) {
-      warps.add( new WarpTile(false, new Sprite.int(0, 0, 0), 0, 0) );
-      updateWarpsTable();
-    });
-    
-    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-    
-    for(var y=0; y<mapTiles.length; y++) {
-      for(var x=0; x<mapTiles[y].length; x++) {
-        for(int layer in World.layers) {
-          if(mapTiles[y][x][layer] is WarpTile) {
-            warps.add(mapTiles[y][x][layer]);
-          }
-        }
+    for(int i=0; i<signs[Main.world.curMap].length; i++) {
+      List<String> attrs = ["posx", "posy", "pic", "text"];
+      for(String attr in attrs) {
+        if(listeners["#signs_${attr}_${i}"] != null)
+          listeners["#signs_${attr}_${i}"].cancel();
+        
+        listeners["#signs_${attr}_${i}"] = 
+            querySelector('#signs_${attr}_${i}').onInput.listen(inputChangeFunction);
       }
-    }
-    
-    updateWarpsTable();
-  }
-  
-  static void updateWarpsTable() {
-    String warpsHtml;
-    warpsHtml = "<table>"+
-      "  <tr>"+
-      "    <td>Num</td><td>X</td><td>Y</td><td>Dest X</td><td>Dest Y</td>"+
-      "  </tr>";
-    for(int i=0; i<warps.length; i++) {
-      warpsHtml +=
-        "<tr>"+
-        "  <td>${i}</td>"+
-        "  <td><input id='warps_posx_${i}' type='text' value='${ warps[i].sprite.posX.round() }' /></td>"+
-        "  <td><input id='warps_posy_${i}' type='text' value='${ warps[i].sprite.posY.round() }' /></td>"+
-        "  <td><input id='warps_destx_${i}' type='text' value='${ warps[i].destX }' /></td>"+
-        "  <td><input id='warps_desty_${i}' type='text' value='${ warps[i].destY }' /></td>"+
-        "</tr>";
-    }
-    warpsHtml += "</table>";
-    querySelector("#warps_container").innerHtml = warpsHtml;
-    
-    Function inputChangeFunction = (Event e) {
-      for(int i=0; i<warps.length; i++) {
-        try {
-          warps[i].sprite.posX = double.parse((querySelector('#warps_posx_${i}') as InputElement).value);
-          warps[i].sprite.posY = double.parse((querySelector('#warps_posy_${i}') as InputElement).value);
-          warps[i].destX = int.parse((querySelector('#warps_destx_${i}') as InputElement).value);
-          warps[i].destY = int.parse((querySelector('#warps_desty_${i}') as InputElement).value);
-        } catch(e) {
-          // could not update this warp
-        }
-      }
-      updateMap();
-    };
-    
-    for(int i=0; i<warps.length; i++) {
-      querySelector('#warps_posx_${i}').onInput.listen(inputChangeFunction);
-      querySelector('#warps_posy_${i}').onInput.listen(inputChangeFunction);
-      querySelector('#warps_destx_${i}').onInput.listen(inputChangeFunction);
-      querySelector('#warps_desty_${i}').onInput.listen(inputChangeFunction);
     }
     
     updateMap();
@@ -296,9 +379,8 @@ class Editor {
       
       selectSprite(Tile.GROUND);
       
-      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-      
       Function tileChange = (MouseEvent e) {
+        List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
         int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
         int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
         
@@ -339,10 +421,12 @@ class Editor {
   }
   
   static void setUpMapSizeButtons() {
-    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-    
     // size x down button
-    querySelector('#size_x_down_button').onClick.listen((MouseEvent e) {
+    if(listeners["#size_x_down_button"] != null)
+      listeners["#size_x_down_button"].cancel();
+      
+    listeners["#size_x_down_button"] = querySelector('#size_x_down_button').onClick.listen((MouseEvent e) {
+      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
       if(mapTiles[0].length == 1)
         return;
       
@@ -362,7 +446,11 @@ class Editor {
     });
      
     // size x up button
-    querySelector('#size_x_up_button').onClick.listen((MouseEvent e) {
+    if(listeners["#size_x_up_button"] != null)
+      listeners["#size_x_up_button"].cancel();
+      
+    listeners["#size_x_up_button"] = querySelector('#size_x_up_button').onClick.listen((MouseEvent e) {
+      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
       if(mapTiles.length == 0)
         mapTiles.add([]);
       
@@ -380,7 +468,11 @@ class Editor {
     });
     
     // size y down button
-    querySelector('#size_y_down_button').onClick.listen((MouseEvent e) {
+    if(listeners["#size_y_down_button"] != null)
+      listeners["#size_y_down_button"].cancel();
+      
+    listeners["#size_y_down_button"] = querySelector('#size_y_down_button').onClick.listen((MouseEvent e) {
+      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
       if(mapTiles.length == 1)
         return;
       
@@ -388,9 +480,13 @@ class Editor {
       
       updateMap();
     });
-     
+    
     // size y up button
-    querySelector('#size_y_up_button').onClick.listen((MouseEvent e) {
+    if(listeners["#size_y_up_button"] != null)
+      listeners["#size_y_up_button"].cancel();
+      
+    listeners["#size_y_up_button"] = querySelector('#size_y_up_button').onClick.listen((MouseEvent e) {
+      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
       List<List<Tile>> rowArray = [];
       
       int height = mapTiles.length;
@@ -413,7 +509,11 @@ class Editor {
     // ////////////////////////////////////////
     
     // size x down button pre
-    querySelector('#size_x_down_button_pre').onClick.listen((MouseEvent e) {
+    if(listeners["#size_x_down_button_pre"] != null)
+      listeners["#size_x_down_button_pre"].cancel();
+      
+    listeners["#size_x_down_button_pre"] = querySelector('#size_x_down_button_pre').onClick.listen((MouseEvent e) {
+      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
       if(mapTiles[0].length == 1)
         return;
       
@@ -433,7 +533,11 @@ class Editor {
     });
      
     // size x up button pre
-    querySelector('#size_x_up_button_pre').onClick.listen((MouseEvent e) {
+    if(listeners["#size_x_up_button_pre"] != null)
+      listeners["#size_x_up_button_pre"].cancel();
+      
+    listeners["#size_x_up_button_pre"] = querySelector('#size_x_up_button_pre').onClick.listen((MouseEvent e) {
+      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
       if(mapTiles.length == 0)
         mapTiles.add([]);
       
@@ -461,7 +565,11 @@ class Editor {
     });
     
     // size y down button pre
-    querySelector('#size_y_down_button_pre').onClick.listen((MouseEvent e) {
+    if(listeners["#size_y_down_button_pre"] != null)
+      listeners["#size_y_down_button_pre"].cancel();
+      
+    listeners["#size_y_down_button_pre"] = querySelector('#size_y_down_button_pre').onClick.listen((MouseEvent e) {
+      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
       if(mapTiles.length == 1)
         return;
       
@@ -481,7 +589,11 @@ class Editor {
     });
      
     // size y up button pre
-    querySelector('#size_y_up_button_pre').onClick.listen((MouseEvent e) {
+    if(listeners["#size_y_up_button_pre"] != null)
+      listeners["#size_y_up_button_pre"].cancel();
+      
+    listeners["#size_y_up_button_pre"] = querySelector('#size_y_up_button_pre').onClick.listen((MouseEvent e) {
+      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
       List<List<Tile>> rowArray = [];
       
       for(int i=0; i<mapTiles[0].length; i++) {
@@ -557,10 +669,10 @@ class Editor {
     outlineTiles(solids, 255, 0, 0);
     
     // draw green boxes around warp tiles
-    outlineTiles(warps, 0, 255, 0);
+    outlineTiles(warps[Main.world.curMap], 0, 255, 0);
     
     // draw yellow boxes around sign tiles
-    outlineTiles(signs, 255, 255, 0);
+    outlineTiles(signs[Main.world.curMap], 255, 255, 0);
     
     // build the json
     buildExportJson();
@@ -597,7 +709,7 @@ class Editor {
         }
       }
       
-      for(WarpTile warp in warps) {
+      for(WarpTile warp in warps[key]) {
         int
           x = warp.sprite.posX.round(),
           y = warp.sprite.posY.round();
@@ -612,7 +724,7 @@ class Editor {
         }
       }
       
-      for(Sign sign in signs) {
+      for(Sign sign in signs[key]) {
         int
           x = sign.sprite.posX.round(),
           y = sign.sprite.posY.round();
