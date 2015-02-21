@@ -117,11 +117,14 @@ class Editor {
   
   static void setUpMapsTab() {
     querySelector("#add_map_button").onClick.listen((MouseEvent e) {
+      // check if a new map already exists so we don't overwrite it
+      if(Main.world.maps["new map"] != null)
+        return;
+      
       List nulls = [];
       for(int i=0; i<World.layers.length; i++)
         nulls.add(null);
       
-      // TODO: check if it already exists so we don't overwrite it
       Main.world.maps["new map"] = new GameMap(
         "new map",
         [ [ nulls ] ],
