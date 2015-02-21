@@ -180,6 +180,7 @@ class World {
                 mapTiles[y][x][k] = new WarpTile(
                   obj[mapName]['tiles'][y][x][k]['solid'],
                   new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y),
+                  obj[mapName]['tiles'][y][x][k]['warp']['destMap'],
                   obj[mapName]['tiles'][y][x][k]['warp']['destX'],
                   obj[mapName]['tiles'][y][x][k]['warp']['destY']
                 );
@@ -225,11 +226,11 @@ class World {
     return character;
   }
   
-  void addWarp(int spriteId, int posX, int posY, int destX, int destY) {
+  void addWarp(int spriteId, int posX, int posY, String destMap, int destX, int destY) {
     maps[curMap].tiles[posY][posX][LAYER_GROUND] = new WarpTile(
       true,
       new Sprite.int(spriteId, posX, posY),
-      destX, destY
+      destMap, destX, destY
     );
   }
   

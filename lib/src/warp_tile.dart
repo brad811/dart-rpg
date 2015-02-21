@@ -7,9 +7,10 @@ import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 
 class WarpTile extends Tile {
+  String destMap;
   int destX, destY;
   
-  WarpTile(bool solid, Sprite sprite, this.destX, this.destY) : super(solid, sprite);
+  WarpTile(bool solid, Sprite sprite, this.destMap, this.destX, this.destY) : super(solid, sprite);
   
   void enter() {
     Main.timeScale = 0.0;
@@ -23,6 +24,7 @@ class WarpTile extends Tile {
       new DelayedGameEvent(100, () {
         Gui.fadeOutLevel = Gui.FADE_BLACK_FULL;
         
+        Main.world.curMap = destMap;
         Main.player.x = destX * Sprite.pixelsPerSprite * Sprite.spriteScale;
         Main.player.y = destY * Sprite.pixelsPerSprite * Sprite.spriteScale;
         Main.player.mapX = destX;
