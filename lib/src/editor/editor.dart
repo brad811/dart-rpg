@@ -14,6 +14,14 @@ import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
+// TODO:
+// - add map field to warps
+// - maybe make maps use numbers instead of names
+//   - could simplify making references to them
+//   - wouldn't be able to change so wouldn't ever have to update warps on name changes
+//     - but what about warps that point to a map that no longer exists?
+//       - probably delete
+
 class Editor {
   static ImageElement spritesImage;
   static CanvasElement c, sc, ssc;
@@ -113,6 +121,7 @@ class Editor {
       for(int i=0; i<World.layers.length; i++)
         nulls.add(null);
       
+      // TODO: check if it already exists so we don't overwrite it
       Main.world.maps["new map"] = new GameMap(
         "new map",
         [ [ nulls ] ],
@@ -153,30 +162,51 @@ class Editor {
     setMapSelectorButtonListeners();
     
     Function inputChangeFunction = (Event e) {
+      Map<String, GameMap> newMaps = {};
+      Map<String, List<WarpTile>> newWarps = {};
+      Map<String, List<Sign>> newSigns = {};
+      bool changedByUser;
+      
       for(int i=0; i<Main.world.maps.length; i++) {
+        changedByUser = false;
         String key = Main.world.maps.keys.elementAt(i);
         try {
           String newName = (querySelector('#maps_name_${i}') as TextInputElement).value;
-          Main.world.maps[key].name = newName;
           
-          // if the map name has changed, move the key in the map to the new name
+          if(key != newName)
+            changedByUser = true;
+          
+          if(newMaps.keys.contains(newName)) {
+            int j=0;
+            while(newMaps.keys.contains("${newName}_${j}")) {
+              j++;
+            }
+            
+            newName = "${newName}_${j}";
+            (querySelector('#maps_name_${i}') as TextInputElement).value = newName;
+          }
+          
+          newMaps[newName] = Main.world.maps[key];
+          newMaps[newName].name = newName;
+          
+          newWarps[newName] = warps[key];
+          newSigns[newName] = signs[key];
+          
+          if(newName != key && Main.world.curMap == key && changedByUser)
+            Main.world.curMap = newName;
+          
           if(newName != key) {
-            Main.world.maps[newName] = Main.world.maps[key];
-            Main.world.maps.remove(key);
-            
-            warps[newName] = warps[key];
-            warps.remove(key);
-            
-            signs[newName] = signs[key];
-            signs.remove(key);
-            
-            if(Main.world.curMap == key)
-              Main.world.curMap = newName;
+            // TODO: update all warp destinations that include this one
           }
         } catch(e) {
           // could not update this map
+          print("Error updating map name: ${e}");
         }
       }
+      
+      Main.world.maps = newMaps;
+      warps = newWarps;
+      signs = newSigns;
       
       setMapSelectorButtonListeners();
       updateMap();
