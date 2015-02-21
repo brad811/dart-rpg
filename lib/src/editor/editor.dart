@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
@@ -17,9 +18,9 @@ class Editor {
   static ImageElement spritesImage;
   static CanvasElement c, sc, ssc;
   static CanvasRenderingContext2D ctx, sctx, ssctx;
-  static DivElement
-    tilesTab, charactersTab, warpsTab, signsTab,
-    tilesTabHeader, charactersTabHeader, warpsTabHeader, signsTabHeader;
+  static List<String> tabs = ["maps", "tiles", "characters", "warps", "signs"];
+  static Map<String, DivElement> tabDivs = {};
+  static Map<String, DivElement> tabHeaderDivs = {};
   
   static int
     canvasWidth = 100,
@@ -58,6 +59,7 @@ class Editor {
         setUpTabs();
         setUpSpritePicker();
         setUpMapSizeButtons();
+        updateMapsTable();
         setUpWarpsTab();
         setUpSignsTab();
         updateMap();
@@ -71,6 +73,67 @@ class Editor {
         resizeFunction(null);
       });
     });
+  }
+  
+  static void setUpTabs() {
+    for(String tab in tabs) {
+      tabDivs[tab] = querySelector("#${tab}_tab");
+      tabDivs[tab].style.display = "none";
+      
+      tabHeaderDivs[tab] = querySelector("#${tab}_tab_header");
+      
+      tabHeaderDivs[tab].onClick.listen((MouseEvent e) {
+        for(String tabb in tabs) {
+          tabDivs[tabb].style.display = "none";
+          tabHeaderDivs[tabb].style.backgroundColor = "";
+        }
+        
+        tabDivs[tab].style.display = "block";
+        tabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
+      });
+    }
+    
+    tabDivs[tabDivs.keys.first].style.display = "block";
+    tabHeaderDivs[tabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
+  }
+  
+  static void updateMapsTable() {
+    String mapsHtml;
+    mapsHtml = "<table>"+
+      "  <tr>"+
+      "    <td>Num</td><td>Name</td><td>X Size</td><td>Y Size</td><td>Chars</td>"+
+      "  </tr>";
+    for(int i=0; i<Main.world.maps.length; i++) {
+      String key = Main.world.maps.keys.elementAt(i);
+      mapsHtml +=
+        "<tr>"+
+        "  <td>${i}</td>"+
+        "  <td><input id='maps_name_${i}' type='text' value='${ Main.world.maps[key].name }' /></td>"+
+        "  <td>${ Main.world.maps[key].tiles[0].length }</td>"+
+        "  <td>${ Main.world.maps[key].tiles.length }</td>"+
+        "  <td>${ Main.world.maps[key].characters.length }</td>"+
+        "</tr>";
+    }
+    mapsHtml += "</table>";
+    querySelector("#maps_container").innerHtml = mapsHtml;
+    
+    Function inputChangeFunction = (Event e) {
+      for(int i=0; i<Main.world.maps.length; i++) {
+        String key = Main.world.maps.keys.elementAt(i);
+        try {
+          Main.world.maps[key].name = (querySelector('#maps_name_${i}') as TextInputElement).value;
+        } catch(e) {
+          // could not update this map
+        }
+      }
+      updateMap();
+    };
+    
+    for(int i=0; i<Main.world.maps.length; i++) {
+      querySelector('#maps_name_${i}').onInput.listen(inputChangeFunction);
+    }
+    
+    updateMap();
   }
   
   static void setUpSignsTab() {
@@ -205,79 +268,6 @@ class Editor {
     }
     
     updateMap();
-  }
-  
-  static void setUpTabs() {
-    tilesTab = querySelector('#tiles_tab');
-    charactersTab = querySelector('#characters_tab');
-    warpsTab = querySelector('#warps_tab');
-    signsTab = querySelector('#signs_tab');
-    
-    tilesTab.style.display = "none";
-    charactersTab.style.display = "none";
-    warpsTab.style.display = "none";
-    signsTab.style.display = "none";
-    
-    tilesTabHeader = querySelector('#tiles_tab_header');
-    charactersTabHeader = querySelector('#characters_tab_header');
-    warpsTabHeader = querySelector('#warps_tab_header');
-    signsTabHeader = querySelector('#signs_tab_header');
-    
-    tilesTabHeader.onClick.listen((MouseEvent e) {
-      tilesTab.style.display = "block";
-      tilesTabHeader.style.backgroundColor = "#eeeeee";
-      
-      charactersTab.style.display = "none";
-      charactersTabHeader.style.backgroundColor = "";
-      
-      warpsTab.style.display = "none";
-      warpsTabHeader.style.backgroundColor = "";
-      
-      signsTab.style.display = "none";
-      signsTabHeader.style.backgroundColor = "";
-    });
-    
-    charactersTabHeader.onClick.listen((MouseEvent e) {
-      tilesTab.style.display = "none";
-      tilesTabHeader.style.backgroundColor = "";
-      
-      charactersTab.style.display = "block";
-      charactersTabHeader.style.backgroundColor = "#eeeeee";
-      
-      warpsTab.style.display = "none";
-      warpsTabHeader.style.backgroundColor = "";
-      
-      signsTab.style.display = "none";
-      signsTabHeader.style.backgroundColor = "";
-    });
-    
-    warpsTabHeader.onClick.listen((MouseEvent e) {
-      tilesTab.style.display = "none";
-      tilesTabHeader.style.backgroundColor = "";
-      
-      charactersTab.style.display = "none";
-      charactersTabHeader.style.backgroundColor = "";
-      
-      warpsTab.style.display = "block";
-      warpsTabHeader.style.backgroundColor = "#eeeeee";
-      
-      signsTab.style.display = "none";
-      signsTabHeader.style.backgroundColor = "";
-    });
-    
-    signsTabHeader.onClick.listen((MouseEvent e) {
-      tilesTab.style.display = "none";
-      tilesTabHeader.style.backgroundColor = "";
-      
-      charactersTab.style.display = "none";
-      charactersTabHeader.style.backgroundColor = "";
-      
-      warpsTab.style.display = "none";
-      warpsTabHeader.style.backgroundColor = "";
-      
-      signsTab.style.display = "block";
-      signsTabHeader.style.backgroundColor = "#eeeeee";
-    });
   }
   
   static void setUpSpritePicker() {
@@ -573,61 +563,76 @@ class Editor {
     outlineTiles(signs, 255, 255, 0);
     
     // build the json
-    List<List<List<Map>>> jsonMap = [];
-    for(int y=0; y<mapTiles.length; y++) {
-      jsonMap.add([]);
-      for(int x=0; x<mapTiles[0].length; x++) {
-        jsonMap[y].add([]);
-        for(int k=0; k<mapTiles[0][0].length; k++) {
-          if(mapTiles[y][x][k] is Tile) {
-            if(mapTiles[y][x][k].sprite.id == -1) {
-              jsonMap[y][x].add(null);
+    buildExportJson();
+  }
+  
+  static void buildExportJson() {
+    Map<String, Map> exportJson = {};
+    
+    for(int i=0; i<Main.world.maps.length; i++) {
+      String key = Main.world.maps.keys.elementAt(i);
+      
+      List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
+      List<Character> characters = Main.world.maps[key].characters;
+      
+      List<List<List<Map>>> jsonMap = [];
+      for(int y=0; y<mapTiles.length; y++) {
+        jsonMap.add([]);
+        for(int x=0; x<mapTiles[0].length; x++) {
+          jsonMap[y].add([]);
+          for(int k=0; k<mapTiles[0][0].length; k++) {
+            if(mapTiles[y][x][k] is Tile) {
+              if(mapTiles[y][x][k].sprite.id == -1) {
+                jsonMap[y][x].add(null);
+              } else {
+                jsonMap[y][x].add({
+                  "id": mapTiles[y][x][k].sprite.id,
+                  "solid": mapTiles[y][x][k].solid
+                });
+              }
             } else {
-              jsonMap[y][x].add({
-                "id": mapTiles[y][x][k].sprite.id,
-                "solid": mapTiles[y][x][k].solid
-              });
+              jsonMap[y][x].add(null);
             }
-          } else {
-            jsonMap[y][x].add(null);
           }
         }
       }
-    }
-    
-    for(WarpTile warp in warps) {
-      int
-        x = warp.sprite.posX.round(),
-        y = warp.sprite.posY.round();
       
-      if(jsonMap[y][x][0] != null) {
-        jsonMap[y][x][0]["warp"] = {
-          "posX": x,
-          "posY": y,
-          "destX": warp.destX,
-          "destY": warp.destY
-        };
+      for(WarpTile warp in warps) {
+        int
+          x = warp.sprite.posX.round(),
+          y = warp.sprite.posY.round();
+        
+        if(jsonMap[y][x][0] != null) {
+          jsonMap[y][x][0]["warp"] = {
+            "posX": x,
+            "posY": y,
+            "destX": warp.destX,
+            "destY": warp.destY
+          };
+        }
       }
-    }
-    
-    for(Sign sign in signs) {
-      int
-        x = sign.sprite.posX.round(),
-        y = sign.sprite.posY.round();
       
-      if(jsonMap[y][x][0] != null) {
-        jsonMap[y][x][0]["sign"] = {
-          "posX": x,
-          "posY": y,
-          "pic": sign.textEvent.pictureSpriteId,
-          "text": sign.textEvent.text
-        };
+      for(Sign sign in signs) {
+        int
+          x = sign.sprite.posX.round(),
+          y = sign.sprite.posY.round();
+        
+        if(jsonMap[y][x][0] != null) {
+          jsonMap[y][x][0]["sign"] = {
+            "posX": x,
+            "posY": y,
+            "pic": sign.textEvent.pictureSpriteId,
+            "text": sign.textEvent.text
+          };
+        }
       }
+      
+      exportJson[key] = {};
+      exportJson[key]['tiles'] = jsonMap;
     }
     
-    TextAreaElement textarea = querySelector("textarea");
-    textarea.value = JSON.encode(jsonMap);
-    //textarea.select();
+    TextAreaElement textarea = querySelector("#export_json");
+    textarea.value = JSON.encode(exportJson);
   }
   
   static void outlineTiles(List<Tile> tiles, int r, int g, int b) {

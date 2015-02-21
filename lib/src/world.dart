@@ -154,7 +154,7 @@ class World {
   }
   
   void parseMaps(String jsonString) {
-    Map<String, List<List<List<Map>>>> obj = JSON.decode(jsonString);
+    Map<String, Map> obj = JSON.decode(jsonString);
     
     maps = {};
     curMap = obj.keys.first;
@@ -166,34 +166,34 @@ class World {
       maps[mapName].characters = [];
       List<List<List<Tile>>> mapTiles = maps[mapName].tiles;
       
-      for(int y=0; y<obj[mapName].length; y++) {
+      for(int y=0; y<obj[mapName]['tiles'].length; y++) {
         mapTiles.add([]);
         
-        for(int x=0; x<obj[mapName][y].length; x++) {
+        for(int x=0; x<obj[mapName]['tiles'][y].length; x++) {
           mapTiles[y].add([]);
           
-          for(int k=0; k<obj[mapName][y][x].length; k++) {
+          for(int k=0; k<obj[mapName]['tiles'][y][x].length; k++) {
             mapTiles[y][x].add(null);
             
-            if(obj[mapName][y][x][k] != null) {
-              if(obj[mapName][y][x][k]['warp'] != null) {
+            if(obj[mapName]['tiles'][y][x][k] != null) {
+              if(obj[mapName]['tiles'][y][x][k]['warp'] != null) {
                 mapTiles[y][x][k] = new WarpTile(
-                  obj[mapName][y][x][k]['solid'],
-                  new Sprite.int(obj[mapName][y][x][k]['id'], x, y),
-                  obj[mapName][y][x][k]['warp']['destX'],
-                  obj[mapName][y][x][k]['warp']['destY']
+                  obj[mapName]['tiles'][y][x][k]['solid'],
+                  new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y),
+                  obj[mapName]['tiles'][y][x][k]['warp']['destX'],
+                  obj[mapName]['tiles'][y][x][k]['warp']['destY']
                 );
-              } else if(obj[mapName][y][x][k]['sign'] != null) {
+              } else if(obj[mapName]['tiles'][y][x][k]['sign'] != null) {
                 mapTiles[y][x][k] = new Sign(
-                  obj[mapName][y][x][k]['solid'],
-                  new Sprite.int(obj[mapName][y][x][k]['id'], x, y),
-                  obj[mapName][y][x][k]['sign']['pic'],
-                  obj[mapName][y][x][k]['sign']['text']
+                  obj[mapName]['tiles'][y][x][k]['solid'],
+                  new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y),
+                  obj[mapName]['tiles'][y][x][k]['sign']['pic'],
+                  obj[mapName]['tiles'][y][x][k]['sign']['text']
                 );
               } else {
                 mapTiles[y][x][k] = new Tile(
-                  obj[mapName][y][x][k]['solid'],
-                  new Sprite.int(obj[mapName][y][x][k]['id'], x, y)
+                  obj[mapName]['tiles'][y][x][k]['solid'],
+                  new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y)
                 );
               }
             }

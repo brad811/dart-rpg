@@ -16,10 +16,16 @@
           </div>
           
           <div class="tab_headers">
+            <div class="tab_header" id="maps_tab_header">Maps</div>
             <div class="tab_header" id="tiles_tab_header">Tiles</div>
             <div class="tab_header" id="characters_tab_header">Characters</div>
             <div class="tab_header" id="warps_tab_header">Warps</div>
             <div class="tab_header" id="signs_tab_header">Signs</div>
+          </div>
+          
+          <div id="maps_tab" class="tab">
+            <button id="add_map_button">Add new map</button>
+            <div id="maps_container"></div>
           </div>
           
           <div id="tiles_tab" class="tab">
@@ -58,8 +64,6 @@
                 <button id="size_y_up_button">+</button>
               </div>
             </div>
-            
-            <textarea></textarea>
           </div>
           
           <div id="characters_tab" class="tab">
@@ -75,6 +79,8 @@
             <button id="add_sign_button">Add new sign</button>
             <div id="signs_container"></div>
           </div>
+          
+          <textarea id="export_json"></textarea>
         </td>
       </tr>
     </table>

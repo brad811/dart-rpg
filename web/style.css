@@ -84,25 +84,21 @@ body {
   height: 30px;
 }
 
-#tiles_tab textarea {
-  margin-top: 8px;
-  height: 60px;
-  width: 490px;
-}
-
 #warps_container input, #signs_container input {
   width: 30px;
 }
 
-#warps_container td {
-  text-align: center;
-}
-
-#signs_container textarea {
-  height: 60px;
+#signs_tab textarea {
   width: 260px;
+  height: 60px;
 }
 
-#signs_container td {
+#maps_container td, #warps_container td, #signs_container td {
   text-align: center;
+}
+
+#export_json {
+  height: 60px;
+  width: 532px;
+  margin-left: 10px;
 }
