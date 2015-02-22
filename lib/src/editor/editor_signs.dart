@@ -19,6 +19,7 @@ class EditorSigns {
     querySelector("#add_sign_button").onClick.listen((MouseEvent e) {
       signs[Main.world.curMap].add( new Sign(false, new Sprite.int(0, 0, 0), 234, "Text") );
       update();
+      Editor.updateMap();
     });
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -87,7 +88,33 @@ class EditorSigns {
             querySelector('#signs_${attr}_${i}').onInput.listen(inputChangeFunction);
       }
     }
+  }
+  
+  static void export(List<List<List<Map>>> jsonMap, String key) {
+    List<Sign> signsToRemove = [];
+    for(Sign sign in signs[key]) {
+      int
+        x = sign.sprite.posX.round(),
+        y = sign.sprite.posY.round();
+      
+      // handle the map shrinking until a warp is out of bounds
+      if(jsonMap.length - 1 < y || jsonMap[0].length - 1 < x) {
+        signsToRemove.add(sign);
+        continue;
+      }
+      
+      if(jsonMap[y][x][0] != null) {
+        jsonMap[y][x][0]["sign"] = {
+          "posX": x,
+          "posY": y,
+          "pic": sign.textEvent.pictureSpriteId,
+          "text": sign.textEvent.text
+        };
+      }
+    }
     
-    Editor.updateMap();
+    for(Sign sign in signsToRemove) {
+      signs[key].remove(sign);
+    }
   }
 }

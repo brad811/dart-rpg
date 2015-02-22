@@ -7,10 +7,8 @@ import 'dart:html';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
-import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
-import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor_maps.dart';
@@ -88,6 +86,7 @@ class Editor {
     EditorMaps.update();
     EditorWarps.update();
     EditorSigns.update();
+    Editor.updateMap();
   }
   
   static void setUpTabs() {
@@ -268,35 +267,8 @@ class Editor {
         }
       }
       
-      for(WarpTile warp in EditorWarps.warps[key]) {
-        int
-          x = warp.sprite.posX.round(),
-          y = warp.sprite.posY.round();
-        
-        if(jsonMap[y][x][0] != null) {
-          jsonMap[y][x][0]["warp"] = {
-            "posX": x,
-            "posY": y,
-            "destX": warp.destX,
-            "destY": warp.destY
-          };
-        }
-      }
-      
-      for(Sign sign in EditorSigns.signs[key]) {
-        int
-          x = sign.sprite.posX.round(),
-          y = sign.sprite.posY.round();
-        
-        if(jsonMap[y][x][0] != null) {
-          jsonMap[y][x][0]["sign"] = {
-            "posX": x,
-            "posY": y,
-            "pic": sign.textEvent.pictureSpriteId,
-            "text": sign.textEvent.text
-          };
-        }
-      }
+      EditorWarps.export(jsonMap, key);
+      EditorSigns.export(jsonMap, key);
       
       exportJson[key] = {};
       exportJson[key]['tiles'] = jsonMap;

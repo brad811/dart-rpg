@@ -25,6 +25,7 @@ class EditorWarps {
         )
       );
       update();
+      Editor.updateMap();
     });
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -48,7 +49,7 @@ class EditorWarps {
     String warpsHtml;
     warpsHtml = "<table>"+
       "  <tr>"+
-      "    <td>Num</td><td>X</td><td>Y</td><td>Dest X</td><td>Dest Y</td>"+
+      "    <td>Num</td><td>X</td><td>Y</td><td>Dest Map</td><td>Dest X</td><td>Dest Y</td>"+
       "  </tr>";
     for(int i=0; i<warps[Main.world.curMap].length; i++) {
       warpsHtml +=
@@ -56,6 +57,19 @@ class EditorWarps {
         "  <td>${i}</td>"+
         "  <td><input id='warps_posx_${i}' type='text' value='${ warps[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
         "  <td><input id='warps_posy_${i}' type='text' value='${ warps[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
+        "  <td>"+
+        "    <select id='warps_destMap_${i}'>";
+        
+      for(String key in Main.world.maps.keys) {
+        if(warps[Main.world.curMap][i].destMap == key)
+          warpsHtml += "<option selected=\"selected\" value=\"${key}\">${key}</option>";
+        else
+          warpsHtml += "<option value=\"${key}\">${key}</option>";
+      }
+        
+      warpsHtml +=
+        "    </select>"+
+        "  </td>"+
         "  <td><input id='warps_destx_${i}' type='text' value='${ warps[Main.world.curMap][i].destX }' /></td>"+
         "  <td><input id='warps_desty_${i}' type='text' value='${ warps[Main.world.curMap][i].destY }' /></td>"+
         "</tr>";
@@ -68,6 +82,7 @@ class EditorWarps {
         try {
           warps[Main.world.curMap][i].sprite.posX = double.parse((querySelector('#warps_posx_${i}') as InputElement).value);
           warps[Main.world.curMap][i].sprite.posY = double.parse((querySelector('#warps_posy_${i}') as InputElement).value);
+          warps[Main.world.curMap][i].destMap = (querySelector('#warps_destMap_${i}') as SelectElement).value;
           warps[Main.world.curMap][i].destX = int.parse((querySelector('#warps_destx_${i}') as InputElement).value);
           warps[Main.world.curMap][i].destY = int.parse((querySelector('#warps_desty_${i}') as InputElement).value);
         } catch(e) {
@@ -78,7 +93,7 @@ class EditorWarps {
     };
     
     for(int i=0; i<warps[Main.world.curMap].length; i++) {
-      List<String> attrs = ["posx", "posy", "destx", "desty"];
+      List<String> attrs = ["posx", "posy", "destMap", "destx", "desty"];
       for(String attr in attrs) {
         if(listeners["#warps_${attr}_${i}"] != null)
           listeners["#warps_${attr}_${i}"].cancel();
@@ -87,7 +102,28 @@ class EditorWarps {
             querySelector('#warps_${attr}_${i}').onInput.listen(inputChangeFunction);
       }
     }
-    
-    Editor.updateMap();
+  }
+  
+  static void export(List<List<List<Map>>> jsonMap, String key) {
+    for(WarpTile warp in warps[key]) {
+      int
+        x = warp.sprite.posX.round(),
+        y = warp.sprite.posY.round();
+      
+      // handle the map shrinking until a warp is out of bounds
+      if(jsonMap.length - 1 < y || jsonMap[0].length - 1 < x) {
+        continue;
+      }
+      
+      if(jsonMap[y][x][0] != null) {
+        jsonMap[y][x][0]["warp"] = {
+          "posX": x,
+          "posY": y,
+          "destMap": warp.destMap,
+          "destX": warp.destX,
+          "destY": warp.destY
+        };
+      }
+    }
   }
 }
