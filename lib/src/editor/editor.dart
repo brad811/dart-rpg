@@ -3,6 +3,7 @@ library Editor;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -53,7 +54,7 @@ class Editor {
     
     spritesImage = new ImageElement(src: "sprite_sheet.png");
     spritesImage.onLoad.listen((e) {
-        start();
+      start();
     });
   }
   
@@ -188,10 +189,13 @@ class Editor {
     canvasHeight = mapTiles.length * Sprite.scaledSpriteSize;
     canvasWidth = mapTiles[0].length * Sprite.scaledSpriteSize;
     
-    c.width = canvasWidth;
-    c.height = canvasHeight;
-    
-    ctx.imageSmoothingEnabled = false;
+    if(c.width != canvasWidth || c.height != canvasHeight) {
+      c.width = canvasWidth;
+      c.height = canvasHeight;
+      
+      ctx.imageSmoothingEnabled = false;
+      context.callMethod("fixImageSmoothing");
+    }
     
     // Draw pink background
     ctx.fillStyle = "#ff00ff";
