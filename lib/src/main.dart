@@ -34,11 +34,12 @@ class Main {
   static void init() {
     c = querySelector('canvas');
     ctx = c.getContext("2d");
+    
     ctx.imageSmoothingEnabled = false;
     
     spritesImage = new ImageElement(src: "sprite_sheet.png");
     spritesImage.onLoad.listen((e) {
-        start();
+      start();
     });
   }
   

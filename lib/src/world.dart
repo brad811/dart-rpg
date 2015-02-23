@@ -7,17 +7,13 @@ import 'dart:math' as math;
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/character.dart';
-//import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
-//import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/game_map.dart';
-//import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
-//import 'package:dart_rpg/src/text_game_event.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 
@@ -125,7 +121,7 @@ class World {
     Interactable.chainGameEvents(character, characterGameEvents);
     */
     
-    Main.player = new Player(15, 8);
+    Main.player = new Player(19, 19);
     Main.player.battler = new Battler(
       237, "Player",
       20, 4, 6, // health, attack, speed
@@ -226,30 +222,6 @@ class World {
     return character;
   }
   
-  void addWarp(int spriteId, int posX, int posY, String destMap, int destX, int destY) {
-    maps[curMap].tiles[posY][posX][LAYER_GROUND] = new WarpTile(
-      true,
-      new Sprite.int(spriteId, posX, posY),
-      destMap, destX, destY
-    );
-  }
-  
-  void addSign(
-      int spriteId, int pictureId,
-      int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
-      String text) {
-    for(int y=posY; y<posY+sizeY; y++) {
-      for(int x=posX; x<posX+sizeX; x++) {
-        maps[curMap].tiles[y][x][layer] = new Sign(
-          solid,
-          new Sprite.int(spriteId, x, y),
-          pictureId,
-          text
-        );
-      }
-    }
-  }
-  
   void addInteractableObject(
       int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
       void handler(List<int> keyCodes)) {
@@ -262,22 +234,6 @@ class World {
             posX+x, posY+y
           ),
           handler
-        );
-      }
-    }
-  }
-  
-  void addObject(
-      int spriteId,
-      int posX, int posY, int layer, int sizeX, int sizeY, bool solid) {
-    for(var y=0; y<sizeY; y++) {
-      for(var x=0; x<sizeX; x++) {
-        maps[curMap].tiles[posY+y][posX+x][layer] = new Tile(
-          solid,
-          new Sprite.int(
-            spriteId + x + (y*Sprite.spriteSheetSize),
-            posX+x, posY+y
-          )
         );
       }
     }
