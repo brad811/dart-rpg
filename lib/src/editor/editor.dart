@@ -12,17 +12,21 @@ import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
+import 'package:dart_rpg/src/editor/editor_characters.dart';
 import 'package:dart_rpg/src/editor/editor_maps.dart';
 import 'package:dart_rpg/src/editor/editor_signs.dart';
 import 'package:dart_rpg/src/editor/editor_warps.dart';
 
 // TODO:
-// - add map field to warps
 // - maybe make maps use numbers instead of names
 //   - could simplify making references to them
 //   - wouldn't be able to change so wouldn't ever have to update warps on name changes
 //     - but what about warps that point to a map that no longer exists?
 //       - probably delete
+
+// TODO: add hover tooltip that shows ID of tiles
+
+// TODO: add hover tooltip that shows map coordinates
 
 class Editor {
   static ImageElement spritesImage;
@@ -67,6 +71,7 @@ class Editor {
         setUpSpritePicker();
         
         EditorMaps.setUp();
+        EditorCharacters.setUp();
         EditorWarps.setUp();
         EditorSigns.setUp();
         
@@ -85,6 +90,7 @@ class Editor {
   
   static void updateAllTables() {
     EditorMaps.update();
+    EditorCharacters.update();
     EditorWarps.update();
     EditorSigns.update();
     Editor.updateMap();
@@ -230,6 +236,8 @@ class Editor {
     // draw red boxes around solid tiles
     outlineTiles(solids, 255, 0, 0);
     
+    // TODO: draw blue boxes around characters
+    
     // draw green boxes around warp tiles
     outlineTiles(EditorWarps.warps[Main.world.curMap], 0, 255, 0);
     
@@ -271,6 +279,7 @@ class Editor {
         }
       }
       
+      EditorCharacters.export(jsonMap, key);
       EditorWarps.export(jsonMap, key);
       EditorSigns.export(jsonMap, key);
       
@@ -299,7 +308,7 @@ class Editor {
       ctx.fillRect(x, y, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
     }
     
-    // draw the strokes around the warp tiles
+    // draw the strokes around the tiles
     ctx.closePath();
     ctx.setStrokeColorRgb(r, g, b, 0.9);
     ctx.stroke();
