@@ -84,7 +84,8 @@ body {
   height: 30px;
 }
 
-#characters_container input, #warps_container input, #signs_container input {
+#characters_container input, #warps_container input,
+#signs_container input, #battlers_container input {
   width: 30px;
 }
 
@@ -93,7 +94,8 @@ body {
   height: 60px;
 }
 
-#maps_container td, #characters_container td, #warps_container td, #signs_container td {
+#maps_container td, #characters_container td,
+#warps_container td, #signs_container td, #battlers_container td {
   text-align: center;
 }
 

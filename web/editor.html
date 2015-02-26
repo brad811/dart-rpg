@@ -21,6 +21,7 @@
             <div class="tab_header" id="characters_tab_header">Characters</div>
             <div class="tab_header" id="warps_tab_header">Warps</div>
             <div class="tab_header" id="signs_tab_header">Signs</div>
+            <div class="tab_header" id="battlers_tab_header">Battlers</div>
           </div>
           
           <div id="maps_tab" class="tab">
@@ -41,7 +42,7 @@
                   <input type="radio" name="layer" value="3" /> Above<br>
                 </td>
                 <td>
-                  <input type="checkbox" id="solid">Solid</input>
+                  <input type="checkbox" id="solid" />Solid
                 </td>
               </tr>
             </table>
@@ -79,6 +80,11 @@
           <div id="signs_tab" class="tab">
             <button id="add_sign_button">Add new sign</button>
             <div id="signs_container"></div>
+          </div>
+          
+          <div id="battlers_tab" class="tab">
+            <button id="add_battler_button">Add new battler</button>
+            <div id="battlers_container"></div>
           </div>
           
           <textarea id="export_json"></textarea>

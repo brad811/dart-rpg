@@ -89,10 +89,18 @@ class EditorCharacters {
     }
   }
   
-  static void export(List<List<List<Map>>> jsonMap, String key) {
+  static void export(Map jsonMap, String key) {
+    jsonMap["characters"] = [];
     for(Character character in characters[key]) {
-      // TODO: This will have to be handled differently
-      // Will just be a list at the end
+      jsonMap["characters"].add({
+        "sprite": character.spriteId,
+        "pic": character.pictureId,
+        "mapx": character.mapX,
+        "mapy": character.mapY,
+        "sizex": character.sizeX,
+        "sizey": character.sizeY,
+        "solid": character.solid
+      });
     }
   }
 }

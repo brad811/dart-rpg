@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:html';
 import 'dart:js';
 
+import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
@@ -16,6 +17,7 @@ import 'package:dart_rpg/src/editor/editor_characters.dart';
 import 'package:dart_rpg/src/editor/editor_maps.dart';
 import 'package:dart_rpg/src/editor/editor_signs.dart';
 import 'package:dart_rpg/src/editor/editor_warps.dart';
+import 'package:dart_rpg/src/editor/editor_battlers.dart';
 
 // TODO:
 // - maybe make maps use numbers instead of names
@@ -32,7 +34,7 @@ class Editor {
   static ImageElement spritesImage;
   static CanvasElement c, sc, ssc;
   static CanvasRenderingContext2D ctx, sctx, ssctx;
-  static List<String> tabs = ["maps", "tiles", "characters", "warps", "signs"];
+  static List<String> tabs = ["maps", "tiles", "characters", "warps", "signs", "battlers"];
   static Map<String, DivElement> tabDivs = {};
   static Map<String, DivElement> tabHeaderDivs = {};
   
@@ -74,6 +76,7 @@ class Editor {
         EditorCharacters.setUp();
         EditorWarps.setUp();
         EditorSigns.setUp();
+        EditorBattlers.setUp();
         
         updateAllTables();
         
@@ -93,6 +96,8 @@ class Editor {
     EditorCharacters.update();
     EditorWarps.update();
     EditorSigns.update();
+    EditorBattlers.update();
+    
     Editor.updateMap();
   }
   
@@ -253,9 +258,9 @@ class Editor {
     
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
+      exportJson[key] = {};
       
       List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
-      List<Character> characters = Main.world.maps[key].characters;
       
       List<List<List<Map>>> jsonMap = [];
       for(int y=0; y<mapTiles.length; y++) {
@@ -279,11 +284,13 @@ class Editor {
         }
       }
       
-      EditorCharacters.export(jsonMap, key);
       EditorWarps.export(jsonMap, key);
       EditorSigns.export(jsonMap, key);
       
-      exportJson[key] = {};
+      EditorCharacters.export(exportJson[key], key);
+
+      EditorBattlers.export(exportJson[key], key);
+      
       exportJson[key]['tiles'] = jsonMap;
     }
     
