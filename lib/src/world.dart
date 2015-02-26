@@ -7,13 +7,17 @@ import 'dart:math' as math;
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
+import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/game_map.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/text_game_event.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 
@@ -39,6 +43,7 @@ class World {
     viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
   
   World(Function callback) {
+    /*
     Battler battlerCommon = new Battler(
       237, "Common Monster",
       14, 8, 5, // health, attack, speed
@@ -65,7 +70,7 @@ class World {
       new BattlerChance(battlerRare, 0.2)
     ];
     
-    /*for(int y=3; y<9; y++) {
+    for(int y=3; y<9; y++) {
       for(int x=18; x<27; x++) {
         maps[curMap].tiles[y][x][LAYER_GROUND] = new EncounterTile(
           new Sprite.int(Tile.TALL_GRASS, x, y),
@@ -73,54 +78,9 @@ class World {
         );
       }
     }
-    
-    // Character
-    Character character = addCharacter(
-      //Tile.PLAYER - 64,
-      Tile.PLAYER,
-      237,
-      4, 6, LAYER_BELOW,
-      1, 2,
-      true
-    );
-    
-    character.direction = Character.RIGHT;
-    
-    List<GameEvent> characterGameEvents = [];
-    characterGameEvents = [
-      new TextGameEvent(237, "I'm like a kid, right?"),
-      new GameEvent((callback) {
-        Main.player.inputEnabled = false;
-        chainCharacterMovement(
-          character,
-          [Character.LEFT, Character.LEFT, Character.LEFT,
-            Character.RIGHT, Character.RIGHT, Character.RIGHT],
-          () {
-            Main.player.inputEnabled = true;
-            callback();
-          }
-        );
-      }),
-      new TextGameEvent.choice(237, "See?",
-        new ChoiceGameEvent(character, ["Yes", "No"], [
-          [
-            new TextGameEvent(231, "That's fine."),
-            new TextGameEvent(237, "If you say so!"),
-            new GameEvent((callback) {
-              character.gameEvent = characterGameEvents[0];
-            })
-          ],
-          [
-            new TextGameEvent(231, "I hate you."),
-            new TextGameEvent(237, "::sniff sniff:: Meanie!")
-          ]
-        ])
-      )
-    ];
-    
-    Interactable.chainGameEvents(character, characterGameEvents);
     */
     
+    // TODO: other character can walk through player
     Main.player = new Player(19, 19);
     Main.player.battler = new Battler(
       237, "Player",
@@ -133,7 +93,55 @@ class World {
     );
     
     // TODO: improve editor so less is needed in world class
-    loadMaps(callback);
+    loadMaps(() {
+      // Character
+      Character character = addCharacter(
+        //Tile.PLAYER - 64,
+        Tile.PLAYER,
+        237,
+        11, 15, LAYER_BELOW,
+        1, 2,
+        true
+      );
+      
+      character.direction = Character.RIGHT;
+      
+      List<GameEvent> characterGameEvents = [];
+      characterGameEvents = [
+        new TextGameEvent(237, "I'm like a kid, right?"),
+        new GameEvent((callback) {
+          Main.player.inputEnabled = false;
+          chainCharacterMovement(
+            character,
+            [Character.LEFT, Character.LEFT, Character.LEFT,
+              Character.RIGHT, Character.RIGHT, Character.RIGHT],
+            () {
+              Main.player.inputEnabled = true;
+              callback();
+            }
+          );
+        }),
+        new TextGameEvent.choice(237, "See?",
+          new ChoiceGameEvent(character, ["Yes", "No"], [
+            [
+              new TextGameEvent(231, "That's fine."),
+              new TextGameEvent(237, "If you say so!"),
+              new GameEvent((callback) {
+                character.gameEvent = characterGameEvents[0];
+              })
+            ],
+            [
+              new TextGameEvent(231, "I hate you."),
+              new TextGameEvent(237, "::sniff sniff:: Meanie!")
+            ]
+          ])
+        )
+      ];
+      
+      Interactable.chainGameEvents(character, characterGameEvents);
+      
+      callback();
+    });
   }
   
   void loadMaps(Function callback) {

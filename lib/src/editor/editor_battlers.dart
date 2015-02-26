@@ -82,7 +82,6 @@ class EditorBattlers {
         if(listeners["#battlers_${attr}_${i}"] != null)
           listeners["#battlers_${attr}_${i}"].cancel();
         
-        print("derp derp: #battlers_${attr}_${i}");
         listeners["#battlers_${attr}_${i}"] = 
             querySelector('#battlers_${attr}_${i}').onInput.listen(inputChangeFunction);
       }
