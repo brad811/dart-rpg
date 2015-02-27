@@ -3,6 +3,8 @@ library EditorMaps;
 import 'dart:async';
 import 'dart:html';
 
+import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sign.dart';
@@ -11,6 +13,8 @@ import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/editor_battlers.dart';
+import 'package:dart_rpg/src/editor/editor_characters.dart';
 import 'package:dart_rpg/src/editor/editor_signs.dart';
 import 'package:dart_rpg/src/editor/editor_warps.dart';
 
@@ -33,8 +37,10 @@ class EditorMaps {
         []
       );
       
+      EditorCharacters.characters["new map"] = [];
       EditorWarps.warps["new map"] = [];
       EditorSigns.signs["new map"] = [];
+      EditorBattlers.battlerChances["new map"] = [];
       
       update();
     });
@@ -68,8 +74,10 @@ class EditorMaps {
     
     Function inputChangeFunction = (Event e) {
       Map<String, GameMap> newMaps = {};
+      Map<String, List<Character>> newCharacters = {};
       Map<String, List<WarpTile>> newWarps = {};
       Map<String, List<Sign>> newSigns = {};
+      Map<String, List<BattlerChance>> newBattlers = {};
       bool changedByUser;
       
       for(int i=0; i<Main.world.maps.length; i++) {
@@ -94,8 +102,10 @@ class EditorMaps {
           newMaps[newName] = Main.world.maps[key];
           newMaps[newName].name = newName;
           
+          newCharacters[newName] = EditorCharacters.characters[key];
           newWarps[newName] = EditorWarps.warps[key];
           newSigns[newName] = EditorSigns.signs[key];
+          newBattlers[newName] = EditorBattlers.battlerChances[key];
           
           if(newName != key && Main.world.curMap == key && changedByUser)
             Main.world.curMap = newName;
@@ -110,8 +120,10 @@ class EditorMaps {
       }
       
       Main.world.maps = newMaps;
+      EditorCharacters.characters = newCharacters;
       EditorWarps.warps = newWarps;
       EditorSigns.signs = newSigns;
+      EditorBattlers.battlerChances = newBattlers;
       
       setMapSelectorButtonListeners();
       Editor.updateMap();
