@@ -8,7 +8,7 @@ import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
-//import 'package:dart_rpg/src/encounter_tile.dart';
+import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/interactable.dart';
@@ -42,8 +42,9 @@ class World {
     viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
     viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
   
+  List<BattlerChance> battlerChances;
+  
   World(Function callback) {
-    /*
     Battler battlerCommon = new Battler(
       237, "Common Monster",
       14, 8, 5, // health, attack, speed
@@ -65,20 +66,10 @@ class World {
       18 // experiencePayout
     );
     
-    List<BattlerChance> battlerChances = [
+    battlerChances = [
       new BattlerChance(battlerCommon, 0.8),
       new BattlerChance(battlerRare, 0.2)
     ];
-    
-    for(int y=3; y<9; y++) {
-      for(int x=18; x<27; x++) {
-        maps[curMap].tiles[y][x][LAYER_GROUND] = new EncounterTile(
-          new Sprite.int(Tile.TALL_GRASS, x, y),
-          battlerChances
-        );
-      }
-    }
-    */
     
     // TODO: other character can walk through player
     Main.player = new Player(19, 19);
@@ -194,6 +185,11 @@ class World {
                   new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y),
                   obj[mapName]['tiles'][y][x][k]['sign']['pic'],
                   obj[mapName]['tiles'][y][x][k]['sign']['text']
+                );
+              } else if(obj[mapName]['tiles'][y][x][k]['encounter'] == true) {
+                mapTiles[y][x][k] = new EncounterTile(
+                  new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y),
+                  battlerChances
                 );
               } else {
                 mapTiles[y][x][k] = new Tile(
