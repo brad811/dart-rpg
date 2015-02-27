@@ -5,8 +5,8 @@ import 'dart:convert';
 import 'dart:html';
 import 'dart:js';
 
-import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sprite.dart';
@@ -159,9 +159,15 @@ class Editor {
         
         int layer = int.parse((querySelector("[name='layer']:checked") as RadioButtonInputElement).value);
         bool solid = (querySelector("#solid") as CheckboxInputElement).checked;
+        bool encounter = (querySelector("#encounter") as CheckboxInputElement).checked;
         
         if(selectedTile == 98) {
           mapTiles[y][x][layer] = null;
+        } else if(encounter) {
+          mapTiles[y][x][layer] = new EncounterTile(
+            new Sprite.int(selectedTile, x, y),
+            Main.world.maps[Main.world.curMap].battlerChances
+          );
         } else {
           mapTiles[y][x][layer] = new Tile(
             solid,
@@ -224,6 +230,7 @@ class Editor {
     }
     
     List<Tile> solids = [];
+    List<Tile> encounters = [];
     
     for(List<Tile> layer in renderList) {
       for(Tile tile in layer) {
@@ -232,9 +239,11 @@ class Editor {
           tile.sprite.posX.round(), tile.sprite.posY.round()
         );
         
-        // add solid tiles to a list to have boxes drawn around them
+        // add solid tiles and encounter tiles to a list to have boxes drawn around them
         if(tile.solid)
           solids.add(tile);
+        else if(tile is EncounterTile)
+          encounters.add(tile);
       }
     }
     
@@ -242,6 +251,9 @@ class Editor {
     outlineTiles(solids, 255, 0, 0);
     
     // TODO: draw blue boxes around characters
+    
+    // draw magenta boxes around encounter tiles
+    outlineTiles(encounters, 200, 0, 255);
     
     // draw green boxes around warp tiles
     outlineTiles(EditorWarps.warps[Main.world.curMap], 0, 255, 0);
@@ -274,7 +286,8 @@ class Editor {
               } else {
                 jsonMap[y][x].add({
                   "id": mapTiles[y][x][k].sprite.id,
-                  "solid": mapTiles[y][x][k].solid
+                  "solid": mapTiles[y][x][k].solid,
+                  "encounter": mapTiles[y][x][k] is EncounterTile 
                 });
               }
             } else {

@@ -8,7 +8,7 @@ import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
-import 'package:dart_rpg/src/encounter_tile.dart';
+//import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/interactable.dart';
