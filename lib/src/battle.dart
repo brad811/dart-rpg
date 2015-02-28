@@ -11,6 +11,7 @@ import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/text_game_event.dart';
 import 'package:dart_rpg/src/tile.dart';
 
 class Battle implements InteractableInterface {
@@ -118,11 +119,10 @@ class Battle implements InteractableInterface {
       healthDrains.add(
         new DelayedGameEvent(200, () {
           if(receiver.health <= 0) {
-            // TODO: receiver dies
-            attacker.experience += receiver.experiencePayout;
-            showExperienceGain(() {
-              exit.trigger();
-            });
+            if(receiver == friendly)
+              friendlyDie();
+            else
+              enemyDie();
           } else {
             callback();
           }
@@ -131,6 +131,55 @@ class Battle implements InteractableInterface {
       
       DelayedGameEvent.executeDelayedEvents(healthDrains);
     });
+  }
+  
+  void friendlyDie() {
+    exit.trigger();
+  }
+  
+  void enemyDie() {
+    friendly.experience += enemy.experiencePayout;
+    TextGameEvent victory =
+      new TextGameEvent(240, "You gained ${enemy.experiencePayout} experience points!");
+    
+    victory.callback = () {
+      showExperienceGain(() {
+        //exit.trigger();
+        fadeOut();
+      });
+    };
+    
+    victory.trigger();
+  }
+  
+  void fadeOut() {
+    Main.timeScale = 0.0;
+    Gui.fadeOutLevel = Gui.FADE_BLACK_LOW;
+    
+    DelayedGameEvent.executeDelayedEvents([
+      new DelayedGameEvent(100, () {
+        Gui.fadeOutLevel = Gui.FADE_BLACK_MED;
+      }),
+      
+      new DelayedGameEvent(100, () {
+        Gui.fadeOutLevel = Gui.FADE_BLACK_FULL;
+        
+        exit.trigger();
+      }),
+      
+      new DelayedGameEvent(100, () {
+        Gui.fadeOutLevel = Gui.FADE_BLACK_MED;
+      }),
+      
+      new DelayedGameEvent(100, () {
+        Gui.fadeOutLevel = Gui.FADE_BLACK_LOW;
+      }),
+      
+      new DelayedGameEvent(100, () {
+        Gui.fadeOutLevel = Gui.FADE_NORMAL;
+        Main.timeScale = 1.0;
+      })
+    ]);
   }
   
   void tick() {
@@ -155,7 +204,7 @@ class Battle implements InteractableInterface {
     }
     
     experienceGains.add(
-      new DelayedGameEvent(200, () {
+      new DelayedGameEvent(1000, () {
         // TODO: trigger level gain if enough experience
         callback();
       })
