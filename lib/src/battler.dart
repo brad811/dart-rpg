@@ -5,6 +5,8 @@ import 'package:dart_rpg/src/attack.dart';
 class Battler {
   final String name;
   
+  // TODO: determine leveling up behavior
+  
   final int
     baseHealth,
     baseAttack,
