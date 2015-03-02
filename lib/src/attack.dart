@@ -14,12 +14,12 @@ class Attack {
   }
   
   void use(Battler attacker, Battler receiver, bool enemy, Function callback) {
-    String text = "${attacker.name} attacked ${receiver.name} with ${this.name}!";
+    String text = "${attacker.battlerType.name} attacked ${receiver.battlerType.name} with ${this.name}!";
     if(enemy) {
       text = "Enemy ${text}";
     }
     textGameEvent = new TextGameEvent(240, text, () {
-      receiver.health -= power;
+      receiver.curHealth -= power;
       callback();
     });
     textGameEvent.trigger();

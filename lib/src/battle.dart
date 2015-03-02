@@ -28,8 +28,8 @@ class Battle implements InteractableInterface {
   math.Random rand = new math.Random();
   
   Battle(this.friendly, this.enemy) {
-    friendlySprite = new Sprite.int(friendly.spriteId, 3, 7);
-    enemySprite = new Sprite.int(enemy.spriteId, 14, 1);
+    friendlySprite = new Sprite.int(friendly.battlerType.spriteId, 3, 7);
+    enemySprite = new Sprite.int(enemy.battlerType.spriteId, 14, 1);
     
     for(int y=0; y<Main.world.viewYSize; y++) {
       tiles.add([]);
@@ -84,8 +84,8 @@ class Battle implements InteractableInterface {
     
     // TODO: enemy decide action
     if(
-        friendly.speed > enemy.speed || // friendly is faster
-        (friendly.speed == enemy.speed && rand.nextBool()) // speed tie breaker
+        friendly.curSpeed > enemy.curSpeed || // friendly is faster
+        (friendly.curSpeed == enemy.curSpeed && rand.nextBool()) // speed tie breaker
     ) {
       doAttack(friendly, enemy, false, attackNum, () {
         doAttack(enemy, friendly, true, rand.nextInt(enemy.attacks.length), callback);
@@ -101,14 +101,14 @@ class Battle implements InteractableInterface {
     Gui.windows.removeRange(0, Gui.windows.length);
     
     attacker.attacks[attackNum].use(attacker, receiver, enemy, () {
-      if(receiver.health < 0)
-        receiver.health = 0;
+      if(receiver.curHealth < 0)
+        receiver.curHealth = 0;
       
       List<DelayedGameEvent> healthDrains = [];
-      for(int i=0; i<(receiver.displayHealth - receiver.health).abs(); i++) {
+      for(int i=0; i<(receiver.displayHealth - receiver.curHealth).abs(); i++) {
         healthDrains.add(
           new DelayedGameEvent(Main.timeDelay, () {
-            if(receiver.displayHealth > receiver.health)
+            if(receiver.displayHealth > receiver.curHealth)
               receiver.displayHealth--;
             else
               receiver.displayHealth++;
@@ -118,7 +118,7 @@ class Battle implements InteractableInterface {
       
       healthDrains.add(
         new DelayedGameEvent(200, () {
-          if(receiver.health <= 0) {
+          if(receiver.curHealth <= 0) {
             if(receiver == friendly)
               friendlyDie();
             else
@@ -134,6 +134,7 @@ class Battle implements InteractableInterface {
   }
   
   void friendlyDie() {
+    // TODO: handle player death
     exit.trigger();
   }
   
@@ -152,6 +153,8 @@ class Battle implements InteractableInterface {
     victory.trigger();
   }
   
+  // TODO: make this a function defined elsewhere that has
+  // a function to be called when the screen is fully black?
   void fadeOut() {
     Main.timeScale = 0.0;
     Gui.fadeOutLevel = Gui.FADE_BLACK_LOW;
@@ -187,10 +190,6 @@ class Battle implements InteractableInterface {
   }
   
   void showExperienceGain(callback) {
-    // TODO: next level
-    if(friendly.experience > friendly.nextLevel)
-      friendly.experience = friendly.nextLevel;
-    
     List<DelayedGameEvent> experienceGains = [];
     for(int i=0; i<(friendly.displayExperience - friendly.experience).abs(); i++) {
       experienceGains.add(
@@ -199,6 +198,12 @@ class Battle implements InteractableInterface {
             friendly.displayExperience--;
           else
             friendly.displayExperience++;
+          
+          // check if we have enough experience to level up
+          if(friendly.displayExperience >= math.pow(friendly.level, 3)) {
+            // TODO: level up!
+            new TextGameEvent(240, "${friendly.battlerType.name} leveled up!").trigger();
+          }
         })
       );
     }
@@ -235,7 +240,7 @@ class Battle implements InteractableInterface {
   
   void drawExperienceBar() {
     Main.ctx.setFillColorRgb(85, 85, 85);
-    double ratio = Main.player.battler.displayExperience / friendly.nextLevel;
+    double ratio = Main.player.battler.displayExperience / (math.pow(friendly.level + 1, 3) - math.pow(friendly.level, 3));
     Main.ctx.fillRect(
       11*Sprite.scaledSpriteSize - Sprite.spriteScale, 10.5*Sprite.scaledSpriteSize,
       ratio*(8*Sprite.scaledSpriteSize + Sprite.spriteScale*2), 2*Sprite.spriteScale + Sprite.spriteScale*2
@@ -254,7 +259,7 @@ class Battle implements InteractableInterface {
     enemySprite.renderStaticSized(3,3);
     
     // enemy health bar
-    drawHealthBar(1, 1, enemy.displayHealth/enemy.baseHealth);
+    drawHealthBar(1, 1, enemy.displayHealth/enemy.startingHealth);
     
     // friendly health bar
     Main.ctx.setFillColorRgb(255, 255, 255);
@@ -264,9 +269,9 @@ class Battle implements InteractableInterface {
     );
     
     Font.renderStaticText(22.25, 18.75, "${friendly.displayHealth}");
-    Font.renderStaticText(37.6 - ("${friendly.baseHealth}".length)*0.75, 18.75, "${friendly.baseHealth}");
+    Font.renderStaticText(37.6 - ("${friendly.startingHealth}".length)*0.75, 18.75, "${friendly.startingHealth}");
     
-    drawHealthBar(11, 10, friendly.displayHealth/friendly.baseHealth);
+    drawHealthBar(11, 10, friendly.displayHealth/friendly.startingHealth);
     
     drawExperienceBar();
   }

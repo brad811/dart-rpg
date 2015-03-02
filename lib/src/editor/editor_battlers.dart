@@ -6,6 +6,7 @@ import 'dart:html';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 
@@ -17,12 +18,7 @@ class EditorBattlers {
     querySelector("#add_battler_button").onClick.listen((MouseEvent e) {
       battlerChances[Main.world.curMap].add(
         new BattlerChance(
-          new Battler(
-            0, "Battler",
-            0, 0, 0,
-            [],
-            0
-          ),
+          new Battler( World.battlerTypes["Common"], [] ),
           0
         )
       );
@@ -63,6 +59,7 @@ class EditorBattlers {
     Function inputChangeFunction = (Event e) {
       for(int i=0; i<battlerChances[Main.world.curMap].length; i++) {
         try {
+          /*
           battlerChances[Main.world.curMap][i].battler = new Battler(
             int.parse((querySelector('#battlers_sprite_${i}') as InputElement).value),
             (querySelector('#battlers_name_${i}') as InputElement).value,
@@ -72,6 +69,7 @@ class EditorBattlers {
             [],
             0
           );
+          */
         } catch(e) {
           // could not update this battler
           print("Error updating battler! ( ${e} )");

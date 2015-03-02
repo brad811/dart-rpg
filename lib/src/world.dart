@@ -6,6 +6,7 @@ import 'dart:math' as math;
 
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler.dart';
+import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
@@ -38,6 +39,24 @@ class World {
   Map<String, GameMap> maps = {};
   String curMap = "";
   
+  static final Map<String, BattlerType> battlerTypes = {
+    "Player": new BattlerType(237, "Player", 50, 10, 10, 10, 10, 10, {
+      1: new Attack("Punch", 10),
+      2: new Attack("Kick", 10)
+    }),
+    
+    "Common": new BattlerType(237, "Common", 30, 4, 4, 4, 4, 4, {
+      1: new Attack("Poke", 2),
+      2: new Attack("Headbutt", 4),
+      3: new Attack("Flail", 3)
+    }),
+    
+    "Rare": new BattlerType(237, "Rare", 50, 6, 6, 6, 6, 6, {
+      1: new Attack("Jab", 4),
+      2: new Attack("Attack 74b", 6)
+    })
+  };
+  
   final int
     viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
     viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
@@ -45,42 +64,18 @@ class World {
   List<BattlerChance> battlerChances;
   
   World(Function callback) {
-    Battler battlerCommon = new Battler(
-      237, "Common Monster",
-      14, 8, 5, // health, attack, speed
-      [
-        new Attack("Poke", 2),
-        new Attack("Headbutt", 4),
-        new Attack("Flail", 3)
-      ],
-      12 // experiencePayout
-    );
-    
-    Battler battlerRare = new Battler(
-      237, "Rare Monster",
-      14, 8, 5, // health, attack, speed
-      [
-        new Attack("Jab", 4),
-        new Attack("Attack 74b", 6)
-      ],
-      18 // experiencePayout
-    );
-    
+    Battler common = new Battler(battlerTypes["Common"], battlerTypes["Common"].levelAttacks.values.toList());
+    Battler rare = new Battler(battlerTypes["Rare"], battlerTypes["Rare"].levelAttacks.values.toList());
     battlerChances = [
-      new BattlerChance(battlerCommon, 0.8),
-      new BattlerChance(battlerRare, 0.2)
+      new BattlerChance(common, 0.8),
+      new BattlerChance(rare, 0.2)
     ];
     
     // TODO: other character can walk through player
     Main.player = new Player(19, 19);
     Main.player.battler = new Battler(
-      237, "Player",
-      20, 4, 6, // health, attack, speed
-      [
-        new Attack("Punch", 10),
-        new Attack("Kick", 10),
-      ],
-      0 // experiencePayout
+      battlerTypes["Player"],
+      battlerTypes["Player"].levelAttacks.values.toList()
     );
     
     // TODO: improve editor so less is needed in world class
