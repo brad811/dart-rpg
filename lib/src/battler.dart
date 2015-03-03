@@ -51,8 +51,9 @@ class Battler {
     
     experience = math.pow(level, 3);
     
-    // TODO: take level argument
-    experiencePayout = (level * battlerType.rarity * battlerType.baseStatsSum()).round();
+    experiencePayout = (
+      level * battlerType.rarity * battlerType.baseStatsSum() / 10
+    ).round();
     
     reset();
     
