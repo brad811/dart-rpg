@@ -1,5 +1,6 @@
 library Battle;
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/battler.dart';
@@ -191,31 +192,21 @@ class Battle implements InteractableInterface {
   
   void showExperienceGain(callback) {
     List<DelayedGameEvent> experienceGains = [];
-    for(int i=0; i<(friendly.displayExperience - friendly.experience).abs(); i++) {
-      experienceGains.add(
-        new DelayedGameEvent(Main.timeDelay * 2, () {
-          if(friendly.displayExperience > friendly.experience)
-            friendly.displayExperience--;
-          else
-            friendly.displayExperience++;
-          
-          // check if we have enough experience to level up
-          if(friendly.displayExperience >= math.pow(friendly.level, 3)) {
-            // TODO: level up!
-            new TextGameEvent(240, "${friendly.battlerType.name} leveled up!").trigger();
-          }
-        })
-      );
+    bool levelUp = false;
+    
+    if(friendly.displayExperience < friendly.experience) {
+      friendly.displayExperience++;
+      if(friendly.displayExperience >= math.pow(friendly.level + 1, 3)) {
+        new TextGameEvent(240, "${friendly.battlerType.name} leveled up!", () {
+          friendly.levelUp();
+          new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(callback));
+        }).trigger();
+      } else {
+        new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(callback));
+      }
+    } else {
+      new Timer(new Duration(seconds: 1), () => callback());
     }
-    
-    experienceGains.add(
-      new DelayedGameEvent(1000, () {
-        // TODO: trigger level gain if enough experience
-        callback();
-      })
-    );
-    
-    DelayedGameEvent.executeDelayedEvents(experienceGains);
   }
   
   void drawHealthBar(int x, int y, double health) {
@@ -240,7 +231,9 @@ class Battle implements InteractableInterface {
   
   void drawExperienceBar() {
     Main.ctx.setFillColorRgb(85, 85, 85);
-    double ratio = Main.player.battler.displayExperience / (math.pow(friendly.level + 1, 3) - math.pow(friendly.level, 3));
+    double ratio =
+      (Main.player.battler.displayExperience - math.pow(friendly.level, 3)) /
+      (math.pow(friendly.level + 1, 3) - math.pow(friendly.level, 3));
     Main.ctx.fillRect(
       11*Sprite.scaledSpriteSize - Sprite.spriteScale, 10.5*Sprite.scaledSpriteSize,
       ratio*(8*Sprite.scaledSpriteSize + Sprite.spriteScale*2), 2*Sprite.spriteScale + Sprite.spriteScale*2

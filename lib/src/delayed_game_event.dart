@@ -8,10 +8,14 @@ class DelayedGameEvent {
   
   DelayedGameEvent(this.delay, this.function);
   
-  static void executeDelayedEvents(List<DelayedGameEvent> events) {
+  static void executeDelayedEvents(List<DelayedGameEvent> events, [Function callback]) {
     Future future = new Future.delayed(const Duration(milliseconds: 0), () {});
     for(DelayedGameEvent event in events) {
       future = addDelayed(future, event.delay, event.function);
+    }
+    
+    if(callback != null) {
+      future.then(callback);
     }
   }
   

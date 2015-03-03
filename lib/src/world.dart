@@ -41,7 +41,7 @@ class World {
   
   static final Map<String, Attack> attacks = {
     "Punch": new Attack("Punch", 10),
-    "Attack": new Attack("Kick", 10),
+    "Kick": new Attack("Kick", 10),
     "Poke": new Attack("Poke", 2),
     "Headbutt": new Attack("Headbutt", 4),
     "Flail": new Attack("Flail", 3),
@@ -50,21 +50,33 @@ class World {
   };
   
   static final Map<String, BattlerType> battlerTypes = {
-    "Player": new BattlerType(237, "Player", 50, 10, 10, 10, 10, 10, {
-      1: attacks["Punch"],
-      2: attacks["Kick"]
-    }),
+    "Player": new BattlerType(
+      237, "Player", 50, 10, 10, 10, 10, 10,
+      {
+        1: attacks["Punch"],
+        2: attacks["Kick"]
+      },
+      1.0
+    ),
     
-    "Common": new BattlerType(237, "Common", 30, 4, 4, 4, 4, 4, {
-      1: attacks["Poke"],
-      2: attacks["Headbutt"],
-      3: attacks["Flail"]
-    }),
+    "Common": new BattlerType(
+      237, "Common", 30, 4, 4, 4, 4, 4,
+      {
+        1: attacks["Poke"],
+        2: attacks["Headbutt"],
+        3: attacks["Flail"]
+      },
+      0.8
+    ),
     
-    "Rare": new BattlerType(237, "Rare", 50, 6, 6, 6, 6, 6, {
-      1: attacks["Jab"],
-      2: attacks["Attack 74b"]
-    })
+    "Rare": new BattlerType(
+      237, "Rare", 50, 6, 6, 6, 6, 6,
+      {
+        1: attacks["Jab"],
+        2: attacks["Attack 74b"]
+      },
+      1.2
+    )
   };
   
   final int
@@ -74,8 +86,8 @@ class World {
   List<BattlerChance> battlerChances;
   
   World(Function callback) {
-    Battler common = new Battler(battlerTypes["Common"], battlerTypes["Common"].levelAttacks.values.toList());
-    Battler rare = new Battler(battlerTypes["Rare"], battlerTypes["Rare"].levelAttacks.values.toList());
+    Battler common = new Battler(battlerTypes["Common"], 3, battlerTypes["Common"].levelAttacks.values.toList());
+    Battler rare = new Battler(battlerTypes["Rare"], 4, battlerTypes["Rare"].levelAttacks.values.toList());
     battlerChances = [
       new BattlerChance(common, 0.8),
       new BattlerChance(rare, 0.2)
@@ -84,7 +96,7 @@ class World {
     // TODO: other character can walk through player
     Main.player = new Player(19, 19);
     Main.player.battler = new Battler(
-      battlerTypes["Player"],
+      battlerTypes["Player"], 3,
       battlerTypes["Player"].levelAttacks.values.toList()
     );
     

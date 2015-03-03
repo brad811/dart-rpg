@@ -7,6 +7,7 @@ class BattlerType {
   
   final int
     spriteId,
+    
     baseHealth,
     basePhysicalAttack,
     baseMagicAttack,
@@ -14,11 +15,25 @@ class BattlerType {
     baseMagicDefence,
     baseSpeed;
   
+  final double
+    rarity;
+  
   final Map<int, Attack> levelAttacks;
   
   BattlerType(
       this.spriteId, this.name,
       this.baseHealth, this.basePhysicalAttack, this.baseMagicAttack,
       this.basePhysicalDefense, this.baseMagicDefence, this.baseSpeed,
-      this.levelAttacks);
+      this.levelAttacks,
+      this.rarity);
+  
+  int baseStatsSum() {
+    return
+      baseHealth +
+      basePhysicalAttack +
+      baseMagicAttack +
+      basePhysicalDefense +
+      baseMagicDefence +
+      baseSpeed;
+  }
 }

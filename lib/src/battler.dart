@@ -40,7 +40,7 @@ class Battler {
   List<Attack> attacks;
   List<String> attackNames = [];
   
-  Battler(this.battlerType, this.attacks) {
+  Battler(this.battlerType, this.level, this.attacks) {
     // TODO: where is starting stuff determined? calculated?
     startingHealth = battlerType.baseHealth;
     startingPhysicalAttack = battlerType.basePhysicalAttack;
@@ -48,6 +48,11 @@ class Battler {
     startingPhysicalDefense = battlerType.basePhysicalDefense;
     startingMagicDefence = battlerType.baseMagicDefence;
     startingSpeed = battlerType.baseSpeed;
+    
+    experience = math.pow(level, 3);
+    
+    // TODO: take level argument
+    experiencePayout = (level * battlerType.rarity * battlerType.baseStatsSum()).round();
     
     reset();
     
@@ -69,11 +74,13 @@ class Battler {
   }
   
   void levelUp() {
-    startingHealth += battlerType.baseHealth + (math.min(healthProficiency, 25))/5;
-    startingPhysicalAttack += battlerType.basePhysicalAttack + (math.min(physicalAttackProficiency, 25))/5;
-    startingMagicAttack += battlerType.baseMagicAttack + (math.min(magicAttackProficiency, 25))/5;
-    startingPhysicalDefense += battlerType.basePhysicalDefense + (math.min(physicalDefenseProficiency, 25))/5;
-    startingMagicDefence += battlerType.baseMagicDefence + (math.min(magicDefenseProficiency, 25))/5;
-    startingSpeed += battlerType.baseSpeed + (math.min(speedProficiency, 25))/5;
+    level += 1;
+    
+    startingHealth += (battlerType.baseHealth + (math.min(healthProficiency, 25))/5).round();
+    startingPhysicalAttack += (battlerType.basePhysicalAttack + (math.min(physicalAttackProficiency, 25))/5).round();
+    startingMagicAttack += (battlerType.baseMagicAttack + (math.min(magicAttackProficiency, 25))/5).round();
+    startingPhysicalDefense += (battlerType.basePhysicalDefense + (math.min(physicalDefenseProficiency, 25))/5).round();
+    startingMagicDefence += (battlerType.baseMagicDefence + (math.min(magicDefenseProficiency, 25))/5).round();
+    startingSpeed += (battlerType.baseSpeed + (math.min(speedProficiency, 25))/5).round();
   }
 }
