@@ -148,6 +148,8 @@ class World {
       
       Interactable.chainGameEvents(character, characterGameEvents);
       
+      // TODO: add character that heals you
+      
       callback();
     });
   }

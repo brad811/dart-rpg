@@ -9,10 +9,14 @@ class Attack {
   
   TextGameEvent textGameEvent;
   
+  // TODO: add optional argument for attack behavior
+  // to handle things other than just dealing damage
   Attack(this.name, this.power) {
     
   }
   
+  // TODO: take into account attacker and receiver stats
+  // in damage calculation
   void use(Battler attacker, Battler receiver, bool enemy, Function callback) {
     String text = "${attacker.battlerType.name} attacked ${receiver.battlerType.name} with ${this.name}!";
     if(enemy) {
