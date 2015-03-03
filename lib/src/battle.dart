@@ -252,6 +252,7 @@ class Battle implements InteractableInterface {
     enemySprite.renderStaticSized(3,3);
     
     // enemy health bar
+    Font.renderStaticText(2.0, 1.0, "${enemy.battlerType.name}");
     drawHealthBar(1, 1, enemy.displayHealth/enemy.startingHealth);
     
     // friendly health bar
@@ -261,6 +262,7 @@ class Battle implements InteractableInterface {
       130*Sprite.spriteScale, 14*Sprite.spriteScale
     );
     
+    Font.renderStaticText(22.25, 17.0, "${friendly.battlerType.name}");
     Font.renderStaticText(22.25, 18.75, "${friendly.displayHealth}");
     Font.renderStaticText(37.6 - ("${friendly.startingHealth}".length)*0.75, 18.75, "${friendly.startingHealth}");
     
