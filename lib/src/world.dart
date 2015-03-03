@@ -39,21 +39,31 @@ class World {
   Map<String, GameMap> maps = {};
   String curMap = "";
   
+  static final Map<String, Attack> attacks = {
+    "Punch": new Attack("Punch", 10),
+    "Attack": new Attack("Kick", 10),
+    "Poke": new Attack("Poke", 2),
+    "Headbutt": new Attack("Headbutt", 4),
+    "Flail": new Attack("Flail", 3),
+    "Jab": new Attack("Jab", 4),
+    "Attack 74b": new Attack("Attack 74b", 6)
+  };
+  
   static final Map<String, BattlerType> battlerTypes = {
     "Player": new BattlerType(237, "Player", 50, 10, 10, 10, 10, 10, {
-      1: new Attack("Punch", 10),
-      2: new Attack("Kick", 10)
+      1: attacks["Punch"],
+      2: attacks["Kick"]
     }),
     
     "Common": new BattlerType(237, "Common", 30, 4, 4, 4, 4, 4, {
-      1: new Attack("Poke", 2),
-      2: new Attack("Headbutt", 4),
-      3: new Attack("Flail", 3)
+      1: attacks["Poke"],
+      2: attacks["Headbutt"],
+      3: attacks["Flail"]
     }),
     
     "Rare": new BattlerType(237, "Rare", 50, 6, 6, 6, 6, 6, {
-      1: new Attack("Jab", 4),
-      2: new Attack("Attack 74b", 6)
+      1: attacks["Jab"],
+      2: attacks["Attack 74b"]
     })
   };
   
