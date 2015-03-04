@@ -43,16 +43,16 @@ class World {
   static final Map<String, Attack> attacks = {
     "Punch": new Attack("Punch", 10),
     "Kick": new Attack("Kick", 10),
-    "Poke": new Attack("Poke", 2),
-    "Headbutt": new Attack("Headbutt", 4),
-    "Flail": new Attack("Flail", 3),
-    "Jab": new Attack("Jab", 4),
-    "Attack 74b": new Attack("Attack 74b", 6)
+    "Poke": new Attack("Poke", 6),
+    "Headbutt": new Attack("Headbutt", 8),
+    "Flail": new Attack("Flail", 4),
+    "Jab": new Attack("Jab", 7),
+    "Attack 74b": new Attack("Attack 74b", 9)
   };
   
   static final Map<String, BattlerType> battlerTypes = {
     "Player": new BattlerType(
-      237, "Player", 50, 10, 10, 10, 10, 10,
+      237, "Player", 8, 8, 8, 8, 8, 8,
       {
         1: attacks["Punch"],
         2: attacks["Kick"]
@@ -61,7 +61,7 @@ class World {
     ),
     
     "Common": new BattlerType(
-      237, "Common", 30, 4, 4, 4, 4, 4,
+      237, "Common", 4, 4, 4, 4, 4, 4,
       {
         1: attacks["Poke"],
         2: attacks["Headbutt"],
@@ -71,7 +71,7 @@ class World {
     ),
     
     "Rare": new BattlerType(
-      237, "Rare", 50, 6, 6, 6, 6, 6,
+      237, "Rare", 6, 6, 6, 6, 6, 6,
       {
         1: attacks["Jab"],
         2: attacks["Attack 74b"]
@@ -84,11 +84,12 @@ class World {
     viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
     viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
   
+  // TODO: make this per-map
   List<BattlerChance> battlerChances;
   
   World(Function callback) {
-    Battler common = new Battler(battlerTypes["Common"], 3, battlerTypes["Common"].levelAttacks.values.toList());
-    Battler rare = new Battler(battlerTypes["Rare"], 4, battlerTypes["Rare"].levelAttacks.values.toList());
+    Battler common = new Battler(battlerTypes["Common"], 5, battlerTypes["Common"].levelAttacks.values.toList());
+    Battler rare = new Battler(battlerTypes["Rare"], 5, battlerTypes["Rare"].levelAttacks.values.toList());
     battlerChances = [
       new BattlerChance(common, 0.8),
       new BattlerChance(rare, 0.2)
