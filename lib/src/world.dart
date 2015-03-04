@@ -149,7 +149,7 @@ class World {
       
       Interactable.chainGameEvents(character, characterGameEvents);
       
-      // TODO: add character that heals you
+      // add character that heals you
       Character healer = addCharacter(
         "house",
         Tile.PLAYER,
