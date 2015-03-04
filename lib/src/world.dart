@@ -84,17 +84,7 @@ class World {
     viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
     viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
   
-  // TODO: make this per-map
-  List<BattlerChance> battlerChances;
-  
   World(Function callback) {
-    Battler common = new Battler(battlerTypes["Common"], 5, battlerTypes["Common"].levelAttacks.values.toList());
-    Battler rare = new Battler(battlerTypes["Rare"], 5, battlerTypes["Rare"].levelAttacks.values.toList());
-    battlerChances = [
-      new BattlerChance(common, 0.8),
-      new BattlerChance(rare, 0.2)
-    ];
-    
     Main.player = new Player(19, 19);
     Main.player.battler = new Battler(
       battlerTypes["Player"], 3,
@@ -103,6 +93,14 @@ class World {
     
     // TODO: improve editor so less is needed in world class
     loadMaps(() {
+      
+      Battler common = new Battler(battlerTypes["Common"], 5, battlerTypes["Common"].levelAttacks.values.toList());
+      Battler rare = new Battler(battlerTypes["Rare"], 5, battlerTypes["Rare"].levelAttacks.values.toList());
+      maps["main"].battlerChances = [
+        new BattlerChance(common, 0.8),
+        new BattlerChance(rare, 0.2)
+      ];
+      
       // Character
       Character character = addCharacter(
         "main",
@@ -233,7 +231,7 @@ class World {
               } else if(obj[mapName]['tiles'][y][x][k]['encounter'] == true) {
                 mapTiles[y][x][k] = new EncounterTile(
                   new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y),
-                  battlerChances
+                  maps[mapName].battlerChances
                 );
               } else {
                 mapTiles[y][x][k] = new Tile(
