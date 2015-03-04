@@ -93,7 +93,6 @@ class World {
       new BattlerChance(rare, 0.2)
     ];
     
-    // TODO: other character can walk through player
     Main.player = new Player(19, 19);
     Main.player.battler = new Battler(
       battlerTypes["Player"], 3,
@@ -274,6 +273,9 @@ class World {
         return true;
       }
     }
+    
+    if(Main.player.mapX == x && Main.player.mapY == y)
+      return true;
     
     return false;
   }
