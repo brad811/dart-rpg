@@ -40,14 +40,16 @@ class Battler {
   List<Attack> attacks;
   List<String> attackNames = [];
   
-  Battler(this.battlerType, this.level, this.attacks) {
-    // TODO: where is starting stuff determined? calculated?
+  Battler(this.battlerType, int level, this.attacks) {
     startingHealth = battlerType.baseHealth;
     startingPhysicalAttack = battlerType.basePhysicalAttack;
     startingMagicAttack = battlerType.baseMagicAttack;
     startingPhysicalDefense = battlerType.basePhysicalDefense;
     startingMagicDefence = battlerType.baseMagicDefence;
     startingSpeed = battlerType.baseSpeed;
+    
+    while(this.level < level)
+      levelUp();
     
     experience = math.pow(level, 3);
     
@@ -60,6 +62,9 @@ class Battler {
     for(Attack attack in attacks) {
       attackNames.add(attack.name);
     }
+    
+    // TODO: automatically determine levelled stats and available moves
+    // based on level
   }
   
   void reset() {
