@@ -3,6 +3,7 @@ library Gui;
 import 'dart:html';
 import 'dart:math' as math;
 
+import 'package:dart_rpg/src/delayed_game_event.dart';
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
@@ -74,6 +75,35 @@ class Gui {
     }
     
     Main.ctx.putImageData(imageData, 0, 0);
+  }
+  
+  static void fadeOutAction(Function action) {
+    Main.timeScale = 0.0;
+    fadeOutLevel = FADE_BLACK_LOW;
+    
+    DelayedGameEvent.executeDelayedEvents([
+      new DelayedGameEvent(100, () {
+        fadeOutLevel = FADE_BLACK_MED;
+      }),
+      
+      new DelayedGameEvent(100, () {
+        fadeOutLevel = FADE_BLACK_FULL;
+        action();
+      }),
+      
+      new DelayedGameEvent(100, () {
+        fadeOutLevel = FADE_BLACK_MED;
+      }),
+      
+      new DelayedGameEvent(100, () {
+        fadeOutLevel = FADE_BLACK_LOW;
+      }),
+      
+      new DelayedGameEvent(100, () {
+        fadeOutLevel = FADE_NORMAL;
+        Main.timeScale = 1.0;
+      })
+    ]);
   }
   
   static void renderConversationWindow() {

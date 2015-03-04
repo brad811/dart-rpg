@@ -136,7 +136,7 @@ class Battle implements InteractableInterface {
   
   void friendlyDie() {
     // TODO: handle player death
-    exit.trigger();
+    fadeOutExit();
   }
   
   void enemyDie() {
@@ -147,43 +147,17 @@ class Battle implements InteractableInterface {
     victory.callback = () {
       showExperienceGain(() {
         //exit.trigger();
-        fadeOut();
+        fadeOutExit();
       });
     };
     
     victory.trigger();
   }
   
-  // TODO: make this a function defined elsewhere that has
-  // a function to be called when the screen is fully black?
-  void fadeOut() {
-    Main.timeScale = 0.0;
-    Gui.fadeOutLevel = Gui.FADE_BLACK_LOW;
-    
-    DelayedGameEvent.executeDelayedEvents([
-      new DelayedGameEvent(100, () {
-        Gui.fadeOutLevel = Gui.FADE_BLACK_MED;
-      }),
-      
-      new DelayedGameEvent(100, () {
-        Gui.fadeOutLevel = Gui.FADE_BLACK_FULL;
-        
-        exit.trigger();
-      }),
-      
-      new DelayedGameEvent(100, () {
-        Gui.fadeOutLevel = Gui.FADE_BLACK_MED;
-      }),
-      
-      new DelayedGameEvent(100, () {
-        Gui.fadeOutLevel = Gui.FADE_BLACK_LOW;
-      }),
-      
-      new DelayedGameEvent(100, () {
-        Gui.fadeOutLevel = Gui.FADE_NORMAL;
-        Main.timeScale = 1.0;
-      })
-    ]);
+  void fadeOutExit() {
+    Gui.fadeOutAction(() {
+      exit.trigger();
+    });
   }
   
   void tick() {
