@@ -12,6 +12,7 @@ import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/game_map.dart';
+import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -103,6 +104,7 @@ class World {
     loadMaps(() {
       // Character
       Character character = addCharacter(
+        "main",
         //Tile.PLAYER - 64,
         Tile.PLAYER,
         237,
@@ -148,6 +150,29 @@ class World {
       Interactable.chainGameEvents(character, characterGameEvents);
       
       // TODO: add character that heals you
+      Character healer = addCharacter(
+        "house",
+        Tile.PLAYER,
+        237,
+        5, 1, LAYER_BELOW,
+        1, 2,
+        true
+      );
+      
+      List<GameEvent> healerGameEvents = [];
+      healerGameEvents = [
+        new TextGameEvent(237, "Allow me to heal your wounds."),
+        new GameEvent((callback) {
+          Gui.fadeOutAction(() {
+            Main.player.battler.curHealth = Main.player.battler.startingHealth;
+            Main.player.battler.displayHealth = Main.player.battler.startingHealth;
+          }, callback);
+          //Main.player.inputEnabled = false;
+        }),
+        new TextGameEvent(237, "You should feel much better now.")
+      ];
+      
+      Interactable.chainGameEvents(healer, healerGameEvents);
       
       callback();
     });
@@ -235,12 +260,13 @@ class World {
   }
   
   Character addCharacter(
+      String map,
       int spriteId, int pictureId,
       int posX, int posY, int layer, int sizeX, int sizeY, bool solid) {
     Character character = new Character(
       spriteId, pictureId, posX, posY, layer, sizeX, sizeY, solid
     );
-    maps[curMap].characters.add(character);
+    maps[map].characters.add(character);
     return character;
   }
   

@@ -77,7 +77,7 @@ class Gui {
     Main.ctx.putImageData(imageData, 0, 0);
   }
   
-  static void fadeOutAction(Function action) {
+  static void fadeOutAction(Function action, [Function callback]) {
     Main.timeScale = 0.0;
     fadeOutLevel = FADE_BLACK_LOW;
     
@@ -102,6 +102,9 @@ class Gui {
       new DelayedGameEvent(100, () {
         fadeOutLevel = FADE_NORMAL;
         Main.timeScale = 1.0;
+        
+        if(callback != null)
+          callback();
       })
     ]);
   }
