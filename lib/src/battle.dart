@@ -170,7 +170,7 @@ class Battle implements InteractableInterface {
     
     if(friendly.displayExperience < friendly.experience) {
       friendly.displayExperience++;
-      if(friendly.displayExperience >= math.pow(friendly.level + 1, 3)) {
+      if(friendly.displayExperience >= friendly.nextLevelExperience()) {
         new TextGameEvent(240, "${friendly.battlerType.name} leveled up!", () {
           friendly.levelUp();
           new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(callback));
@@ -206,8 +206,8 @@ class Battle implements InteractableInterface {
   void drawExperienceBar() {
     Main.ctx.setFillColorRgb(85, 85, 85);
     double ratio =
-      (Main.player.battler.displayExperience - math.pow(friendly.level, 3)) /
-      (math.pow(friendly.level + 1, 3) - math.pow(friendly.level, 3));
+      (Main.player.battler.displayExperience - friendly.curLevelExperience()) /
+      (friendly.nextLevelExperience() - friendly.curLevelExperience());
     Main.ctx.fillRect(
       11*Sprite.scaledSpriteSize - Sprite.spriteScale, 10.5*Sprite.scaledSpriteSize,
       ratio*(8*Sprite.scaledSpriteSize + Sprite.spriteScale*2), 2*Sprite.spriteScale + Sprite.spriteScale*2

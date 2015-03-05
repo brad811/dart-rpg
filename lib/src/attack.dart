@@ -15,15 +15,22 @@ class Attack {
   
   // TODO: take into account attacker and receiver stats
   // in damage calculation
-  void use(Battler attacker, Battler receiver, bool enemy, Function callback) {
-    String text = "${attacker.battlerType.name} attacked ${receiver.battlerType.name} with ${this.name}!";
+  void use(Battler attacker, Battler defender, bool enemy, Function callback) {
+    String text = "${attacker.battlerType.name} attacked ${defender.battlerType.name} with ${this.name}!";
     if(enemy) {
       text = "Enemy ${text}";
     }
     textGameEvent = new TextGameEvent(240, text, () {
-      receiver.curHealth -= power;
+      defender.curHealth -= calculateDamage(attacker, defender);
       callback();
     });
     textGameEvent.trigger();
+  }
+  
+  int calculateDamage(Battler attacker, Battler defender) {
+    double damage =
+        (attacker.curPhysicalAttack / defender.curPhysicalDefense) * power;
+    
+    return damage.round();
   }
 }

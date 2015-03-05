@@ -13,14 +13,14 @@ class Battler {
     startingPhysicalAttack = 0,
     startingMagicAttack = 0,
     startingPhysicalDefense = 0,
-    startingMagicDefence = 0,
+    startingMagicDefense = 0,
     startingSpeed = 0,
     
     curHealth = 0,
     curPhysicalAttack = 0,
     curMagicAttack = 0,
     curPhysicalDefense = 0,
-    curMagicDefence = 0,
+    curMagicDefense = 0,
     curSpeed = 0,
     
     healthProficiency = 0,
@@ -45,13 +45,13 @@ class Battler {
     startingPhysicalAttack = battlerType.basePhysicalAttack;
     startingMagicAttack = battlerType.baseMagicAttack;
     startingPhysicalDefense = battlerType.basePhysicalDefense;
-    startingMagicDefence = battlerType.baseMagicDefence;
+    startingMagicDefense = battlerType.baseMagicDefense;
     startingSpeed = battlerType.baseSpeed;
     
     while(this.level < level)
       levelUp();
     
-    experience = math.pow(level, 3);
+    experience = curLevelExperience();
     
     experiencePayout = (
       level * battlerType.rarity * battlerType.baseStatsSum() / 10
@@ -72,24 +72,52 @@ class Battler {
     curPhysicalAttack = startingPhysicalAttack;
     curMagicAttack = startingMagicAttack;
     curPhysicalDefense = startingPhysicalDefense;
-    curMagicDefence = startingMagicDefence;
+    curMagicDefense = startingMagicDefense;
     curSpeed = startingSpeed;
     
     displayHealth = startingHealth;
     displayExperience = experience;
+    print("Name: ${battlerType.name}, attack: ${curPhysicalAttack}");
+  }
+  
+  int levelExperience(int level) {
+    return math.pow(level, 2);
+  }
+  
+  int curLevelExperience() {
+    return levelExperience(level);
+  }
+  
+  int nextLevelExperience() {
+    return levelExperience(level + 1);
   }
   
   void levelUp() {
     level += 1;
+
+    int healthChange = (battlerType.baseHealth + (math.min(healthProficiency, 25))/5).round();
+    startingHealth += healthChange;
+    curHealth += healthChange;
+    displayHealth += healthChange;
     
-    startingHealth += (battlerType.baseHealth + (math.min(healthProficiency, 25))/5).round();
-    curHealth += (battlerType.baseHealth + (math.min(healthProficiency, 25))/5).round();
-    displayHealth += (battlerType.baseHealth + (math.min(healthProficiency, 25))/5).round();
+    int physicalAttackChange = (battlerType.basePhysicalAttack + (math.min(physicalAttackProficiency, 25))/5).round();
+    startingPhysicalAttack += physicalAttackChange;
+    curPhysicalAttack += physicalAttackChange;
+
+    int magicAttackChange = (battlerType.baseMagicAttack + (math.min(magicAttackProficiency, 25))/5).round();
+    startingMagicAttack += magicAttackChange;
+    curMagicAttack += magicAttackChange;
     
-    startingPhysicalAttack += (battlerType.basePhysicalAttack + (math.min(physicalAttackProficiency, 25))/5).round();
-    startingMagicAttack += (battlerType.baseMagicAttack + (math.min(magicAttackProficiency, 25))/5).round();
-    startingPhysicalDefense += (battlerType.basePhysicalDefense + (math.min(physicalDefenseProficiency, 25))/5).round();
-    startingMagicDefence += (battlerType.baseMagicDefence + (math.min(magicDefenseProficiency, 25))/5).round();
-    startingSpeed += (battlerType.baseSpeed + (math.min(speedProficiency, 25))/5).round();
+    int physicalDefenseChange = (battlerType.basePhysicalDefense + (math.min(physicalDefenseProficiency, 25))/5).round();
+    startingPhysicalDefense += physicalDefenseChange;
+    curPhysicalDefense += physicalDefenseChange;
+    
+    int magicDefenseChange = (battlerType.baseMagicDefense + (math.min(magicDefenseProficiency, 25))/5).round();
+    startingMagicDefense += magicDefenseChange;
+    curMagicDefense += magicDefenseChange;
+    
+    int speedChange = (battlerType.baseSpeed + (math.min(speedProficiency, 25))/5).round();
+    startingSpeed += speedChange;
+    curSpeed += speedChange;
   }
 }
