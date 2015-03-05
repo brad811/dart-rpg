@@ -77,7 +77,6 @@ class Battler {
     
     displayHealth = startingHealth;
     displayExperience = experience;
-    print("Name: ${battlerType.name}, attack: ${curPhysicalAttack}");
   }
   
   int levelExperience(int level) {
