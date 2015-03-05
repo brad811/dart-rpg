@@ -230,8 +230,7 @@ class World {
                 );
               } else if(obj[mapName]['tiles'][y][x][k]['encounter'] == true) {
                 mapTiles[y][x][k] = new EncounterTile(
-                  new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y),
-                  maps[mapName].battlerChances
+                  new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y)
                 );
               } else {
                 mapTiles[y][x][k] = new Tile(

@@ -165,8 +165,7 @@ class Editor {
           mapTiles[y][x][layer] = null;
         } else if(encounter) {
           mapTiles[y][x][layer] = new EncounterTile(
-            new Sprite.int(selectedTile, x, y),
-            Main.world.maps[Main.world.curMap].battlerChances
+            new Sprite.int(selectedTile, x, y)
           );
         } else {
           mapTiles[y][x][layer] = new Tile(

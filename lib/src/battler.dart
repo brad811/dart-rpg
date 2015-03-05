@@ -9,19 +9,19 @@ class Battler {
   final BattlerType battlerType;
   
   int
-    startingHealth,
-    startingPhysicalAttack,
-    startingMagicAttack,
-    startingPhysicalDefense,
-    startingMagicDefence,
-    startingSpeed,
+    startingHealth = 0,
+    startingPhysicalAttack = 0,
+    startingMagicAttack = 0,
+    startingPhysicalDefense = 0,
+    startingMagicDefence = 0,
+    startingSpeed = 0,
     
-    curHealth,
-    curPhysicalAttack,
-    curMagicAttack,
-    curPhysicalDefense,
-    curMagicDefence,
-    curSpeed,
+    curHealth = 0,
+    curPhysicalAttack = 0,
+    curMagicAttack = 0,
+    curPhysicalDefense = 0,
+    curMagicDefence = 0,
+    curSpeed = 0,
     
     healthProficiency = 0,
     physicalAttackProficiency = 0,
@@ -34,8 +34,8 @@ class Battler {
     experience = 0,
     experiencePayout = 0,
     
-    displayHealth,
-    displayExperience;
+    displayHealth = 0,
+    displayExperience = 0;
   
   List<Attack> attacks;
   List<String> attackNames = [];
@@ -83,6 +83,9 @@ class Battler {
     level += 1;
     
     startingHealth += (battlerType.baseHealth + (math.min(healthProficiency, 25))/5).round();
+    curHealth += (battlerType.baseHealth + (math.min(healthProficiency, 25))/5).round();
+    displayHealth += (battlerType.baseHealth + (math.min(healthProficiency, 25))/5).round();
+    
     startingPhysicalAttack += (battlerType.basePhysicalAttack + (math.min(physicalAttackProficiency, 25))/5).round();
     startingMagicAttack += (battlerType.baseMagicAttack + (math.min(magicAttackProficiency, 25))/5).round();
     startingPhysicalDefense += (battlerType.basePhysicalDefense + (math.min(physicalDefenseProficiency, 25))/5).round();

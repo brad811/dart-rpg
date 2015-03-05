@@ -17,9 +17,8 @@ class BattlerChance<Battler, double> {
 
 class EncounterTile extends Tile {
   math.Random rand = new math.Random();
-  List<BattlerChance> battlerChances;
   
-  EncounterTile(Sprite sprite, this.battlerChances) : super(false, sprite);
+  EncounterTile(Sprite sprite) : super(false, sprite);
   
   void enter() {
     double chance = rand.nextDouble();
@@ -28,7 +27,7 @@ class EncounterTile extends Tile {
       
       double curWeight = 0.0;
       Battler battler;
-      for(BattlerChance battlerChance in battlerChances) {
+      for(BattlerChance battlerChance in Main.world.maps[Main.world.curMap].battlerChances) {
         curWeight += battlerChance.chance;
         if(curWeight > chance) {
           battler = battlerChance.battler;

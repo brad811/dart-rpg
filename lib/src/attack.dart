@@ -11,9 +11,7 @@ class Attack {
   
   // TODO: add optional argument for attack behavior
   // to handle things other than just dealing damage
-  Attack(this.name, this.power) {
-    
-  }
+  Attack(this.name, this.power);
   
   // TODO: take into account attacker and receiver stats
   // in damage calculation
