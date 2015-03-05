@@ -105,7 +105,7 @@ class World {
       Character character = addCharacter(
         "main",
         //Tile.PLAYER - 64,
-        Tile.PLAYER,
+        Tile.PLAYER + 17,
         237,
         11, 15, LAYER_BELOW,
         1, 2,

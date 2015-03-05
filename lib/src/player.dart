@@ -11,7 +11,7 @@ import 'package:dart_rpg/src/world.dart';
 class Player extends Character implements InputHandler {
   bool inputEnabled = true;
   
-  Player(int posX, int posY) : super(Tile.PLAYER, 238, posX, posY, World.LAYER_PLAYER, 1, 2, true);
+  Player(int posX, int posY) : super(Tile.PLAYER + 17, 238, posX, posY, World.LAYER_PLAYER, 1, 2, true);
   
   void handleKeys(List<int> keyCodes) {
     if(!inputEnabled)
