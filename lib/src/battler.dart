@@ -62,9 +62,6 @@ class Battler {
     for(Attack attack in attacks) {
       attackNames.add(attack.name);
     }
-    
-    // TODO: automatically determine levelled stats and available moves
-    // based on level
   }
   
   void reset() {
@@ -80,7 +77,7 @@ class Battler {
   }
   
   int levelExperience(int level) {
-    return math.pow(level, 2);
+    return math.pow(level, 3);
   }
   
   int curLevelExperience() {
@@ -118,5 +115,9 @@ class Battler {
     int speedChange = (battlerType.baseSpeed + (math.min(speedProficiency, 25))/5).round();
     startingSpeed += speedChange;
     curSpeed += speedChange;
+    
+    // TODO: update available attacks
+    // If player and attacks are full, prompt for which move to keep
+    // If not player, delete least recent move
   }
 }

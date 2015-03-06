@@ -7,6 +7,8 @@ class Attack {
   final String name;
   final int power;
   
+  // TODO: add attack types (fire, water, electric, etc.)
+  
   TextGameEvent textGameEvent;
   
   // TODO: add optional argument for attack behavior
