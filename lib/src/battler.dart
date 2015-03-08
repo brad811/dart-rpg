@@ -11,23 +11,23 @@ class Battler {
   int
     startingHealth = 0,
     startingPhysicalAttack = 0,
-    startingMagicAttack = 0,
+    startingMagicalAttack = 0,
     startingPhysicalDefense = 0,
-    startingMagicDefense = 0,
+    startingMagicalDefense = 0,
     startingSpeed = 0,
     
     curHealth = 0,
     curPhysicalAttack = 0,
-    curMagicAttack = 0,
+    curMagicalAttack = 0,
     curPhysicalDefense = 0,
-    curMagicDefense = 0,
+    curMagicalDefense = 0,
     curSpeed = 0,
     
     healthProficiency = 0,
     physicalAttackProficiency = 0,
-    magicAttackProficiency = 0,
+    magicalAttackProficiency = 0,
     physicalDefenseProficiency = 0,
-    magicDefenseProficiency = 0,
+    magicalDefenseProficiency = 0,
     speedProficiency = 0,
     
     level = 1,
@@ -43,9 +43,9 @@ class Battler {
   Battler(this.battlerType, int level, this.attacks) {
     startingHealth = battlerType.baseHealth;
     startingPhysicalAttack = battlerType.basePhysicalAttack;
-    startingMagicAttack = battlerType.baseMagicAttack;
+    startingMagicalAttack = battlerType.baseMagicalAttack;
     startingPhysicalDefense = battlerType.basePhysicalDefense;
-    startingMagicDefense = battlerType.baseMagicDefense;
+    startingMagicalDefense = battlerType.baseMagicalDefense;
     startingSpeed = battlerType.baseSpeed;
     
     while(this.level < level)
@@ -67,9 +67,9 @@ class Battler {
   void reset() {
     curHealth = startingHealth;
     curPhysicalAttack = startingPhysicalAttack;
-    curMagicAttack = startingMagicAttack;
+    curMagicalAttack = startingMagicalAttack;
     curPhysicalDefense = startingPhysicalDefense;
-    curMagicDefense = startingMagicDefense;
+    curMagicalDefense = startingMagicalDefense;
     curSpeed = startingSpeed;
     
     displayHealth = startingHealth;
@@ -100,17 +100,17 @@ class Battler {
     startingPhysicalAttack += physicalAttackChange;
     curPhysicalAttack += physicalAttackChange;
 
-    int magicAttackChange = (battlerType.baseMagicAttack + (math.min(magicAttackProficiency, 25))/5).round();
-    startingMagicAttack += magicAttackChange;
-    curMagicAttack += magicAttackChange;
+    int magicalAttackChange = (battlerType.baseMagicalAttack + (math.min(magicalAttackProficiency, 25))/5).round();
+    startingMagicalAttack += magicalAttackChange;
+    curMagicalAttack += magicalAttackChange;
     
     int physicalDefenseChange = (battlerType.basePhysicalDefense + (math.min(physicalDefenseProficiency, 25))/5).round();
     startingPhysicalDefense += physicalDefenseChange;
     curPhysicalDefense += physicalDefenseChange;
     
-    int magicDefenseChange = (battlerType.baseMagicDefense + (math.min(magicDefenseProficiency, 25))/5).round();
-    startingMagicDefense += magicDefenseChange;
-    curMagicDefense += magicDefenseChange;
+    int magicalDefenseChange = (battlerType.baseMagicalDefense + (math.min(magicalDefenseProficiency, 25))/5).round();
+    startingMagicalDefense += magicalDefenseChange;
+    curMagicalDefense += magicalDefenseChange;
     
     int speedChange = (battlerType.baseSpeed + (math.min(speedProficiency, 25))/5).round();
     startingSpeed += speedChange;

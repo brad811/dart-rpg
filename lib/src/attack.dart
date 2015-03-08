@@ -7,14 +7,19 @@ class Attack {
   final String name;
   final int power;
   
+  static final int
+    CATEGORY_PHYSICAL = 0,
+    CATEGORY_MAGICAL = 1;
+  
+  final int category;
+  
   // TODO: add attack types (fire, water, electric, etc.)
-  // TODO: add physical vs magic
   
   TextGameEvent textGameEvent;
   
   // TODO: add optional argument for attack behavior
   // to handle things other than just dealing damage
-  Attack(this.name, this.power);
+  Attack(this.name, this.category, this.power);
   
   void use(Battler attacker, Battler defender, bool enemy, Function callback) {
     String text = "${attacker.battlerType.name} attacked ${defender.battlerType.name} with ${this.name}!";
@@ -29,8 +34,15 @@ class Attack {
   }
   
   int calculateDamage(Battler attacker, Battler defender) {
-    double damage =
+    double damage;
+    print("Category: ${ category }");
+    if(category == CATEGORY_PHYSICAL) {
+      damage =
         (attacker.curPhysicalAttack / defender.curPhysicalDefense) * power;
+    } else {
+      damage =
+        (attacker.curMagicalAttack / defender.curMagicalDefense) * power;
+    }
     
     return damage.round();
   }

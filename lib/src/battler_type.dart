@@ -10,9 +10,9 @@ class BattlerType {
     
     baseHealth,
     basePhysicalAttack,
-    baseMagicAttack,
+    baseMagicalAttack,
     basePhysicalDefense,
-    baseMagicDefense,
+    baseMagicalDefense,
     baseSpeed;
   
   final double
@@ -22,8 +22,8 @@ class BattlerType {
   
   BattlerType(
       this.spriteId, this.name,
-      this.baseHealth, this.basePhysicalAttack, this.baseMagicAttack,
-      this.basePhysicalDefense, this.baseMagicDefense, this.baseSpeed,
+      this.baseHealth, this.basePhysicalAttack, this.baseMagicalAttack,
+      this.basePhysicalDefense, this.baseMagicalDefense, this.baseSpeed,
       this.levelAttacks,
       this.rarity);
   
@@ -31,9 +31,9 @@ class BattlerType {
     return
       baseHealth +
       basePhysicalAttack +
-      baseMagicAttack +
+      baseMagicalAttack +
       basePhysicalDefense +
-      baseMagicDefense +
+      baseMagicalDefense +
       baseSpeed;
   }
 }

@@ -41,13 +41,13 @@ class World {
   String curMap = "";
   
   static final Map<String, Attack> attacks = {
-    "Punch": new Attack("Punch", 10),
-    "Kick": new Attack("Kick", 10),
-    "Poke": new Attack("Poke", 6),
-    "Headbutt": new Attack("Headbutt", 8),
-    "Flail": new Attack("Flail", 4),
-    "Jab": new Attack("Jab", 7),
-    "Attack 74b": new Attack("Attack 74b", 9)
+    "Punch": new Attack("Punch", Attack.CATEGORY_PHYSICAL, 10),
+    "Kick": new Attack("Kick", Attack.CATEGORY_PHYSICAL, 10),
+    "Poke": new Attack("Poke", Attack.CATEGORY_PHYSICAL, 6),
+    "Headbutt": new Attack("Headbutt", Attack.CATEGORY_PHYSICAL, 8),
+    "Flail": new Attack("Flail", Attack.CATEGORY_PHYSICAL, 4),
+    "Jab": new Attack("Jab", Attack.CATEGORY_PHYSICAL, 7),
+    "Attack 74b": new Attack("Attack 74b", Attack.CATEGORY_MAGICAL, 9)
   };
   
   static final Map<String, BattlerType> battlerTypes = {
