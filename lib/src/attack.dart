@@ -8,6 +8,7 @@ class Attack {
   final int power;
   
   // TODO: add attack types (fire, water, electric, etc.)
+  // TODO: add physical vs magic
   
   TextGameEvent textGameEvent;
   
@@ -15,8 +16,6 @@ class Attack {
   // to handle things other than just dealing damage
   Attack(this.name, this.power);
   
-  // TODO: take into account attacker and receiver stats
-  // in damage calculation
   void use(Battler attacker, Battler defender, bool enemy, Function callback) {
     String text = "${attacker.battlerType.name} attacked ${defender.battlerType.name} with ${this.name}!";
     if(enemy) {
