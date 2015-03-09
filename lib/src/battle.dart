@@ -196,7 +196,11 @@ class Battle implements InteractableInterface {
       8*Sprite.scaledSpriteSize, 4*Sprite.spriteScale
     );
     
-    Main.ctx.setFillColorRgb(170, 170, 170);
+    if(health < 0.2)
+      Main.ctx.setFillColorRgb(85, 85, 85);
+    else
+      Main.ctx.setFillColorRgb(170, 170, 170);
+    
     Main.ctx.fillRect(
       x*Sprite.scaledSpriteSize, y*Sprite.scaledSpriteSize,
       (8*health*Sprite.pixelsPerSprite).round()*Sprite.spriteScale, 4*Sprite.spriteScale
