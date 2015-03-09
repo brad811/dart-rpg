@@ -35,7 +35,6 @@ class Attack {
   
   int calculateDamage(Battler attacker, Battler defender) {
     double damage;
-    print("Category: ${ category }");
     if(category == CATEGORY_PHYSICAL) {
       damage =
         (attacker.curPhysicalAttack / defender.curPhysicalDefense) * power;
