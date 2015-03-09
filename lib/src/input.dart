@@ -9,7 +9,15 @@ class Input {
   static List<int>
     keys = [],
     lastKeys = [],
-    releasedKeys = [KeyCode.X, KeyCode.Z, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.UP, KeyCode.DOWN],
+    releasedKeys = [
+      KeyCode.X,
+      KeyCode.Z,
+      KeyCode.LEFT,
+      KeyCode.RIGHT,
+      KeyCode.UP,
+      KeyCode.DOWN,
+      KeyCode.ENTER
+    ],
     validKeys = [];
   
   static void handleKey(InputHandler focusObject) {
@@ -25,7 +33,7 @@ class Input {
     for(int i=0; i<keys.length; i++) {
       if(
         releasedKeys.contains(keys[i]) ||
-        // only allow holding arrow keys down if you're controlling the player
+        // only allow holding keys down if you're controlling the player
         (Main.focusObject == Main.player &&
           (keys[i] == KeyCode.LEFT || keys[i] == KeyCode.RIGHT ||
           keys[i] == KeyCode.UP || keys[i] == KeyCode.DOWN ||

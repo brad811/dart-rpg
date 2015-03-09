@@ -3,6 +3,8 @@ library Player;
 import 'dart:html';
 
 import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/choice_game_event.dart';
+import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/tile.dart';
@@ -19,6 +21,18 @@ class Player extends Character implements InputHandler {
     
     if(keyCodes.contains(KeyCode.X))
       interact();
+    
+    if(keyCodes.contains(KeyCode.ENTER)) {
+      // show start menu
+      GameEvent empty = new GameEvent( (Function a) { Main.focusObject = this; } );
+      new ChoiceGameEvent.custom(
+          this,
+          ["Stats", "Powers", "Items", "Save", "Exit"],
+          [[empty], [empty], [empty], [empty]],
+          15, 0,
+          5, 6
+        ).trigger();
+    }
     
     for(int key in keyCodes) {
       if(keyCodes.contains(KeyCode.Z))
