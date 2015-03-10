@@ -27,8 +27,13 @@ class Player extends Character implements InputHandler {
       GameEvent empty = new GameEvent( (Function a) { Main.focusObject = this; } );
       new ChoiceGameEvent.custom(
           this,
-          ["Stats", "Powers", "Items", "Save", "Exit"],
-          [[empty], [empty], [empty], [empty]],
+          {
+            "Stats": [empty],
+            "Powers": [empty],
+            "Items": [empty],
+            "Save": [empty],
+            "Exit": [empty]
+          },
           15, 0,
           5, 6
         ).trigger();

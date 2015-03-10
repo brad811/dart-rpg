@@ -12,8 +12,7 @@ import 'package:dart_rpg/src/main.dart';
 
 class ChoiceGameEvent extends GameEvent implements InputHandler {
   final InteractableInterface interactable;
-  final List<String> choices;
-  List<List<GameEvent>> callbacks;
+  final Map<String, List<GameEvent>> choices;
   GameEvent cancelEvent;
   Function window;
   bool
@@ -28,11 +27,11 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     sizeX = 3,
     sizeY = 2;
   
-  ChoiceGameEvent(this.interactable, this.choices, this.callbacks) : super() {
+  ChoiceGameEvent(this.interactable, this.choices) : super() {
     int maxLength = 0;
-    for(int i=0; i<choices.length; i++) {
-      if(choices[i].length > maxLength)
-        maxLength = choices[i].length;
+    for(int i=0; i<choices.keys.toList().length; i++) {
+      if(choices.keys.toList()[i].length > maxLength)
+        maxLength = choices.keys.toList()[i].length;
     }
     
     addWidth = ((maxLength - 3) / 2).round();
@@ -40,10 +39,9 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
   
   factory ChoiceGameEvent.custom(
       InteractableInterface interactable,
-      List<String> choices,
-      List<List<GameEvent>> callbacks,
+      Map<String, List<GameEvent>> choices,
       int posX, int posY, int sizeX, int sizeY) {
-    ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(interactable, choices, callbacks);
+    ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(interactable, choices);
     choiceGameEvent.addWidth = 0;
     choiceGameEvent.posX = posX;
     choiceGameEvent.posY = posY;
@@ -59,7 +57,7 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     Main.focusObject = this;
     
     // reverse the list so they get rendered in order
-    List<String> myChoices = choices.reversed.toList();
+    List<String> myChoices = choices.keys.toList().reversed.toList();
     
     window = () {
       if(isCustom) {
@@ -106,18 +104,18 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     if(keyCodes.contains(KeyCode.UP)) {
       curChoice--;
       if(curChoice < 0) {
-        curChoice = choices.length - 1;
+        curChoice = choices.keys.toList().length - 1;
       }
     } else if(keyCodes.contains(KeyCode.DOWN)) {
       curChoice++;
-      if(curChoice > choices.length - 1) {
+      if(curChoice > choices.keys.toList().length - 1) {
         curChoice = 0;
       }
     } else if(keyCodes.contains(KeyCode.X)) {
       if(remove)
         Gui.windows.remove(window);
       
-      Interactable.chainGameEvents(interactable, callbacks[curChoice]);
+      Interactable.chainGameEvents(interactable, choices.values.toList()[curChoice]);
       interactable.gameEvent.trigger();
     } else if(keyCodes.contains(KeyCode.Z) && cancelEvent != null) {
       Gui.windows.remove(window);

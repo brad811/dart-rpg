@@ -130,19 +130,19 @@ class World {
           );
         }),
         new TextGameEvent.choice(237, "See?",
-          new ChoiceGameEvent(character, ["Yes", "No"], [
-            [
+          new ChoiceGameEvent(character, {
+            "Yes": [
               new TextGameEvent(231, "That's fine."),
               new TextGameEvent(237, "If you say so!"),
               new GameEvent((callback) {
                 character.gameEvent = characterGameEvents[0];
               })
             ],
-            [
+            "No": [
               new TextGameEvent(231, "I hate you."),
               new TextGameEvent(237, "::sniff sniff:: Meanie!")
             ]
-          ])
+          })
         )
       ];
       

@@ -62,7 +62,8 @@ class TextGameEvent extends GameEvent {
       textLines.removeRange(0, Gui.maxLines);
       
       if(textLines.length <= Gui.maxLines && choiceGameEvent != null) {
-        choiceGameEvent.callbacks = [callback];
+        // TODO: is this line still needed?
+        //choiceGameEvent.callbacks = [callback];
         choiceGameEvent.trigger();
       }
     } else {

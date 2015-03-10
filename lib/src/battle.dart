@@ -45,23 +45,28 @@ class Battle implements InteractableInterface {
       Main.inBattle = false;
     });
     
+    Map<String, List<GameEvent>> friendlyAttackMap = new Map<String, List<GameEvent>>();
+    for(int i=0; i<friendly.attacks.length; i++) {
+      friendlyAttackMap.putIfAbsent(
+        friendly.attackNames[i], () { return [new GameEvent((callback) { attack(friendly, i); })]; }
+      );
+    }
+    
     fight = new ChoiceGameEvent.custom(
       this,
-      friendly.attackNames,
-      [
-        [new GameEvent((callback) { attack(friendly, 0); })],
-        [new GameEvent((callback) { attack(friendly, 1); })],
-        [new GameEvent((callback) { attack(friendly, 2); })],
-        [new GameEvent((callback) { attack(friendly, 3); })]
-      ],
+      friendlyAttackMap,
       5, 11, 10, 5
     );
     fight.remove = true;
     
     main = new ChoiceGameEvent.custom(
       this,
-      ["Fight", "Powers", "Bag", "Run"],
-      [[fight], [fight], [fight], [exit]],
+      {
+        "Fight": [fight],
+        "Powers": [fight],
+        "Bag": [fight],
+        "Run": [exit]
+      },
       15, 11, 5, 5
     );
     main.remove = false;
