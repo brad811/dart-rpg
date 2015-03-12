@@ -217,7 +217,7 @@ class World {
             if(curTile != null) {
               if(curTile['warp'] != null) {
                 mapTiles[y][x][k] = new WarpTile(
-                    curTile['solid'],
+                  curTile['solid'] == true,
                   new Sprite.int(curTile['id'], x, y),
                   curTile['warp']['destMap'],
                   curTile['warp']['destX'],
@@ -225,7 +225,7 @@ class World {
                 );
               } else if(curTile['sign'] != null) {
                 mapTiles[y][x][k] = new Sign(
-                    curTile['solid'],
+                  curTile['solid'] == true,
                   new Sprite.int(curTile['id'], x, y),
                   curTile['sign']['pic'],
                   curTile['sign']['text']
@@ -233,13 +233,13 @@ class World {
               } else if(curTile['encounter'] == true) {
                 mapTiles[y][x][k] = new EncounterTile(
                   new Sprite.int(curTile['id'], x, y),
-                  curTile['layered']
+                  curTile['layered'] == true
                 );
               } else {
                 mapTiles[y][x][k] = new Tile(
-                  curTile['solid'],
+                  curTile['solid'] == true,
                   new Sprite.int(curTile['id'], x, y),
-                  curTile['layered']
+                  curTile['layered'] == true
                 );
               }
             }

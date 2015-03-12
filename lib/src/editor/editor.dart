@@ -295,12 +295,16 @@ class Editor {
               if(mapTiles[y][x][k].sprite.id == -1) {
                 jsonMap[y][x].add(null);
               } else {
-                jsonMap[y][x].add({
-                  "id": mapTiles[y][x][k].sprite.id,
-                  "solid": mapTiles[y][x][k].solid,
-                  "layered": mapTiles[y][x][k].layered,
-                  "encounter": mapTiles[y][x][k] is EncounterTile 
-                });
+                Map jsonObject = {};
+                jsonObject["id"] = mapTiles[y][x][k].sprite.id;
+                if(mapTiles[y][x][k].solid)
+                  jsonObject["solid"] = true;
+                if(mapTiles[y][x][k].layered == true)
+                  jsonObject["layered"] = true;
+                if(mapTiles[y][x][k] is EncounterTile)
+                  jsonObject["encounter"] = true;
+                
+                jsonMap[y][x].add(jsonObject);
               }
             } else {
               jsonMap[y][x].add(null);
