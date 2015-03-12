@@ -212,30 +212,34 @@ class World {
           for(int k=0; k<obj[mapName]['tiles'][y][x].length; k++) {
             mapTiles[y][x].add(null);
             
-            if(obj[mapName]['tiles'][y][x][k] != null) {
-              if(obj[mapName]['tiles'][y][x][k]['warp'] != null) {
+            var curTile = obj[mapName]['tiles'][y][x][k];
+            
+            if(curTile != null) {
+              if(curTile['warp'] != null) {
                 mapTiles[y][x][k] = new WarpTile(
-                  obj[mapName]['tiles'][y][x][k]['solid'],
-                  new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y),
-                  obj[mapName]['tiles'][y][x][k]['warp']['destMap'],
-                  obj[mapName]['tiles'][y][x][k]['warp']['destX'],
-                  obj[mapName]['tiles'][y][x][k]['warp']['destY']
+                    curTile['solid'],
+                  new Sprite.int(curTile['id'], x, y),
+                  curTile['warp']['destMap'],
+                  curTile['warp']['destX'],
+                  curTile['warp']['destY']
                 );
-              } else if(obj[mapName]['tiles'][y][x][k]['sign'] != null) {
+              } else if(curTile['sign'] != null) {
                 mapTiles[y][x][k] = new Sign(
-                  obj[mapName]['tiles'][y][x][k]['solid'],
-                  new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y),
-                  obj[mapName]['tiles'][y][x][k]['sign']['pic'],
-                  obj[mapName]['tiles'][y][x][k]['sign']['text']
+                    curTile['solid'],
+                  new Sprite.int(curTile['id'], x, y),
+                  curTile['sign']['pic'],
+                  curTile['sign']['text']
                 );
-              } else if(obj[mapName]['tiles'][y][x][k]['encounter'] == true) {
+              } else if(curTile['encounter'] == true) {
                 mapTiles[y][x][k] = new EncounterTile(
-                  new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y)
+                  new Sprite.int(curTile['id'], x, y),
+                  curTile['layered']
                 );
               } else {
                 mapTiles[y][x][k] = new Tile(
-                  obj[mapName]['tiles'][y][x][k]['solid'],
-                  new Sprite.int(obj[mapName]['tiles'][y][x][k]['id'], x, y)
+                  curTile['solid'],
+                  new Sprite.int(curTile['id'], x, y),
+                  curTile['layered']
                 );
               }
             }

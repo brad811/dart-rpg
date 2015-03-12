@@ -159,18 +159,21 @@ class Editor {
         
         int layer = int.parse((querySelector("[name='layer']:checked") as RadioButtonInputElement).value);
         bool solid = (querySelector("#solid") as CheckboxInputElement).checked;
+        bool layered = (querySelector("#layered") as CheckboxInputElement).checked;
         bool encounter = (querySelector("#encounter") as CheckboxInputElement).checked;
         
         if(selectedTile == 98) {
           mapTiles[y][x][layer] = null;
         } else if(encounter) {
           mapTiles[y][x][layer] = new EncounterTile(
-            new Sprite.int(selectedTile, x, y)
+            new Sprite.int(selectedTile, x, y),
+            layered
           );
         } else {
           mapTiles[y][x][layer] = new Tile(
             solid,
-            new Sprite.int(selectedTile, x, y)
+            new Sprite.int(selectedTile, x, y),
+            layered
           );
         }
         
@@ -229,6 +232,7 @@ class Editor {
     }
     
     List<Tile> solids = [];
+    List<Tile> layereds = [];
     List<Tile> encounters = [];
     
     for(List<Tile> layer in renderList) {
@@ -238,10 +242,15 @@ class Editor {
           tile.sprite.posX.round(), tile.sprite.posY.round()
         );
         
-        // add solid tiles and encounter tiles to a list to have boxes drawn around them
+        // add solid tiles, layered tiles, and encounter tiles
+        // to a list to have boxes drawn around them
         if(tile.solid)
           solids.add(tile);
-        else if(tile is EncounterTile)
+        
+        if(tile.layered == true)
+          layereds.add(tile);
+        
+        if(tile is EncounterTile)
           encounters.add(tile);
       }
     }
@@ -250,6 +259,9 @@ class Editor {
     outlineTiles(solids, 255, 0, 0);
     
     // TODO: draw blue boxes around characters
+    
+    // draw cyan boxes around layered tiles
+    outlineTiles(layereds, 0, 150, 255);
     
     // draw magenta boxes around encounter tiles
     outlineTiles(encounters, 200, 0, 255);
@@ -286,6 +298,7 @@ class Editor {
                 jsonMap[y][x].add({
                   "id": mapTiles[y][x][k].sprite.id,
                   "solid": mapTiles[y][x][k].solid,
+                  "layered": mapTiles[y][x][k].layered,
                   "encounter": mapTiles[y][x][k] is EncounterTile 
                 });
               }

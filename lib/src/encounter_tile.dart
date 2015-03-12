@@ -18,7 +18,7 @@ class BattlerChance<Battler, double> {
 class EncounterTile extends Tile {
   math.Random rand = new math.Random();
   
-  EncounterTile(Sprite sprite) : super(false, sprite);
+  EncounterTile(Sprite sprite, [bool layered]) : super(false, sprite, layered);
   
   void enter() {
     double chance = rand.nextDouble();
