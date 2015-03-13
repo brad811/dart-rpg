@@ -202,6 +202,12 @@ class Editor {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     List<Character> characters = Main.world.maps[Main.world.curMap].characters;
     
+    if(querySelector("#size_x") != null)
+      querySelector("#size_x").text = mapTiles[0].length.toString();
+    
+    if(querySelector("#size_y") != null)
+      querySelector("#size_y").text = mapTiles.length.toString();
+    
     if(mapTiles.length == 0 || mapTiles[0].length == 0)
       return;
     

@@ -78,6 +78,12 @@ body {
   float: right;
 }
 
+#size_x, #size_y {
+  display: inline-block;
+  width: 40px;
+  text-align: center;
+}
+
 #size_x_buttons button, #size_y_buttons button {
   margin-top: 8px;
   width: 30px;
