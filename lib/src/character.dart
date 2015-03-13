@@ -46,6 +46,10 @@ class Character implements InteractableInterface, InputHandler {
   Battler battler;
   
   // TODO: perhaps add name field
+  // TODO: add wander behavior
+  // TODO: add line-of-sight battle encounters?
+  // TODO: add battle event with callback
+  //   (to fight a character and then have them react to the battle)
   
   Character(this.spriteId, this.pictureId,
       this.mapX, this.mapY, this.layer, this.sizeX, this.sizeY, this.solid) {
