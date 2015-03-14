@@ -235,17 +235,24 @@ class Battle implements InteractableInterface {
     enemySprite.renderStaticSized(3,3);
     
     // enemy health bar
-    double levelTextAdjust = 0.75 * (enemy.level.toString().length - 1);
-    Font.renderStaticText(14.6 - levelTextAdjust, 1.0, "Lv ${enemy.level}");
+    Main.ctx.setFillColorRgb(255, 255, 255);
+    Main.ctx.fillRect(
+      15*Sprite.spriteScale, 0*Sprite.scaledSpriteSize,
+      130*Sprite.spriteScale, 1*Sprite.scaledSpriteSize
+    );
     
-    Font.renderStaticText(2.0, 1.0, "${enemy.battlerType.name}");
+    
+    double levelTextAdjust = 0.75 * (enemy.level.toString().length - 1);
+    Font.renderStaticText(14.6 - levelTextAdjust, 0.8, "Lv ${enemy.level}");
+    
+    Font.renderStaticText(2.3, 0.8, "${enemy.battlerType.name}");
     drawHealthBar(1, 1, enemy.displayHealth/enemy.startingHealth);
     
     // friendly health bar
     Main.ctx.setFillColorRgb(255, 255, 255);
     Main.ctx.fillRect(
-      175*Sprite.spriteScale, 145*Sprite.spriteScale,
-      130*Sprite.spriteScale, 14*Sprite.spriteScale
+      175*Sprite.spriteScale, 8.125*Sprite.scaledSpriteSize,
+      130*Sprite.spriteScale, 2*Sprite.scaledSpriteSize
     );
     
     Font.renderStaticText(22.25, 17.0, "${friendly.battlerType.name}");
