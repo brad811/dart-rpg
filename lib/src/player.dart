@@ -1,10 +1,9 @@
 library Player;
 
-import 'dart:html';
-
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event.dart';
+import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/tile.dart';
@@ -22,10 +21,10 @@ class Player extends Character implements InputHandler {
     if(!inputEnabled)
       return;
     
-    if(keyCodes.contains(KeyCode.X))
+    if(keyCodes.contains(Input.CONFIRM))
       interact();
     
-    if(keyCodes.contains(KeyCode.ENTER)) {
+    if(keyCodes.contains(Input.START)) {
       ChoiceGameEvent start;
       
       // show start menu
@@ -78,24 +77,24 @@ class Player extends Character implements InputHandler {
     }
     
     for(int key in keyCodes) {
-      if(keyCodes.contains(KeyCode.Z))
+      if(keyCodes.contains(Input.BACK))
         curSpeed = runSpeed;
       else
         curSpeed = walkSpeed;
       
-      if(keyCodes.contains(KeyCode.LEFT)) {
+      if(keyCodes.contains(Input.LEFT)) {
         move(Character.LEFT);
         return;
       }
-      if(keyCodes.contains(KeyCode.RIGHT)) {
+      if(keyCodes.contains(Input.RIGHT)) {
         move(Character.RIGHT);
         return;
       }
-      if(keyCodes.contains(KeyCode.UP)) {
+      if(keyCodes.contains(Input.UP)) {
         move(Character.UP);
         return;
       }
-      if(keyCodes.contains(KeyCode.DOWN)) {
+      if(keyCodes.contains(Input.DOWN)) {
         move(Character.DOWN);
         return;
       }

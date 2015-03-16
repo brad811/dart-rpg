@@ -1,10 +1,9 @@
 library TextGameEvent;
 
-import 'dart:html';
-
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
+import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/main.dart';
 
 class TextGameEvent extends GameEvent {
@@ -74,7 +73,7 @@ class TextGameEvent extends GameEvent {
   }
   
   void handleKeys(List<int> keyCodes) {
-    if(keyCodes.contains(KeyCode.X)) {
+    if(keyCodes.contains(Input.CONFIRM)) {
       continueText();
     }
   }

@@ -1,10 +1,9 @@
 library ChoiceEvent;
 
-import 'dart:html';
-
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
+import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
@@ -101,23 +100,23 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
   }
   
   void handleKeys(List<int> keyCodes) {
-    if(keyCodes.contains(KeyCode.UP)) {
+    if(keyCodes.contains(Input.UP)) {
       curChoice--;
       if(curChoice < 0) {
         curChoice = choices.keys.toList().length - 1;
       }
-    } else if(keyCodes.contains(KeyCode.DOWN)) {
+    } else if(keyCodes.contains(Input.DOWN)) {
       curChoice++;
       if(curChoice > choices.keys.toList().length - 1) {
         curChoice = 0;
       }
-    } else if(keyCodes.contains(KeyCode.X)) {
+    } else if(keyCodes.contains(Input.CONFIRM)) {
       if(remove)
         Gui.windows.remove(window);
       
       Interactable.chainGameEvents(interactable, choices.values.toList()[curChoice]);
       interactable.gameEvent.trigger();
-    } else if(keyCodes.contains(KeyCode.Z) && cancelEvent != null) {
+    } else if(keyCodes.contains(Input.BACK) && cancelEvent != null) {
       Gui.windows.remove(window);
       
       Interactable.chainGameEvents(interactable, [cancelEvent]);

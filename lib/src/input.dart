@@ -6,17 +6,26 @@ import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/main.dart';
 
 class Input {
+  static final int
+    CONFIRM = KeyCode.X,
+    BACK = KeyCode.Z,
+    LEFT = KeyCode.LEFT,
+    RIGHT = KeyCode.RIGHT,
+    UP = KeyCode.UP,
+    DOWN = KeyCode.DOWN,
+    START = KeyCode.ENTER;
+  
   static List<int>
     keys = [],
     lastKeys = [],
     releasedKeys = [
-      KeyCode.X,
-      KeyCode.Z,
-      KeyCode.LEFT,
-      KeyCode.RIGHT,
-      KeyCode.UP,
-      KeyCode.DOWN,
-      KeyCode.ENTER
+      CONFIRM,
+      BACK,
+      LEFT,
+      RIGHT,
+      UP,
+      DOWN,
+      START
     ],
     validKeys = [];
   
@@ -35,9 +44,9 @@ class Input {
         releasedKeys.contains(keys[i]) ||
         // only allow holding keys down if you're controlling the player
         (Main.focusObject == Main.player &&
-          (keys[i] == KeyCode.LEFT || keys[i] == KeyCode.RIGHT ||
-          keys[i] == KeyCode.UP || keys[i] == KeyCode.DOWN ||
-          keys[i] == KeyCode.Z
+          (keys[i] == LEFT || keys[i] == RIGHT ||
+          keys[i] == UP || keys[i] == DOWN ||
+          keys[i] == BACK
           )
         )
       ) {
