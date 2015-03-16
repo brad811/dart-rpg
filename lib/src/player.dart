@@ -26,6 +26,8 @@ class Player extends Character implements InputHandler {
       interact();
     
     if(keyCodes.contains(KeyCode.ENTER)) {
+      ChoiceGameEvent start;
+      
       // show start menu
       GameEvent exit = new GameEvent( (Function a) { Main.focusObject = this; } );
       
@@ -49,28 +51,30 @@ class Player extends Character implements InputHandler {
         
         GameEvent powersBack = new GameEvent((Function a) {
           Gui.windows = [];
-          exit.trigger();
+          start.trigger();
         });
         
         new ChoiceGameEvent.custom(
-            this, {"Exit": [powersBack]},
+            this, {"Back": [powersBack]},
             15, 0,
             5, 2
         ).trigger();
       });
       
-      new ChoiceGameEvent.custom(
-          this,
-          {
-            "Stats": [exit],
-            "Powers": [powers],
-            "Items": [exit],
-            "Save": [exit],
-            "Exit": [exit]
-          },
-          15, 0,
-          5, 6
-        ).trigger();
+      start = new ChoiceGameEvent.custom(
+        this,
+        {
+          "Stats": [exit],
+          "Powers": [powers],
+          "Items": [exit],
+          "Save": [exit],
+          "Exit": [exit]
+        },
+        15, 0,
+        5, 6
+      );
+      
+      start.trigger();
     }
     
     for(int key in keyCodes) {
