@@ -25,6 +25,8 @@ class Player extends Character implements InputHandler {
       interact();
     
     if(keyCodes.contains(Input.START)) {
+      // TODO: move start menu code somewhere else
+      //   and have it only declared once
       ChoiceGameEvent start;
       
       // show start menu
