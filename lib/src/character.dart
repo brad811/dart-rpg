@@ -93,6 +93,7 @@ class Character implements InteractableInterface, InputHandler {
       if(directionCooldown > 0)
         return;
       
+      // TODO: handle entering null tiles
       if(motionDirection == Character.LEFT) {
         motionX = -motionAmount;
         Main.world.maps[Main.world.curMap].tiles[mapY][mapX-1][World.LAYER_GROUND].enter();

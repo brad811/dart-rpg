@@ -9,6 +9,7 @@ class WarpTile extends Tile {
   String destMap;
   int destX, destY;
   
+  // TODO: maybe don't move after warping
   WarpTile(bool solid, Sprite sprite, this.destMap, this.destX, this.destY) : super(solid, sprite);
   
   void enter() {

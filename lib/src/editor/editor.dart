@@ -27,8 +27,9 @@ import 'package:dart_rpg/src/editor/editor_battlers.dart';
 //       - probably delete
 
 // TODO: add hover tooltip that shows ID of tiles
-
 // TODO: add hover tooltip that shows map coordinates
+// TODO: enable showing and hiding layers
+// TODO: shift warps, signs, etc. when map is resized
 
 class Editor {
   static ImageElement spritesImage;
