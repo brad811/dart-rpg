@@ -112,6 +112,8 @@ class World {
         true
       );
       
+      character.sightDistance = 2;
+      
       character.direction = Character.RIGHT;
       
       List<GameEvent> characterGameEvents = [];
