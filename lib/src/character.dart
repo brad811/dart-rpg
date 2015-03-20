@@ -3,7 +3,6 @@ library Character;
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/battler.dart';
-import 'package:dart_rpg/src/delayed_game_event.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
@@ -218,43 +217,7 @@ class Character implements InteractableInterface, InputHandler {
   }
   
   void checkForBattle() {
-    // check for line-of-sight battles
-    // TODO: move this into player class
-    if(this == Main.player) {
-      for(Character character in Main.world.maps[Main.world.curMap].characters) {
-        for(int i=1; i<=character.sightDistance; i++) {
-          if(
-              (Main.player.mapX == character.mapX && Main.player.mapY + i == character.mapY) ||
-              (Main.player.mapX == character.mapX && Main.player.mapY - i == character.mapY) ||
-              (Main.player.mapX + i == character.mapX && Main.player.mapY == character.mapY) ||
-              (Main.player.mapX - i == character.mapX && Main.player.mapY == character.mapY)
-          ) {
-            print("A battle should now ensue!");
-            
-            Tile target = Main.world.maps[Main.world.curMap]
-                .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE];
-            
-            Tile before = null;
-            if(target != null)
-              before = new Tile(target.solid, target.sprite, target.layered);
-            
-            DelayedGameEvent.executeDelayedEvents([
-              new DelayedGameEvent(0, () {
-                Main.timeScale = 0.0;
-                Main.world.maps[Main.world.curMap]
-                  .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE] =
-                    new Tile(false, new Sprite.int(99, character.mapX, character.mapY - character.sizeY));
-              }),
-              new DelayedGameEvent(500, () {
-                Main.world.maps[Main.world.curMap]
-                  .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE] = before;
-                Main.timeScale = 1.0;
-              })
-            ]);
-          }
-        }
-      }
-    }
+    // Override in Player class
   }
   
   void render(List<List<Tile>> renderList) {
