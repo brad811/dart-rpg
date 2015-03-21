@@ -4,6 +4,7 @@ import 'dart:math' as math;
 
 import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/battler.dart';
+import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
@@ -35,15 +36,21 @@ class EncounterTile extends Tile {
         }
       }
       
+      Main.player.inputEnabled = false;
       battler.reset();
       
       Main.player.motionCallback = () {
-        Main.battle = new Battle(
-            Main.player.battler,
-            battler
-        );
-        
-        Main.battle.start();
+        Gui.fadeLightAction((){},(){
+          Gui.fadeDarkAction((){}, (){
+            Main.battle = new Battle(
+                Main.player.battler,
+                battler
+            );
+            
+            Main.player.inputEnabled = true;
+            Main.battle.start();
+          });
+        });
       };
     }
   }

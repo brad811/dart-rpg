@@ -160,7 +160,7 @@ class Battle implements InteractableInterface {
   }
   
   void fadeOutExit() {
-    Gui.fadeOutAction(() {
+    Gui.fadeDarkAction(() {
       exit.trigger();
     });
   }

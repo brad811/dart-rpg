@@ -190,16 +190,20 @@ class Player extends Character implements InputHandler {
             new List<int>.generate(movementAmount, (int i) => movementDirection, growable: true),
             () {
               new TextGameEvent(237, "Let's fight!", () {
-                // start the battle!
-                character.battler.reset();
-                
-                Main.battle = new Battle(
-                    Main.player.battler,
-                    character.battler
-                );
-                
-                Main.battle.start();
-                Main.player.inputEnabled = true;
+                Gui.fadeLightAction((){},(){
+                  Gui.fadeDarkAction((){}, (){
+                    // start the battle!
+                    character.battler.reset();
+                    
+                    Main.battle = new Battle(
+                        Main.player.battler,
+                        character.battler
+                    );
+                    
+                    Main.battle.start();
+                    Main.player.inputEnabled = true;
+                  });
+                });
               }).trigger();
             }
           );
