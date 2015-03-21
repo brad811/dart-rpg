@@ -102,7 +102,7 @@ class World {
       ];
       
       // Character
-      Character character = addCharacter(
+      Character someKid = addCharacter(
         "main",
         //Tile.PLAYER - 64,
         Tile.PLAYER + 17,
@@ -112,12 +112,7 @@ class World {
         true
       );
       
-      character.sightDistance = 5;
-      character.direction = Character.RIGHT;
-      character.battler = new Battler(
-        battlerTypes["Player"], 4,
-        battlerTypes["Player"].levelAttacks.values.toList()
-      );
+      someKid.direction = Character.RIGHT;
       
       List<GameEvent> characterGameEvents = [];
       characterGameEvents = [
@@ -125,7 +120,7 @@ class World {
         new GameEvent((callback) {
           Main.player.inputEnabled = false;
           chainCharacterMovement(
-            character,
+            someKid,
             [Character.LEFT, Character.LEFT, Character.LEFT,
               Character.RIGHT, Character.RIGHT, Character.RIGHT],
             () {
@@ -135,12 +130,12 @@ class World {
           );
         }),
         new TextGameEvent.choice(237, "See?",
-          new ChoiceGameEvent(character, {
+          new ChoiceGameEvent(someKid, {
             "Yes": [
               new TextGameEvent(231, "That's fine."),
               new TextGameEvent(237, "If you say so!"),
               new GameEvent((callback) {
-                character.gameEvent = characterGameEvents[0];
+                someKid.gameEvent = characterGameEvents[0];
               })
             ],
             "No": [
@@ -151,7 +146,7 @@ class World {
         )
       ];
       
-      Interactable.chainGameEvents(character, characterGameEvents);
+      Interactable.chainGameEvents(someKid, characterGameEvents);
       
       // add character that heals you
       Character healer = addCharacter(
@@ -177,6 +172,22 @@ class World {
       ];
       
       Interactable.chainGameEvents(healer, healerGameEvents);
+      
+      Character fighter = addCharacter(
+        "main",
+        Tile.PLAYER + 17,
+        237,
+        35, 13, LAYER_BELOW,
+        1, 2,
+        true
+      );
+      
+      fighter.sightDistance = 4;
+      fighter.direction = Character.DOWN;
+      fighter.battler = new Battler(
+        battlerTypes["Player"], 4,
+        battlerTypes["Player"].levelAttacks.values.toList()
+      );
       
       callback();
     });

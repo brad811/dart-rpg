@@ -59,6 +59,8 @@ class Battle implements InteractableInterface {
     );
     fight.remove = true;
     
+    // TODO: make it so that some battles cannot be run from
+    // TODO: make running possibly fail
     main = new ChoiceGameEvent.custom(
       this,
       {

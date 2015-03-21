@@ -109,6 +109,8 @@ class Player extends Character implements InputHandler {
   
   @override
   void checkForBattle() {
+    // TODO: make it so that talking to a player can make them battle you
+    
     // check for line-of-sight battles
     for(Character character in Main.world.maps[Main.world.curMap].characters) {
       for(int i=1; i<=character.sightDistance; i++) {
@@ -189,7 +191,8 @@ class Player extends Character implements InputHandler {
             character,
             new List<int>.generate(movementAmount, (int i) => movementDirection, growable: true),
             () {
-              new TextGameEvent(237, "Let's fight!", () {
+              // TODO: this text should be input
+              new TextGameEvent(237, "Hey, before you leave, let's see how strong you are!", () {
                 Gui.fadeLightAction((){},(){
                   Gui.fadeDarkAction((){}, (){
                     // start the battle!
