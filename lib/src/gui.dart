@@ -77,30 +77,54 @@ class Gui {
     Main.ctx.putImageData(imageData, 0, 0);
   }
   
-  static void fadeOutAction(Function action, [Function callback]) {
+  static void fadeDarkAction(Function action, [Function callback]) {
+    List<int> fadeLevels = [
+      FADE_BLACK_LOW,
+      FADE_BLACK_MED,
+      FADE_BLACK_FULL,
+      FADE_BLACK_MED,
+      FADE_BLACK_LOW,
+      FADE_NORMAL
+    ];
+    fadeAction(fadeLevels, action, callback);
+  }
+  
+  static void fadeLightAction(Function action, [Function callback]) {
+    List<int> fadeLevels = [
+      FADE_WHITE_LOW,
+      FADE_WHITE_MED,
+      FADE_WHITE_FULL,
+      FADE_WHITE_MED,
+      FADE_WHITE_LOW,
+      FADE_NORMAL
+    ];
+    fadeAction(fadeLevels, action, callback);
+  }
+  
+  static void fadeAction(List<int> fadeLevels, Function action, [Function callback]) {
     Main.timeScale = 0.0;
-    fadeOutLevel = FADE_BLACK_LOW;
+    fadeOutLevel = fadeLevels[0];
     
     DelayedGameEvent.executeDelayedEvents([
       new DelayedGameEvent(100, () {
-        fadeOutLevel = FADE_BLACK_MED;
+        fadeOutLevel = fadeLevels[1];
       }),
       
       new DelayedGameEvent(100, () {
-        fadeOutLevel = FADE_BLACK_FULL;
+        fadeOutLevel = fadeLevels[2];
         action();
       }),
       
       new DelayedGameEvent(100, () {
-        fadeOutLevel = FADE_BLACK_MED;
+        fadeOutLevel = fadeLevels[3];
       }),
       
       new DelayedGameEvent(100, () {
-        fadeOutLevel = FADE_BLACK_LOW;
+        fadeOutLevel = fadeLevels[4];
       }),
       
       new DelayedGameEvent(100, () {
-        fadeOutLevel = FADE_NORMAL;
+        fadeOutLevel = fadeLevels[5];
         Main.timeScale = 1.0;
         
         if(callback != null)

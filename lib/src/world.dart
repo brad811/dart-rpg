@@ -167,7 +167,7 @@ class World {
       healerGameEvents = [
         new TextGameEvent(237, "Allow me to heal your wounds."),
         new GameEvent((callback) {
-          Gui.fadeOutAction(() {
+          Gui.fadeLightAction(() {
             Main.player.battler.curHealth = Main.player.battler.startingHealth;
             Main.player.battler.displayHealth = Main.player.battler.startingHealth;
           }, callback);

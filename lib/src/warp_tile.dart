@@ -13,7 +13,7 @@ class WarpTile extends Tile {
   WarpTile(bool solid, Sprite sprite, this.destMap, this.destX, this.destY) : super(solid, sprite);
   
   void enter() {
-    Gui.fadeOutAction(() {
+    Gui.fadeDarkAction(() {
       Main.world.curMap = destMap;
       Main.player.x = destX * Sprite.pixelsPerSprite * Sprite.spriteScale;
       Main.player.y = destY * Sprite.pixelsPerSprite * Sprite.spriteScale;
