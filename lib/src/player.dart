@@ -113,12 +113,24 @@ class Player extends Character implements InputHandler {
       for(int i=1; i<=character.sightDistance; i++) {
         // TODO: check that character is facing the proper direction
         if(
-            (Main.player.mapX == character.mapX && Main.player.mapY + i == character.mapY) ||
-            (Main.player.mapX == character.mapX && Main.player.mapY - i == character.mapY) ||
-            (Main.player.mapX + i == character.mapX && Main.player.mapY == character.mapY) ||
+          (
+            character.direction == Character.UP &&
+            (Main.player.mapX == character.mapX && Main.player.mapY + i == character.mapY)
+          ) || (
+            character.direction == Character.DOWN &&
+            (Main.player.mapX == character.mapX && Main.player.mapY - i == character.mapY)
+          ) || (
+            character.direction == Character.LEFT &&
+            (Main.player.mapX + i == character.mapX && Main.player.mapY == character.mapY)
+          ) || (
+            character.direction == Character.RIGHT &&
             (Main.player.mapX - i == character.mapX && Main.player.mapY == character.mapY)
+          )
         ) {
           startCharacterBattle(character);
+          
+          // TODO: should we not return in case you are in sight of more than
+          // one character? This would allow for simple consecutive battles
           return;
         }
       }
@@ -163,7 +175,7 @@ class Player extends Character implements InputHandler {
             movementAmount = character.mapX - mapX;
           } else if(mapY > character.mapY) {
             movementDirection = Character.DOWN;
-            movementAmount = mapY - character.mapX;
+            movementAmount = mapY - character.mapY;
           } else if(mapY < character.mapY) {
             movementDirection = Character.UP;
             movementAmount = character.mapY - mapY;
