@@ -40,6 +40,10 @@ class Battler {
   List<Attack> attacks;
   List<String> attackNames = [];
   
+  // TODO: perhaps make it so that if attacks are not specified in the
+  //   constructor, they are automatically the last 4 attacks learned
+  //   at the current level
+  
   Battler(this.battlerType, int level, this.attacks) {
     startingHealth = battlerType.baseHealth;
     startingPhysicalAttack = battlerType.basePhysicalAttack;

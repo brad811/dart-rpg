@@ -113,8 +113,11 @@ class World {
       );
       
       character.sightDistance = 5;
-      
       character.direction = Character.RIGHT;
+      character.battler = new Battler(
+        battlerTypes["Player"], 4,
+        battlerTypes["Player"].levelAttacks.values.toList()
+      );
       
       List<GameEvent> characterGameEvents = [];
       characterGameEvents = [

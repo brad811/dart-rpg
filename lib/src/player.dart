@@ -1,5 +1,6 @@
 library Player;
 
+import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/delayed_game_event.dart';
@@ -189,7 +190,15 @@ class Player extends Character implements InputHandler {
             new List<int>.generate(movementAmount, (int i) => movementDirection, growable: true),
             () {
               new TextGameEvent(237, "Let's fight!", () {
-                // Start the battle!
+                // start the battle!
+                character.battler.reset();
+                
+                Main.battle = new Battle(
+                    Main.player.battler,
+                    character.battler
+                );
+                
+                Main.battle.start();
                 Main.player.inputEnabled = true;
               }).trigger();
             }
