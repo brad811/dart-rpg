@@ -21,6 +21,8 @@ class Character implements InteractableInterface, InputHandler {
   final int
     walkSpeed = 4,
     runSpeed = 8,
+    
+    // how far the character moves with each step, in pixels
     motionAmount = Sprite.pixelsPerSprite * Sprite.spriteScale,
     directionCooldownAmount = 2;
   
@@ -29,6 +31,8 @@ class Character implements InteractableInterface, InputHandler {
     pictureId,
     layer,
     sizeX, sizeY,
+    
+    // how far the character has left to move, in pixels
     motionX = 0,
     motionY = 0,
     direction = DOWN,
@@ -49,7 +53,6 @@ class Character implements InteractableInterface, InputHandler {
   
   // TODO: perhaps add name field
   // TODO: add wander behavior
-  // TODO: add line-of-sight battle encounters?
   // TODO: add battle event with callback
   //   (to fight a character and then have them react to the battle)
   

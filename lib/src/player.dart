@@ -3,16 +3,16 @@ library Player;
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/delayed_game_event.dart';
+import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';
+import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/text_game_event.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
-
-import 'package:dart_rpg/src/font.dart';
-import 'package:dart_rpg/src/gui.dart';
 
 class Player extends Character implements InputHandler {
   bool inputEnabled = true;
@@ -109,41 +109,86 @@ class Player extends Character implements InputHandler {
   @override
   void checkForBattle() {
     // check for line-of-sight battles
-    if(this == Main.player) {
-      for(Character character in Main.world.maps[Main.world.curMap].characters) {
-        for(int i=1; i<=character.sightDistance; i++) {
-          if(
-              (Main.player.mapX == character.mapX && Main.player.mapY + i == character.mapY) ||
-              (Main.player.mapX == character.mapX && Main.player.mapY - i == character.mapY) ||
-              (Main.player.mapX + i == character.mapX && Main.player.mapY == character.mapY) ||
-              (Main.player.mapX - i == character.mapX && Main.player.mapY == character.mapY)
-          ) {
-            print("A battle should now ensue!");
-            
-            Tile target = Main.world.maps[Main.world.curMap]
-                .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE];
-            
-            Tile before = null;
-            if(target != null)
-              before = new Tile(target.solid, target.sprite, target.layered);
-            
-            DelayedGameEvent.executeDelayedEvents([
-              new DelayedGameEvent(0, () {
-                Main.timeScale = 0.0;
-                Main.world.maps[Main.world.curMap]
-                  .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE] =
-                    new Tile(false, new Sprite.int(99, character.mapX, character.mapY - character.sizeY));
-              }),
-              new DelayedGameEvent(500, () {
-                Main.world.maps[Main.world.curMap]
-                  .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE] = before;
-                Main.timeScale = 1.0;
-              })
-            ]);
-          }
+    for(Character character in Main.world.maps[Main.world.curMap].characters) {
+      for(int i=1; i<=character.sightDistance; i++) {
+        // TODO: check that character is facing the proper direction
+        if(
+            (Main.player.mapX == character.mapX && Main.player.mapY + i == character.mapY) ||
+            (Main.player.mapX == character.mapX && Main.player.mapY - i == character.mapY) ||
+            (Main.player.mapX + i == character.mapX && Main.player.mapY == character.mapY) ||
+            (Main.player.mapX - i == character.mapX && Main.player.mapY == character.mapY)
+        ) {
+          startCharacterBattle(character);
+          return;
         }
       }
     }
+  }
+  
+  void startCharacterBattle(Character character) {
+    // TODO: make a helper class to chain together complex game events
+    //   like chaining character movements, delayed game events, etc.
+    Main.player.inputEnabled = false;
+    
+    Tile target = Main.world.maps[Main.world.curMap]
+        .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE];
+    
+    Tile before = null;
+    if(target != null)
+      before = new Tile(target.solid, target.sprite, target.layered);
+    
+    List<DelayedGameEvent> delayedGameEvents = [
+      new DelayedGameEvent(0, () {
+        Main.timeScale = 0.0;
+        Main.world.maps[Main.world.curMap]
+          .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE] =
+            new Tile(false, new Sprite.int(99, character.mapX, character.mapY - character.sizeY));
+      }),
+      new DelayedGameEvent(500, () {
+        Main.timeScale = 1.0;
+        Main.world.maps[Main.world.curMap]
+          .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE] = before;
+        
+        List<GameEvent> characterGameEvents = [];
+        characterGameEvents.add(new GameEvent((callback) {
+          int movementDirection, movementAmount;
+          
+          // Find out which direction the character should move in
+          // and how far the character needs to move
+          if(mapX > character.mapX) {
+            movementDirection = Character.RIGHT;
+            movementAmount = mapX - character.mapX;
+          } else if(mapX < character.mapX) {
+            movementDirection = Character.LEFT;
+            movementAmount = character.mapX - mapX;
+          } else if(mapY > character.mapY) {
+            movementDirection = Character.DOWN;
+            movementAmount = mapY - character.mapX;
+          } else if(mapY < character.mapY) {
+            movementDirection = Character.UP;
+            movementAmount = character.mapY - mapY;
+          }
+          
+          // So the character end up next to the tile the player is in
+          movementAmount -= 1;
+          
+          Main.world.chainCharacterMovement(
+            character,
+            new List<int>.generate(movementAmount, (int i) => movementDirection, growable: true),
+            () {
+              new TextGameEvent(237, "Let's fight!", () {
+                // Start the battle!
+                Main.player.inputEnabled = true;
+              }).trigger();
+            }
+          );
+        }));
+        
+        characterGameEvents[0].trigger();
+      })
+    ];
+    
+    DelayedGameEvent.executeDelayedEvents(delayedGameEvents);
   }
   
   @override

@@ -112,7 +112,7 @@ class World {
         true
       );
       
-      character.sightDistance = 2;
+      character.sightDistance = 5;
       
       character.direction = Character.RIGHT;
       
