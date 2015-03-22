@@ -255,6 +255,18 @@ class Character implements InteractableInterface, InputHandler {
     if(gameEvent != null) {
       Main.focusObject = this;
       gameEvent.trigger();
+    } else if(battler != null) {
+      // talking to a player can make them face you and battle you
+      if(Main.player.mapX < mapX)
+        direction = LEFT;
+      else if(Main.player.mapX > mapX)
+        direction = RIGHT;
+      else if(Main.player.mapY < mapY)
+        direction = UP;
+      else if(Main.player.mapY > mapY)
+        direction = DOWN;
+      
+      Main.player.checkForBattle();
     }
   }
 }
