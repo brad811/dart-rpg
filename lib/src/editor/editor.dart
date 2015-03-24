@@ -49,15 +49,27 @@ class Editor {
   static void init() {
     c = querySelector('#editor_main_canvas');
     ctx = c.getContext("2d");
-    ctx.imageSmoothingEnabled = false;
     
     sc = querySelector('#editor_sprite_canvas');
     sctx = sc.getContext("2d");
-    sctx.imageSmoothingEnabled = false;
     
     ssc = querySelector('#editor_selected_sprite_canvas');
     ssctx = ssc.getContext("2d");
-    ssctx.imageSmoothingEnabled = false;
+    
+    if(window.devicePixelRatio != 1.0) {
+      List<CanvasElement> canvasElements = [c, sc, ssc];
+      List<CanvasRenderingContext2D> contexts = [ctx, sctx, ssctx];
+      double scale = window.devicePixelRatio;
+      
+      for(int i=0; i<canvasElements.length; i++) {
+        canvasElements[i].style.width = canvasElements[i].width.toString() + 'px';
+        canvasElements[i].style.height = canvasElements[i].height.toString() + 'px';
+        canvasElements[i].width = (canvasElements[i].width * scale).round();
+        canvasElements[i].height = (canvasElements[i].height * scale).round();
+        contexts[i].scale(scale, scale);
+        contexts[i].imageSmoothingEnabled = false;
+      }
+    }
     
     spritesImage = new ImageElement(src: "sprite_sheet.png");
     spritesImage.onLoad.listen((e) {
@@ -199,6 +211,26 @@ class Editor {
       });
   }
   
+  static void updateMapCanvasSize() {
+    if(c.width != canvasWidth || c.height != canvasHeight) {
+      c.width = canvasWidth;
+      c.height = canvasHeight;
+      
+      if(window.devicePixelRatio != 1.0) {
+        double scale = window.devicePixelRatio;
+        
+        c.style.width = c.width.toString() + 'px';
+        c.style.height = c.height.toString() + 'px';
+        c.width = (c.width * scale).round();
+        c.height = (c.height * scale).round();
+        ctx.scale(scale, scale);
+      }
+      
+      ctx.imageSmoothingEnabled = false;
+      context.callMethod("fixImageSmoothing");
+    }
+  }
+  
   static void updateMap() {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     List<Character> characters = Main.world.maps[Main.world.curMap].characters;
@@ -215,13 +247,7 @@ class Editor {
     canvasHeight = mapTiles.length * Sprite.scaledSpriteSize;
     canvasWidth = mapTiles[0].length * Sprite.scaledSpriteSize;
     
-    if(c.width != canvasWidth || c.height != canvasHeight) {
-      c.width = canvasWidth;
-      c.height = canvasHeight;
-      
-      ctx.imageSmoothingEnabled = false;
-      context.callMethod("fixImageSmoothing");
-    }
+    updateMapCanvasSize();
     
     // Draw pink background
     ctx.fillStyle = "#ff00ff";
