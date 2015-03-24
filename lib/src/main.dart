@@ -35,7 +35,7 @@ class Main {
     c = querySelector('canvas');
     ctx = c.getContext("2d");
     
-    if(window.devicePixelRatio > 1.0) {
+    if(window.devicePixelRatio != 1.0) {
       double scale = window.devicePixelRatio;
       c.style.width = c.width.toString() + 'px';
       c.style.height = c.height.toString() + 'px';

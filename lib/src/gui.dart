@@ -61,11 +61,15 @@ class Gui {
   }
   
   static void renderFade() {
-    ImageData imageData = Main.ctx.getImageData(0, 0, Main.canvasWidth, Main.canvasHeight);
+    int
+      scaledWidth = (Main.canvasWidth * window.devicePixelRatio).round(),
+      scaledHeight = (Main.canvasHeight * window.devicePixelRatio).round();
     
-    for(int y=0; y<Main.canvasHeight; y++) {
-      int pos = y*Main.canvasWidth*4;
-      for(int x=0; x<Main.canvasWidth; x++) {
+    ImageData imageData = Main.ctx.getImageData(0, 0, scaledWidth, scaledHeight);
+    
+    for(int y=0; y<scaledHeight; y++) {
+      int pos = y*scaledWidth*4;
+      for(int x=0; x<scaledWidth; x++) {
         int value = imageData.data[pos];
         imageData.data[pos] = math.min(255, math.max(0, value + 85*fadeOutLevel));
         imageData.data[pos+1] = math.min(255, math.max(0, value + 85*fadeOutLevel));
