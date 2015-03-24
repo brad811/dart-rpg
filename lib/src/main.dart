@@ -35,6 +35,15 @@ class Main {
     c = querySelector('canvas');
     ctx = c.getContext("2d");
     
+    if(window.devicePixelRatio > 1.0) {
+      double scale = window.devicePixelRatio;
+      c.style.width = c.width.toString() + 'px';
+      c.style.height = c.height.toString() + 'px';
+      c.width = (c.width * scale).round();
+      c.height = (c.height * scale).round();
+      ctx.scale(scale, scale);
+    }
+    
     ctx.imageSmoothingEnabled = false;
     
     spritesImage = new ImageElement(src: "sprite_sheet.png");
