@@ -11,7 +11,7 @@ class Tile {
     GROUND = 66,
     TALL_GRASS = 97,
     WALL = 67,
-    PLAYER = 128,
+    PLAYER = 145,
     SIGN = 192,
     
     TREE = 69,

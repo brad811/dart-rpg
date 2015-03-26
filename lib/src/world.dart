@@ -104,8 +104,7 @@ class World {
       // Character
       Character someKid = addCharacter(
         "main",
-        //Tile.PLAYER - 64,
-        Tile.PLAYER + 17,
+        Tile.PLAYER,
         237,
         11, 15, LAYER_BELOW,
         1, 2,
@@ -175,7 +174,7 @@ class World {
       
       Character fighter = addCharacter(
         "main",
-        Tile.PLAYER + 17,
+        Tile.PLAYER,
         237,
         35, 13, LAYER_BELOW,
         1, 2,
