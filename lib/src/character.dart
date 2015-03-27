@@ -50,6 +50,7 @@ class Character implements InteractableInterface, InputHandler {
   
   Battler battler;
   int sightDistance = 0;
+  String preBattleText = "";
   
   // TODO: perhaps add name field
   // TODO: add wander behavior

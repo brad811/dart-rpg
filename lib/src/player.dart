@@ -189,8 +189,7 @@ class Player extends Character implements InputHandler {
             character,
             new List<int>.generate(movementAmount, (int i) => movementDirection, growable: true),
             () {
-              // TODO: this text should be input
-              new TextGameEvent(237, "Hey, before you leave, let's see how strong you are!", () {
+              new TextGameEvent(237, character.preBattleText, () {
                 Gui.fadeLightAction((){},(){
                   Gui.fadeDarkAction((){}, (){
                     // start the battle!

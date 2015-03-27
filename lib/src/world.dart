@@ -182,6 +182,7 @@ class World {
       );
       
       fighter.sightDistance = 4;
+      fighter.preBattleText = "Hey, before you leave, let's see how strong you are!";
       fighter.direction = Character.DOWN;
       fighter.battler = new Battler(
         battlerTypes["Player"], 4,
