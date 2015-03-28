@@ -202,6 +202,7 @@ class Gui {
   
   static void showStartMenu() {
     // TODO: have b button go back in start menu
+    // TODO: declare start menu only once
     ChoiceGameEvent start;
     Battler battler = Main.player.battler;
     
