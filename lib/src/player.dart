@@ -2,9 +2,7 @@ library Player;
 
 import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/character.dart';
-import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/delayed_game_event.dart';
-import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input.dart';
