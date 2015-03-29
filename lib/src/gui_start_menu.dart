@@ -8,7 +8,6 @@ import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/main.dart';
 
 class GuiStartMenu {
-  // TODO: have b button go back in start menu
   static ChoiceGameEvent start = new ChoiceGameEvent.custom(
     Main.player,
     {
@@ -19,7 +18,8 @@ class GuiStartMenu {
       "Exit": [exit]
     },
     15, 0,
-    5, 6
+    5, 6,
+    exit
   );
   
   static GameEvent exit = new GameEvent( (Function a) { Main.focusObject = Main.player; } );
@@ -51,7 +51,8 @@ class GuiStartMenu {
     new ChoiceGameEvent.custom(
         Main.player, {"Back": [powersBack]},
         15, 0,
-        5, 2
+        5, 2,
+        powersBack
     ).trigger();
   });
 }
