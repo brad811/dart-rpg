@@ -85,7 +85,7 @@ class World {
     viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
   
   World(Function callback) {
-    Main.player = new Player(19, 19);
+    Main.player = new Player(3, 3);
     Main.player.battler = new Battler(
       battlerTypes["Player"], 3,
       battlerTypes["Player"].levelAttacks.values.toList()
@@ -93,6 +93,7 @@ class World {
     
     // TODO: improve editor so less is needed in world class
     loadMaps(() {
+      curMap = "apartment";
       
       Battler common = new Battler(battlerTypes["Common"], 5, battlerTypes["Common"].levelAttacks.values.toList());
       Battler rare = new Battler(battlerTypes["Rare"], 5, battlerTypes["Rare"].levelAttacks.values.toList());
