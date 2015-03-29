@@ -9,16 +9,21 @@ class WarpTile extends Tile {
   String destMap;
   int destX, destY;
   
-  // TODO: maybe don't move after warping
   WarpTile(bool solid, Sprite sprite, this.destMap, this.destX, this.destY) : super(solid, sprite);
   
   void enter() {
+    Main.player.inputEnabled = false;
     Gui.fadeDarkAction(() {
       Main.world.curMap = destMap;
       Main.player.x = destX * Sprite.pixelsPerSprite * Sprite.spriteScale;
       Main.player.y = destY * Sprite.pixelsPerSprite * Sprite.spriteScale;
       Main.player.mapX = destX;
       Main.player.mapY = destY;
+      
+      Main.player.motionX = 0;
+      Main.player.motionY = 0;
+    }, () {
+      Main.player.inputEnabled = true;
     });
   }
 }
