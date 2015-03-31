@@ -160,7 +160,7 @@ class World {
       
       List<GameEvent> healerGameEvents = [];
       healerGameEvents = [
-        new TextGameEvent(237, "Allow me to heal your wounds."),
+        new TextGameEvent(237, "Take a quick rest, you'll feel much better."),
         new GameEvent((callback) {
           Gui.fadeLightAction(() {
             Main.player.battler.curHealth = Main.player.battler.startingHealth;
@@ -168,7 +168,7 @@ class World {
           }, callback);
           //Main.player.inputEnabled = false;
         }),
-        new TextGameEvent(237, "You should feel much better now.")
+        new TextGameEvent(237, "There you go, good as new.")
       ];
       
       Interactable.chainGameEvents(healer, healerGameEvents);
