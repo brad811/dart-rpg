@@ -6,6 +6,7 @@ import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
@@ -51,6 +52,8 @@ class Character implements InteractableInterface, InputHandler {
   Battler battler;
   int sightDistance = 0;
   String preBattleText = "";
+  
+  Inventory inventory;
   
   // TODO: perhaps add name field
   // TODO: add wander behavior
