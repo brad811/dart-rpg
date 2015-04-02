@@ -1,4 +1,4 @@
-library Editor;
+library dart_rpg.editor;
 
 import 'dart:async';
 import 'dart:convert';

@@ -1,4 +1,4 @@
-library Input;
+library dart_rpg.input;
 
 import 'dart:html';
 

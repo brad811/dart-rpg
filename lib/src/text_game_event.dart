@@ -1,4 +1,4 @@
-library TextGameEvent;
+library dart_rpg.text_game_event;
 
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event.dart';

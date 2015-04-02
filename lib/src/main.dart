@@ -1,4 +1,4 @@
-library Main;
+library dart_rpg.main;
 
 import 'dart:async';
 import 'dart:html';

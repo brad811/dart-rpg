@@ -1,4 +1,4 @@
-library Tile;
+library dart_rpg.tile;
 
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';

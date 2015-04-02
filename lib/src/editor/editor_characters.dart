@@ -1,4 +1,4 @@
-library EditorCharacters;
+library dart_rpg.editor_characters;
 
 import 'dart:async';
 import 'dart:html';

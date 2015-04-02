@@ -1,4 +1,4 @@
-library ChoiceEvent;
+library dart_rpg.choice_event;
 
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';

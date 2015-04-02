@@ -1,4 +1,4 @@
-library Character;
+library dart_rpg.character;
 
 import 'dart:math' as math;
 

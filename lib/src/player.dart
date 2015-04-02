@@ -1,4 +1,4 @@
-library Player;
+library dart_rpg.player;
 
 import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/character.dart';

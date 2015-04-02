@@ -1,4 +1,4 @@
-library Sprite;
+library dart_rpg.sprite;
 
 import 'package:dart_rpg/src/main.dart';
 

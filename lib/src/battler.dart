@@ -1,4 +1,4 @@
-library Battler;
+library dart_rpg.battler;
 
 import 'dart:math' as math;
 

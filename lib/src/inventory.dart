@@ -1,4 +1,4 @@
-library Inventory;
+library dart_rpg.inventory;
 
 import 'package:dart_rpg/src/item_stack.dart';
 

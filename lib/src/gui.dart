@@ -1,4 +1,4 @@
-library Gui;
+library dart_rpg.gui;
 
 import 'dart:html';
 import 'dart:math' as math;

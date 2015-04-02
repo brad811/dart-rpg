@@ -1,4 +1,4 @@
-library Interactable;
+library dart_rpg.interactable;
 
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';

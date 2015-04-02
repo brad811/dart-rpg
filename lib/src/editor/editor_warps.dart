@@ -1,4 +1,4 @@
-library EditorWarps;
+library dart_rpg.editor_warps;
 
 import 'dart:async';
 import 'dart:html';

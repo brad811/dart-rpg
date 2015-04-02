@@ -1,4 +1,4 @@
-library Sign;
+library dart_rpg.sign;
 
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';

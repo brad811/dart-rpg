@@ -1,4 +1,4 @@
-library World;
+library dart_rpg.world;
 
 import 'dart:convert';
 import 'dart:html';

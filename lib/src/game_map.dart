@@ -1,4 +1,4 @@
-library Map;
+library dart_rpg.game_map;
 
 import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/character.dart';

@@ -1,4 +1,4 @@
-library EditorBattlers;
+library dart_rpg.editor_battlers;
 
 import 'dart:async';
 import 'dart:html';

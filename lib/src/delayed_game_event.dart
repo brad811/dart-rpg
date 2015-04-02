@@ -1,4 +1,4 @@
-library DelayedGameEvent;
+library dart_rpg.delayed_game_event;
 
 import 'dart:async';
 

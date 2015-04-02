@@ -1,4 +1,4 @@
-library Battle;
+library dart_rpg.battle;
 
 import 'dart:async';
 import 'dart:math' as math;

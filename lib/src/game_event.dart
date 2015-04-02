@@ -1,4 +1,4 @@
-library GameEvent;
+library dart_rpg.game_event;
 
 import 'package:dart_rpg/src/input_handler.dart';
 

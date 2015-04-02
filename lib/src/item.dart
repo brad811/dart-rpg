@@ -1,4 +1,4 @@
-library Item;
+library dart_rpg.item;
 
 class Item {
   String name;

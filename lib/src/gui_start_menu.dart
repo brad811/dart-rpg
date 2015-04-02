@@ -1,4 +1,4 @@
-library GuiStartMenu;
+library dart_rpg.gui_start_menu;
 
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';

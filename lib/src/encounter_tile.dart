@@ -1,4 +1,4 @@
-library EncounterTile;
+library dart_rpg.encounter_tile;
 
 import 'dart:math' as math;
 

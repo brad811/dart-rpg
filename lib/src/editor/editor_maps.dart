@@ -1,4 +1,4 @@
-library EditorMaps;
+library dart_rpg.editor_maps;
 
 import 'dart:async';
 import 'dart:html';

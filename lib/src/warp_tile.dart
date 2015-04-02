@@ -1,4 +1,4 @@
-library WarpTile;
+library dart_rpg.warp_tile;
 
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/main.dart';

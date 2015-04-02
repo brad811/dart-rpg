@@ -1,4 +1,4 @@
-library Font;
+library dart_rpg.font;
 
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';

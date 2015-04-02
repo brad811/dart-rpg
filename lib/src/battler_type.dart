@@ -1,4 +1,4 @@
-library BattlerType;
+library dart_rpg.battler_type;
 
 import 'package:dart_rpg/src/attack.dart';
 

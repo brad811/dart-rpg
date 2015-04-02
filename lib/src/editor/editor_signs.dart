@@ -1,4 +1,4 @@
-library EditorSigns;
+library dart_rpg.editor_signs;
 
 import 'dart:async';
 import 'dart:html';
