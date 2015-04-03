@@ -15,6 +15,8 @@ import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
+import 'package:dart_rpg/src/item_potion.dart';
+import 'package:dart_rpg/src/item_stack.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
@@ -89,6 +91,10 @@ class World {
     Main.player.battler = new Battler(
       battlerTypes["Player"], 3,
       battlerTypes["Player"].levelAttacks.values.toList()
+    );
+    
+    Main.player.inventory.itemStacks.add(
+      new ItemStack(new ItemPotion(), 2)
     );
     
     // TODO: improve editor so less is needed in world class

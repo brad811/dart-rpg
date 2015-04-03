@@ -1,12 +1,8 @@
 library dart_rpg.item;
 
-class Item {
-  String name;
-  int price;
+abstract class Item {
+  static final String name = "Item";
+  int price = 100;
   
-  Item(this.name, this.price);
-  
-  static void use() {
-    
-  }
+  void use();
 }
