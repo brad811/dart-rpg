@@ -53,7 +53,7 @@ class Character implements InteractableInterface, InputHandler {
   int sightDistance = 0;
   String preBattleText = "";
   
-  Inventory inventory;
+  Inventory inventory = new Inventory();
   
   // TODO: perhaps add name field
   // TODO: add wander behavior
