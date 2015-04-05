@@ -13,6 +13,7 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
   final InteractableInterface interactable;
   final Map<String, List<GameEvent>> choices;
   GameEvent cancelEvent;
+  GameEvent onChangeEvent;
   Function window;
   bool
     remove = true,
@@ -26,7 +27,7 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     sizeX = 3,
     sizeY = 2;
   
-  ChoiceGameEvent(this.interactable, this.choices, [this.cancelEvent]) : super() {
+  ChoiceGameEvent(this.interactable, this.choices, [this.cancelEvent, this.onChangeEvent]) : super() {
     int maxLength = 0;
     for(int i=0; i<choices.keys.toList().length; i++) {
       if(choices.keys.toList()[i].length > maxLength)
@@ -39,8 +40,8 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
   factory ChoiceGameEvent.custom(
       InteractableInterface interactable,
       Map<String, List<GameEvent>> choices,
-      int posX, int posY, int sizeX, int sizeY, [GameEvent cancelEvent]) {
-    ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(interactable, choices, cancelEvent);
+      int posX, int posY, int sizeX, int sizeY, [GameEvent cancelEvent, GameEvent onChangeEvent]) {
+    ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(interactable, choices, cancelEvent, onChangeEvent);
     choiceGameEvent.addWidth = 0;
     choiceGameEvent.posX = posX;
     choiceGameEvent.posY = posY;
@@ -105,11 +106,17 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
       if(curChoice < 0) {
         curChoice = choices.keys.toList().length - 1;
       }
+      
+      if(onChangeEvent != null)
+        onChangeEvent.trigger();
     } else if(keyCodes.contains(Input.DOWN)) {
       curChoice++;
       if(curChoice > choices.keys.toList().length - 1) {
         curChoice = 0;
       }
+      
+      if(onChangeEvent != null)
+        onChangeEvent.trigger();
     } else if(keyCodes.contains(Input.CONFIRM)) {
       if(remove)
         Gui.windows.remove(window);

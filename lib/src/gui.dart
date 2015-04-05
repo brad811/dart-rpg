@@ -138,6 +138,7 @@ class Gui {
     ]);
   }
   
+  // TODO: allow rendering custom text window
   static void renderConversationWindow() {
     // Text window
     Gui.renderWindow(4, 11, 15, 4);
