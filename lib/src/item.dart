@@ -1,8 +1,10 @@
 library dart_rpg.item;
 
+import 'package:dart_rpg/src/battler.dart';
+
 abstract class Item {
-  static final String name = "Item";
+  final String name = "Item";
   int price = 100;
   
-  void use();
+  void use(Battler target);
 }

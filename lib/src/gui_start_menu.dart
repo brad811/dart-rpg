@@ -5,15 +5,16 @@ import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
+import 'package:dart_rpg/src/item_stack.dart';
 import 'package:dart_rpg/src/main.dart';
 
 class GuiStartMenu {
   static ChoiceGameEvent start = new ChoiceGameEvent.custom(
     Main.player,
     {
-      "Stats": [exit],
-      "Powers": [powers],
-      "Items": [exit],
+      "Stats": [stats],
+      "Powers": [exit],
+      "Items": [items],
       "Save": [exit],
       "Exit": [exit]
     },
@@ -24,7 +25,7 @@ class GuiStartMenu {
   
   static GameEvent exit = new GameEvent( (Function a) { Main.focusObject = Main.player; } );
   
-  static GameEvent powers = new GameEvent((Function a) {
+  static GameEvent stats = new GameEvent((Function a) {
     Gui.windows.add(() {
       Gui.renderWindow(
         0, 0,
@@ -53,6 +54,27 @@ class GuiStartMenu {
         15, 0,
         5, 2,
         powersBack
+    ).trigger();
+  });
+  
+  static GameEvent items = new GameEvent((Function a) {
+    Map<String, List<GameEvent>> items = new Map<String, List<GameEvent>>();
+    for(ItemStack itemStack in Main.player.inventory.itemStacks) {
+      String name = itemStack.quantity.toString();
+      if(name.length == 1)
+        name = "0" + name;
+      
+      name += " x ";
+      name += itemStack.item.name;
+      items.addAll({name: [start]});
+    }
+    items.addAll({"Back": [start]});
+    
+    new ChoiceGameEvent.custom(
+        Main.player, items,
+        0, 0,
+        10, 10,
+        start
     ).trigger();
   });
 }
