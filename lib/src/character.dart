@@ -20,8 +20,8 @@ class Character implements InteractableInterface, InputHandler {
     LEFT = 3;
   
   final int
-    walkSpeed = 4,
-    runSpeed = 8,
+    walkSpeed = 2 * Sprite.spriteScale,
+    runSpeed = 4 * Sprite.spriteScale,
     
     // how far the character moves with each step, in pixels
     motionAmount = Sprite.pixelsPerSprite * Sprite.spriteScale,
