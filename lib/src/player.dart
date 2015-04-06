@@ -143,7 +143,8 @@ class Player extends Character implements InputHandler {
                     
                     Main.battle = new Battle(
                         Main.player.battler,
-                        character.battler
+                        character.battler,
+                        character.postBattleEvent
                     );
                     
                     Main.battle.start();

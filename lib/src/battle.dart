@@ -25,10 +25,11 @@ class Battle implements InteractableInterface {
   Sprite friendlySprite, enemySprite;
   
   GameEvent attackEvent;
+  GameEvent postBattleCallback;
   
   math.Random rand = new math.Random();
   
-  Battle(this.friendly, this.enemy) {
+  Battle(this.friendly, this.enemy, [this.postBattleCallback]) {
     friendlySprite = new Sprite.int(friendly.battlerType.spriteId, 3, 7);
     enemySprite = new Sprite.int(enemy.battlerType.spriteId, 14, 1);
     
@@ -40,9 +41,14 @@ class Battle implements InteractableInterface {
     }
     
     exit = new GameEvent((callback) {
-      Main.focusObject = Main.player;
       Gui.windows.removeRange(0, Gui.windows.length);
       Main.inBattle = false;
+      
+      if(this.postBattleCallback != null) {
+        this.postBattleCallback.trigger();
+      } else {
+        Main.focusObject = Main.player;
+      }
     });
     
     Map<String, List<GameEvent>> friendlyAttackMap = new Map<String, List<GameEvent>>();
@@ -153,7 +159,6 @@ class Battle implements InteractableInterface {
     
     victory.callback = () {
       showExperienceGain(() {
-        //exit.trigger();
         fadeOutExit();
       });
     };

@@ -195,6 +195,11 @@ class World {
         battlerTypes["Player"], 4,
         battlerTypes["Player"].levelAttacks.values.toList()
       );
+      fighter.postBattleEvent = new GameEvent((Function a) {
+        new TextGameEvent(237, "Ouch! Clearly I have more training to do...", () {
+          Main.focusObject = Main.player;
+        }).trigger();
+      });
       
       callback();
     });

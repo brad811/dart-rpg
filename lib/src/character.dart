@@ -52,6 +52,7 @@ class Character implements InteractableInterface, InputHandler {
   Battler battler;
   int sightDistance = 0;
   String preBattleText = "";
+  GameEvent postBattleEvent;
   
   Inventory inventory = new Inventory();
   
