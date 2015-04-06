@@ -172,9 +172,6 @@ class Battle implements InteractableInterface {
   }
   
   void showExperienceGain(callback) {
-    List<DelayedGameEvent> experienceGains = [];
-    bool levelUp = false;
-    
     if(friendly.displayExperience < friendly.experience) {
       friendly.displayExperience++;
       if(friendly.displayExperience >= friendly.nextLevelExperience()) {

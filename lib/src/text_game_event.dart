@@ -17,7 +17,6 @@ class TextGameEvent extends GameEvent {
   
   TextGameEvent(this.pictureSpriteId, this.text, [Function callback]) : super(null, callback) {
     List<String> tokens = text.split(" ");
-    int lineNumber = 0;
     String curLine;
     
     // Split the text into lines of proper length
@@ -31,7 +30,6 @@ class TextGameEvent extends GameEvent {
         tokens.removeAt(0);
       }
       originalTextLines.add(curLine);
-      lineNumber++;
     }
     
     textLines = new List<String>.from(originalTextLines);

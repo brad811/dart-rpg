@@ -30,28 +30,26 @@ class Player extends Character implements InputHandler {
       Gui.showStartMenu();
     }
     
-    for(int key in keyCodes) {
-      if(keyCodes.contains(Input.BACK))
-        curSpeed = runSpeed;
-      else
-        curSpeed = walkSpeed;
+    if(keyCodes.contains(Input.BACK))
+      curSpeed = runSpeed;
+    else
+      curSpeed = walkSpeed;
       
-      if(keyCodes.contains(Input.LEFT)) {
-        move(Character.LEFT);
-        return;
-      }
-      if(keyCodes.contains(Input.RIGHT)) {
-        move(Character.RIGHT);
-        return;
-      }
-      if(keyCodes.contains(Input.UP)) {
-        move(Character.UP);
-        return;
-      }
-      if(keyCodes.contains(Input.DOWN)) {
-        move(Character.DOWN);
-        return;
-      }
+    if(keyCodes.contains(Input.LEFT)) {
+      move(Character.LEFT);
+      return;
+    }
+    if(keyCodes.contains(Input.RIGHT)) {
+      move(Character.RIGHT);
+      return;
+    }
+    if(keyCodes.contains(Input.UP)) {
+      move(Character.UP);
+      return;
+    }
+    if(keyCodes.contains(Input.DOWN)) {
+      move(Character.DOWN);
+      return;
     }
   }
   

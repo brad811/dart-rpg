@@ -189,8 +189,6 @@ class EditorMaps {
       if(mapTiles.length == 0)
         mapTiles.add([]);
       
-      int width = mapTiles[0].length;
-      
       for(int y=0; y<mapTiles.length; y++) {
         List<Tile> array = [];
         for(int k=0; k<World.layers.length; k++) {
@@ -223,8 +221,6 @@ class EditorMaps {
     listeners["#size_y_up_button"] = querySelector('#size_y_up_button').onClick.listen((MouseEvent e) {
       List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
       List<List<Tile>> rowArray = [];
-      
-      int height = mapTiles.length;
       
       for(int x=0; x<mapTiles[0].length; x++) {
         List<Tile> array = [];
