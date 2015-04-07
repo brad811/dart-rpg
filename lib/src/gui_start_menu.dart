@@ -62,6 +62,9 @@ class GuiStartMenu {
     ).trigger();
   });
   
+  // TODO: move this into its own class?
+  //   because the item screen will also be used in battle
+  //   perhaps that class could return the item selected
   static GameEvent items = new GameEvent((Function a) {
     Map<String, List<GameEvent>> items = new Map<String, List<GameEvent>>();
     for(ItemStack itemStack in Main.player.inventory.itemStacks) {
