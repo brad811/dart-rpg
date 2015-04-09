@@ -18,7 +18,7 @@ class GuiItemsMenu {
   });
   
   static GameEvent items = new GameEvent((Function callback) {
-    GameEvent callbackEvent = new GameEvent((Function callback){
+    GameEvent callbackEvent = new GameEvent((Function c){
       callback();
     });
     exit.callback = callback;
