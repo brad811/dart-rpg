@@ -4,10 +4,10 @@ import 'dart:html';
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/delayed_game_event.dart';
-import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/gui_start_menu.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/text_game_event.dart';
 
 class Gui {
   static final int
@@ -34,8 +34,6 @@ class Gui {
     maxLines = 4;
   
   static final double
-    textX = 9.75,
-    textY = 23.5,
     verticalLineSpacing = 1.5;
   
   static List<List<List<Sprite>>> screen;
@@ -49,7 +47,7 @@ class Gui {
   
   static void render() {
     if(inConversation) {
-      renderConversationWindow();
+      TextGameEvent.renderConversationWindow();
     }
     
     if(fadeOutLevel != FADE_NORMAL) {
@@ -138,35 +136,9 @@ class Gui {
     ]);
   }
   
-  // TODO: allow rendering custom text window
-  static void renderConversationWindow() {
-    // Text window
-    Gui.renderWindow(4, 11, 15, 4);
-    
-    // Picture window
-    Gui.renderWindow(1, 11, 3, 3);
-    
-    // Picture
-    for(int row=0; row<3; row++) {
-      for(int col=0; col<3; col++) {
-        new Sprite.int(pictureSpriteId + 32*row + col, 1 + col, 11 + row).renderStatic();
-      }
-    }
-    
-    // Text
-    for(int i=0; i<textLines.length && i<maxLines; i++) {
-      Font.renderStaticText(textX, textY + verticalLineSpacing*i, textLines[i]);
-    }
-    
-    if(textLines.length > maxLines) {
-      // draw arrow indicating there is more text
-      Font.renderStaticText(36.25, 28.5, new String.fromCharCode(127));
-    }
-  }
-  
   static List<String> splitText(String text, int w) {
-    // TODO: calculate chars per line properly
-    int charsPerLine = (w * 2.33333).floor();
+    // find out how many characters will fit on each line in this window
+    int charsPerLine = ((w - 1) * (8 / 3)).floor();
     
     List<String> textLines = new List<String>();
     List<String> tokens = text.split(" ");
@@ -175,13 +147,15 @@ class Gui {
     // Split the text into lines of proper length
     while(tokens.length > 0) {
       curLine = "";
+      
       while(tokens.length > 0 && curLine.length + tokens[0].length < charsPerLine) {
-        if(curLine.length > 0) {
+        if(curLine.length > 0)
           curLine += " ";
-        }
+        
         curLine += tokens[0];
         tokens.removeAt(0);
       }
+      
       textLines.add(curLine);
     }
     

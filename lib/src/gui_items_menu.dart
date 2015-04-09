@@ -57,7 +57,7 @@ class GuiItemsMenu {
           Gui.renderWindow(10, 0, 9, 9);
           
           // TODO: calculate max lines
-          List<String> textLines = Gui.splitText(curItem.description, 10);
+          List<String> textLines = Gui.splitText(curItem.description, 9);
           for(int i=0; i<textLines.length && i<8; i++) {
             Font.renderStaticText(textX, textY + Gui.verticalLineSpacing*i, textLines[i]);
           }
