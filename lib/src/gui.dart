@@ -164,6 +164,30 @@ class Gui {
     }
   }
   
+  static List<String> splitText(String text, int w) {
+    // TODO: calculate chars per line properly
+    int charsPerLine = (w * 2.33333).floor();
+    
+    List<String> textLines = new List<String>();
+    List<String> tokens = text.split(" ");
+    String curLine;
+    
+    // Split the text into lines of proper length
+    while(tokens.length > 0) {
+      curLine = "";
+      while(tokens.length > 0 && curLine.length + tokens[0].length < charsPerLine) {
+        if(curLine.length > 0) {
+          curLine += " ";
+        }
+        curLine += tokens[0];
+        tokens.removeAt(0);
+      }
+      textLines.add(curLine);
+    }
+    
+    return textLines;
+  }
+  
   static void renderWindow(int posX, int posY, int sizeX, int sizeY) {
     int id;
     for(int j=posY; j<posY+sizeY; j++) {

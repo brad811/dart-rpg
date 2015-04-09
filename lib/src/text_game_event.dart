@@ -16,23 +16,7 @@ class TextGameEvent extends GameEvent {
       textLines = [];
   
   TextGameEvent(this.pictureSpriteId, this.text, [Function callback]) : super(null, callback) {
-    List<String> tokens = text.split(" ");
-    String curLine;
-    
-    // Split the text into lines of proper length
-    while(tokens.length > 0) {
-      curLine = "";
-      while(tokens.length > 0 && curLine.length + tokens[0].length < 35) {
-        if(curLine.length > 0) {
-          curLine += " ";
-        }
-        curLine += tokens[0];
-        tokens.removeAt(0);
-      }
-      originalTextLines.add(curLine);
-    }
-    
-    textLines = new List<String>.from(originalTextLines);
+    textLines = Gui.splitText(text, 15);
   }
   
   factory TextGameEvent.choice(int pictureSpriteId, String text, ChoiceGameEvent choice) {

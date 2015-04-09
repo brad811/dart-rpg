@@ -13,6 +13,10 @@ class GuiItemsMenu {
   // TODO: return the item selected
   // TODO: enable disabling the "back" option
   
+  static final double
+    textX = 21.0,
+    textY = 9.0;
+  
   static GameEvent exit = new GameEvent((Function callback) {
     
   });
@@ -51,7 +55,13 @@ class GuiItemsMenu {
         Sprite curSprite = new Sprite.int(curItem.pictureId, 13, 1);
         descriptionWindow = () {
           Gui.renderWindow(10, 0, 9, 9);
-          Font.renderStaticText(21.0, 9.0, curItem.description);
+          
+          // TODO: calculate max lines
+          List<String> textLines = Gui.splitText(curItem.description, 10);
+          for(int i=0; i<textLines.length && i<8; i++) {
+            Font.renderStaticText(textX, textY + Gui.verticalLineSpacing*i, textLines[i]);
+          }
+          
           curSprite.renderStaticSized(3, 3);
         };
         Gui.windows.add(descriptionWindow);
