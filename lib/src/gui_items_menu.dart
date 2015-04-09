@@ -17,6 +17,9 @@ class GuiItemsMenu {
     textX = 21.0,
     textY = 9.0;
   
+  static final int
+    itemDescriptionWindowWidth = 9;
+  
   static GameEvent exit = new GameEvent((Function callback) {
     
   });
@@ -47,23 +50,23 @@ class GuiItemsMenu {
       callbackEvent.trigger();
     });
     
-    // TODO: somehow use existing logic to break words in other windows
     GameEvent onChange = new GameEvent((Function callback) {
       Gui.windows.remove(descriptionWindow);
       if(itemChoice.curChoice < Main.player.inventory.itemStacks.length) {
         Item curItem = Main.player.inventory.itemStacks[itemChoice.curChoice].item;
         Sprite curSprite = new Sprite.int(curItem.pictureId, 13, 1);
         descriptionWindow = () {
-          Gui.renderWindow(10, 0, 9, 9);
+          Gui.renderWindow(10, 0, itemDescriptionWindowWidth, 10);
           
-          // TODO: calculate max lines
-          List<String> textLines = Gui.splitText(curItem.description, 9);
+          // TODO: calculate max lines based on window height
+          List<String> textLines = Gui.splitText(curItem.description, itemDescriptionWindowWidth);
           for(int i=0; i<textLines.length && i<8; i++) {
             Font.renderStaticText(textX, textY + Gui.verticalLineSpacing*i, textLines[i]);
           }
           
           curSprite.renderStaticSized(3, 3);
         };
+        
         Gui.windows.add(descriptionWindow);
       }
     });

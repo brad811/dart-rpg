@@ -67,6 +67,7 @@ class Battle implements InteractableInterface {
     
     // TODO: make it so that some battles cannot be run from
     // TODO: make running possibly fail
+    // TODO: use items in battle
     main = new ChoiceGameEvent.custom(
       this,
       {
@@ -180,6 +181,7 @@ class Battle implements InteractableInterface {
     if(friendly.displayExperience < friendly.experience) {
       friendly.displayExperience++;
       if(friendly.displayExperience >= friendly.nextLevelExperience()) {
+        // TODO: show stat gains
         new TextGameEvent(240, "${friendly.battlerType.name} leveled up!", () {
           friendly.levelUp();
           new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(callback));

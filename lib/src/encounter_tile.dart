@@ -40,6 +40,7 @@ class EncounterTile extends Tile {
       battler.reset();
       
       Main.player.motionCallback = () {
+        // TODO: check if this is slower than the healer fade
         Gui.fadeLightAction((){},(){
           Gui.fadeDarkAction((){}, (){
             Main.battle = new Battle(
