@@ -9,7 +9,9 @@ import 'package:dart_rpg/src/delayed_game_event.dart';
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
+import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/text_game_event.dart';
@@ -19,7 +21,8 @@ class Battle implements InteractableInterface {
   GameEvent gameEvent;
   List<List<Tile>> tiles = [];
   
-  ChoiceGameEvent main, fight, powers, bag, run;
+  ChoiceGameEvent main, fight, powers, run;
+  GameEvent items;
   GameEvent exit;
   Battler friendly, enemy;
   Sprite friendlySprite, enemySprite;
@@ -65,6 +68,24 @@ class Battle implements InteractableInterface {
     );
     fight.remove = true;
     
+    items = new GameEvent((Function callback) {
+      Function itemsConfirm = (Item selectedItem) {
+        // TODO: show confirm dialog
+        // TODO: show text event to say what happened
+        print("Just doing it anyway!");
+        selectedItem.use(friendly);
+        // TODO: only show health change if health-changing item was used?
+        showHealthChange(friendly, () {
+          print("Item was used!");
+          attack(friendly, -1);
+        });
+      };
+      
+      // TODO: BUG! Choice game event still has focus while health change is being shown
+      // TODO: BUG! Back option is not selectable!
+      GuiItemsMenu.trigger(itemsConfirm);
+    });
+    
     // TODO: make it so that some battles cannot be run from
     // TODO: make running possibly fail
     // TODO: use items in battle
@@ -73,7 +94,7 @@ class Battle implements InteractableInterface {
       {
         "Fight": [fight],
         "Powers": [fight],
-        "Bag": [fight],
+        "Items": [items],
         "Run": [exit]
       },
       15, 11, 5, 5
@@ -98,7 +119,9 @@ class Battle implements InteractableInterface {
     };
     
     // TODO: enemy decide action
-    if(
+    if(attackNum == -1) { // an item was used
+      doAttack(enemy, friendly, true, rand.nextInt(enemy.attacks.length), callback);
+    } else if(
         friendly.curSpeed > enemy.curSpeed || // friendly is faster
         (friendly.curSpeed == enemy.curSpeed && rand.nextBool()) // speed tie breaker
     ) {
@@ -116,36 +139,44 @@ class Battle implements InteractableInterface {
     Gui.windows.removeRange(0, Gui.windows.length);
     
     attacker.attacks[attackNum].use(attacker, receiver, enemy, () {
-      if(receiver.curHealth < 0)
-        receiver.curHealth = 0;
-      
-      List<DelayedGameEvent> healthDrains = [];
-      for(int i=0; i<(receiver.displayHealth - receiver.curHealth).abs(); i++) {
-        healthDrains.add(
-          new DelayedGameEvent(Main.timeDelay, () {
-            if(receiver.displayHealth > receiver.curHealth)
-              receiver.displayHealth--;
-            else
-              receiver.displayHealth++;
-          })
-        );
-      }
-      
+      showHealthChange(receiver, callback);
+    });
+  }
+  
+  void showHealthChange(Battler battler, Function callback) {
+    // make sure health stays in bounds
+    if(battler.curHealth < 0)
+      battler.curHealth = 0;
+    
+    if(battler.curHealth > battler.startingHealth)
+      battler.curHealth = battler.startingHealth;
+    
+    List<DelayedGameEvent> healthDrains = [];
+    for(int i=0; i<(battler.displayHealth - battler.curHealth).abs(); i++) {
       healthDrains.add(
-        new DelayedGameEvent(200, () {
-          if(receiver.curHealth <= 0) {
-            if(receiver == friendly)
-              friendlyDie();
-            else
-              enemyDie();
-          } else {
-            callback();
-          }
+        new DelayedGameEvent(Main.timeDelay, () {
+          if(battler.displayHealth > battler.curHealth)
+            battler.displayHealth--;
+          else
+            battler.displayHealth++;
         })
       );
-      
-      DelayedGameEvent.executeDelayedEvents(healthDrains);
-    });
+    }
+    
+    healthDrains.add(
+      new DelayedGameEvent(200, () {
+        if(battler.curHealth <= 0) {
+          if(battler == friendly)
+            friendlyDie();
+          else
+            enemyDie();
+        } else {
+          callback();
+        }
+      })
+    );
+    
+    DelayedGameEvent.executeDelayedEvents(healthDrains);
   }
   
   void friendlyDie() {
