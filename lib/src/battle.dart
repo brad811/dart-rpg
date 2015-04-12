@@ -70,17 +70,22 @@ class Battle implements InteractableInterface {
     
     items = new GameEvent((Function callback) {
       Function itemsConfirm = (Item selectedItem) {
-        // TODO: show confirm dialog
-        // TODO: show text event to say what happened
-        print("Just doing it anyway!");
-        selectedItem.use(friendly);
-        // TODO: only show health change if health-changing item was used?
-        showHealthChange(friendly, () {
-          print("Item was used!");
-          attack(friendly, -1);
-        });
+        new ChoiceGameEvent(this, {
+          "Yes": [new GameEvent((Function callback) {
+          // TODO: show text event to say what happened
+          selectedItem.use(friendly);
+          
+          // TODO: only show health change if health-changing item was used?
+          showHealthChange(friendly, () {
+            print("Item was used!");
+            attack(friendly, -1);
+          });
+         })],
+          "No": []
+        }).trigger();
       };
       
+      // TODO: keep items list from disappearing while confirm message is up
       // TODO: BUG! Choice game event still has focus while health change is being shown
       // TODO: BUG! Back option is not selectable!
       GuiItemsMenu.trigger(itemsConfirm);
