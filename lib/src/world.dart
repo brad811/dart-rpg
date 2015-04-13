@@ -89,6 +89,7 @@ class World {
   World(Function callback) {
     Main.player = new Player(3, 3);
     Main.player.battler = new Battler(
+      "Player",
       battlerTypes["Player"], 3,
       battlerTypes["Player"].levelAttacks.values.toList()
     );
@@ -101,8 +102,8 @@ class World {
     loadMaps(() {
       curMap = "apartment";
       
-      Battler common = new Battler(battlerTypes["Common"], 5, battlerTypes["Common"].levelAttacks.values.toList());
-      Battler rare = new Battler(battlerTypes["Rare"], 5, battlerTypes["Rare"].levelAttacks.values.toList());
+      Battler common = new Battler("Common", battlerTypes["Common"], 5, battlerTypes["Common"].levelAttacks.values.toList());
+      Battler rare = new Battler("Rare", battlerTypes["Rare"], 5, battlerTypes["Rare"].levelAttacks.values.toList());
       maps["main"].battlerChances = [
         new BattlerChance(common, 0.8),
         new BattlerChance(rare, 0.2)
@@ -192,6 +193,7 @@ class World {
       fighter.preBattleText = "Hey, before you leave, let's see how strong you are!";
       fighter.direction = Character.DOWN;
       fighter.battler = new Battler(
+        "Player",
         battlerTypes["Player"], 4,
         battlerTypes["Player"].levelAttacks.values.toList()
       );

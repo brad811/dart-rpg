@@ -1,6 +1,7 @@
 library dart_rpg.item;
 
 import 'package:dart_rpg/src/battler.dart';
+import 'package:dart_rpg/src/text_game_event.dart';
 
 abstract class Item {
   final String name = "Item";
@@ -8,5 +9,5 @@ abstract class Item {
   final String description = "This is an item!";
   final int pictureId = 237;
   
-  void use(Battler target);
+  TextGameEvent use(Battler target);
 }

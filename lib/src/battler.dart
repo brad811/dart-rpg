@@ -8,6 +8,8 @@ import 'package:dart_rpg/src/battler_type.dart';
 class Battler {
   final BattlerType battlerType;
   
+  String name;
+  
   int
     startingHealth = 0,
     startingPhysicalAttack = 0,
@@ -44,7 +46,7 @@ class Battler {
   //   constructor, they are automatically the last 4 attacks learned
   //   at the current level
   
-  Battler(this.battlerType, int level, this.attacks) {
+  Battler(this.name, this.battlerType, int level, this.attacks) {
     startingHealth = battlerType.baseHealth;
     startingPhysicalAttack = battlerType.basePhysicalAttack;
     startingMagicalAttack = battlerType.baseMagicalAttack;

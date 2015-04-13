@@ -72,13 +72,16 @@ class Battle implements InteractableInterface {
       Function itemsConfirm = (Item selectedItem) {
         new ChoiceGameEvent(this, {
           "Yes": [new GameEvent((Function callback) {
-          // TODO: show text event to say what happened
-          selectedItem.use(friendly);
+          TextGameEvent text = selectedItem.use(friendly);
           
           // TODO: only show health change if health-changing item was used?
+          Gui.windows = [];
           showHealthChange(friendly, () {
-            print("Item was used!");
-            attack(friendly, -1);
+            text.callback = () {
+              attack(friendly, -1);
+            };
+            
+            text.trigger();
           });
          })],
           "No": []
