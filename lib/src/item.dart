@@ -9,5 +9,6 @@ abstract class Item {
   final String description = "This is an item!";
   final int pictureId = 237;
   
+  // TODO: make this remove one of the items used
   TextGameEvent use(Battler target);
 }

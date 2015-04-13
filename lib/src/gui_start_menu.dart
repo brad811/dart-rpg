@@ -6,7 +6,9 @@ import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
+import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/text_game_event.dart';
 
 class GuiStartMenu {
   static ChoiceGameEvent start = new ChoiceGameEvent.custom(
@@ -14,7 +16,7 @@ class GuiStartMenu {
     {
       "Stats": [stats],
       "Powers": [exit],
-      "Items": [GuiItemsMenu.items],
+      "Items": [items],
       "Save": [exit],
       "Exit": [exit]
     },
@@ -23,7 +25,18 @@ class GuiStartMenu {
     exit
   );
   
-  static GameEvent exit = new GameEvent( (Function a) {
+  static GameEvent items = new GameEvent((Function a) {
+    GuiItemsMenu.trigger((Item item) {
+      TextGameEvent text = item.use(Main.player.battler);
+      text.callback = () {
+        Gui.windows = [];
+        Main.focusObject = Main.player;
+      };
+      text.trigger();
+    });
+  });
+  
+  static GameEvent exit = new GameEvent((Function a) {
     Gui.windows = [];
     Main.focusObject = Main.player;
   });
