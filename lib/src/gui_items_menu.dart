@@ -10,7 +10,6 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 
 class GuiItemsMenu {
-  // TODO: return the item selected
   // TODO: enable disabling the "back" option
   
   static final double
