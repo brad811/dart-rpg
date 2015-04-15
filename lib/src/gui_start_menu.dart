@@ -27,12 +27,17 @@ class GuiStartMenu {
   
   static GameEvent items = new GameEvent((Function a) {
     GuiItemsMenu.trigger((Item item) {
-      TextGameEvent text = item.use(Main.player.battler);
-      text.callback = () {
-        Gui.windows = [];
-        Main.focusObject = Main.player;
-      };
-      text.trigger();
+      Gui.windows = [];
+      if(item == null) {
+        start.trigger();
+      } else {
+        TextGameEvent text = item.use(Main.player.battler);
+        text.callback = () {
+          Main.focusObject = Main.player;
+          items.trigger();
+        };
+        text.trigger();
+      }
     });
   });
   

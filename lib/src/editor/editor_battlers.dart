@@ -18,7 +18,7 @@ class EditorBattlers {
     querySelector("#add_battler_button").onClick.listen((MouseEvent e) {
       battlerChances[Main.world.curMap].add(
         new BattlerChance(
-          new Battler( World.battlerTypes["Common"], 2, [] ),
+          new Battler( "Common", World.battlerTypes["Common"], 2, [] ),
           0
         )
       );
