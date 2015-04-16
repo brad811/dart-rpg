@@ -31,6 +31,7 @@ class GuiStartMenu {
       if(item == null) {
         start.trigger();
       } else {
+        item = Main.player.inventory.removeItem(item);
         TextGameEvent text = item.use(Main.player.battler);
         text.callback = () {
           Main.focusObject = Main.player;
