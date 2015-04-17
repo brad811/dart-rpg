@@ -10,8 +10,6 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 
 class GuiItemsMenu {
-  // TODO: enable disabling the "back" option
-  
   static final double
     textX = 21.0,
     textY = 9.0;
@@ -21,6 +19,7 @@ class GuiItemsMenu {
   
   static Item selectedItem;
   static Function selectCallback;
+  static bool backEnabled = true;
   
   static GameEvent selectItem = new GameEvent((Function callback) {
     selectCallback(selectedItem);
@@ -42,7 +41,10 @@ class GuiItemsMenu {
       name += itemStack.item.name;
       items.addAll({name: [selectItem]});
     }
-    items.addAll({"Back": [callbackEvent]});
+    
+    if(backEnabled) {
+      items.addAll({"Back": [callbackEvent]});
+    }
     
     ChoiceGameEvent itemChoice;
     Function descriptionWindow;
@@ -86,7 +88,8 @@ class GuiItemsMenu {
     itemChoice.trigger();
   });
   
-  static trigger(Function callback) {
+  static trigger(Function callback, [bool backEnabled = true]) {
+    GuiItemsMenu.backEnabled = backEnabled;
     items.callback = callback;
     items.trigger();
   }
