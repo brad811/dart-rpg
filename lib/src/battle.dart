@@ -94,15 +94,13 @@ class Battle implements InteractableInterface {
         }
       };
       
-      // TODO: keep items list from disappearing while confirm message is up
-      // TODO: BUG! Choice game event still has focus while health change is being shown
       // TODO: BUG! Back option is not selectable!
+      Gui.inConversation = false;
       GuiItemsMenu.trigger(itemsConfirm);
     });
     
     // TODO: make it so that some battles cannot be run from
     // TODO: make running possibly fail
-    // TODO: use items in battle
     main = new ChoiceGameEvent.custom(
       this,
       {
