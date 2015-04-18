@@ -97,7 +97,7 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
       }
     };
     
-    Gui.windows.add(window);
+    Gui.addWindow(window);
   }
   
   void handleKeys(List<int> keyCodes) {
@@ -119,12 +119,12 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
         onChangeEvent.trigger();
     } else if(keyCodes.contains(Input.CONFIRM)) {
       if(remove)
-        Gui.windows.remove(window);
+        Gui.removeWindow(window);
       
       Interactable.chainGameEvents(interactable, choices.values.toList()[curChoice]);
       interactable.gameEvent.trigger();
     } else if(keyCodes.contains(Input.BACK) && cancelEvent != null) {
-      Gui.windows.remove(window);
+      Gui.removeWindow(window);
       
       Interactable.chainGameEvents(interactable, [cancelEvent]);
       interactable.gameEvent.trigger();

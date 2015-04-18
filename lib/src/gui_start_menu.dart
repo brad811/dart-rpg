@@ -27,7 +27,7 @@ class GuiStartMenu {
   
   static GameEvent items = new GameEvent((Function a) {
     GuiItemsMenu.trigger((Item item) {
-      Gui.windows = [];
+      Gui.clear();
       if(item == null) {
         start.trigger();
       } else {
@@ -43,12 +43,12 @@ class GuiStartMenu {
   });
   
   static GameEvent exit = new GameEvent((Function a) {
-    Gui.windows = [];
+    Gui.clear();
     Main.focusObject = Main.player;
   });
   
   static GameEvent stats = new GameEvent((Function a) {
-    Gui.windows.add(() {
+    Gui.addWindow(() {
       Gui.renderWindow(
         0, 0,
         12, 8
@@ -67,7 +67,7 @@ class GuiStartMenu {
     });
     
     GameEvent powersBack = new GameEvent((Function a) {
-      Gui.windows = [];
+      Gui.clear();
       GuiStartMenu.start.trigger();
     });
     

@@ -41,7 +41,7 @@ class Gui {
   static List<String> textLines = [];
   static int pictureSpriteId;
   
-  static List<Function> windows = [];
+  static List<Function> _windows = [];
   
   static int fadeOutLevel = FADE_NORMAL;
   
@@ -54,7 +54,7 @@ class Gui {
       renderFade();
     }
     
-    for(Function window in windows) {
+    for(Function window in _windows) {
       window();
     }
   }
@@ -199,5 +199,18 @@ class Gui {
   
   static void showStartMenu() {
     GuiStartMenu.start.trigger();
+  }
+  
+  static void addWindow(Function window) {
+    _windows.add(window);
+  }
+  
+  static void removeWindow(Function window) {
+    _windows.remove(window);
+  }
+  
+  static void clear() {
+    _windows = [];
+    inConversation = false;
   }
 }

@@ -50,12 +50,12 @@ class GuiItemsMenu {
     Function descriptionWindow;
     
     GameEvent onCancel = new GameEvent((Function a) {
-      Gui.windows.remove(descriptionWindow);
+      Gui.removeWindow(descriptionWindow);
       callbackEvent.trigger();
     });
     
     GameEvent onChange = new GameEvent((Function callback) {
-      Gui.windows.remove(descriptionWindow);
+      Gui.removeWindow(descriptionWindow);
       if(itemChoice.curChoice < Main.player.inventory.itemStacks.length) {
         selectedItem = Main.player.inventory.itemStacks[itemChoice.curChoice].item;
         Sprite curSprite = new Sprite.int(selectedItem.pictureId, 13, 1);
@@ -71,7 +71,7 @@ class GuiItemsMenu {
           curSprite.renderStaticSized(3, 3);
         };
         
-        Gui.windows.add(descriptionWindow);
+        Gui.addWindow(descriptionWindow);
       }
     });
     

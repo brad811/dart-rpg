@@ -44,7 +44,7 @@ class Battle implements InteractableInterface {
     }
     
     exit = new GameEvent((callback) {
-      Gui.windows.removeRange(0, Gui.windows.length);
+      Gui.clear();
       Main.inBattle = false;
       
       if(this.postBattleCallback != null) {
@@ -70,8 +70,7 @@ class Battle implements InteractableInterface {
     
     items = new GameEvent((Function callback) {
       Function itemsConfirm = (Item selectedItem) {
-        // TODO: clear confirm dialog if no is selected
-        Gui.windows = [];
+        Gui.clear();
         if(selectedItem != null) {
           new TextGameEvent.choice(237, "Use 1 ${selectedItem.name}?",
             new ChoiceGameEvent(this, {
@@ -79,7 +78,7 @@ class Battle implements InteractableInterface {
               TextGameEvent text = selectedItem.use(friendly);
               
               // TODO: only show health change if health-changing item was used?
-              Gui.windows = [];
+              Gui.clear();
               showHealthChange(friendly, () {
                 text.callback = () {
                   attack(friendly, -1);
@@ -95,7 +94,7 @@ class Battle implements InteractableInterface {
       };
       
       // TODO: BUG! Back option is not selectable!
-      Gui.inConversation = false;
+      Gui.clear();
       GuiItemsMenu.trigger(itemsConfirm);
     });
     
@@ -123,10 +122,10 @@ class Battle implements InteractableInterface {
   }
   
   void attack(Battler user, int attackNum) {
-    Gui.windows = [];
+    Gui.clear();
     
     Function callback = () {
-      Gui.windows.removeRange(0, Gui.windows.length);
+      Gui.clear();
       main.trigger();
     };
     
@@ -148,7 +147,7 @@ class Battle implements InteractableInterface {
   }
   
   void doAttack(Battler attacker, Battler receiver, bool enemy, int attackNum, Function callback) {
-    Gui.windows.removeRange(0, Gui.windows.length);
+    Gui.clear();
     
     attacker.attacks[attackNum].use(attacker, receiver, enemy, () {
       showHealthChange(receiver, callback);
