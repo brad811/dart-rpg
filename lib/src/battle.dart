@@ -68,32 +68,33 @@ class Battle implements InteractableInterface {
     );
     fight.remove = true;
     
-    items = new GameEvent((Function callback) {
-      Function itemsConfirm = (Item selectedItem) {
-        Gui.clear();
-        if(selectedItem != null) {
-          new TextGameEvent.choice(237, "Use 1 ${selectedItem.name}?",
-            new ChoiceGameEvent(this, {
-              "Yes": [new GameEvent((Function callback) {
-              TextGameEvent text = selectedItem.use(friendly);
+    Function itemsConfirm = (Item selectedItem) {
+      Gui.clear();
+      if(selectedItem != null) {
+        new TextGameEvent.choice(237, "Use 1 ${selectedItem.name}?",
+          new ChoiceGameEvent(this, {
+            "Yes": [new GameEvent((Function callback) {
+            TextGameEvent text = selectedItem.use(friendly);
+            
+            // TODO: only show health change if health-changing item was used?
+            Gui.clear();
+            showHealthChange(friendly, () {
+              text.callback = () {
+                attack(friendly, -1);
+              };
               
-              // TODO: only show health change if health-changing item was used?
-              Gui.clear();
-              showHealthChange(friendly, () {
-                text.callback = () {
-                  attack(friendly, -1);
-                };
-                
-                text.trigger();
-              });
-             })],
-              "No": []
-            })
-          ).trigger();
-        }
-      };
-      
-      // TODO: BUG! Back option is not selectable!
+              text.trigger();
+            });
+           })],
+            "No": []
+          })
+        ).trigger();
+      } else {
+        main.trigger();
+      }
+    };
+    
+    items = new GameEvent((Function callback) {
       Gui.clear();
       GuiItemsMenu.trigger(itemsConfirm);
     });
