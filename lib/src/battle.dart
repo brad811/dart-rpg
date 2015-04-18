@@ -70,22 +70,28 @@ class Battle implements InteractableInterface {
     
     items = new GameEvent((Function callback) {
       Function itemsConfirm = (Item selectedItem) {
-        new ChoiceGameEvent(this, {
-          "Yes": [new GameEvent((Function callback) {
-          TextGameEvent text = selectedItem.use(friendly);
-          
-          // TODO: only show health change if health-changing item was used?
-          Gui.windows = [];
-          showHealthChange(friendly, () {
-            text.callback = () {
-              attack(friendly, -1);
-            };
-            
-            text.trigger();
-          });
-         })],
-          "No": []
-        }).trigger();
+        // TODO: clear confirm dialog if no is selected
+        Gui.windows = [];
+        if(selectedItem != null) {
+          new TextGameEvent.choice(237, "Use 1 ${selectedItem.name}?",
+            new ChoiceGameEvent(this, {
+              "Yes": [new GameEvent((Function callback) {
+              TextGameEvent text = selectedItem.use(friendly);
+              
+              // TODO: only show health change if health-changing item was used?
+              Gui.windows = [];
+              showHealthChange(friendly, () {
+                text.callback = () {
+                  attack(friendly, -1);
+                };
+                
+                text.trigger();
+              });
+             })],
+              "No": []
+            })
+          ).trigger();
+        }
       };
       
       // TODO: keep items list from disappearing while confirm message is up
