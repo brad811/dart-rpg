@@ -13,8 +13,10 @@ import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/gui.dart';
+import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
+import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/item_potion.dart';
 import 'package:dart_rpg/src/item_stack.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -202,6 +204,34 @@ class World {
           Main.focusObject = Main.player;
         }).trigger();
       });
+      
+      // add store clerk
+      Character storeClerk = addCharacter(
+        "store",
+        Tile.PLAYER,
+        237,
+        5, 1, LAYER_BELOW,
+        1, 2,
+        true
+      );
+      
+      List<GameEvent> storeClerkGameEvents = [];
+      storeClerkGameEvents = [
+        new TextGameEvent(237, "Welcome! What are you looking for today?"),
+        new GameEvent((callback) {
+          // TODO: add "store mode" to gui items menu
+          // TODO: purchase the selected item
+          Function itemPurchaseCallback = (Item item) {
+            Gui.clear();
+            callback();
+          };
+          
+          GuiItemsMenu.trigger(itemPurchaseCallback);
+        }),
+        new TextGameEvent(237, "Thanks for coming in!")
+      ];
+      
+      Interactable.chainGameEvents(storeClerk, storeClerkGameEvents);
       
       callback();
     });
