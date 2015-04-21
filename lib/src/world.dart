@@ -219,10 +219,15 @@ class World {
       storeClerkGameEvents = [
         new TextGameEvent(237, "Welcome! What are you looking for today?"),
         new GameEvent((callback) {
-          // TODO: add "store mode" to gui items menu
-          // TODO: purchase the selected item
+          // TODO: add "store mode" to gui items menu to show prices
+          // TODO: make "store mode" also take a character's inventory as input
+          // TODO: add quantity option when purchasing items?
           Function itemPurchaseCallback = (Item item) {
             Gui.clear();
+            
+            Main.player.inventory.money -= item.basePrice;
+            Main.player.inventory.addItem(item);
+            
             callback();
           };
           
@@ -232,6 +237,8 @@ class World {
       ];
       
       Interactable.chainGameEvents(storeClerk, storeClerkGameEvents);
+      
+      Main.player.inventory.money = 1000;
       
       callback();
     });

@@ -5,6 +5,7 @@ import 'package:dart_rpg/src/item_stack.dart';
 
 class Inventory {
   List<ItemStack> itemStacks = new List<ItemStack>();
+  int money = 0;
   
   Item removeItem(Item item) {
     if(item == null)
@@ -23,5 +24,17 @@ class Inventory {
     }
     
     return null;
+  }
+  
+  void addItem(Item item) {
+    if(item == null)
+      return;
+    
+    for(ItemStack itemStack in itemStacks) {
+      if(itemStack.item.name == item.name) {
+        itemStack.quantity += 1;
+        return;
+      }
+    }
   }
 }
