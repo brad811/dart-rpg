@@ -96,7 +96,7 @@ class Battle implements InteractableInterface {
     
     items = new GameEvent((Function callback) {
       Gui.clear();
-      GuiItemsMenu.trigger(itemsConfirm);
+      GuiItemsMenu.trigger(Main.player, itemsConfirm);
     });
     
     // TODO: make it so that some battles cannot be run from

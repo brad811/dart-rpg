@@ -1,5 +1,6 @@
 library dart_rpg.gui_items_menu;
 
+import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';
@@ -20,6 +21,7 @@ class GuiItemsMenu {
   static Item selectedItem;
   static Function selectCallback;
   static bool backEnabled = true;
+  static Character character;
   
   static GameEvent selectItem = new GameEvent((Function callback) {
     selectCallback(selectedItem);
@@ -32,7 +34,7 @@ class GuiItemsMenu {
     selectCallback = callback;
     
     Map<String, List<GameEvent>> items = new Map<String, List<GameEvent>>();
-    for(ItemStack itemStack in Main.player.inventory.itemStacks) {
+    for(ItemStack itemStack in character.inventory.itemStacks) {
       String name = itemStack.quantity.toString();
       if(name.length == 1)
         name = "0" + name;
@@ -56,8 +58,9 @@ class GuiItemsMenu {
     
     GameEvent onChange = new GameEvent((Function callback) {
       Gui.removeWindow(descriptionWindow);
-      if(itemChoice.curChoice < Main.player.inventory.itemStacks.length) {
-        selectedItem = Main.player.inventory.itemStacks[itemChoice.curChoice].item;
+      
+      if(itemChoice.curChoice < character.inventory.itemStacks.length) {
+        selectedItem = character.inventory.itemStacks[itemChoice.curChoice].item;
         Sprite curSprite = new Sprite.int(selectedItem.pictureId, 13, 1);
         descriptionWindow = () {
           Gui.renderWindow(10, 0, itemDescriptionWindowWidth, 10);
@@ -88,7 +91,8 @@ class GuiItemsMenu {
     itemChoice.trigger();
   });
   
-  static trigger(Function callback, [bool backEnabled = true]) {
+  static trigger(Character character, Function callback, [bool backEnabled = true]) {
+    GuiItemsMenu.character = character;
     GuiItemsMenu.backEnabled = backEnabled;
     items.callback = callback;
     items.trigger();

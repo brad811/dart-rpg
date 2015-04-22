@@ -26,7 +26,7 @@ class GuiStartMenu {
   );
   
   static GameEvent items = new GameEvent((Function a) {
-    GuiItemsMenu.trigger((Item item) {
+    GuiItemsMenu.trigger(Main.player, (Item item) {
       Gui.clear();
       if(item == null) {
         start.trigger();
