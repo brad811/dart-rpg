@@ -7,7 +7,7 @@ class Inventory {
   List<ItemStack> itemStacks = new List<ItemStack>();
   int money = 0;
   
-  Item removeItem(Item item) {
+  Item removeItem(Item item, [int quantity = 1]) {
     if(item == null)
       return null;
     
@@ -23,18 +23,22 @@ class Inventory {
       }
     }
     
+    // TODO: handle no more items left differently?
     return null;
   }
   
-  void addItem(Item item) {
+  void addItem(Item item, [int quantity = 1]) {
     if(item == null)
       return;
     
     for(ItemStack itemStack in itemStacks) {
       if(itemStack.item.name == item.name) {
-        itemStack.quantity += 1;
+        itemStack.quantity += quantity;
         return;
       }
     }
+    
+    ItemStack newItemStack = new ItemStack(item, quantity);
+    itemStacks.add(newItemStack);
   }
 }
