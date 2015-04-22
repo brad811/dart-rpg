@@ -215,23 +215,30 @@ class World {
         true
       );
       
+      for(int i=0; i<10; i++)
+        storeClerk.inventory.addItem(new ItemPotion());
+      
       List<GameEvent> storeClerkGameEvents = [];
       storeClerkGameEvents = [
         new TextGameEvent(237, "Welcome! What are you looking for today?"),
         new GameEvent((callback) {
           // TODO: add "store mode" to gui items menu to show prices
-          // TODO: make "store mode" also take a character's inventory as input
-          // TODO: add quantity option when purchasing items?
+          // TODO: add quantity option when purchasing items
+          // TODO: add confirm dialog when purchasing items
           Function itemPurchaseCallback = (Item item) {
             Gui.clear();
             
-            Main.player.inventory.money -= item.basePrice;
-            Main.player.inventory.addItem(item);
-            
-            callback();
+            if(item != null) {
+              Main.player.inventory.money -= item.basePrice;
+              storeClerk.inventory.removeItem(item);
+              Main.player.inventory.addItem(item);
+              callback();
+            } else {
+              callback();
+            }
           };
           
-          GuiItemsMenu.trigger(itemPurchaseCallback);
+          GuiItemsMenu.trigger(storeClerk, itemPurchaseCallback);
         }),
         new TextGameEvent(237, "Thanks for coming in!")
       ];
