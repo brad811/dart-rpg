@@ -225,6 +225,8 @@ class World {
           // TODO: add "store mode" to gui items menu to show prices
           // TODO: add quantity option when purchasing items
           // TODO: make store clerks their own class
+          // TODO: render store money when in store mode
+          // TODO: make sure player has enough money to purchase an item
           Function itemPurchaseCallback;
           itemPurchaseCallback = (Item item) {
             Gui.clear();
