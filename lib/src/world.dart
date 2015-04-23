@@ -237,6 +237,7 @@ class World {
                     storeClerk.inventory.removeItem(item);
                     Main.player.inventory.addItem(item);
                     
+                    // TODO: make a noise or say thank you or something
                     Gui.clear();
                     GuiItemsMenu.trigger(storeClerk, itemPurchaseCallback);
                   })],
