@@ -32,6 +32,7 @@ class GuiStartMenu {
         start.trigger();
       } else {
         item = Main.player.inventory.removeItem(item);
+        // TODO: add confirm dialog before using item from start menu
         TextGameEvent text = item.use(Main.player.battler);
         text.callback = () {
           Main.focusObject = Main.player;
