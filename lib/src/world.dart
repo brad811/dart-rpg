@@ -225,19 +225,25 @@ class World {
           // TODO: add "store mode" to gui items menu to show prices
           // TODO: add quantity option when purchasing items
           // TODO: make store clerks their own class
-          Function itemPurchaseCallback = (Item item) {
+          Function itemPurchaseCallback;
+          itemPurchaseCallback = (Item item) {
             Gui.clear();
             
             if(item != null) {
               new TextGameEvent.choice(237, "Buy this for real?",
-                new ChoiceGameEvent(Main.player, {
+                new ChoiceGameEvent(storeClerk, {
                   "Yes": [new GameEvent((_) {
                     Main.player.inventory.money -= item.basePrice;
                     storeClerk.inventory.removeItem(item);
                     Main.player.inventory.addItem(item);
-                    callback();
+                    
+                    Gui.clear();
+                    GuiItemsMenu.trigger(storeClerk, itemPurchaseCallback);
                   })],
-                  "No": [new GameEvent((_) { callback(); })]
+                  "No": [new GameEvent((_) {
+                    Gui.clear();
+                    GuiItemsMenu.trigger(storeClerk, itemPurchaseCallback);
+                  })]
                 })
               ).trigger();
             } else {
