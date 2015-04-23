@@ -23,6 +23,11 @@ class GuiItemsMenu {
   static bool backEnabled = true;
   static Character character;
   
+  static Function playerMoneyWindow = () {
+    Gui.renderWindow(0, 10, 10, 2);
+    Font.renderStaticText(1.0, 21.75, "Money: " + Main.player.inventory.money.toString());
+  };
+  
   static GameEvent selectItem = new GameEvent((Function callback) {
     selectCallback(selectedItem);
   });
@@ -94,6 +99,9 @@ class GuiItemsMenu {
   static trigger(Character character, Function callback, [bool backEnabled = true]) {
     GuiItemsMenu.character = character;
     GuiItemsMenu.backEnabled = backEnabled;
+    
+    Gui.addWindow(playerMoneyWindow);
+    
     items.callback = callback;
     items.trigger();
   }
