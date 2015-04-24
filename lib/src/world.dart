@@ -226,12 +226,11 @@ class World {
           // TODO: add quantity option when purchasing items
           // TODO: make store clerks their own class
           // TODO: render store money when in store mode
-          // TODO: make sure player has enough money to purchase an item
           Function itemPurchaseCallback;
           itemPurchaseCallback = (Item item) {
             Gui.clear();
             
-            if(item != null) {
+            if(item != null && Main.player.inventory.money >= item.basePrice) {
               new TextGameEvent.choice(237, "Buy this for real?",
                 new ChoiceGameEvent(storeClerk, {
                   "Yes": [new GameEvent((_) {
@@ -249,6 +248,11 @@ class World {
                   })]
                 })
               ).trigger();
+            } else if(item != null && Main.player.inventory.money < item.basePrice) {
+              new TextGameEvent(237, "You don't have enough money to buy this item.", () {
+                Gui.clear();
+                GuiItemsMenu.trigger(storeClerk, itemPurchaseCallback);
+              }).trigger();
             } else {
               callback();
             }
@@ -261,7 +265,7 @@ class World {
       
       Interactable.chainGameEvents(storeClerk, storeClerkGameEvents);
       
-      Main.player.inventory.money = 1000;
+      Main.player.inventory.money = 500;
       
       callback();
     });
