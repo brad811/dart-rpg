@@ -13,16 +13,15 @@ import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/gui.dart';
-import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
-import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/item_potion.dart';
 import 'package:dart_rpg/src/item_stack.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/store_character.dart';
 import 'package:dart_rpg/src/text_game_event.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
@@ -206,64 +205,18 @@ class World {
       });
       
       // add store clerk
-      Character storeClerk = addCharacter(
+      Character storeClerk = addStoreCharacter(
         "store",
         Tile.PLAYER,
         237,
         5, 1, LAYER_BELOW,
         1, 2,
-        true
+        true, [
+          new ItemStack(new ItemPotion(), 10)
+        ]
       );
       
-      for(int i=0; i<10; i++)
-        storeClerk.inventory.addItem(new ItemPotion());
-      
-      List<GameEvent> storeClerkGameEvents = [];
-      storeClerkGameEvents = [
-        new TextGameEvent(237, "Welcome! What are you looking for today?"),
-        new GameEvent((callback) {
-          // TODO: add "store mode" to gui items menu to show prices
-          // TODO: add quantity option when purchasing items
-          // TODO: make store clerks their own class
-          // TODO: render store money when in store mode
-          Function itemPurchaseCallback;
-          itemPurchaseCallback = (Item item) {
-            Gui.clear();
-            
-            if(item != null && Main.player.inventory.money >= item.basePrice) {
-              new TextGameEvent.choice(237, "Buy this for real?",
-                new ChoiceGameEvent(storeClerk, {
-                  "Yes": [new GameEvent((_) {
-                    Main.player.inventory.money -= item.basePrice;
-                    storeClerk.inventory.removeItem(item);
-                    Main.player.inventory.addItem(item);
-                    
-                    // TODO: make a noise or say thank you or something
-                    Gui.clear();
-                    GuiItemsMenu.trigger(storeClerk, itemPurchaseCallback);
-                  })],
-                  "No": [new GameEvent((_) {
-                    Gui.clear();
-                    GuiItemsMenu.trigger(storeClerk, itemPurchaseCallback);
-                  })]
-                })
-              ).trigger();
-            } else if(item != null && Main.player.inventory.money < item.basePrice) {
-              new TextGameEvent(237, "You don't have enough money to buy this item.", () {
-                Gui.clear();
-                GuiItemsMenu.trigger(storeClerk, itemPurchaseCallback);
-              }).trigger();
-            } else {
-              callback();
-            }
-          };
-          
-          GuiItemsMenu.trigger(storeClerk, itemPurchaseCallback);
-        }),
-        new TextGameEvent(237, "Thanks for coming in!")
-      ];
-      
-      Interactable.chainGameEvents(storeClerk, storeClerkGameEvents);
+      // store clerk stuff
       
       Main.player.inventory.money = 500;
       
@@ -364,6 +317,17 @@ class World {
     );
     maps[map].characters.add(character);
     return character;
+  }
+  
+  StoreCharacter addStoreCharacter(
+      String map,
+      int spriteId, int pictureId,
+      int posX, int posY, int layer, int sizeX, int sizeY, bool solid, List<ItemStack> storeItems) {
+    StoreCharacter storeCharacter = new StoreCharacter(
+      spriteId, pictureId, posX, posY, layer, sizeX, sizeY, solid, storeItems
+    );
+    maps[map].characters.add(storeCharacter);
+    return storeCharacter;
   }
   
   void addInteractableObject(
