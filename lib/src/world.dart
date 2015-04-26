@@ -211,7 +211,10 @@ class World {
         237,
         5, 1, LAYER_BELOW,
         1, 2,
-        true, [
+        true,
+        "Welcome! What are you looking for today?",
+        "Thanks for coming in!",
+        [
           new ItemStack(new ItemPotion(), 10)
         ]
       );
@@ -322,9 +325,11 @@ class World {
   StoreCharacter addStoreCharacter(
       String map,
       int spriteId, int pictureId,
-      int posX, int posY, int layer, int sizeX, int sizeY, bool solid, List<ItemStack> storeItems) {
+      int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
+      String helloMessage, String goodbyeMessage, List<ItemStack> storeItems) {
     StoreCharacter storeCharacter = new StoreCharacter(
-      spriteId, pictureId, posX, posY, layer, sizeX, sizeY, solid, storeItems
+      spriteId, pictureId, posX, posY, layer, sizeX, sizeY, solid,
+      helloMessage, goodbyeMessage, storeItems
     );
     maps[map].characters.add(storeCharacter);
     return storeCharacter;

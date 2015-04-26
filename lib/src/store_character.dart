@@ -13,7 +13,8 @@ import 'package:dart_rpg/src/text_game_event.dart';
 
 class StoreCharacter extends Character {
   StoreCharacter(int spriteId, int pictureId,
-        int mapX, int mapY, int layer, int sizeX, int sizeY, bool solid, List<ItemStack> storeItems) : super(
+        int mapX, int mapY, int layer, int sizeX, int sizeY, bool solid,
+        String helloMessage, String goodbyeMessage, List<ItemStack> storeItems) : super(
             spriteId, pictureId, mapX, mapY, layer, sizeX, sizeY, solid) {
     
     for(ItemStack itemStack in storeItems) {
@@ -22,7 +23,7 @@ class StoreCharacter extends Character {
     
     List<GameEvent> storeClerkGameEvents = [];
     storeClerkGameEvents = [
-      new TextGameEvent(237, "Welcome! What are you looking for today?"),
+      new TextGameEvent(237, helloMessage),
       new GameEvent((callback) {
         // TODO: add "store mode" to gui items menu to show prices
         // TODO: add quantity option when purchasing items
@@ -62,11 +63,9 @@ class StoreCharacter extends Character {
         
         GuiItemsMenu.trigger(this, itemPurchaseCallback);
       }),
-      new TextGameEvent(237, "Thanks for coming in!")
+      new TextGameEvent(237, goodbyeMessage)
     ];
     
     Interactable.chainGameEvents(this, storeClerkGameEvents);
   }
-  
-  
 }
