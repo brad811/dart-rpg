@@ -38,30 +38,31 @@ class StoreCharacter extends Character {
               new ChoiceGameEvent(this, {
                 "Yes": [new GameEvent((_) {
                   Main.player.inventory.money -= item.basePrice;
+                  this.inventory.money += item.basePrice;
                   this.inventory.removeItem(item);
                   Main.player.inventory.addItem(item);
                   
                   // TODO: make a noise or say thank you or something
                   Gui.clear();
-                  GuiItemsMenu.trigger(this, itemPurchaseCallback);
+                  GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
                 })],
                 "No": [new GameEvent((_) {
                   Gui.clear();
-                  GuiItemsMenu.trigger(this, itemPurchaseCallback);
+                  GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
                 })]
               })
             ).trigger();
           } else if(item != null && Main.player.inventory.money < item.basePrice) {
             new TextGameEvent(237, "You don't have enough money to buy this item.", () {
               Gui.clear();
-              GuiItemsMenu.trigger(this, itemPurchaseCallback);
+              GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
             }).trigger();
           } else {
             callback();
           }
         };
         
-        GuiItemsMenu.trigger(this, itemPurchaseCallback);
+        GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
       }),
       new TextGameEvent(237, goodbyeMessage)
     ];

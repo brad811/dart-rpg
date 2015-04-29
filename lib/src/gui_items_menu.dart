@@ -9,6 +9,7 @@ import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/item_stack.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/store_character.dart';
 
 class GuiItemsMenu {
   static final double
@@ -23,6 +24,7 @@ class GuiItemsMenu {
   static bool backEnabled = true;
   static bool storeMode = false;
   static Character character;
+  static StoreCharacter storeCharacter;
   
   static Function playerMoneyWindow = () {
     Gui.renderWindow(0, 10, 10, 2);
@@ -31,7 +33,7 @@ class GuiItemsMenu {
   
   static Function storeMoneyWindow = () {
     Gui.renderWindow(10, 10, 10, 2);
-    Font.renderStaticText(1.0, 21.75, "Store: " + Main.player.inventory.money.toString());
+    Font.renderStaticText(21.0, 21.75, "Store: " + storeCharacter.inventory.money.toString());
   };
   
   static GameEvent selectItem = new GameEvent((Function callback) {
@@ -102,15 +104,17 @@ class GuiItemsMenu {
     itemChoice.trigger();
   });
   
-  static trigger(Character character, Function callback, [bool backEnabled = true, storeMode = false]) {
+  static trigger(Character character, Function callback,
+      [bool backEnabled = true, StoreCharacter storeCharacter]) {
     GuiItemsMenu.character = character;
     GuiItemsMenu.backEnabled = backEnabled;
     
     Gui.addWindow(playerMoneyWindow);
     
-    GuiItemsMenu.storeMode = storeMode;
+    GuiItemsMenu.storeMode = storeCharacter != null;
     if(storeMode) {
       Gui.addWindow(storeMoneyWindow);
+      GuiItemsMenu.storeCharacter = storeCharacter;
     }
     
     items.callback = callback;
