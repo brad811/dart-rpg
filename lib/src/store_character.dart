@@ -25,10 +25,7 @@ class StoreCharacter extends Character {
     storeClerkGameEvents = [
       new TextGameEvent(237, helloMessage),
       new GameEvent((callback) {
-        // TODO: add "store mode" to gui items menu to show prices
         // TODO: add quantity option when purchasing items
-        // TODO: make store clerks their own class
-        // TODO: render store money when in store mode
         Function itemPurchaseCallback;
         itemPurchaseCallback = (Item item) {
           Gui.clear();
@@ -42,9 +39,10 @@ class StoreCharacter extends Character {
                   this.inventory.removeItem(item);
                   Main.player.inventory.addItem(item);
                   
-                  // TODO: make a noise or say thank you or something
-                  Gui.clear();
-                  GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
+                  new TextGameEvent(237, "Thank you! Here you go.", () {
+                    Gui.clear();
+                    GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
+                  }).trigger();
                 })],
                 "No": [new GameEvent((_) {
                   Gui.clear();
