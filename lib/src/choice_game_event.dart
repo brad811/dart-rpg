@@ -37,6 +37,8 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     addWidth = ((maxLength - 3) / 2).round();
   }
   
+  // TODO: create quantity chooser choice game event
+  
   factory ChoiceGameEvent.custom(
       InteractableInterface interactable,
       Map<String, List<GameEvent>> choices,
