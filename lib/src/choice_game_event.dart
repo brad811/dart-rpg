@@ -1,4 +1,4 @@
-library dart_rpg.choice_event;
+library dart_rpg.choice_game_event;
 
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';
@@ -36,8 +36,6 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     
     addWidth = ((maxLength - 3) / 2).round();
   }
-  
-  // TODO: create quantity chooser choice game event
   
   factory ChoiceGameEvent.custom(
       InteractableInterface interactable,
