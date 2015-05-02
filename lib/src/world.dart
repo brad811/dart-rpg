@@ -15,8 +15,8 @@ import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
+import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/item_potion.dart';
-import 'package:dart_rpg/src/item_stack.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
@@ -95,9 +95,7 @@ class World {
       battlerTypes["Player"].levelAttacks.values.toList()
     );
     
-    Main.player.inventory.itemStacks.add(
-      new ItemStack(new ItemPotion(), 2)
-    );
+    Main.player.inventory.addItem(new ItemPotion(), 2);
     
     // TODO: improve editor so less is needed in world class
     loadMaps(() {
@@ -214,9 +212,9 @@ class World {
         true,
         "Welcome! What are you looking for today?",
         "Thanks for coming in!",
-        [
-          new ItemStack(new ItemPotion(), 10)
-        ]
+        {
+          new ItemPotion(): 10
+        }
       );
       
       // store clerk stuff
@@ -326,10 +324,10 @@ class World {
       String map,
       int spriteId, int pictureId,
       int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
-      String helloMessage, String goodbyeMessage, List<ItemStack> storeItems) {
+      String helloMessage, String goodbyeMessage, Map<Item, int> storeItemQuantities) {
     StoreCharacter storeCharacter = new StoreCharacter(
       spriteId, pictureId, posX, posY, layer, sizeX, sizeY, solid,
-      helloMessage, goodbyeMessage, storeItems
+      helloMessage, goodbyeMessage, storeItemQuantities
     );
     maps[map].characters.add(storeCharacter);
     return storeCharacter;

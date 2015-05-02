@@ -1,26 +1,22 @@
 library dart_rpg.inventory;
 
 import 'package:dart_rpg/src/item.dart';
-import 'package:dart_rpg/src/item_stack.dart';
 
 class Inventory {
-  List<ItemStack> itemStacks = new List<ItemStack>();
+  Map<Item, int> itemQuantities = new Map<Item, int>();
   int money = 0;
   
   Item removeItem(Item item, [int quantity = 1]) {
     if(item == null)
       return null;
-    
-    for(ItemStack itemStack in itemStacks) {
-      if(itemStack.item.name == item.name) {
-        itemStack.quantity -= 1;
-        
-        if(itemStack.quantity == 0) {
-          itemStacks.remove(itemStack);
-        }
-        
-        return item;
+
+    if(itemQuantities.containsKey(item)) {
+      itemQuantities[item] -= quantity;
+      if(itemQuantities[item] <= 0) {
+        itemQuantities.remove(item);
       }
+      
+      return item;
     }
     
     // TODO: handle no more items left differently?
@@ -31,14 +27,10 @@ class Inventory {
     if(item == null)
       return;
     
-    for(ItemStack itemStack in itemStacks) {
-      if(itemStack.item.name == item.name) {
-        itemStack.quantity += quantity;
-        return;
-      }
+    if(itemQuantities.containsKey(item)) {
+      itemQuantities[item] += quantity;
+    } else {
+      itemQuantities[item] = quantity;
     }
-    
-    ItemStack newItemStack = new ItemStack(item, quantity);
-    itemStacks.add(newItemStack);
   }
 }

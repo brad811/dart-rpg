@@ -6,7 +6,6 @@ import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/item.dart';
-import 'package:dart_rpg/src/item_stack.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/store_character.dart';
@@ -47,13 +46,13 @@ class GuiItemsMenu {
     selectCallback = callback;
     
     Map<String, List<GameEvent>> items = new Map<String, List<GameEvent>>();
-    for(ItemStack itemStack in character.inventory.itemStacks) {
-      String name = itemStack.quantity.toString();
+    for(Item item in character.inventory.itemQuantities.keys) {
+      String name = character.inventory.itemQuantities[item].toString();
       if(name.length == 1)
         name = "0" + name;
       
       name += " x ";
-      name += itemStack.item.name;
+      name += item.name;
       items.addAll({name: [selectItem]});
     }
     
@@ -72,8 +71,8 @@ class GuiItemsMenu {
     GameEvent onChange = new GameEvent((Function callback) {
       Gui.removeWindow(descriptionWindow);
       
-      if(itemChoice.curChoice < character.inventory.itemStacks.length) {
-        selectedItem = character.inventory.itemStacks[itemChoice.curChoice].item;
+      if(itemChoice.curChoice < character.inventory.itemQuantities.keys.length) {
+        selectedItem = character.inventory.itemQuantities.keys.toList()[itemChoice.curChoice];
         Sprite curSprite = new Sprite.int(selectedItem.pictureId, 13, 1);
         descriptionWindow = () {
           Gui.renderWindow(10, 0, itemDescriptionWindowWidth, 10);

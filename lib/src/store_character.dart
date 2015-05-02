@@ -1,12 +1,13 @@
 library dart_rpg.store_character;
 
+import 'dart:math' as math;
+
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/interactable.dart';
-import 'package:dart_rpg/src/item_stack.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/quantity_choice_game_event.dart';
@@ -15,33 +16,34 @@ import 'package:dart_rpg/src/text_game_event.dart';
 class StoreCharacter extends Character {
   StoreCharacter(int spriteId, int pictureId,
         int mapX, int mapY, int layer, int sizeX, int sizeY, bool solid,
-        String helloMessage, String goodbyeMessage, List<ItemStack> storeItems) : super(
+        String helloMessage, String goodbyeMessage, Map<Item, int> storeItemQuantities) : super(
             spriteId, pictureId, mapX, mapY, layer, sizeX, sizeY, solid) {
     
-    for(ItemStack itemStack in storeItems) {
-      this.inventory.addItem(itemStack.item, itemStack.quantity);
-    }
+    this.inventory.itemQuantities = storeItemQuantities;
     
     List<GameEvent> storeClerkGameEvents = [];
     storeClerkGameEvents = [
       new TextGameEvent(237, helloMessage),
       new GameEvent((callback) {
-        // TODO: add quantity option when purchasing items
         Function itemPurchaseCallback;
         itemPurchaseCallback = (Item item) {
           Gui.clear();
           
           if(item != null && Main.player.inventory.money >= item.basePrice) {
-            // TODO: calculate min and max from number available and money available
-            new QuantityChoiceGameEvent(this, 4, 12, (int quantity) {
-              // TODO: make confirmation message include quantity item name, and cost
-              new TextGameEvent.choice(237, "Buy this for real?",
+            // calculate min and max from number available and money available
+            int max = math.min(
+                this.inventory.itemQuantities[item],
+                (Main.player.inventory.money/item.basePrice).floor()
+              );
+            new QuantityChoiceGameEvent(this, 1, max, (int quantity) {
+              // show a confirmation message before completing purchase
+              new TextGameEvent.choice(237, "Buy $quantity of ${item.name} for \$${item.basePrice * quantity}?",
                 new ChoiceGameEvent(this, {
                   "Yes": [new GameEvent((_) {
-                    Main.player.inventory.money -= item.basePrice;
-                    this.inventory.money += item.basePrice;
-                    this.inventory.removeItem(item);
-                    Main.player.inventory.addItem(item);
+                    Main.player.inventory.money -= item.basePrice * quantity;
+                    this.inventory.money += item.basePrice * quantity;
+                    this.inventory.removeItem(item, quantity);
+                    Main.player.inventory.addItem(item, quantity);
                     
                     new TextGameEvent(237, "Thank you! Here you go.", () {
                       Gui.clear();
