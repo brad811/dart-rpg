@@ -103,19 +103,24 @@ class Character implements InteractableInterface, InputHandler {
       if(directionCooldown > 0)
         return;
       
-      // TODO: handle entering null tiles
+      Tile tile;
       if(motionDirection == Character.LEFT) {
         motionX = -motionAmount;
-        Main.world.maps[Main.world.curMap].tiles[mapY][mapX-1][World.LAYER_GROUND].enter();
+        tile = Main.world.maps[Main.world.curMap].tiles[mapY][mapX-1][World.LAYER_GROUND];
       } else if(motionDirection == Character.RIGHT) {
         motionX = motionAmount;
-        Main.world.maps[Main.world.curMap].tiles[mapY][mapX+1][World.LAYER_GROUND].enter();
+        tile = Main.world.maps[Main.world.curMap].tiles[mapY][mapX+1][World.LAYER_GROUND];
       } else if(motionDirection == Character.UP) {
         motionY = -motionAmount;
-        Main.world.maps[Main.world.curMap].tiles[mapY-1][mapX][World.LAYER_GROUND].enter();
+        tile = Main.world.maps[Main.world.curMap].tiles[mapY-1][mapX][World.LAYER_GROUND];
       } else if(motionDirection == Character.DOWN) {
         motionY = motionAmount;
-        Main.world.maps[Main.world.curMap].tiles[mapY+1][mapX][World.LAYER_GROUND].enter();
+        tile = Main.world.maps[Main.world.curMap].tiles[mapY+1][mapX][World.LAYER_GROUND];
+      }
+      
+      // handle entering null tiles
+      if(tile != null) {
+        tile.enter();
       }
     }
   }
