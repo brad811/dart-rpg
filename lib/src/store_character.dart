@@ -27,6 +27,7 @@ class StoreCharacter extends Character {
       new GameEvent((callback) {
         Function itemPurchaseCallback;
         itemPurchaseCallback = (Item item) {
+          // TODO: decide which windows should be shown during quantity choice game event
           Gui.clear();
           
           if(item != null && Main.player.inventory.money >= item.basePrice) {
