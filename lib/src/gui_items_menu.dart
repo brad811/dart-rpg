@@ -83,6 +83,20 @@ class GuiItemsMenu {
             Font.renderStaticText(textX, textY + Gui.verticalLineSpacing*i, textLines[i]);
           }
           
+          String priceText;
+          if(GuiItemsMenu.storeMode) {
+            priceText = "Price: ${selectedItem.basePrice}";
+          } else {
+            priceText = "Value: ${selectedItem.basePrice}";
+          }
+          
+          // TODO: perhaps calculate these values only once to save CPU cycles
+          Font.renderStaticText(
+              textX + 10 - (selectedItem.basePrice.toString().length / 1.75),
+              textY + Gui.verticalLineSpacing*6,
+              priceText
+          );
+          
           curSprite.renderStaticSized(3, 3);
         };
         
