@@ -89,7 +89,7 @@ class TextGameEvent extends GameEvent {
   }
   
   void handleKeys(List<int> keyCodes) {
-    if(keyCodes.contains(Input.CONFIRM)) {
+    if(keyCodes.contains(Input.CONFIRM) || keyCodes.contains(Input.BACK)) {
       continueText();
     }
   }

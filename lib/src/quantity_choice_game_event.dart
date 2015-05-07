@@ -32,6 +32,7 @@ class QuantityChoiceGameEvent extends ChoiceGameEvent implements InputHandler {
     window = () {
       int curChoiceValue = int.parse(choices.keys.toList().elementAt(curChoice));
       
+      // show the currently selected quantity
       Gui.renderWindow(
         posX, posY,
         sizeX, sizeY
@@ -49,6 +50,7 @@ class QuantityChoiceGameEvent extends ChoiceGameEvent implements InputHandler {
         "How many?"
       );
       
+      // if we're purchasing something, show the total cost for the selected quantity
       if(price != -1) {
         Gui.renderWindow(
           0, posY,

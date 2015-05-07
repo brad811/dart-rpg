@@ -57,7 +57,10 @@ class StoreCharacter extends Character {
                   })]
                 })
               ).trigger();
-            }, null, null, item.basePrice).trigger();
+            }, new GameEvent((_) { // onCancel event
+              Gui.clear();
+              GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
+            }), null, item.basePrice).trigger();
           } else if(item != null && Main.player.inventory.money < item.basePrice) {
             new TextGameEvent(237, "You don't have enough money to buy this item.", () {
               Gui.clear();
