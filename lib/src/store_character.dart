@@ -8,6 +8,7 @@ import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/interactable.dart';
+import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/quantity_choice_game_event.dart';
@@ -15,11 +16,11 @@ import 'package:dart_rpg/src/text_game_event.dart';
 
 class StoreCharacter extends Character {
   StoreCharacter(int spriteId, int pictureId,
-        int mapX, int mapY, int layer, int sizeX, int sizeY, bool solid,
-        String helloMessage, String goodbyeMessage, Map<Item, int> storeItemQuantities) : super(
-            spriteId, pictureId, mapX, mapY, layer, sizeX, sizeY, solid) {
-    
-    this.inventory.itemQuantities = storeItemQuantities;
+        String helloMessage, String goodbyeMessage, List<ItemStack> storeItemStacks,
+        int mapX, int mapY,
+        {int layer, int sizeX, int sizeY, bool solid})
+        : super(spriteId, pictureId, mapX, mapY, layer: layer, sizeX: sizeX, sizeY: sizeY, solid: solid) {
+    this.inventory = new Inventory(storeItemStacks);
     
     List<GameEvent> storeClerkGameEvents = [];
     storeClerkGameEvents = [
@@ -33,34 +34,37 @@ class StoreCharacter extends Character {
           if(item != null && Main.player.inventory.money >= item.basePrice) {
             // calculate min and max from number available and money available
             int max = math.min(
-                this.inventory.itemQuantities[item],
+                this.inventory.getQuantity(item.name),
                 (Main.player.inventory.money/item.basePrice).floor()
               );
-            new QuantityChoiceGameEvent(this, 1, max, (int quantity) {
-              // show a confirmation message before completing purchase
-              new TextGameEvent.choice(237, "Buy $quantity of ${item.name} for \$${item.basePrice * quantity}?",
-                new ChoiceGameEvent(this, {
-                  "Yes": [new GameEvent((_) {
-                    Main.player.inventory.money -= item.basePrice * quantity;
-                    this.inventory.money += item.basePrice * quantity;
-                    this.inventory.removeItem(item, quantity);
-                    Main.player.inventory.addItem(item, quantity);
-                    
-                    new TextGameEvent(237, "Thank you! Here you go.", () {
+            new QuantityChoiceGameEvent(this, 1, max,
+              callback: (int quantity) {
+                // show a confirmation message before completing purchase
+                new TextGameEvent.choice(237, "Buy $quantity of ${item.name} for \$${item.basePrice * quantity}?",
+                  new ChoiceGameEvent(this, {
+                    "Yes": [new GameEvent((_) {
+                      Main.player.inventory.money -= item.basePrice * quantity;
+                      this.inventory.money += item.basePrice * quantity;
+                      this.inventory.removeItem(item.name, quantity);
+                      Main.player.inventory.addItem(item, quantity);
+                      
+                      new TextGameEvent(237, "Thank you! Here you go.", () {
+                        Gui.clear();
+                        GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
+                      }).trigger();
+                    })],
+                    "No": [new GameEvent((_) {
                       Gui.clear();
                       GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
-                    }).trigger();
-                  })],
-                  "No": [new GameEvent((_) {
-                    Gui.clear();
-                    GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
-                  })]
-                })
-              ).trigger();
-            }, new GameEvent((_) { // onCancel event
-              Gui.clear();
-              GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
-            }), null, item.basePrice).trigger();
+                    })]
+                  })
+                ).trigger();
+              },
+              cancelEvent: new GameEvent((_) { // onCancel event
+                Gui.clear();
+                GuiItemsMenu.trigger(this, itemPurchaseCallback, true, this);
+              }),
+              price: item.basePrice).trigger();
           } else if(item != null && Main.player.inventory.money < item.basePrice) {
             new TextGameEvent(237, "You don't have enough money to buy this item.", () {
               Gui.clear();

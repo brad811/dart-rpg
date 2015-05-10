@@ -12,8 +12,9 @@ class QuantityChoiceGameEvent extends ChoiceGameEvent implements InputHandler {
   int price = -1;
   
   QuantityChoiceGameEvent(InteractableInterface interactable, int min, int max,
-      [Function callback, GameEvent cancelEvent, GameEvent onChangeEvent, this.price])
-      : super(interactable, new Map<String, List<GameEvent>>(), cancelEvent, onChangeEvent) {
+      {Function callback, GameEvent cancelEvent, GameEvent onChangeEvent, this.price})
+      : super(interactable, new Map<String, List<GameEvent>>(),
+          cancelEvent: cancelEvent, onChangeEvent: onChangeEvent) {
     for(int i=max; i>=min; i--) {
       List<GameEvent> events = [new GameEvent((_) { callback(i); })];
       this.choices.addAll({i.toString(): events});

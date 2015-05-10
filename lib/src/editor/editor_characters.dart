@@ -18,9 +18,9 @@ class EditorCharacters {
       characters[Main.world.curMap].add(
         new Character(
           0, 0,
-          0, 0, World.LAYER_GROUND,
-          0, 0,
-          true
+          0, 0, layer: World.LAYER_GROUND,
+          sizeX: 0, sizeY: 0,
+          solid: true
         )
       );
       update();

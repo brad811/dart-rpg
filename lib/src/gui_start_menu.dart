@@ -22,7 +22,7 @@ class GuiStartMenu {
     },
     15, 0,
     5, 6,
-    exit
+    cancelEvent: exit
   );
   
   static GameEvent items = new GameEvent((Function a) {
@@ -31,7 +31,7 @@ class GuiStartMenu {
       if(item == null) {
         start.trigger();
       } else {
-        item = Main.player.inventory.removeItem(item);
+        item = Main.player.inventory.removeItem(item.name);
         // TODO: add confirm dialog before using item from start menu
         TextGameEvent text = item.use(Main.player.battler);
         text.callback = () {
@@ -76,7 +76,7 @@ class GuiStartMenu {
         Main.player, {"Back": [powersBack]},
         15, 0,
         5, 2,
-        powersBack
+        cancelEvent: powersBack
     ).trigger();
   });
 }

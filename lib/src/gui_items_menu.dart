@@ -46,14 +46,14 @@ class GuiItemsMenu {
     selectCallback = callback;
     
     Map<String, List<GameEvent>> items = new Map<String, List<GameEvent>>();
-    for(Item item in character.inventory.itemQuantities.keys) {
-      String name = character.inventory.itemQuantities[item].toString();
-      if(name.length == 1)
-        name = "0" + name;
+    for(String itemName in character.inventory.itemNames()) {
+      String text = character.inventory.getQuantity(itemName).toString();
+      if(text.length == 1)
+        text = "0" + text;
       
-      name += " x ";
-      name += item.name;
-      items.addAll({name: [selectItem]});
+      text += " x ";
+      text += itemName;
+      items.addAll({text: [selectItem]});
     }
     
     if(backEnabled) {
@@ -71,8 +71,9 @@ class GuiItemsMenu {
     GameEvent onChange = new GameEvent((Function callback) {
       Gui.removeWindow(descriptionWindow);
       
-      if(itemChoice.curChoice < character.inventory.itemQuantities.keys.length) {
-        selectedItem = character.inventory.itemQuantities.keys.toList()[itemChoice.curChoice];
+      if(itemChoice.curChoice < character.inventory.itemNames().length) {
+        String selectedItemName = character.inventory.itemNames()[itemChoice.curChoice];
+        selectedItem = character.inventory.getItem(selectedItemName);
         Sprite curSprite = new Sprite.int(selectedItem.pictureId, 13, 1);
         descriptionWindow = () {
           Gui.renderWindow(10, 0, itemDescriptionWindowWidth, 10);
@@ -108,8 +109,8 @@ class GuiItemsMenu {
         Main.player, items,
         0, 0,
         10, 10,
-        onCancel,
-        onChange
+        cancelEvent: onCancel,
+        onChangeEvent: onChange
     );
     
     onChange.trigger();

@@ -6,7 +6,7 @@ import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/world.dart';
 
 class Tile {
-  static final int
+  static const int
     WOOD_FLOOR = 65,
     GROUND = 66,
     TALL_GRASS = 97,

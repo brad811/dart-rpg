@@ -27,7 +27,7 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     sizeX = 3,
     sizeY = 2;
   
-  ChoiceGameEvent(this.interactable, this.choices, [this.cancelEvent, this.onChangeEvent]) : super() {
+  ChoiceGameEvent(this.interactable, this.choices, {this.cancelEvent, this.onChangeEvent}) : super() {
     int maxLength = 0;
     for(int i=0; i<choices.keys.toList().length; i++) {
       if(choices.keys.toList()[i].length > maxLength)
@@ -40,8 +40,12 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
   factory ChoiceGameEvent.custom(
       InteractableInterface interactable,
       Map<String, List<GameEvent>> choices,
-      int posX, int posY, int sizeX, int sizeY, [GameEvent cancelEvent, GameEvent onChangeEvent]) {
-    ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(interactable, choices, cancelEvent, onChangeEvent);
+      int posX, int posY, int sizeX, int sizeY, {GameEvent cancelEvent, GameEvent onChangeEvent}) {
+    ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(
+        interactable, choices,
+        cancelEvent: cancelEvent,
+        onChangeEvent: onChangeEvent
+      );
     choiceGameEvent.addWidth = 0;
     choiceGameEvent.posX = posX;
     choiceGameEvent.posY = posY;

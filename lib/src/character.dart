@@ -54,7 +54,7 @@ class Character implements InteractableInterface, InputHandler {
   String preBattleText = "";
   GameEvent postBattleEvent;
   
-  Inventory inventory = new Inventory();
+  Inventory inventory = new Inventory([]);
   
   // TODO: perhaps add name field
   // TODO: add wander behavior
@@ -62,7 +62,8 @@ class Character implements InteractableInterface, InputHandler {
   //   (to fight a character and then have them react to the battle)
   
   Character(this.spriteId, this.pictureId,
-      this.mapX, this.mapY, this.layer, this.sizeX, this.sizeY, this.solid) {
+      this.mapX, this.mapY,
+      {this.layer: World.LAYER_PLAYER, this.sizeX: 1, this.sizeY: 2, this.solid: true}) {
     curSpeed = walkSpeed;
     x = mapX * motionAmount;
     y = mapY * motionAmount;

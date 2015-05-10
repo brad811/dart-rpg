@@ -15,7 +15,7 @@ import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
-import 'package:dart_rpg/src/item.dart';
+import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/item_potion.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
@@ -27,7 +27,7 @@ import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 
 class World {
-  static final int
+  static const int
     LAYER_GROUND = 0,
     LAYER_BELOW = 1,
     LAYER_PLAYER = 2,
@@ -111,11 +111,12 @@ class World {
       // Character
       Character someKid = addCharacter(
         "main",
-        Tile.PLAYER,
-        237,
-        11, 15, LAYER_BELOW,
-        1, 2,
-        true
+        new Character(
+          Tile.PLAYER,
+          237,
+          11, 15,
+          layer: LAYER_BELOW
+        )
       );
       
       someKid.direction = Character.RIGHT;
@@ -157,11 +158,11 @@ class World {
       // add character that heals you
       Character healer = addCharacter(
         "house",
-        Tile.PLAYER,
-        237,
-        5, 1, LAYER_BELOW,
-        1, 2,
-        true
+        new Character(
+          Tile.PLAYER,
+          237,
+          5, 1, layer: LAYER_BELOW
+        )
       );
       
       List<GameEvent> healerGameEvents = [];
@@ -181,11 +182,11 @@ class World {
       
       Character fighter = addCharacter(
         "main",
-        Tile.PLAYER,
-        237,
-        35, 13, LAYER_BELOW,
-        1, 2,
-        true
+        new Character(
+          Tile.PLAYER,
+          237,
+          35, 13, layer: LAYER_BELOW
+        )
       );
       
       fighter.sightDistance = 2;
@@ -205,16 +206,15 @@ class World {
       // add store clerk
       Character storeClerk = addStoreCharacter(
         "store",
-        Tile.PLAYER,
-        237,
-        5, 1, LAYER_BELOW,
-        1, 2,
-        true,
-        "Welcome! What are you looking for today?",
-        "Thanks for coming in!",
-        {
-          new ItemPotion(): 10
-        }
+        new StoreCharacter(
+          Tile.PLAYER, 237,
+          "Welcome! What are you looking for today?",
+          "Thanks for coming in!",
+          [
+            new ItemStack(new ItemPotion(), 10)
+          ],
+          5, 1, layer: LAYER_BELOW
+        )
       );
       
       // store clerk stuff
@@ -309,26 +309,12 @@ class World {
     }
   }
   
-  Character addCharacter(
-      String map,
-      int spriteId, int pictureId,
-      int posX, int posY, int layer, int sizeX, int sizeY, bool solid) {
-    Character character = new Character(
-      spriteId, pictureId, posX, posY, layer, sizeX, sizeY, solid
-    );
+  Character addCharacter(String map, Character character) {
     maps[map].characters.add(character);
     return character;
   }
   
-  StoreCharacter addStoreCharacter(
-      String map,
-      int spriteId, int pictureId,
-      int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
-      String helloMessage, String goodbyeMessage, Map<Item, int> storeItemQuantities) {
-    StoreCharacter storeCharacter = new StoreCharacter(
-      spriteId, pictureId, posX, posY, layer, sizeX, sizeY, solid,
-      helloMessage, goodbyeMessage, storeItemQuantities
-    );
+  StoreCharacter addStoreCharacter(String map, StoreCharacter storeCharacter) {
     maps[map].characters.add(storeCharacter);
     return storeCharacter;
   }
