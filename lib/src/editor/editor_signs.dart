@@ -53,6 +53,8 @@ class EditorSigns {
         "  <td><input id='signs_posy_${i}' type='text' value='${ signs[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
         "  <td><input id='signs_pic_${i}' type='text' value='${ signs[Main.world.curMap][i].textEvent.pictureSpriteId }' /></td>"+
         "  <td><textarea id='signs_text_${i}' />${ signs[Main.world.curMap][i].textEvent.text }</textarea></td>"+
+        // TODO: make the delete button work, with a confirm dialog
+        "  <td><button>Delete</button></td>" +
         "</tr>";
     }
     signsHtml += "</table>";

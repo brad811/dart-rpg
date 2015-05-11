@@ -31,6 +31,8 @@ import 'package:dart_rpg/src/editor/editor_battlers.dart';
 // TODO: enable showing and hiding layers
 // TODO: shift warps, signs, etc. when map is resized
 
+// TODO: add delete buttons to the various tabs
+
 class Editor {
   static ImageElement spritesImage;
   static CanvasElement c, sc, ssc;
