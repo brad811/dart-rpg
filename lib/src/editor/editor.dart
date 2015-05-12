@@ -45,6 +45,8 @@ class Editor {
     canvasWidth = 100,
     canvasHeight = 100;
   
+  static List<bool> layerVisible = [];
+  
   static List<List<Tile>> renderList;
   static int selectedTile;
   
@@ -71,6 +73,10 @@ class Editor {
         contexts[i].scale(scale, scale);
         contexts[i].imageSmoothingEnabled = false;
       }
+    }
+    
+    for(int layer in World.layers) {
+      layerVisible.add(true);
     }
     
     spritesImage = new ImageElement(src: "sprite_sheet.png");
@@ -414,6 +420,9 @@ class Editor {
     for(var y=0; y<mapTiles.length; y++) {
       for(var x=0; x<mapTiles[y].length; x++) {
         for(int layer in World.layers) {
+          if(!layerVisible[layer])
+            continue;
+          
           if(mapTiles[y][x][layer] is Tile) {
             renderList[layer].add(
               mapTiles[y][x][layer]

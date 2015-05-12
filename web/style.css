@@ -132,6 +132,11 @@ body {
   background-color: #c00;
 }
 
+#layer_visibility_toggles {
+  float: left;
+  clear: left;
+}
+
 #characters_container input, #warps_container input,
 #signs_container input, #battlers_container input {
   width: 30px;

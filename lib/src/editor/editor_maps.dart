@@ -137,6 +137,7 @@ class EditorMaps {
     }
     
     Editor.updateMap();
+    setUpLayerVisibilityToggles();
     setUpMapSizeButtons();
   }
   
@@ -153,6 +154,44 @@ class EditorMaps {
         });
       }
     }
+  }
+  
+  static void setUpLayerVisibilityToggles() {
+    if(listeners["#layer_above_visible"] != null)
+      listeners["#layer_above_visible"].cancel();
+    
+    if(listeners["#layer_player_visible"] != null)
+      listeners["#layer_player_visible"].cancel();
+    
+    if(listeners["#layer_below_visible"] != null)
+      listeners["#layer_below_visible"].cancel();
+    
+    if(listeners["#layer_ground_visible"] != null)
+      listeners["#layer_ground_visible"].cancel();
+    
+    listeners["#layer_above_visible"] = querySelector('#layer_above_visible').onChange.listen((Event e) {
+      CheckboxInputElement checkbox = querySelector('#layer_above_visible');
+      Editor.layerVisible[World.LAYER_ABOVE] = checkbox.checked;
+      Editor.updateMap();
+    });
+    
+    listeners["#layer_player_visible"] = querySelector('#layer_player_visible').onChange.listen((Event e) {
+      CheckboxInputElement checkbox = querySelector('#layer_player_visible');
+      Editor.layerVisible[World.LAYER_PLAYER] = checkbox.checked;
+      Editor.updateMap();
+    });
+    
+    listeners["#layer_below_visible"] = querySelector('#layer_below_visible').onChange.listen((Event e) {
+      CheckboxInputElement checkbox = querySelector('#layer_below_visible');
+      Editor.layerVisible[World.LAYER_BELOW] = checkbox.checked;
+      Editor.updateMap();
+    });
+    
+    listeners["#layer_ground_visible"] = querySelector('#layer_ground_visible').onChange.listen((Event e) {
+      CheckboxInputElement checkbox = querySelector('#layer_ground_visible');
+      Editor.layerVisible[World.LAYER_GROUND] = checkbox.checked;
+      Editor.updateMap();
+    });
   }
   
   static void setUpMapSizeButtons() {
