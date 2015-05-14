@@ -11,8 +11,10 @@ import 'package:dart_rpg/src/world.dart';
 import 'package:dart_rpg/src/editor/editor.dart';
 
 class EditorBattlers {
-  static Map<String, List<BattlerChance>> battlerChances = {};
+  static Map<String, List<BattlerChance<Battler, double>>> battlerChances = {};
   static Map<String, StreamSubscription> listeners = {};
+  
+  // TODO: allow management of battler types
   
   static void setUp() {
     querySelector("#add_battler_button").onClick.listen((MouseEvent e) {
@@ -40,17 +42,15 @@ class EditorBattlers {
     String battlersHtml;
     battlersHtml = "<table>"+
       "  <tr>"+
-      "    <td>Num</td><td>Sprite</td><td>Name</td><td>Health</td><td>Attack</td><td>Speed</td>"+
+      "    <td>#</td><td>Name</td><td>Type</td><td>Level</td>"+
       "  </tr>";
     for(int i=0; i<battlerChances[Main.world.curMap].length; i++) {
       battlersHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input id='battlers_sprite_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.spriteId }' /></td>"+
-        "  <td><input id='battlers_name_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.name }' /></td>"+
-        "  <td><input id='battlers_health_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.baseHealth }' /></td>"+
-        "  <td><input id='battlers_attack_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.baseAttack }' /></td>"+
-        "  <td><input id='battlers_speed_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.baseSpeed }' /></td>"+
+        "  <td><input class='battlers_name_input' id='battlers_name_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.name }' /></td>"+
+        "  <td><input id='battlers_type_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.battlerType.name }' /></td>"+
+        "  <td><input id='battlers_level_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.level }' /></td>"+
         "</tr>";
     }
     battlersHtml += "</table>";
@@ -79,7 +79,7 @@ class EditorBattlers {
     };
     
     for(int i=0; i<battlerChances[Main.world.curMap].length; i++) {
-      List<String> attrs = ["sprite", "name", "health", "attack", "speed"];
+      List<String> attrs = ["name", "type", "level"];
       for(String attr in attrs) {
         if(listeners["#battlers_${attr}_${i}"] != null)
           listeners["#battlers_${attr}_${i}"].cancel();
@@ -94,11 +94,9 @@ class EditorBattlers {
     jsonMap["battlers"] = [];
     for(BattlerChance battlerChance in battlerChances[key]) {
       jsonMap["battlers"].add({
-        "sprite": battlerChance.battler.spriteId,
         "name": battlerChance.battler.name,
-        "health": battlerChance.battler.baseHealth,
-        "attack": battlerChance.battler.baseAttack,
-        "speed": battlerChance.battler.baseSpeed
+        "type": battlerChance.battler.battlerType.name,
+        "level": battlerChance.battler.level
       });
     }
   }

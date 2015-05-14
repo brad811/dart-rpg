@@ -101,8 +101,8 @@ class World {
     loadMaps(() {
       curMap = "apartment";
       
-      Battler common = new Battler("Common", battlerTypes["Common"], 5, battlerTypes["Common"].levelAttacks.values.toList());
-      Battler rare = new Battler("Rare", battlerTypes["Rare"], 5, battlerTypes["Rare"].levelAttacks.values.toList());
+      Battler common = new Battler(null, battlerTypes["Common"], 5, battlerTypes["Common"].levelAttacks.values.toList());
+      Battler rare = new Battler(null, battlerTypes["Rare"], 5, battlerTypes["Rare"].levelAttacks.values.toList());
       maps["main"].battlerChances = [
         new BattlerChance(common, 0.8),
         new BattlerChance(rare, 0.2)

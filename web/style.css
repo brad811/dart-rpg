@@ -152,6 +152,10 @@ body {
   text-align: center;
 }
 
+#battlers_container .battlers_name_input {
+  width: 100px;
+}
+
 #export_json {
   height: 60px;
   width: 532px;

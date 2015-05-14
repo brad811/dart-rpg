@@ -47,6 +47,9 @@ class Battler {
   //   at the current level
   
   Battler(this.name, this.battlerType, int level, this.attacks) {
+    if(this.name == null)
+      this.name = this.battlerType.name;
+    
     startingHealth = battlerType.baseHealth;
     startingPhysicalAttack = battlerType.basePhysicalAttack;
     startingMagicalAttack = battlerType.baseMagicalAttack;
