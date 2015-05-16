@@ -37,7 +37,20 @@ class EditorWarps {
         for(var x=0; x<mapTiles[y].length; x++) {
           for(int layer in World.layers) {
             if(mapTiles[y][x][layer] is WarpTile) {
-              warps[key].add(mapTiles[y][x][layer]);
+              // make a copy of the warp tile
+              WarpTile mapWarpTile = mapTiles[y][x][layer];
+              WarpTile warpTile = new WarpTile(
+                  mapWarpTile.solid,
+                  new Sprite(
+                    mapWarpTile.sprite.id,
+                    mapWarpTile.sprite.posX,
+                    mapWarpTile.sprite.posY
+                  ),
+                  mapWarpTile.destMap,
+                  mapWarpTile.destX,
+                  mapWarpTile.destY
+                );
+              warps[key].add(warpTile);
             }
           }
         }

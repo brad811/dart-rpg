@@ -31,7 +31,18 @@ class EditorSigns {
         for(var x=0; x<mapTiles[y].length; x++) {
           for(int layer in World.layers) {
             if(mapTiles[y][x][layer] is Sign) {
-              signs[key].add(mapTiles[y][x][layer]);
+              Sign mapSignTile = mapTiles[y][x][layer];
+              Sign signTile = new Sign(
+                  mapSignTile.solid,
+                  new Sprite(
+                    mapSignTile.sprite.id,
+                    mapSignTile.sprite.posX,
+                    mapSignTile.sprite.posY
+                  ),
+                  mapSignTile.textEvent.pictureSpriteId,
+                  mapSignTile.textEvent.text
+                );
+              signs[key].add(signTile);
             }
           }
         }
