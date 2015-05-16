@@ -195,28 +195,14 @@ class EditorMaps {
   }
   
   static void setUpMapSizeButtons() {
+    // TODO: shift warps, signs, etc
+    
     // size x down button
     if(listeners["#size_x_down_button"] != null)
       listeners["#size_x_down_button"].cancel();
       
     listeners["#size_x_down_button"] = querySelector('#size_x_down_button').onClick.listen((MouseEvent e) {
-      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-      if(mapTiles[0].length == 1)
-        return;
-      
-      for(int y=0; y<mapTiles.length; y++) {
-        mapTiles[y].removeLast();
-        
-        for(int x=0; x<mapTiles[y].length; x++) {
-          for(int k=0; k<mapTiles[y][x].length; k++) {
-            if(mapTiles[y][x][k] is Tile) {
-              mapTiles[y][x][k].sprite.posX = x * 1.0;
-            }
-          }
-        }
-      }
-      
-      Editor.updateMap();
+      sizeDownRight();
     });
      
     // size x up button
@@ -224,19 +210,7 @@ class EditorMaps {
       listeners["#size_x_up_button"].cancel();
       
     listeners["#size_x_up_button"] = querySelector('#size_x_up_button').onClick.listen((MouseEvent e) {
-      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-      if(mapTiles.length == 0)
-        mapTiles.add([]);
-      
-      for(int y=0; y<mapTiles.length; y++) {
-        List<Tile> array = [];
-        for(int k=0; k<World.layers.length; k++) {
-          array.add(null);
-        }
-        mapTiles[y].add(array);
-      }
-      
-      Editor.updateMap();
+      sizeUpRight();
     });
     
     // size y down button
@@ -244,13 +218,7 @@ class EditorMaps {
       listeners["#size_y_down_button"].cancel();
       
     listeners["#size_y_down_button"] = querySelector('#size_y_down_button').onClick.listen((MouseEvent e) {
-      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-      if(mapTiles.length == 1)
-        return;
-      
-      mapTiles.removeLast();
-      
-      Editor.updateMap();
+      sizeDownBottom();
     });
     
     // size y up button
@@ -258,20 +226,7 @@ class EditorMaps {
       listeners["#size_y_up_button"].cancel();
       
     listeners["#size_y_up_button"] = querySelector('#size_y_up_button').onClick.listen((MouseEvent e) {
-      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-      List<List<Tile>> rowArray = [];
-      
-      for(int x=0; x<mapTiles[0].length; x++) {
-        List<Tile> array = [];
-        for(int k=0; k<World.layers.length; k++) {
-          array.add(null);
-        }
-        rowArray.add(array);
-      }
-      
-      mapTiles.add(rowArray);
-      
-      Editor.updateMap();
+      sizeUpBottom();
     });
     
     // ////////////////////////////////////////
@@ -283,23 +238,7 @@ class EditorMaps {
       listeners["#size_x_down_button_pre"].cancel();
       
     listeners["#size_x_down_button_pre"] = querySelector('#size_x_down_button_pre').onClick.listen((MouseEvent e) {
-      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-      if(mapTiles[0].length == 1)
-        return;
-      
-      for(int i=0; i<mapTiles.length; i++) {
-        mapTiles[i] = mapTiles[i].sublist(1);
-        
-        for(int j=0; j<mapTiles[i].length; j++) {
-          for(int k=0; k<mapTiles[i][j].length; k++) {
-            if(mapTiles[i][j][k] is Tile) {
-              mapTiles[i][j][k].sprite.posX = j * 1.0;
-            }
-          }
-        }
-      }
-      
-      Editor.updateMap();
+      sizeDownLeft();
     });
      
     // size x up button pre
@@ -307,31 +246,7 @@ class EditorMaps {
       listeners["#size_x_up_button_pre"].cancel();
       
     listeners["#size_x_up_button_pre"] = querySelector('#size_x_up_button_pre').onClick.listen((MouseEvent e) {
-      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-      if(mapTiles.length == 0)
-        mapTiles.add([]);
-      
-      for(int y=0; y<mapTiles.length; y++) {
-        List<Tile> array = [];
-        for(int k=0; k<World.layers.length; k++) {
-          array.add(null);
-        }
-        var temp = mapTiles[y];
-        temp.insert(0, array);
-        mapTiles[y] = temp;
-      }
-      
-      for(int y=0; y<mapTiles.length; y++) {
-        for(int x=0; x<mapTiles[y].length; x++) {
-          for(int k=0; k<mapTiles[y][x].length; k++) {
-            if(mapTiles[y][x][k] is Tile) {
-              mapTiles[y][x][k].sprite.posX = x * 1.0;
-            }
-          }
-        }
-      }
-      
-      Editor.updateMap();
+      sizeUpLeft();
     });
     
     // size y down button pre
@@ -339,23 +254,7 @@ class EditorMaps {
       listeners["#size_y_down_button_pre"].cancel();
       
     listeners["#size_y_down_button_pre"] = querySelector('#size_y_down_button_pre').onClick.listen((MouseEvent e) {
-      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-      if(mapTiles.length == 1)
-        return;
-      
-      mapTiles.removeAt(0);
-      
-      for(int y=0; y<mapTiles.length; y++) {
-        for(int x=0; x<mapTiles[0].length; x++) {
-          for(int k=0; k<mapTiles[0][0].length; k++) {
-            if(mapTiles[y][x][k] is Tile) {
-              mapTiles[y][x][k].sprite.posY = y * 1.0;
-            }
-          }
-        }
-      }
-      
-      Editor.updateMap();
+      sizeDownTop();
     });
      
     // size y up button pre
@@ -363,30 +262,165 @@ class EditorMaps {
       listeners["#size_y_up_button_pre"].cancel();
       
     listeners["#size_y_up_button_pre"] = querySelector('#size_y_up_button_pre').onClick.listen((MouseEvent e) {
-      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-      List<List<Tile>> rowArray = [];
+      sizeUpTop();
+    });
+  }
+  
+  static void sizeDownRight() {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    if(mapTiles[0].length == 1)
+      return;
+    
+    for(int y=0; y<mapTiles.length; y++) {
+      mapTiles[y].removeLast();
       
-      for(int i=0; i<mapTiles[0].length; i++) {
-        List<Tile> array = [];
-        for(int j=0; j<World.layers.length; j++) {
-          array.add(null);
-        }
-        rowArray.add(array);
-      }
-      
-      mapTiles.insert(0, rowArray);
-      
-      for(int y=0; y<mapTiles.length; y++) {
-        for(int x=0; x<mapTiles[0].length; x++) {
-          for(int k=0; k<mapTiles[0][0].length; k++) {
-            if(mapTiles[y][x][k] is Tile) {
-              mapTiles[y][x][k].sprite.posY = y * 1.0;
-            }
+      for(int x=0; x<mapTiles[y].length; x++) {
+        for(int k=0; k<mapTiles[y][x].length; k++) {
+          if(mapTiles[y][x][k] is Tile) {
+            mapTiles[y][x][k].sprite.posX = x * 1.0;
           }
         }
       }
+    }
+    
+    Editor.updateAllTables();
+  }
+  
+  static void sizeUpRight() {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    if(mapTiles.length == 0)
+      mapTiles.add([]);
+    
+    for(int y=0; y<mapTiles.length; y++) {
+      List<Tile> array = [];
+      for(int k=0; k<World.layers.length; k++) {
+        array.add(null);
+      }
+      mapTiles[y].add(array);
+    }
+    
+    Editor.updateAllTables();
+  }
+  
+  static void sizeDownBottom() {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    if(mapTiles.length == 1)
+      return;
+    
+    mapTiles.removeLast();
+    
+    Editor.updateAllTables();
+  }
+  
+  static void sizeUpBottom() {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    List<List<Tile>> rowArray = [];
+    
+    for(int x=0; x<mapTiles[0].length; x++) {
+      List<Tile> array = [];
+      for(int k=0; k<World.layers.length; k++) {
+        array.add(null);
+      }
+      rowArray.add(array);
+    }
+    
+    mapTiles.add(rowArray);
+    
+    Editor.updateAllTables();
+  }
+  
+  static void sizeDownLeft() {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    if(mapTiles[0].length == 1)
+      return;
+    
+    for(int i=0; i<mapTiles.length; i++) {
+      mapTiles[i] = mapTiles[i].sublist(1);
       
-      Editor.updateMap();
-    });
+      for(int j=0; j<mapTiles[i].length; j++) {
+        for(int k=0; k<mapTiles[i][j].length; k++) {
+          if(mapTiles[i][j][k] is Tile) {
+            mapTiles[i][j][k].sprite.posX = j * 1.0;
+          }
+        }
+      }
+    }
+    
+    Editor.updateAllTables();
+  }
+  
+  static void sizeUpLeft() {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    if(mapTiles.length == 0)
+      mapTiles.add([]);
+    
+    for(int y=0; y<mapTiles.length; y++) {
+      List<Tile> array = [];
+      for(int k=0; k<World.layers.length; k++) {
+        array.add(null);
+      }
+      var temp = mapTiles[y];
+      temp.insert(0, array);
+      mapTiles[y] = temp;
+    }
+    
+    for(int y=0; y<mapTiles.length; y++) {
+      for(int x=0; x<mapTiles[y].length; x++) {
+        for(int k=0; k<mapTiles[y][x].length; k++) {
+          if(mapTiles[y][x][k] is Tile) {
+            mapTiles[y][x][k].sprite.posX = x * 1.0;
+          }
+        }
+      }
+    }
+    
+    Editor.updateAllTables();
+  }
+  
+  static void sizeDownTop() {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    if(mapTiles.length == 1)
+      return;
+    
+    mapTiles.removeAt(0);
+    
+    for(int y=0; y<mapTiles.length; y++) {
+      for(int x=0; x<mapTiles[0].length; x++) {
+        for(int k=0; k<mapTiles[0][0].length; k++) {
+          if(mapTiles[y][x][k] is Tile) {
+            mapTiles[y][x][k].sprite.posY = y * 1.0;
+          }
+        }
+      }
+    }
+    
+    Editor.updateAllTables();
+  }
+  
+  static void sizeUpTop() {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    List<List<Tile>> rowArray = [];
+    
+    for(int i=0; i<mapTiles[0].length; i++) {
+      List<Tile> array = [];
+      for(int j=0; j<World.layers.length; j++) {
+        array.add(null);
+      }
+      rowArray.add(array);
+    }
+    
+    mapTiles.insert(0, rowArray);
+    
+    for(int y=0; y<mapTiles.length; y++) {
+      for(int x=0; x<mapTiles[0].length; x++) {
+        for(int k=0; k<mapTiles[0][0].length; k++) {
+          if(mapTiles[y][x][k] is Tile) {
+            mapTiles[y][x][k].sprite.posY = y * 1.0;
+          }
+        }
+      }
+    }
+    
+    Editor.updateAllTables();
   }
 }
