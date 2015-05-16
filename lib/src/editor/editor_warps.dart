@@ -86,11 +86,13 @@ class EditorWarps {
         "  <td><input id='warps_destx_${i}' type='text' value='${ warps[Main.world.curMap][i].destX }' /></td>"+
         "  <td><input id='warps_desty_${i}' type='text' value='${ warps[Main.world.curMap][i].destY }' /></td>"+
         // TODO: make the delete button work, with a confirm dialog
-        "  <td><button>Delete</button></td>" +
+        "  <td><button id='delete_warp_${i}'>Delete</button></td>" +
         "</tr>";
     }
     warpsHtml += "</table>";
     querySelector("#warps_container").innerHtml = warpsHtml;
+    
+    setWarpDeleteButtonListeners();
     
     Function inputChangeFunction = (Event e) {
       for(int i=0; i<warps[Main.world.curMap].length; i++) {
@@ -116,6 +118,21 @@ class EditorWarps {
         listeners["#warps_${attr}_${i}"] = 
             querySelector('#warps_${attr}_${i}').onInput.listen(inputChangeFunction);
       }
+    }
+  }
+  
+  static void setWarpDeleteButtonListeners() {
+    for(int i=0; i<warps[Main.world.curMap].length; i++) {
+      if(listeners["#delete_warp_${i}"] != null)
+        listeners["#delete_warp_${i}"].cancel();
+      
+      listeners["#delete_warp_${i}"] = querySelector("#delete_warp_${i}").onClick.listen((MouseEvent e) {
+        bool confirm = window.confirm('Are you sure you would like to delete this warp?');
+        if(confirm) {
+          warps[Main.world.curMap].removeAt(i);
+          Editor.updateAllTables();
+        }
+      });
     }
   }
   
