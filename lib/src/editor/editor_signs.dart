@@ -65,11 +65,13 @@ class EditorSigns {
         "  <td><input id='signs_pic_${i}' type='text' value='${ signs[Main.world.curMap][i].textEvent.pictureSpriteId }' /></td>"+
         "  <td><textarea id='signs_text_${i}' />${ signs[Main.world.curMap][i].textEvent.text }</textarea></td>"+
         // TODO: make the delete button work, with a confirm dialog
-        "  <td><button>Delete</button></td>" +
+        "  <td><button id='delete_sign_${i}'>Delete</button></td>" +
         "</tr>";
     }
     signsHtml += "</table>";
     querySelector("#signs_container").innerHtml = signsHtml;
+    
+    setSignDeleteButtonListeners();
     
     Function inputChangeFunction = (Event e) {
       for(int i=0; i<signs[Main.world.curMap].length; i++) {
@@ -100,6 +102,21 @@ class EditorSigns {
         listeners["#signs_${attr}_${i}"] = 
             querySelector('#signs_${attr}_${i}').onInput.listen(inputChangeFunction);
       }
+    }
+  }
+  
+  static void setSignDeleteButtonListeners() {
+    for(int i=0; i<signs[Main.world.curMap].length; i++) {
+      if(listeners["#delete_sign_${i}"] != null)
+        listeners["#delete_sign_${i}"].cancel();
+      
+      listeners["#delete_sign_${i}"] = querySelector("#delete_sign_${i}").onClick.listen((MouseEvent e) {
+        bool confirm = window.confirm('Are you sure you would like to delete this sign?');
+        if(confirm) {
+          signs[Main.world.curMap].removeAt(i);
+          Editor.updateAllTables();
+        }
+      });
     }
   }
   
