@@ -136,6 +136,34 @@ class EditorWarps {
     }
   }
   
+  static void shift(int xAmount, int yAmount) {
+    for(WarpTile warpTile in warps[Main.world.curMap]) {
+      if(warpTile == null)
+        continue;
+      
+      // shift
+      if(warpTile.sprite != null) {
+        warpTile.sprite.posX += xAmount;
+        warpTile.sprite.posY += yAmount;
+      }
+      
+      if(warpTile.topSprite != null) {
+        warpTile.topSprite.posX += xAmount;
+        warpTile.topSprite.posY += yAmount;
+      }
+      
+      // delete if off map
+      if(
+          warpTile.sprite.posX < 0 ||
+          warpTile.sprite.posX >= Main.world.maps[Main.world.curMap].tiles[0].length ||
+          warpTile.sprite.posY < 0 ||
+          warpTile.sprite.posY >= Main.world.maps[Main.world.curMap].tiles.length) {
+        // delete it
+        warps[Main.world.curMap].remove(warpTile);
+      }
+    }
+  }
+  
   static void export(List<List<List<Map>>> jsonMap, String key) {
     for(WarpTile warp in warps[key]) {
       int

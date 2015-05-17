@@ -103,6 +103,34 @@ class EditorSigns {
     }
   }
   
+  static void shift(int xAmount, int yAmount) {
+    for(Sign sign in signs[Main.world.curMap]) {
+      if(sign == null)
+        continue;
+      
+      // shift
+      if(sign.sprite != null) {
+        sign.sprite.posX += xAmount;
+        sign.sprite.posY += yAmount;
+      }
+      
+      if(sign.topSprite != null) {
+        sign.topSprite.posX += xAmount;
+        sign.topSprite.posY += yAmount;
+      }
+      
+      // delete if off map
+      if(
+          sign.sprite.posX < 0 ||
+          sign.sprite.posX >= Main.world.maps[Main.world.curMap].tiles[0].length ||
+          sign.sprite.posY < 0 ||
+          sign.sprite.posY >= Main.world.maps[Main.world.curMap].tiles.length) {
+        // delete it
+        signs[Main.world.curMap].remove(sign);
+      }
+    }
+  }
+  
   static void export(List<List<List<Map>>> jsonMap, String key) {
     List<Sign> signsToRemove = [];
     for(Sign sign in signs[key]) {
@@ -110,7 +138,7 @@ class EditorSigns {
         x = sign.sprite.posX.round(),
         y = sign.sprite.posY.round();
       
-      // handle the map shrinking until a warp is out of bounds
+      // handle the map shrinking until a sign is out of bounds
       if(jsonMap.length - 1 < y || jsonMap[0].length - 1 < x) {
         signsToRemove.add(sign);
         continue;

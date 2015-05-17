@@ -283,6 +283,10 @@ class EditorMaps {
       }
     }
     
+    // this will delete any that are now off the map
+    EditorWarps.shift(0, 0);
+    EditorSigns.shift(0, 0);
+    
     Editor.updateAllTables();
   }
   
@@ -308,6 +312,10 @@ class EditorMaps {
       return;
     
     mapTiles.removeLast();
+    
+    // this will delete any that are now off the map
+    EditorWarps.shift(0, 0);
+    EditorSigns.shift(0, 0);
     
     Editor.updateAllTables();
   }
@@ -346,6 +354,10 @@ class EditorMaps {
       }
     }
     
+    // this will shift and delete any that are now off the map
+    EditorWarps.shift(-1, 0);
+    EditorSigns.shift(-1, 0);
+    
     Editor.updateAllTables();
   }
   
@@ -374,6 +386,10 @@ class EditorMaps {
       }
     }
     
+    // this will shift and delete any that are now off the map
+    EditorWarps.shift(1, 0);
+    EditorSigns.shift(1, 0);
+    
     Editor.updateAllTables();
   }
   
@@ -393,6 +409,10 @@ class EditorMaps {
         }
       }
     }
+    
+    // this will shift and delete any that are now off the map
+    EditorWarps.shift(0, -1);
+    EditorSigns.shift(0, -1);
     
     Editor.updateAllTables();
   }
@@ -420,6 +440,10 @@ class EditorMaps {
         }
       }
     }
+    
+    // this will shift and delete any that are now off the map
+    EditorWarps.shift(0, 1);
+    EditorSigns.shift(0, 1);
     
     Editor.updateAllTables();
   }
