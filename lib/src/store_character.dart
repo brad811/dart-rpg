@@ -22,6 +22,8 @@ class StoreCharacter extends Character {
         : super(spriteId, pictureId, mapX, mapY, layer: layer, sizeX: sizeX, sizeY: sizeY, solid: solid) {
     this.inventory = new Inventory(storeItemStacks);
     
+    // TODO: add ability to sell items
+    
     List<GameEvent> storeClerkGameEvents = [];
     storeClerkGameEvents = [
       new TextGameEvent(237, helloMessage),
