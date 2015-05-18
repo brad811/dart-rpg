@@ -202,6 +202,21 @@ class Editor {
       
       c.onClick.listen(tileChange);
       
+      var tooltip = querySelector('#tooltip');
+      StreamSubscription mouseMoveStream = c.onMouseMove.listen((MouseEvent e) {
+        int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+        int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+        
+        tooltip.style.display = "block";
+        tooltip.style.left = "${e.page.x + 30}px";
+        tooltip.style.top = "${e.page.y - 10}px";
+        tooltip.text = "x: ${x}, y: ${y}";
+      });
+      
+      c.onMouseLeave.listen((onData) {
+        tooltip.style.display = "none";
+      });
+      
       c.onMouseDown.listen((MouseEvent e) {
         StreamSubscription mouseMoveStream = c.onMouseMove.listen((MouseEvent e) {
           tileChange(e);
