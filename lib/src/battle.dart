@@ -199,7 +199,7 @@ class Battle implements InteractableInterface {
   void enemyDie() {
     friendly.experience += enemy.experiencePayout;
     TextGameEvent victory =
-      new TextGameEvent(240, "You gained ${enemy.experiencePayout} experience points!");
+      new TextGameEvent(240, "${friendly.name} gained ${enemy.experiencePayout} experience points!");
     
     victory.callback = () {
       showExperienceGain(() {
