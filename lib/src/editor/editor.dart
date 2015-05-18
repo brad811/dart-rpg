@@ -25,13 +25,12 @@ import 'package:dart_rpg/src/editor/editor_battlers.dart';
 //   - wouldn't be able to change so wouldn't ever have to update warps on name changes
 //     - but what about warps that point to a map that no longer exists?
 //       - probably delete
+//       - but maybe point to self map
 
 // TODO: add hover tooltip that shows ID of tiles
 // TODO: add hover tooltip that shows map coordinates
-// TODO: shift warps, signs, etc. when map is resized
-//       - right now does not work properly in all situations
 
-// TODO: add delete buttons to the various tabs
+// TODO: add delete buttons to maps
 
 class Editor {
   static ImageElement spritesImage;

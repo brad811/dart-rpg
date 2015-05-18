@@ -85,7 +85,6 @@ class EditorWarps {
         "  </td>"+
         "  <td><input id='warps_destx_${i}' type='text' value='${ warps[Main.world.curMap][i].destX }' /></td>"+
         "  <td><input id='warps_desty_${i}' type='text' value='${ warps[Main.world.curMap][i].destY }' /></td>"+
-        // TODO: make the delete button work, with a confirm dialog
         "  <td><button id='delete_warp_${i}'>Delete</button></td>" +
         "</tr>";
     }

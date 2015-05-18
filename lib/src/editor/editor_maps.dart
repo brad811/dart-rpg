@@ -195,8 +195,6 @@ class EditorMaps {
   }
   
   static void setUpMapSizeButtons() {
-    // TODO: shift warps, signs, etc
-    
     // size x down button
     if(listeners["#size_x_down_button"] != null)
       listeners["#size_x_down_button"].cancel();
