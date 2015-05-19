@@ -5,7 +5,6 @@ import 'dart:html';
 
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
-import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 
@@ -18,9 +17,7 @@ class EditorCharacters {
       characters[Main.world.curMap].add(
         new Character(
           0, 0,
-          0, 0, layer: World.LAYER_GROUND,
-          sizeX: 0, sizeY: 0,
-          solid: true
+          0, 0
         )
       );
       update();
