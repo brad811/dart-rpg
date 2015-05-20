@@ -44,6 +44,10 @@ body {
 
 /* Editor */
 
+#container {
+  height: 100%;
+}
+
 #left_half {
   background-color: #ddddff;
   float: left;
@@ -52,6 +56,10 @@ body {
 
 #right_half {
   vertical-align: top;
+}
+
+#right_half_container {
+  height: 100%;
 }
 
 #editor_main_canvas {
@@ -78,6 +86,10 @@ body {
   margin-left: 10px;
 }
 
+#editor_tabs_container {
+  height: 100%;
+}
+
 .tab_headers {
   height: 30px;
   float: left;
@@ -98,7 +110,7 @@ body {
 
 .tab {
   background-color: #eee;
-  height: 228px;
+  height: 100%;
   width: 522px;
   overflow-y: scroll;
   padding: 8px;

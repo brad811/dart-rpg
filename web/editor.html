@@ -11,106 +11,118 @@
           <canvas id="editor_main_canvas" width="640" height="512"></canvas>
         </td>
         <td id="right_half">
-          <div class="sprite_container">
-            <canvas id="editor_sprite_canvas" width="1024" height="1024"></canvas>
-          </div>
-          
-          <div class="tab_headers">
-            <div class="tab_header" id="maps_tab_header">Maps</div>
-            <div class="tab_header" id="tiles_tab_header">Tiles</div>
-            <div class="tab_header" id="characters_tab_header">Characters</div>
-            <div class="tab_header" id="warps_tab_header">Warps</div>
-            <div class="tab_header" id="signs_tab_header">Signs</div>
-            <div class="tab_header" id="battlers_tab_header">Battlers</div>
-          </div>
-          
-          <div id="maps_tab" class="tab">
-            <button id="add_map_button">Add new map</button>
-            <div id="maps_container"></div>
-          </div>
-          
-          <div id="tiles_tab" class="tab">
-            <table>
-              <tr>
-                <td>
-                  <canvas id="editor_selected_sprite_canvas" width="32" height="32"></canvas>
-                </td>
-                <td>
-                  <input type="radio" name="layer" value="0" checked="checked" /> Ground<br>
-                  <input type="radio" name="layer" value="1" /> Below<br>
-                  <input type="radio" name="layer" value="2" /> Player<br>
-                  <input type="radio" name="layer" value="3" /> Above<br>
-                </td>
-                <td>
-                  <input type="checkbox" id="solid" />Solid<br>
-                  <input type="checkbox" id="layered" />Layered<br>
-                  <input type="checkbox" id="encounter" />Encounter
-                </td>
-              </tr>
-            </table>
-            
-            <div id="size_buttons_container">
-              <table>
-                <tr>
-                  <td colspan=2></td>
-                  <td><button id="size_y_up_button_pre">+</button></td>
-                  <td colspan=2></td>
-                </tr>
-                <tr>
-                  <td colspan=2></td>
-                  <td><button id="size_y_down_button_pre">-</button></td>
-                  <td colspan=2></td>
-                </tr>
-                <tr>
-                  <td><button id="size_x_up_button_pre">+</button></td>
-                  <td><button id="size_x_down_button_pre">-</button></td>
-                  <td class="center">Resize Map</td>
-                  <td><button id="size_x_down_button">-</button></td>
-                  <td><button id="size_x_up_button">+</button></td>
-                </tr>
-                <tr>
-                  <td colspan=2></td>
-                  <td><button id="size_y_down_button">-</button></td>
-                  <td colspan=2></td>
-                </tr>
-                <tr>
-                  <td colspan=2></td>
-                  <td><button id="size_y_up_button">+</button></td>
-                  <td colspan=2></td>
-                </tr>
-              </table>
-            </div>
-            
-            <div id="layer_visibility_toggles">
-              <h4>Layer Visibility</h4>
-              <input id="layer_above_visible" type="checkbox" checked="checked" />Above<br />
-              <input id="layer_player_visible" type="checkbox" checked="checked" />Player<br />
-              <input id="layer_below_visible" type="checkbox" checked="checked" />Below<br />
-              <input id="layer_ground_visible" type="checkbox" checked="checked" />Ground<br />
-            </div>
-          </div>
-          
-          <div id="characters_tab" class="tab">
-            <button id="add_character_button">Add new character</button>
-            <div id="characters_container"></div>
-          </div>
-          
-          <div id="warps_tab" class="tab">
-            <button id="add_warp_button">Add new warp</button>
-            <div id="warps_container"></div>
-          </div>
-          
-          <div id="signs_tab" class="tab">
-            <button id="add_sign_button">Add new sign</button>
-            <div id="signs_container"></div>
-          </div>
-          
-          <div id="battlers_tab" class="tab">
-            <button id="add_battler_button">Add new battler</button>
-            <div id="battlers_container"></div>
-          </div>
-          
-          <textarea id="export_json"></textarea>
+        
+          <table id="right_half_container">
+            <tr>
+              <td class="sprite_container">
+                <canvas id="editor_sprite_canvas" width="1024" height="1024"></canvas>
+              </td>
+            </tr>
+            <tr>
+              <td class="tab_headers">
+                <div class="tab_header" id="maps_tab_header">Maps</div>
+                <div class="tab_header" id="tiles_tab_header">Tiles</div>
+                <div class="tab_header" id="characters_tab_header">Characters</div>
+                <div class="tab_header" id="warps_tab_header">Warps</div>
+                <div class="tab_header" id="signs_tab_header">Signs</div>
+                <div class="tab_header" id="battlers_tab_header">Battlers</div>
+              </td>
+            </tr>
+            <tr>
+              <td id="editor_tabs_container">
+                <div id="maps_tab" class="tab">
+                  <button id="add_map_button">Add new map</button>
+                  <div id="maps_container"></div>
+                </div>
+                
+                <div id="tiles_tab" class="tab">
+                  <table>
+                    <tr>
+                      <td>
+                        <canvas id="editor_selected_sprite_canvas" width="32" height="32"></canvas>
+                      </td>
+                      <td>
+                        <input type="radio" name="layer" value="0" checked="checked" /> Ground<br>
+                        <input type="radio" name="layer" value="1" /> Below<br>
+                        <input type="radio" name="layer" value="2" /> Player<br>
+                        <input type="radio" name="layer" value="3" /> Above<br>
+                      </td>
+                      <td>
+                        <input type="checkbox" id="solid" />Solid<br>
+                        <input type="checkbox" id="layered" />Layered<br>
+                        <input type="checkbox" id="encounter" />Encounter
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <div id="size_buttons_container">
+                    <table>
+                      <tr>
+                        <td colspan=2></td>
+                        <td><button id="size_y_up_button_pre">+</button></td>
+                        <td colspan=2></td>
+                      </tr>
+                      <tr>
+                        <td colspan=2></td>
+                        <td><button id="size_y_down_button_pre">-</button></td>
+                        <td colspan=2></td>
+                      </tr>
+                      <tr>
+                        <td><button id="size_x_up_button_pre">+</button></td>
+                        <td><button id="size_x_down_button_pre">-</button></td>
+                        <td class="center">Resize Map</td>
+                        <td><button id="size_x_down_button">-</button></td>
+                        <td><button id="size_x_up_button">+</button></td>
+                      </tr>
+                      <tr>
+                        <td colspan=2></td>
+                        <td><button id="size_y_down_button">-</button></td>
+                        <td colspan=2></td>
+                      </tr>
+                      <tr>
+                        <td colspan=2></td>
+                        <td><button id="size_y_up_button">+</button></td>
+                        <td colspan=2></td>
+                      </tr>
+                    </table>
+                  </div>
+                  
+                  <div id="layer_visibility_toggles">
+                    <h4>Layer Visibility</h4>
+                    <input id="layer_above_visible" type="checkbox" checked="checked" />Above<br />
+                    <input id="layer_player_visible" type="checkbox" checked="checked" />Player<br />
+                    <input id="layer_below_visible" type="checkbox" checked="checked" />Below<br />
+                    <input id="layer_ground_visible" type="checkbox" checked="checked" />Ground<br />
+                  </div>
+                </div>
+                
+                <div id="characters_tab" class="tab">
+                  <button id="add_character_button">Add new character</button>
+                  <div id="characters_container"></div>
+                </div>
+                
+                <div id="warps_tab" class="tab">
+                  <button id="add_warp_button">Add new warp</button>
+                  <div id="warps_container"></div>
+                </div>
+                
+                <div id="signs_tab" class="tab">
+                  <button id="add_sign_button">Add new sign</button>
+                  <div id="signs_container"></div>
+                </div>
+                
+                <div id="battlers_tab" class="tab">
+                  <button id="add_battler_button">Add new battler</button>
+                  <div id="battlers_container"></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <textarea id="export_json"></textarea>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
     </table>
