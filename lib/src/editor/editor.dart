@@ -102,7 +102,8 @@ class Editor {
         
         Function resizeFunction = (Event e) {
           querySelector('#left_half').style.width = "${window.innerWidth - 580}px";
-          querySelector('#left_half').style.height = "${window.innerHeight - 30}px";
+          querySelector('#left_half').style.height = "${window.innerHeight - 60}px";
+          querySelector('#container').style.height = "${window.innerHeight - 30}px";
         };
         
         window.onResize.listen(resizeFunction);
