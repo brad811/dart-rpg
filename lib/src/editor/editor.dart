@@ -28,7 +28,6 @@ import 'package:dart_rpg/src/editor/editor_battlers.dart';
 //       - but maybe point to self map
 
 // TODO: add hover tooltip that shows ID of tiles
-// TODO: add hover tooltip that shows map coordinates
 
 // TODO: add delete buttons to maps
 
