@@ -8,10 +8,11 @@
     <table id="container">
       <tr>
         <td colspan=2 style="height: 30px;">
-          <div class="tab_header">Map Editor</div>
+          <div class="tab_header" id="map_editor_tab_header">Map Editor</div>
+          <div class="tab_header" id="object_editor_tab_header">Object Editor</div>
         </td>
       </tr>
-      <tr>
+      <tr id="map_editor_tab">
         <td id="left_half">
           <canvas id="editor_main_canvas" width="640" height="512"></canvas>
         </td>
@@ -129,6 +130,10 @@
             </tr>
           </table>
         </td>
+      </tr>
+      <tr id="object_editor_tab">
+        <td>This is the object editor!</td>
+        <td>Right section!</td>
       </tr>
     </table>
 

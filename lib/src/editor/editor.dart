@@ -35,9 +35,14 @@ class Editor {
   static ImageElement spritesImage;
   static CanvasElement c, sc, ssc;
   static CanvasRenderingContext2D ctx, sctx, ssctx;
-  static List<String> tabs = ["maps", "tiles", "characters", "warps", "signs", "battlers"];
-  static Map<String, DivElement> tabDivs = {};
-  static Map<String, DivElement> tabHeaderDivs = {};
+  
+  static List<String> editorTabs = ["map_editor", "object_editor"];
+  static Map<String, DivElement> editorTabDivs = {};
+  static Map<String, DivElement> editorTabHeaderDivs = {};
+  
+  static List<String> mapEditorTabs = ["maps", "tiles", "characters", "warps", "signs", "battlers"];
+  static Map<String, DivElement> mapEditorTabDivs = {};
+  static Map<String, DivElement> mapEditorTabHeaderDivs = {};
   
   static int
     canvasWidth = 100,
@@ -122,25 +127,45 @@ class Editor {
   }
   
   static void setUpTabs() {
-    for(String tab in tabs) {
-      tabDivs[tab] = querySelector("#${tab}_tab");
-      tabDivs[tab].style.display = "none";
+    for(String tab in editorTabs) {
+      editorTabDivs[tab] = querySelector("#${tab}_tab");
+      editorTabDivs[tab].style.display = "none";
       
-      tabHeaderDivs[tab] = querySelector("#${tab}_tab_header");
+      editorTabHeaderDivs[tab] = querySelector("#${tab}_tab_header");
       
-      tabHeaderDivs[tab].onClick.listen((MouseEvent e) {
-        for(String tabb in tabs) {
-          tabDivs[tabb].style.display = "none";
-          tabHeaderDivs[tabb].style.backgroundColor = "";
+      editorTabHeaderDivs[tab].onClick.listen((MouseEvent e) {
+        for(String tabb in editorTabs) {
+          editorTabDivs[tabb].style.display = "none";
+          editorTabHeaderDivs[tabb].style.backgroundColor = "";
         }
         
-        tabDivs[tab].style.display = "block";
-        tabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
+        editorTabDivs[tab].style.display = "";
+        editorTabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
       });
     }
     
-    tabDivs[tabDivs.keys.first].style.display = "block";
-    tabHeaderDivs[tabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
+    editorTabDivs[editorTabDivs.keys.first].style.display = "";
+    editorTabHeaderDivs[editorTabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
+    
+    for(String tab in mapEditorTabs) {
+      mapEditorTabDivs[tab] = querySelector("#${tab}_tab");
+      mapEditorTabDivs[tab].style.display = "none";
+      
+      mapEditorTabHeaderDivs[tab] = querySelector("#${tab}_tab_header");
+      
+      mapEditorTabHeaderDivs[tab].onClick.listen((MouseEvent e) {
+        for(String tabb in mapEditorTabs) {
+          mapEditorTabDivs[tabb].style.display = "none";
+          mapEditorTabHeaderDivs[tabb].style.backgroundColor = "";
+        }
+        
+        mapEditorTabDivs[tab].style.display = "block";
+        mapEditorTabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
+      });
+    }
+    
+    mapEditorTabDivs[mapEditorTabDivs.keys.first].style.display = "block";
+    mapEditorTabHeaderDivs[mapEditorTabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
   }
   
   static void setUpSpritePicker() {
