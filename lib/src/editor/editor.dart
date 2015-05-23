@@ -31,6 +31,9 @@ import 'package:dart_rpg/src/editor/editor_battlers.dart';
 
 // TODO: add delete buttons to maps
 
+// TODO: further separate map editing and object editing
+// TODO: make maps a sub-object in the save format
+
 class Editor {
   static ImageElement spritesImage;
   static CanvasElement c, sc, ssc;
