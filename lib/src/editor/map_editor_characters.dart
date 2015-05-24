@@ -1,4 +1,4 @@
-library dart_rpg.editor_characters;
+library dart_rpg.map_editor_characters;
 
 import 'dart:async';
 import 'dart:html';
@@ -6,9 +6,9 @@ import 'dart:html';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
 
-import 'package:dart_rpg/src/editor/editor.dart';
+import 'map_editor.dart';
 
-class EditorCharacters {
+class MapEditorCharacters {
   static Map<String, List<Character>> characters = {};
   static Map<String, StreamSubscription> listeners = {};
   
@@ -21,7 +21,7 @@ class EditorCharacters {
         )
       );
       update();
-      Editor.updateMap();
+      MapEditor.updateMap();
     });
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -71,7 +71,7 @@ class EditorCharacters {
           // could not update this character
         }
       }
-      Editor.updateMap();
+      MapEditor.updateMap();
     };
     
     for(int i=0; i<characters[Main.world.curMap].length; i++) {

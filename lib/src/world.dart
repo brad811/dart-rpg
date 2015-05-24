@@ -204,7 +204,7 @@ class World {
       });
       
       // add store clerk
-      Character storeClerk = addStoreCharacter(
+      addStoreCharacter(
         "store",
         new StoreCharacter(
           Tile.PLAYER, 237,
@@ -216,8 +216,6 @@ class World {
           5, 1, layer: LAYER_BELOW
         )
       );
-      
-      // store clerk stuff
       
       Main.player.inventory.money = 500;
       

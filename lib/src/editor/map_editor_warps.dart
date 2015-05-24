@@ -1,4 +1,4 @@
-library dart_rpg.editor_warps;
+library dart_rpg.map_editor_warps;
 
 import 'dart:async';
 import 'dart:html';
@@ -10,8 +10,9 @@ import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+import 'map_editor.dart';
 
-class EditorWarps {
+class MapEditorWarps {
   static Map<String, List<WarpTile>> warps = {};
   static Map<String, StreamSubscription> listeners = {};
   
@@ -25,7 +26,7 @@ class EditorWarps {
         )
       );
       update();
-      Editor.updateMap();
+      MapEditor.updateMap();
     });
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -105,7 +106,7 @@ class EditorWarps {
           // could not update this warp
         }
       }
-      Editor.updateMap();
+      MapEditor.updateMap();
     };
     
     for(int i=0; i<warps[Main.world.curMap].length; i++) {

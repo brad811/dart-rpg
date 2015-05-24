@@ -1,4 +1,4 @@
-library dart_rpg.editor_signs;
+library dart_rpg.map_editor_signs;
 
 import 'dart:async';
 import 'dart:html';
@@ -10,8 +10,9 @@ import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+import 'map_editor.dart';
 
-class EditorSigns {
+class MapEditorSigns {
   static Map<String, List<Sign>> signs = {};
   static Map<String, StreamSubscription> listeners = {};
   
@@ -19,7 +20,7 @@ class EditorSigns {
     querySelector("#add_sign_button").onClick.listen((MouseEvent e) {
       signs[Main.world.curMap].add( new Sign(false, new Sprite.int(0, 0, 0), 234, "Text") );
       update();
-      Editor.updateMap();
+      MapEditor.updateMap();
     });
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -89,7 +90,7 @@ class EditorSigns {
           // could not update this sign
         }
       }
-      Editor.updateMap();
+      MapEditor.updateMap();
     };
     
     for(int i=0; i<signs[Main.world.curMap].length; i++) {

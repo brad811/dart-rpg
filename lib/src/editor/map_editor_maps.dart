@@ -1,4 +1,4 @@
-library dart_rpg.editor_maps;
+library dart_rpg.map_editor_maps;
 
 import 'dart:async';
 import 'dart:html';
@@ -13,12 +13,13 @@ import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/editor_battlers.dart';
-import 'package:dart_rpg/src/editor/editor_characters.dart';
-import 'package:dart_rpg/src/editor/editor_signs.dart';
-import 'package:dart_rpg/src/editor/editor_warps.dart';
+import 'map_editor.dart';
+import 'map_editor_battlers.dart';
+import 'map_editor_characters.dart';
+import 'map_editor_signs.dart';
+import 'map_editor_warps.dart';
 
-class EditorMaps {
+class MapEditorMaps {
   static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
@@ -37,10 +38,10 @@ class EditorMaps {
         []
       );
       
-      EditorCharacters.characters["new map"] = [];
-      EditorWarps.warps["new map"] = [];
-      EditorSigns.signs["new map"] = [];
-      EditorBattlers.battlerChances["new map"] = [];
+      MapEditorCharacters.characters["new map"] = [];
+      MapEditorWarps.warps["new map"] = [];
+      MapEditorSigns.signs["new map"] = [];
+      MapEditorBattlers.battlerChances["new map"] = [];
       
       update();
     });
@@ -102,10 +103,10 @@ class EditorMaps {
           newMaps[newName] = Main.world.maps[key];
           newMaps[newName].name = newName;
           
-          newCharacters[newName] = EditorCharacters.characters[key];
-          newWarps[newName] = EditorWarps.warps[key];
-          newSigns[newName] = EditorSigns.signs[key];
-          newBattlers[newName] = EditorBattlers.battlerChances[key];
+          newCharacters[newName] = MapEditorCharacters.characters[key];
+          newWarps[newName] = MapEditorWarps.warps[key];
+          newSigns[newName] = MapEditorSigns.signs[key];
+          newBattlers[newName] = MapEditorBattlers.battlerChances[key];
           
           if(newName != key && Main.world.curMap == key && changedByUser)
             Main.world.curMap = newName;
@@ -120,13 +121,13 @@ class EditorMaps {
       }
       
       Main.world.maps = newMaps;
-      EditorCharacters.characters = newCharacters;
-      EditorWarps.warps = newWarps;
-      EditorSigns.signs = newSigns;
-      EditorBattlers.battlerChances = newBattlers;
+      MapEditorCharacters.characters = newCharacters;
+      MapEditorWarps.warps = newWarps;
+      MapEditorSigns.signs = newSigns;
+      MapEditorBattlers.battlerChances = newBattlers;
       
       setMapSelectorButtonListeners();
-      Editor.updateMap();
+      MapEditor.updateMap();
     };
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -136,7 +137,7 @@ class EditorMaps {
       listeners["#maps_name_${i}"] = querySelector('#maps_name_${i}').onInput.listen(inputChangeFunction);
     }
     
-    Editor.updateMap();
+    MapEditor.updateMap();
     setUpLayerVisibilityToggles();
     setUpMapSizeButtons();
   }
@@ -171,26 +172,26 @@ class EditorMaps {
     
     listeners["#layer_above_visible"] = querySelector('#layer_above_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_above_visible');
-      Editor.layerVisible[World.LAYER_ABOVE] = checkbox.checked;
-      Editor.updateMap();
+      MapEditor.layerVisible[World.LAYER_ABOVE] = checkbox.checked;
+      MapEditor.updateMap();
     });
     
     listeners["#layer_player_visible"] = querySelector('#layer_player_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_player_visible');
-      Editor.layerVisible[World.LAYER_PLAYER] = checkbox.checked;
-      Editor.updateMap();
+      MapEditor.layerVisible[World.LAYER_PLAYER] = checkbox.checked;
+      MapEditor.updateMap();
     });
     
     listeners["#layer_below_visible"] = querySelector('#layer_below_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_below_visible');
-      Editor.layerVisible[World.LAYER_BELOW] = checkbox.checked;
-      Editor.updateMap();
+      MapEditor.layerVisible[World.LAYER_BELOW] = checkbox.checked;
+      MapEditor.updateMap();
     });
     
     listeners["#layer_ground_visible"] = querySelector('#layer_ground_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_ground_visible');
-      Editor.layerVisible[World.LAYER_GROUND] = checkbox.checked;
-      Editor.updateMap();
+      MapEditor.layerVisible[World.LAYER_GROUND] = checkbox.checked;
+      MapEditor.updateMap();
     });
   }
   
@@ -282,8 +283,8 @@ class EditorMaps {
     }
     
     // this will delete any that are now off the map
-    EditorWarps.shift(0, 0);
-    EditorSigns.shift(0, 0);
+    MapEditorWarps.shift(0, 0);
+    MapEditorSigns.shift(0, 0);
     
     Editor.updateAllTables();
   }
@@ -312,8 +313,8 @@ class EditorMaps {
     mapTiles.removeLast();
     
     // this will delete any that are now off the map
-    EditorWarps.shift(0, 0);
-    EditorSigns.shift(0, 0);
+    MapEditorWarps.shift(0, 0);
+    MapEditorSigns.shift(0, 0);
     
     Editor.updateAllTables();
   }
@@ -353,8 +354,8 @@ class EditorMaps {
     }
     
     // this will shift and delete any that are now off the map
-    EditorWarps.shift(-1, 0);
-    EditorSigns.shift(-1, 0);
+    MapEditorWarps.shift(-1, 0);
+    MapEditorSigns.shift(-1, 0);
     
     Editor.updateAllTables();
   }
@@ -385,8 +386,8 @@ class EditorMaps {
     }
     
     // this will shift and delete any that are now off the map
-    EditorWarps.shift(1, 0);
-    EditorSigns.shift(1, 0);
+    MapEditorWarps.shift(1, 0);
+    MapEditorSigns.shift(1, 0);
     
     Editor.updateAllTables();
   }
@@ -409,8 +410,8 @@ class EditorMaps {
     }
     
     // this will shift and delete any that are now off the map
-    EditorWarps.shift(0, -1);
-    EditorSigns.shift(0, -1);
+    MapEditorWarps.shift(0, -1);
+    MapEditorSigns.shift(0, -1);
     
     Editor.updateAllTables();
   }
@@ -440,8 +441,8 @@ class EditorMaps {
     }
     
     // this will shift and delete any that are now off the map
-    EditorWarps.shift(0, 1);
-    EditorSigns.shift(0, 1);
+    MapEditorWarps.shift(0, 1);
+    MapEditorSigns.shift(0, 1);
     
     Editor.updateAllTables();
   }

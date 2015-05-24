@@ -1,4 +1,4 @@
-library dart_rpg.editor_battlers;
+library dart_rpg.map_editor_battlers;
 
 import 'dart:async';
 import 'dart:html';
@@ -8,9 +8,9 @@ import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'package:dart_rpg/src/editor/editor.dart';
+import 'map_editor.dart';
 
-class EditorBattlers {
+class MapEditorBattlers {
   static Map<String, List<BattlerChance<Battler, double>>> battlerChances = {};
   static Map<String, StreamSubscription> listeners = {};
   
@@ -25,7 +25,7 @@ class EditorBattlers {
         )
       );
       update();
-      Editor.updateMap();
+      MapEditor.updateMap();
     });
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -75,7 +75,7 @@ class EditorBattlers {
           print("Error updating battler! ( ${e} )");
         }
       }
-      Editor.updateMap();
+      MapEditor.updateMap();
     };
     
     for(int i=0; i<battlerChances[Main.world.curMap].length; i++) {
