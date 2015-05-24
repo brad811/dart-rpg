@@ -35,21 +35,31 @@ import 'package:dart_rpg/src/editor/editor_battlers.dart';
 // TODO: make maps a sub-object in the save format
 
 class Editor {
-  static ImageElement spritesImage;
-  static CanvasElement c, sc, ssc;
-  static CanvasRenderingContext2D ctx, sctx, ssctx;
-  
+  // editor
   static List<String> editorTabs = ["map_editor", "object_editor"];
   static Map<String, DivElement> editorTabDivs = {};
   static Map<String, DivElement> editorTabHeaderDivs = {};
+  
+  // map editor
+  static ImageElement spritesImage;
+  
+  static CanvasElement
+    mapEditorCanvas,
+    mapEditorSpriteSelectorCanvas,
+    mapEditorSelectedSpriteCanvas;
+  
+  static CanvasRenderingContext2D
+    mapEditorCanvasContext,
+    mapEditorSpriteSelectorCanvasContext,
+    mapEditorSelectedSpriteCanvasContext;
   
   static List<String> mapEditorTabs = ["maps", "tiles", "characters", "warps", "signs", "battlers"];
   static Map<String, DivElement> mapEditorTabDivs = {};
   static Map<String, DivElement> mapEditorTabHeaderDivs = {};
   
   static int
-    canvasWidth = 100,
-    canvasHeight = 100;
+    mapEditorCanvasWidth = 100,
+    mapEditorCanvasHeight = 100;
   
   static List<bool> layerVisible = [];
   
@@ -57,18 +67,28 @@ class Editor {
   static int selectedTile;
   
   static void init() {
-    c = querySelector('#editor_main_canvas');
-    ctx = c.getContext("2d");
+    mapEditorCanvas = querySelector('#editor_main_canvas');
+    mapEditorCanvasContext = mapEditorCanvas.getContext("2d");
     
-    sc = querySelector('#editor_sprite_canvas');
-    sctx = sc.getContext("2d");
+    mapEditorSpriteSelectorCanvas = querySelector('#editor_sprite_canvas');
+    mapEditorSpriteSelectorCanvasContext = mapEditorSpriteSelectorCanvas.getContext("2d");
     
-    ssc = querySelector('#editor_selected_sprite_canvas');
-    ssctx = ssc.getContext("2d");
+    mapEditorSelectedSpriteCanvas = querySelector('#editor_selected_sprite_canvas');
+    mapEditorSelectedSpriteCanvasContext = mapEditorSelectedSpriteCanvas.getContext("2d");
     
     if(window.devicePixelRatio != 1.0) {
-      List<CanvasElement> canvasElements = [c, sc, ssc];
-      List<CanvasRenderingContext2D> contexts = [ctx, sctx, ssctx];
+      List<CanvasElement> canvasElements = [
+        mapEditorCanvas,
+        mapEditorSpriteSelectorCanvas,
+        mapEditorSelectedSpriteCanvas
+      ];
+      
+      List<CanvasRenderingContext2D> contexts = [
+        mapEditorCanvasContext,
+        mapEditorSpriteSelectorCanvasContext,
+        mapEditorSelectedSpriteCanvasContext
+      ];
+      
       double scale = window.devicePixelRatio;
       
       for(int i=0; i<canvasElements.length; i++) {
@@ -172,8 +192,8 @@ class Editor {
   }
   
   static void setUpSpritePicker() {
-    sctx.fillStyle = "#ff00ff";
-      sctx.fillRect(
+    mapEditorSpriteSelectorCanvasContext.fillStyle = "#ff00ff";
+      mapEditorSpriteSelectorCanvasContext.fillRect(
         0, 0,
         Sprite.scaledSpriteSize*Sprite.spriteSheetSize,
         Sprite.scaledSpriteSize*Sprite.spriteSheetSize
@@ -186,7 +206,7 @@ class Editor {
         row = 0;
       for(int y=0; y<Sprite.spriteSheetSize; y++) {
         for(int x=0; x<Sprite.spriteSheetSize; x++) {
-          renderStaticSprite(sctx, y*Sprite.spriteSheetSize + x, col, row);
+          renderStaticSprite(mapEditorSpriteSelectorCanvasContext, y*Sprite.spriteSheetSize + x, col, row);
           col++;
           if(col >= maxCol) {
             row++;
@@ -228,10 +248,10 @@ class Editor {
         updateMap();
       };
       
-      c.onClick.listen(tileChange);
+      mapEditorCanvas.onClick.listen(tileChange);
       
       var tooltip = querySelector('#tooltip');
-      StreamSubscription mouseMoveStream = c.onMouseMove.listen((MouseEvent e) {
+      StreamSubscription mouseMoveStream = mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
         int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
         int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
         
@@ -241,20 +261,20 @@ class Editor {
         tooltip.text = "x: ${x}, y: ${y}";
       });
       
-      c.onMouseLeave.listen((onData) {
+      mapEditorCanvas.onMouseLeave.listen((onData) {
         tooltip.style.display = "none";
       });
       
-      c.onMouseDown.listen((MouseEvent e) {
-        StreamSubscription mouseMoveStream = c.onMouseMove.listen((MouseEvent e) {
+      mapEditorCanvas.onMouseDown.listen((MouseEvent e) {
+        StreamSubscription mouseMoveStream = mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
           tileChange(e);
         });
 
-        c.onMouseUp.listen((onData) => mouseMoveStream.cancel());
-        c.onMouseLeave.listen((onData) => mouseMoveStream.cancel());
+        mapEditorCanvas.onMouseUp.listen((onData) => mouseMoveStream.cancel());
+        mapEditorCanvas.onMouseLeave.listen((onData) => mouseMoveStream.cancel());
       });
       
-      sc.onClick.listen((MouseEvent e) {
+      mapEditorSpriteSelectorCanvas.onClick.listen((MouseEvent e) {
         int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
         int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
         selectSprite(y*Sprite.spriteSheetSize + x);
@@ -262,21 +282,21 @@ class Editor {
   }
   
   static void updateMapCanvasSize() {
-    if(c.width != canvasWidth || c.height != canvasHeight) {
-      c.width = canvasWidth;
-      c.height = canvasHeight;
+    if(mapEditorCanvas.width != mapEditorCanvasWidth || mapEditorCanvas.height != mapEditorCanvasHeight) {
+      mapEditorCanvas.width = mapEditorCanvasWidth;
+      mapEditorCanvas.height = mapEditorCanvasHeight;
       
       if(window.devicePixelRatio != 1.0) {
         double scale = window.devicePixelRatio;
         
-        c.style.width = c.width.toString() + 'px';
-        c.style.height = c.height.toString() + 'px';
-        c.width = (c.width * scale).round();
-        c.height = (c.height * scale).round();
-        ctx.scale(scale, scale);
+        mapEditorCanvas.style.width = mapEditorCanvas.width.toString() + 'px';
+        mapEditorCanvas.style.height = mapEditorCanvas.height.toString() + 'px';
+        mapEditorCanvas.width = (mapEditorCanvas.width * scale).round();
+        mapEditorCanvas.height = (mapEditorCanvas.height * scale).round();
+        mapEditorCanvasContext.scale(scale, scale);
       }
       
-      ctx.imageSmoothingEnabled = false;
+      mapEditorCanvasContext.imageSmoothingEnabled = false;
       context.callMethod("fixImageSmoothing");
     }
   }
@@ -294,14 +314,14 @@ class Editor {
     if(mapTiles.length == 0 || mapTiles[0].length == 0)
       return;
     
-    canvasHeight = mapTiles.length * Sprite.scaledSpriteSize;
-    canvasWidth = mapTiles[0].length * Sprite.scaledSpriteSize;
+    mapEditorCanvasHeight = mapTiles.length * Sprite.scaledSpriteSize;
+    mapEditorCanvasWidth = mapTiles[0].length * Sprite.scaledSpriteSize;
     
     updateMapCanvasSize();
     
     // Draw pink background
-    ctx.fillStyle = "#ff00ff";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    mapEditorCanvasContext.fillStyle = "#ff00ff";
+    mapEditorCanvasContext.fillRect(0, 0, mapEditorCanvasWidth, mapEditorCanvasHeight);
     
     renderList = [];
     for(int i=0; i<World.layers.length; i++) {
@@ -321,7 +341,7 @@ class Editor {
     for(List<Tile> layer in renderList) {
       for(Tile tile in layer) {
         renderStaticSprite(
-          ctx, tile.sprite.id,
+          mapEditorCanvasContext, tile.sprite.id,
           tile.sprite.posX.round(), tile.sprite.posY.round()
         );
         
@@ -411,33 +431,33 @@ class Editor {
   }
   
   static void outlineTiles(List<Tile> tiles, int r, int g, int b) {
-    ctx.beginPath();
+    mapEditorCanvasContext.beginPath();
     for(Tile tile in tiles) {
       int
         x = (tile.sprite.posX * Sprite.scaledSpriteSize).round(),
         y = (tile.sprite.posY * Sprite.scaledSpriteSize).round();
       
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + Sprite.scaledSpriteSize, y);
-      ctx.lineTo(x + Sprite.scaledSpriteSize, y + Sprite.scaledSpriteSize);
-      ctx.lineTo(x, y + Sprite.scaledSpriteSize);
-      ctx.lineTo(x, y);
+      mapEditorCanvasContext.moveTo(x, y);
+      mapEditorCanvasContext.lineTo(x + Sprite.scaledSpriteSize, y);
+      mapEditorCanvasContext.lineTo(x + Sprite.scaledSpriteSize, y + Sprite.scaledSpriteSize);
+      mapEditorCanvasContext.lineTo(x, y + Sprite.scaledSpriteSize);
+      mapEditorCanvasContext.lineTo(x, y);
       
-      ctx.setFillColorRgb(r, g, b, 0.1);
-      ctx.fillRect(x, y, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
+      mapEditorCanvasContext.setFillColorRgb(r, g, b, 0.1);
+      mapEditorCanvasContext.fillRect(x, y, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
     }
     
     // draw the strokes around the tiles
-    ctx.closePath();
-    ctx.setStrokeColorRgb(r, g, b, 0.9);
-    ctx.stroke();
+    mapEditorCanvasContext.closePath();
+    mapEditorCanvasContext.setStrokeColorRgb(r, g, b, 0.9);
+    mapEditorCanvasContext.stroke();
   }
   
   static void selectSprite(int id) {
     selectedTile = id;
-    ssctx.fillStyle = "#ff00ff";
-    ssctx.fillRect(0, 0, 32, 32);
-    renderStaticSprite(ssctx, id, 0, 0);
+    mapEditorSelectedSpriteCanvasContext.fillStyle = "#ff00ff";
+    mapEditorSelectedSpriteCanvasContext.fillRect(0, 0, 32, 32);
+    renderStaticSprite(mapEditorSelectedSpriteCanvasContext, id, 0, 0);
   }
   
   static void renderStaticSprite(CanvasRenderingContext2D ctx, int id, int posX, int posY) {
