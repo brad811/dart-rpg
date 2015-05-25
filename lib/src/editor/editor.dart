@@ -7,6 +7,7 @@ import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'map_editor.dart';
+import 'object_editor.dart';
 
 // TODO:
 // - maybe make maps use numbers instead of names
@@ -25,6 +26,7 @@ class Editor {
   static Map<String, DivElement> editorTabHeaderDivs = {};
   
   static void init() {
+    ObjectEditor.init();
     MapEditor.init(start);
   }
   
@@ -34,6 +36,7 @@ class Editor {
     Main.world = new World(() {
       Main.world.loadMaps(() {
         MapEditor.setUp();
+        ObjectEditor.setUp();
         setUpTabs();
         
         updateAllTables();
@@ -53,6 +56,8 @@ class Editor {
   static void updateAllTables() {
     MapEditor.update();
     MapEditor.updateMap();
+    
+    ObjectEditor.update();
   }
   
   static void setUpTabs() {

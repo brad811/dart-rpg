@@ -183,6 +183,32 @@ body {
   margin-left: 10px;
 }
 
+/*
+ * Object Editor
+ */
+
 #object_editor_tab td {
   vertical-align: top;
+}
+
+#object_editor_inner_container {
+  width: 100%;
+  height: 100%;
+}
+
+#object_editor_inner_main_area {
+  height: 100%;
+  padding-right: 20px;
+}
+
+#object_editor_inner_main_area div {
+  height: 100%;
+}
+
+#object_editor_inner_main_area .tab {
+  background-color: #eee;
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+  margin: 0;
 }
