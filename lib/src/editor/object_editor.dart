@@ -2,6 +2,8 @@ library dart_rpg.object_editor;
 
 import 'dart:html';
 
+import 'object_editor_attacks.dart';
+
 class ObjectEditor {
   static List<String> objectEditorTabs = ["attacks", "battler_types", "characters", "items"];
   static Map<String, DivElement> objectEditorTabDivs = {};
@@ -32,8 +34,8 @@ class ObjectEditor {
     objectEditorTabDivs[objectEditorTabDivs.keys.first].style.display = "block";
     objectEditorTabHeaderDivs[objectEditorTabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
     
-    /*
     ObjectEditorAttacks.setUp();
+    /*
     ObjectEditorBattlerTypes.setUp();
     ObjectEditorCharacters.setUp();
     ObjectEditorItems.setUp();
