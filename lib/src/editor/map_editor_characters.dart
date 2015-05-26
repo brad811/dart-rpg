@@ -6,6 +6,7 @@ import 'dart:html';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
 
+import 'editor.dart';
 import 'map_editor.dart';
 
 class MapEditorCharacters {
@@ -20,8 +21,8 @@ class MapEditorCharacters {
           0, 0
         )
       );
-      update();
-      MapEditor.updateMap();
+      
+      Editor.update();
     });
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -71,7 +72,8 @@ class MapEditorCharacters {
           // could not update this character
         }
       }
-      MapEditor.updateMap();
+      
+      MapEditor.updateMap(shouldExport: true);
     };
     
     for(int i=0; i<characters[Main.world.curMap].length; i++) {

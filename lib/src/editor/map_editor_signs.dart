@@ -9,7 +9,7 @@ import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'package:dart_rpg/src/editor/editor.dart';
+import 'editor.dart';
 import 'map_editor.dart';
 
 class MapEditorSigns {
@@ -19,8 +19,7 @@ class MapEditorSigns {
   static void setUp() {
     querySelector("#add_sign_button").onClick.listen((MouseEvent e) {
       signs[Main.world.curMap].add( new Sign(false, new Sprite.int(0, 0, 0), 234, "Text") );
-      update();
-      MapEditor.updateMap();
+      Editor.update();
     });
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -90,7 +89,8 @@ class MapEditorSigns {
           // could not update this sign
         }
       }
-      MapEditor.updateMap();
+      
+      MapEditor.updateMap(shouldExport: true);
     };
     
     for(int i=0; i<signs[Main.world.curMap].length; i++) {
@@ -114,7 +114,7 @@ class MapEditorSigns {
         bool confirm = window.confirm('Are you sure you would like to delete this sign?');
         if(confirm) {
           signs[Main.world.curMap].removeAt(i);
-          Editor.updateAllTables();
+          Editor.update();
         }
       });
     }

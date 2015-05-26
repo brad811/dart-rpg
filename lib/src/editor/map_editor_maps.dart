@@ -127,7 +127,8 @@ class MapEditorMaps {
       MapEditorBattlers.battlerChances = newBattlers;
       
       setMapSelectorButtonListeners();
-      MapEditor.updateMap();
+      
+      MapEditor.updateMap(shouldExport: true);
     };
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -137,7 +138,6 @@ class MapEditorMaps {
       listeners["#maps_name_${i}"] = querySelector('#maps_name_${i}').onInput.listen(inputChangeFunction);
     }
     
-    MapEditor.updateMap();
     setUpLayerVisibilityToggles();
     setUpMapSizeButtons();
   }
@@ -151,7 +151,7 @@ class MapEditorMaps {
         
         listeners["#map_select_${i}"] = querySelector("#map_select_${i}").onClick.listen((MouseEvent e) {
           Main.world.curMap = key;
-          Editor.updateAllTables();
+          Editor.update();
         });
       }
     }
@@ -173,25 +173,25 @@ class MapEditorMaps {
     listeners["#layer_above_visible"] = querySelector('#layer_above_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_above_visible');
       MapEditor.layerVisible[World.LAYER_ABOVE] = checkbox.checked;
-      MapEditor.updateMap();
+      Editor.update();
     });
     
     listeners["#layer_player_visible"] = querySelector('#layer_player_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_player_visible');
       MapEditor.layerVisible[World.LAYER_PLAYER] = checkbox.checked;
-      MapEditor.updateMap();
+      Editor.update();
     });
     
     listeners["#layer_below_visible"] = querySelector('#layer_below_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_below_visible');
       MapEditor.layerVisible[World.LAYER_BELOW] = checkbox.checked;
-      MapEditor.updateMap();
+      Editor.update();
     });
     
     listeners["#layer_ground_visible"] = querySelector('#layer_ground_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_ground_visible');
       MapEditor.layerVisible[World.LAYER_GROUND] = checkbox.checked;
-      MapEditor.updateMap();
+      Editor.update();
     });
   }
   
@@ -286,7 +286,7 @@ class MapEditorMaps {
     MapEditorWarps.shift(0, 0);
     MapEditorSigns.shift(0, 0);
     
-    Editor.updateAllTables();
+    Editor.update();
   }
   
   static void sizeUpRight() {
@@ -302,7 +302,7 @@ class MapEditorMaps {
       mapTiles[y].add(array);
     }
     
-    Editor.updateAllTables();
+    Editor.update();
   }
   
   static void sizeDownBottom() {
@@ -316,7 +316,7 @@ class MapEditorMaps {
     MapEditorWarps.shift(0, 0);
     MapEditorSigns.shift(0, 0);
     
-    Editor.updateAllTables();
+    Editor.update();
   }
   
   static void sizeUpBottom() {
@@ -333,7 +333,7 @@ class MapEditorMaps {
     
     mapTiles.add(rowArray);
     
-    Editor.updateAllTables();
+    Editor.update();
   }
   
   static void sizeDownLeft() {
@@ -357,7 +357,7 @@ class MapEditorMaps {
     MapEditorWarps.shift(-1, 0);
     MapEditorSigns.shift(-1, 0);
     
-    Editor.updateAllTables();
+    Editor.update();
   }
   
   static void sizeUpLeft() {
@@ -389,7 +389,7 @@ class MapEditorMaps {
     MapEditorWarps.shift(1, 0);
     MapEditorSigns.shift(1, 0);
     
-    Editor.updateAllTables();
+    Editor.update();
   }
   
   static void sizeDownTop() {
@@ -413,7 +413,7 @@ class MapEditorMaps {
     MapEditorWarps.shift(0, -1);
     MapEditorSigns.shift(0, -1);
     
-    Editor.updateAllTables();
+    Editor.update();
   }
   
   static void sizeUpTop() {
@@ -444,6 +444,6 @@ class MapEditorMaps {
     MapEditorWarps.shift(0, 1);
     MapEditorSigns.shift(0, 1);
     
-    Editor.updateAllTables();
+    Editor.update();
   }
 }

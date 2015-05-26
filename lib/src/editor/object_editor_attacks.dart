@@ -58,7 +58,10 @@ class ObjectEditorAttacks {
         }
       }
       
+      // TODO: make it so this doesn't de-focus the input
+      InputElement target = e.target;
       ObjectEditor.update();
+      querySelector('#' + target.id).focus();
     };
     
     for(int i=0; i<attacks.length; i++) {
@@ -73,6 +76,7 @@ class ObjectEditorAttacks {
     }
   }
   
+  // TODO: generalize functions like this and put in main editor class
   static void setAttackDeleteButtonListeners() {
     for(int i=0; i<attacks.length; i++) {
       if(listeners["#delete_attack_${i}"] != null)
@@ -82,13 +86,13 @@ class ObjectEditorAttacks {
         bool confirm = window.confirm('Are you sure you would like to delete this attack?');
         if(confirm) {
           attacks.removeAt(i);
-          Editor.updateAllTables();
+          Editor.update();
         }
       });
     }
   }
   
   static void export(List<List<List<Map>>> jsonMap, String key) {
-    // TODO
+    // TODO: update export format to include object editor objects
   }
 }

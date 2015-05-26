@@ -12,6 +12,7 @@ import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
+import 'editor.dart';
 import 'map_editor_characters.dart';
 import 'map_editor_maps.dart';
 import 'map_editor_signs.dart';
@@ -125,6 +126,8 @@ class MapEditor {
     MapEditorWarps.update();
     MapEditorSigns.update();
     MapEditorBattlers.update();
+    
+    MapEditor.updateMap();
   }
   
   static void setUpSpritePicker() {
@@ -181,7 +184,7 @@ class MapEditor {
         );
       }
       
-      updateMap();
+      Editor.update();
     };
     
     mapEditorCanvas.onClick.listen(tileChange);
@@ -238,7 +241,7 @@ class MapEditor {
     }
   }
   
-  static void updateMap() {
+  static void updateMap({bool shouldExport: false}) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     List<Character> characters = Main.world.maps[Main.world.curMap].characters;
     
@@ -312,8 +315,9 @@ class MapEditor {
     // draw yellow boxes around sign tiles
     outlineTiles(MapEditorSigns.signs[Main.world.curMap], 255, 255, 0);
     
-    // build the json
-    buildExportJson();
+    if(shouldExport) {
+      Editor.export();
+    }
   }
   
   static void outlineTiles(List<Tile> tiles, int r, int g, int b) {
@@ -381,12 +385,12 @@ class MapEditor {
     }
   }
   
-  static void buildExportJson() {
-    Map<String, Map> exportJson = {};
+  static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {
+    exportJson["maps"] = {};
     
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
-      exportJson[key] = {};
+      exportJson["maps"][key] = {};
       
       List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
       
@@ -421,11 +425,11 @@ class MapEditor {
       MapEditorWarps.export(jsonMap, key);
       MapEditorSigns.export(jsonMap, key);
       
-      MapEditorCharacters.export(exportJson[key], key);
+      MapEditorCharacters.export(exportJson["maps"][key], key);
 
-      MapEditorBattlers.export(exportJson[key], key);
+      MapEditorBattlers.export(exportJson["maps"][key], key);
       
-      exportJson[key]['tiles'] = jsonMap;
+      exportJson["maps"][key]['tiles'] = jsonMap;
     }
     
     TextAreaElement textarea = querySelector("#export_json");

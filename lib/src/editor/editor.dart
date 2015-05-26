@@ -37,9 +37,9 @@ class Editor {
       Main.world.loadMaps(() {
         MapEditor.setUp();
         ObjectEditor.setUp();
-        setUpTabs();
+        Editor.setUpTabs();
         
-        updateAllTables();
+        Editor.update();
         
         Function resizeFunction = (Event e) {
           querySelector('#left_half').style.width = "${window.innerWidth - 580}px";
@@ -53,11 +53,14 @@ class Editor {
     });
   }
   
-  static void updateAllTables() {
+  static void update() {
     MapEditor.update();
-    MapEditor.updateMap();
-    
     ObjectEditor.update();
+  }
+  
+  static void export() {
+    Map<String, Map<String, Map<String, Object>>> exportJson = {};
+    MapEditor.export(exportJson);
   }
   
   static void setUpTabs() {

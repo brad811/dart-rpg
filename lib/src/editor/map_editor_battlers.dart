@@ -8,6 +8,7 @@ import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
+import 'editor.dart';
 import 'map_editor.dart';
 
 class MapEditorBattlers {
@@ -24,8 +25,8 @@ class MapEditorBattlers {
           0
         )
       );
-      update();
-      MapEditor.updateMap();
+      
+      Editor.update();
     });
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -75,7 +76,8 @@ class MapEditorBattlers {
           print("Error updating battler! ( ${e} )");
         }
       }
-      MapEditor.updateMap();
+      
+      MapEditor.updateMap(shouldExport: true);
     };
     
     for(int i=0; i<battlerChances[Main.world.curMap].length; i++) {

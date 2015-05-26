@@ -43,6 +43,11 @@ class ObjectEditor {
   }
   
   static void update() {
-    
+    ObjectEditorAttacks.update();
+    /*
+    ObjectEditorBattlerTypes.setUp();
+    ObjectEditorCharacters.setUp();
+    ObjectEditorItems.setUp();
+    */
   }
 }

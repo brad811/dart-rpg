@@ -9,7 +9,7 @@ import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'package:dart_rpg/src/editor/editor.dart';
+import 'editor.dart';
 import 'map_editor.dart';
 
 class MapEditorWarps {
@@ -25,8 +25,8 @@ class MapEditorWarps {
           Main.world.curMap, 0, 0
         )
       );
-      update();
-      MapEditor.updateMap();
+      
+      Editor.update();
     });
     
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -106,7 +106,8 @@ class MapEditorWarps {
           // could not update this warp
         }
       }
-      MapEditor.updateMap();
+      
+      MapEditor.updateMap(shouldExport: true);
     };
     
     for(int i=0; i<warps[Main.world.curMap].length; i++) {
@@ -130,7 +131,7 @@ class MapEditorWarps {
         bool confirm = window.confirm('Are you sure you would like to delete this warp?');
         if(confirm) {
           warps[Main.world.curMap].removeAt(i);
-          Editor.updateAllTables();
+          Editor.update();
         }
       });
     }

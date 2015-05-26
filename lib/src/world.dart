@@ -225,7 +225,7 @@ class World {
   
   void loadMaps(Function callback) {
     HttpRequest
-      .getString("maps.json")
+      .getString("game.json")
       .then(parseMaps)
       .then((dynamic f) { if(callback != null) { callback(); } })
       .catchError((Error err) {
@@ -240,25 +240,25 @@ class World {
     Map<String, Map> obj = JSON.decode(jsonString);
     
     maps = {};
-    curMap = obj.keys.first;
+    curMap = obj["maps"].keys.first;
     
-    for(String mapName in obj.keys) {
+    for(String mapName in obj["maps"].keys) {
       GameMap gameMap = new GameMap(mapName);
       maps[mapName] = gameMap;
       maps[mapName].tiles = [];
       maps[mapName].characters = [];
       List<List<List<Tile>>> mapTiles = maps[mapName].tiles;
       
-      for(int y=0; y<obj[mapName]['tiles'].length; y++) {
+      for(int y=0; y<obj["maps"][mapName]['tiles'].length; y++) {
         mapTiles.add([]);
         
-        for(int x=0; x<obj[mapName]['tiles'][y].length; x++) {
+        for(int x=0; x<obj["maps"][mapName]['tiles'][y].length; x++) {
           mapTiles[y].add([]);
           
-          for(int k=0; k<obj[mapName]['tiles'][y][x].length; k++) {
+          for(int k=0; k<obj["maps"][mapName]['tiles'][y][x].length; k++) {
             mapTiles[y][x].add(null);
             
-            var curTile = obj[mapName]['tiles'][y][x][k];
+            var curTile = obj["maps"][mapName]['tiles'][y][x][k];
             
             if(curTile != null) {
               if(curTile['warp'] != null) {
