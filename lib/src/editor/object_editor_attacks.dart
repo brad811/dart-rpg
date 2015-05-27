@@ -92,7 +92,7 @@ class ObjectEditorAttacks {
     }
   }
   
-  static void export(List<List<List<Map>>> jsonMap, String key) {
+  static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {
     // TODO: update export format to include object editor objects
   }
 }

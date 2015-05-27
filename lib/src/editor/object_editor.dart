@@ -50,4 +50,13 @@ class ObjectEditor {
     ObjectEditorItems.setUp();
     */
   }
+  
+  static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {
+    ObjectEditorAttacks.export(exportJson);
+    /*
+    ObjectEditorBattlerTypes.export(exportJson);
+    ObjectEditorCharacters.export(exportJson);
+    ObjectEditorItems.export(exportJson);
+    */
+  }
 }

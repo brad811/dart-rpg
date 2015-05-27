@@ -1,7 +1,6 @@
 library dart_rpg.map_editor;
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:html';
 import 'dart:js';
 
@@ -431,8 +430,5 @@ class MapEditor {
       
       exportJson["maps"][key]['tiles'] = jsonMap;
     }
-    
-    TextAreaElement textarea = querySelector("#export_json");
-    textarea.value = JSON.encode(exportJson);
   }
 }

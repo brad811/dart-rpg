@@ -1,5 +1,6 @@
 library dart_rpg.editor;
 
+import 'dart:convert';
 import 'dart:html';
 
 import 'package:dart_rpg/src/main.dart';
@@ -18,7 +19,6 @@ import 'object_editor.dart';
 //       - but maybe point to self map
 
 // TODO: add delete buttons to maps
-// TODO: make maps a sub-object in the save format
 
 class Editor {
   static List<String> editorTabs = ["map_editor", "object_editor"];
@@ -61,6 +61,10 @@ class Editor {
   static void export() {
     Map<String, Map<String, Map<String, Object>>> exportJson = {};
     MapEditor.export(exportJson);
+    ObjectEditor.export(exportJson);
+    
+    TextAreaElement textarea = querySelector("#export_json");
+    textarea.value = JSON.encode(exportJson);
   }
   
   static void setUpTabs() {
