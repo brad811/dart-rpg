@@ -56,6 +56,8 @@ class Editor {
   static void update() {
     MapEditor.update();
     ObjectEditor.update();
+    
+    Editor.export();
   }
   
   static void export() {

@@ -5,7 +5,7 @@ import 'dart:html';
 
 import 'package:dart_rpg/src/attack.dart';
 
-import 'package:dart_rpg/src/editor/editor.dart';
+import 'editor.dart';
 import 'object_editor.dart';
 
 class ObjectEditorAttacks {
@@ -60,12 +60,13 @@ class ObjectEditorAttacks {
       
       // TODO: make it so this doesn't de-focus the input
       InputElement target = e.target;
-      ObjectEditor.update();
-      querySelector('#' + target.id).focus();
+      // TODO: need to find a way to update here without losing input focus and position
+      //   This is so other elements that reference this attack also get updated
+      Editor.export();
     };
     
+    List<String> attrs = ["name", "category", "power"];
     for(int i=0; i<attacks.length; i++) {
-      List<String> attrs = ["name", "category", "power"];
       for(String attr in attrs) {
         if(listeners["#attacks_${attr}_${i}"] != null)
           listeners["#attacks_${attr}_${i}"].cancel();
@@ -92,7 +93,16 @@ class ObjectEditorAttacks {
     }
   }
   
-  static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {
-    // TODO: update export format to include object editor objects
+  static void export(Map<String, Object> exportJson) {
+    List<Map<String, String>> attacksJson = [];
+    for(Attack attack in attacks) {
+      Map<String, String> attackJson = {};
+      attackJson["name"] = attack.name;
+      attackJson["category"] = attack.category.toString();
+      attackJson["power"] = attack.power.toString();
+      attacksJson.add(attackJson);
+    }
+    
+    exportJson["attacks"] = attacksJson;
   }
 }
