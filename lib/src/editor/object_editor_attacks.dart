@@ -9,13 +9,13 @@ import 'editor.dart';
 import 'object_editor.dart';
 
 class ObjectEditorAttacks {
-  static List<Attack> attacks = [];
+  static Map<String, Attack> attacks = {};
   static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
     querySelector("#add_attack_button").onClick.listen((MouseEvent e) {
       // TODO: will have to use unique ids or something, like a database, so they can be deleted cleanly
-      attacks.add( new Attack("Attack", Attack.CATEGORY_PHYSICAL, 0) );
+      attacks["New Attack"] = new Attack("New Attack", Attack.CATEGORY_PHYSICAL, 0);
       update();
       ObjectEditor.update();
     });
@@ -28,15 +28,17 @@ class ObjectEditorAttacks {
       "  <tr>"+
       "    <td>Num</td><td>Name</td><td>Category</td><td>Power</td>"+
       "  </tr>";
-    for(int i=0; i<attacks.length; i++) {
+    for(int i=0; i<attacks.keys.length; i++) {
       // TODO: change these div ids to be more specific so they don't collide with anything in the map editor
+      String key = attacks.keys.elementAt(i);
+      
       attacksHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input id='attacks_name_${i}' type='text' value='${ attacks[i].name }' /></td>"+
+        "  <td><input id='attacks_name_${i}' type='text' value='${ attacks[key].name }' /></td>"+
         // TODO: make category a dropdown
-        "  <td><input id='attacks_category_${i}' type='text' value='${ attacks[i].category }' /></td>"+
-        "  <td><input id='attacks_power_${i}' type='text' value='${ attacks[i].power }' /></td>"+
+        "  <td><input id='attacks_category_${i}' type='text' value='${ attacks[key].category }' /></td>"+
+        "  <td><input id='attacks_power_${i}' type='text' value='${ attacks[key].power }' /></td>"+
         "  <td><button id='delete_attack_${i}'>Delete</button></td>" +
         "</tr>";
     }
@@ -46,9 +48,9 @@ class ObjectEditorAttacks {
     setAttackDeleteButtonListeners();
     
     Function inputChangeFunction = (Event e) {
-      for(int i=0; i<attacks.length; i++) {
+      for(int i=0; i<attacks.keys.length; i++) {
         try {
-          attacks[i] = new Attack(
+          attacks[attacks.keys.elementAt(i)] = new Attack(
             (querySelector('#attacks_name_${i}') as InputElement).value,
             int.parse((querySelector('#attacks_category_${i}') as InputElement).value),
             int.parse((querySelector('#attacks_power_${i}') as InputElement).value)
@@ -62,7 +64,12 @@ class ObjectEditorAttacks {
       InputElement target = e.target;
       // TODO: need to find a way to update here without losing input focus and position
       //   This is so other elements that reference this attack also get updated
-      Editor.export();
+      InputElement inputElement = querySelector('#' + target.id);
+      int position = inputElement.selectionStart;
+      Editor.update();
+      inputElement = querySelector('#' + target.id);
+      inputElement.focus();
+      inputElement.setSelectionRange(position, position);
     };
     
     List<String> attrs = ["name", "category", "power"];
@@ -94,13 +101,12 @@ class ObjectEditorAttacks {
   }
   
   static void export(Map<String, Object> exportJson) {
-    List<Map<String, String>> attacksJson = [];
-    for(Attack attack in attacks) {
+    Map<String, Map<String, String>> attacksJson = {};
+    for(Attack attack in attacks.keys) {
       Map<String, String> attackJson = {};
-      attackJson["name"] = attack.name;
       attackJson["category"] = attack.category.toString();
       attackJson["power"] = attack.power.toString();
-      attacksJson.add(attackJson);
+      attacksJson[attack.name] = attackJson;
     }
     
     exportJson["attacks"] = attacksJson;
