@@ -37,6 +37,13 @@ class ObjectEditorAttacks {
         "  <td>${i}</td>"+
         "  <td><input id='attacks_name_${i}' type='text' value='${ attacks[key].name }' /></td>"+
         // TODO: make category a dropdown
+        "  <td>"+
+        "    <select id='attacks_category_${i}'>"+
+        "      <option>Physical</option>"+
+        "      <option>Magical</option>"+
+        "    </select>"+
+        "  </td>"+
+        
         "  <td><input id='attacks_category_${i}' type='text' value='${ attacks[key].category }' /></td>"+
         "  <td><input id='attacks_power_${i}' type='text' value='${ attacks[key].power }' /></td>"+
         "  <td><button id='delete_attack_${i}'>Delete</button></td>" +
@@ -73,7 +80,7 @@ class ObjectEditorAttacks {
     };
     
     List<String> attrs = ["name", "category", "power"];
-    for(int i=0; i<attacks.length; i++) {
+    for(int i=0; i<attacks.keys.length; i++) {
       for(String attr in attrs) {
         if(listeners["#attacks_${attr}_${i}"] != null)
           listeners["#attacks_${attr}_${i}"].cancel();
@@ -86,14 +93,14 @@ class ObjectEditorAttacks {
   
   // TODO: generalize functions like this and put in main editor class
   static void setAttackDeleteButtonListeners() {
-    for(int i=0; i<attacks.length; i++) {
+    for(int i=0; i<attacks.keys.length; i++) {
       if(listeners["#delete_attack_${i}"] != null)
         listeners["#delete_attack_${i}"].cancel();
       
       listeners["#delete_attack_${i}"] = querySelector("#delete_attack_${i}").onClick.listen((MouseEvent e) {
         bool confirm = window.confirm('Are you sure you would like to delete this attack?');
         if(confirm) {
-          attacks.removeAt(i);
+          attacks.remove(attacks.keys.elementAt(i));
           Editor.update();
         }
       });
@@ -102,12 +109,12 @@ class ObjectEditorAttacks {
   
   static void export(Map<String, Object> exportJson) {
     Map<String, Map<String, String>> attacksJson = {};
-    for(Attack attack in attacks.keys) {
+    attacks.forEach((String key, Attack attack) {
       Map<String, String> attackJson = {};
       attackJson["category"] = attack.category.toString();
       attackJson["power"] = attack.power.toString();
       attacksJson[attack.name] = attackJson;
-    }
+    });
     
     exportJson["attacks"] = attacksJson;
   }
