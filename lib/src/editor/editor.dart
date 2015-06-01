@@ -34,7 +34,7 @@ class Editor {
     Main.player = new Player(0, 0);
     
     Main.world = new World(() {
-      Main.world.loadMaps(() {
+      Main.world.loadGame(() {
         MapEditor.setUp();
         ObjectEditor.setUp();
         Editor.setUpTabs();

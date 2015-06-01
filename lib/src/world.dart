@@ -43,7 +43,7 @@ class World {
   Map<String, GameMap> maps = {};
   String curMap = "";
   
-  static final Map<String, Attack> attacks = {
+  static Map<String, Attack> attacks = {
     "Punch": new Attack("Punch", Attack.CATEGORY_PHYSICAL, 10),
     "Kick": new Attack("Kick", Attack.CATEGORY_PHYSICAL, 10),
     "Poke": new Attack("Poke", Attack.CATEGORY_PHYSICAL, 6),
@@ -98,7 +98,7 @@ class World {
     Main.player.inventory.addItem(new ItemPotion(), 2);
     
     // TODO: improve editor so less is needed in world class
-    loadMaps(() {
+    loadGame(() {
       curMap = "apartment";
       
       Battler common = new Battler(null, battlerTypes["Common"], 5, battlerTypes["Common"].levelAttacks.values.toList());
@@ -223,10 +223,10 @@ class World {
     });
   }
   
-  void loadMaps(Function callback) {
+  void loadGame(Function callback) {
     HttpRequest
       .getString("game.json")
-      .then(parseMaps)
+      .then(parseGame)
       .then((dynamic f) { if(callback != null) { callback(); } })
       .catchError((Error err) {
         print("Error loading maps! (${err})");
@@ -236,29 +236,45 @@ class World {
       });
   }
   
-  void parseMaps(String jsonString) {
+  void parseGame(String jsonString) {
     Map<String, Map> obj = JSON.decode(jsonString);
     
+    parseAttacks(obj["attacks"]);
+    parseMaps(obj["maps"]);
+  }
+  
+  void parseAttacks(Map<String, Map> attacksObject) {
+    attacks = {};
+    for(String attackName in attacksObject.keys) {
+      attacks[attackName] = new Attack(
+          attackName,
+          int.parse(attacksObject[attackName]["category"]),
+          int.parse(attacksObject[attackName]["power"])
+      );
+    }
+  }
+  
+  void parseMaps(Map<String, Map> mapsObject) {
     maps = {};
-    curMap = obj["maps"].keys.first;
+    curMap = mapsObject.keys.first;
     
-    for(String mapName in obj["maps"].keys) {
+    for(String mapName in mapsObject.keys) {
       GameMap gameMap = new GameMap(mapName);
       maps[mapName] = gameMap;
       maps[mapName].tiles = [];
       maps[mapName].characters = [];
       List<List<List<Tile>>> mapTiles = maps[mapName].tiles;
       
-      for(int y=0; y<obj["maps"][mapName]['tiles'].length; y++) {
+      for(int y=0; y<mapsObject[mapName]['tiles'].length; y++) {
         mapTiles.add([]);
         
-        for(int x=0; x<obj["maps"][mapName]['tiles'][y].length; x++) {
+        for(int x=0; x<mapsObject[mapName]['tiles'][y].length; x++) {
           mapTiles[y].add([]);
           
-          for(int k=0; k<obj["maps"][mapName]['tiles'][y][x].length; k++) {
+          for(int k=0; k<mapsObject[mapName]['tiles'][y][x].length; k++) {
             mapTiles[y][x].add(null);
             
-            var curTile = obj["maps"][mapName]['tiles'][y][x][k];
+            var curTile = mapsObject[mapName]['tiles'][y][x][k];
             
             if(curTile != null) {
               if(curTile['warp'] != null) {
