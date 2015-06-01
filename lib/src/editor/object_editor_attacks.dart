@@ -53,7 +53,16 @@ class ObjectEditorAttacks {
     setAttackDeleteButtonListeners();
     
     Function inputChangeFunction = (Event e) {
-      // TODO: fix attack name collisions
+      // fix name collisions
+      if(e.target is InputElement) {
+        InputElement target = e.target;
+        if(attacks.keys.contains(target.value)) {
+          int i = 0;
+          for(; attacks.keys.contains(target.value + "_${i}"); i++) {}
+          target.value += "_${i}";
+        }
+      }
+      
       attacks = new Map<String, Attack>();
       for(int i=0; querySelector('#attacks_name_${i}') != null; i++) {
         try {
