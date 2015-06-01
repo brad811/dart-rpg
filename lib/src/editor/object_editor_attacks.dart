@@ -36,14 +36,12 @@ class ObjectEditorAttacks {
         "<tr>"+
         "  <td>${i}</td>"+
         "  <td><input id='attacks_name_${i}' type='text' value='${ attacks[key].name }' /></td>"+
-        // TODO: make category a dropdown
         "  <td>"+
         "    <select id='attacks_category_${i}'>"+
-        "      <option>Physical</option>"+
-        "      <option>Magical</option>"+
+        "      <option value='"+Attack.CATEGORY_PHYSICAL.toString()+"'>Physical</option>"+
+        "      <option value='"+Attack.CATEGORY_MAGICAL.toString()+"'>Magical</option>"+
         "    </select>"+
         "  </td>"+
-        
         "  <td><input id='attacks_category_${i}' type='text' value='${ attacks[key].category }' /></td>"+
         "  <td><input id='attacks_power_${i}' type='text' value='${ attacks[key].power }' /></td>"+
         "  <td><button id='delete_attack_${i}'>Delete</button></td>" +
@@ -55,28 +53,36 @@ class ObjectEditorAttacks {
     setAttackDeleteButtonListeners();
     
     Function inputChangeFunction = (Event e) {
-      for(int i=0; i<attacks.keys.length; i++) {
+      // TODO: fix attack name collisions
+      attacks = new Map<String, Attack>();
+      for(int i=0; querySelector('#attacks_name_${i}') != null; i++) {
         try {
-          attacks[attacks.keys.elementAt(i)] = new Attack(
+          String name = (querySelector('#attacks_name_${i}') as InputElement).value;
+          attacks[name] = new Attack(
             (querySelector('#attacks_name_${i}') as InputElement).value,
-            int.parse((querySelector('#attacks_category_${i}') as InputElement).value),
+            int.parse((querySelector('#attacks_category_${i}') as SelectElement).value),
             int.parse((querySelector('#attacks_power_${i}') as InputElement).value)
           );
         } catch(e) {
           // could not update this attack
+          print("Error updating attack: " + e.toString());
         }
       }
       
-      // TODO: make it so this doesn't de-focus the input
-      InputElement target = e.target;
-      // TODO: need to find a way to update here without losing input focus and position
-      //   This is so other elements that reference this attack also get updated
-      InputElement inputElement = querySelector('#' + target.id);
-      int position = inputElement.selectionStart;
-      Editor.update();
-      inputElement = querySelector('#' + target.id);
-      inputElement.focus();
-      inputElement.setSelectionRange(position, position);
+      if(e.target is InputElement) {
+        // save the cursor location
+        InputElement target = e.target;
+        InputElement inputElement = querySelector('#' + target.id);
+        int position = inputElement.selectionStart;
+        
+        // update everything
+        Editor.update();
+        
+        // restore the cursor position
+        inputElement = querySelector('#' + target.id);
+        inputElement.focus();
+        inputElement.setSelectionRange(position, position);
+      }
     };
     
     List<String> attrs = ["name", "category", "power"];
