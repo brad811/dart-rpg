@@ -50,13 +50,17 @@ class ObjectEditorAttacks {
     setAttackDeleteButtonListeners();
     
     Function inputChangeFunction = (Event e) {
-      // fix name collisions
       if(e.target is InputElement) {
         InputElement target = e.target;
-        if(World.attacks.keys.contains(target.value)) {
+        
+        if(target.id.contains("attacks_name_") && World.attacks.keys.contains(target.value)) {
+          // avoid name collisions
           int i = 0;
           for(; World.attacks.keys.contains(target.value + "_${i}"); i++) {}
           target.value += "_${i}";
+        } else if(target.id.contains("attacks_power_")) {
+          // enforce number format
+          target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
         }
       }
       
