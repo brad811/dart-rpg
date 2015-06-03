@@ -3,6 +3,7 @@ library dart_rpg.object_editor_battler_types;
 import 'dart:async';
 import 'dart:html';
 
+import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/world.dart';
 
@@ -20,7 +21,7 @@ class ObjectEditorBattlerTypes {
     querySelector("#add_battler_type_button").onClick.listen((MouseEvent e) {
       // TODO: make rarity map-specific
       World.battlerTypes["New Battler Type"] = new BattlerType(
-          0, "Battler",
+          0, "New Battler",
           0, 0, 0, 0, 0, 0,
           {}, 1.0
         );
@@ -58,7 +59,14 @@ class ObjectEditorBattlerTypes {
         "  <td><input class='number' id='battler_types_physical_defense_${i}' type='text' value='${ World.battlerTypes[key].basePhysicalDefense }' /></td>"+
         "  <td><input class='number' id='battler_types_magical_defense_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalDefense }' /></td>"+
         "  <td><input class='number' id='battler_types_speed_${i}' type='text' value='${ World.battlerTypes[key].baseSpeed }' /></td>"+
-        "  <td>Level Attacks</td>"+
+        "  <td>";
+        
+      World.battlerTypes[key].levelAttacks.forEach((int level, Attack attack) {
+        battlerTypesHtml += "(${level},${attack.name})";
+      });
+        
+      battlerTypesHtml +=
+        "  </td>"+
         "  <td><input class='number' id='battler_types_rarity_${i}' type='text' value='${ World.battlerTypes[key].rarity }' /></td>"+
         "  <td><button id='delete_battler_type_${i}'>Delete</button></td>" +
         "</tr>";
@@ -143,16 +151,22 @@ class ObjectEditorBattlerTypes {
   static void export(Map<String, Object> exportJson) {
     Map<String, Map<String, String>> battlerTypesJson = {};
     World.battlerTypes.forEach((String key, BattlerType battlerType) {
-      Map<String, String> battlerTypeJson = {};
+      Map<String, Object> battlerTypeJson = {};
       
-      battlerTypeJson["sprite_id"] = battlerType.spriteId.toString();
+      battlerTypeJson["spriteId"] = battlerType.spriteId.toString();
       battlerTypeJson["health"] = battlerType.baseHealth.toString();
-      battlerTypeJson["physical_attack"] = battlerType.basePhysicalAttack.toString();
-      battlerTypeJson["magical_attack"] = battlerType.baseMagicalAttack.toString();
-      battlerTypeJson["physical_defense"] = battlerType.basePhysicalDefense.toString();
-      battlerTypeJson["magical_defense"] = battlerType.baseMagicalDefense.toString();
+      battlerTypeJson["physicalAttack"] = battlerType.basePhysicalAttack.toString();
+      battlerTypeJson["magicalAttack"] = battlerType.baseMagicalAttack.toString();
+      battlerTypeJson["physicalDefense"] = battlerType.basePhysicalDefense.toString();
+      battlerTypeJson["magicalDefense"] = battlerType.baseMagicalDefense.toString();
       battlerTypeJson["speed"] = battlerType.baseSpeed.toString();
-      battlerTypeJson["level_attacks"] = battlerType.levelAttacks.toString();
+      
+      Map<String, String> levelAttacks = {};
+      battlerType.levelAttacks.forEach((int level, Attack attack) {
+        levelAttacks[level.toString()] = attack.name;
+      });
+      battlerTypeJson["levelAttacks"] = levelAttacks;
+      
       battlerTypeJson["rarity"] = battlerType.rarity.toString();
       
       battlerTypesJson[battlerType.name] = battlerTypeJson;
