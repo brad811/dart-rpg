@@ -52,12 +52,12 @@ class ObjectEditorBattlerTypes {
         "  <td>${i}</td>"+
         "  <td><input class='number' id='battler_types_sprite_id_${i}' type='text' value='${ World.battlerTypes[key].spriteId }' /></td>"+
         "  <td><input id='battler_types_name_${i}' type='text' value='${ World.battlerTypes[key].name }' /></td>"+
-        "  <td><input class='number' id='battler_types_base_health_${i}' type='text' value='${ World.battlerTypes[key].baseHealth }' /></td>"+
-        "  <td><input class='number' id='battler_types_base_physical_attack_${i}' type='text' value='${ World.battlerTypes[key].basePhysicalAttack }' /></td>"+
-        "  <td><input class='number' id='battler_types_base_magical_attack_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalAttack }' /></td>"+
-        "  <td><input class='number' id='battler_types_base_physical_defense_${i}' type='text' value='${ World.battlerTypes[key].basePhysicalDefense }' /></td>"+
-        "  <td><input class='number' id='battler_types_base_magical_defense_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalDefense }' /></td>"+
-        "  <td><input class='number' id='battler_types_base_speed_${i}' type='text' value='${ World.battlerTypes[key].baseSpeed }' /></td>"+
+        "  <td><input class='number' id='battler_types_health_${i}' type='text' value='${ World.battlerTypes[key].baseHealth }' /></td>"+
+        "  <td><input class='number' id='battler_types_physical_attack_${i}' type='text' value='${ World.battlerTypes[key].basePhysicalAttack }' /></td>"+
+        "  <td><input class='number' id='battler_types_magical_attack_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalAttack }' /></td>"+
+        "  <td><input class='number' id='battler_types_physical_defense_${i}' type='text' value='${ World.battlerTypes[key].basePhysicalDefense }' /></td>"+
+        "  <td><input class='number' id='battler_types_magical_defense_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalDefense }' /></td>"+
+        "  <td><input class='number' id='battler_types_speed_${i}' type='text' value='${ World.battlerTypes[key].baseSpeed }' /></td>"+
         "  <td>Level Attacks</td>"+
         "  <td><input class='number' id='battler_types_rarity_${i}' type='text' value='${ World.battlerTypes[key].rarity }' /></td>"+
         "  <td><button id='delete_battler_type_${i}'>Delete</button></td>" +
@@ -90,12 +90,12 @@ class ObjectEditorBattlerTypes {
           World.battlerTypes[name] = new BattlerType(
             int.parse((querySelector('#battler_types_sprite_id_${i}') as InputElement).value),
             name,
-            int.parse((querySelector('#battler_types_base_health_${i}') as InputElement).value),
-            int.parse((querySelector('#battler_types_base_physical_attack_${i}') as InputElement).value),
-            int.parse((querySelector('#battler_types_base_magical_attack_${i}') as InputElement).value),
-            int.parse((querySelector('#battler_types_base_physical_defense_${i}') as InputElement).value),
-            int.parse((querySelector('#battler_types_base_magical_defense_${i}') as InputElement).value),
-            int.parse((querySelector('#battler_types_base_speed_${i}') as InputElement).value),
+            int.parse((querySelector('#battler_types_health_${i}') as InputElement).value),
+            int.parse((querySelector('#battler_types_physical_attack_${i}') as InputElement).value),
+            int.parse((querySelector('#battler_types_magical_attack_${i}') as InputElement).value),
+            int.parse((querySelector('#battler_types_physical_defense_${i}') as InputElement).value),
+            int.parse((querySelector('#battler_types_magical_defense_${i}') as InputElement).value),
+            int.parse((querySelector('#battler_types_speed_${i}') as InputElement).value),
             {},
             double.parse((querySelector('#battler_types_rarity_${i}') as InputElement).value)
           );
@@ -125,8 +125,8 @@ class ObjectEditorBattlerTypes {
     // TODO: perhaps move into base editor class
     List<String> attrs = [
       "sprite_id", "name",
-      "base_health", "base_physical_attack", "base_magical_attack",
-      "base_physical_defense", "base_magical_defense", "base_speed",
+      "health", "physical_attack", "magical_attack",
+      "physical_defense", "magical_defense", "speed",
       /* level attacks? */ "rarity"
     ];
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
@@ -146,12 +146,12 @@ class ObjectEditorBattlerTypes {
       Map<String, String> battlerTypeJson = {};
       
       battlerTypeJson["sprite_id"] = battlerType.spriteId.toString();
-      battlerTypeJson["base_health"] = battlerType.baseHealth.toString();
-      battlerTypeJson["base_physical_attack"] = battlerType.basePhysicalAttack.toString();
-      battlerTypeJson["base_magical_attack"] = battlerType.baseMagicalAttack.toString();
-      battlerTypeJson["base_physical_defense"] = battlerType.basePhysicalDefense.toString();
-      battlerTypeJson["base_magical_defense"] = battlerType.baseMagicalDefense.toString();
-      battlerTypeJson["base_speed"] = battlerType.baseSpeed.toString();
+      battlerTypeJson["health"] = battlerType.baseHealth.toString();
+      battlerTypeJson["physical_attack"] = battlerType.basePhysicalAttack.toString();
+      battlerTypeJson["magical_attack"] = battlerType.baseMagicalAttack.toString();
+      battlerTypeJson["physical_defense"] = battlerType.basePhysicalDefense.toString();
+      battlerTypeJson["magical_defense"] = battlerType.baseMagicalDefense.toString();
+      battlerTypeJson["speed"] = battlerType.baseSpeed.toString();
       battlerTypeJson["level_attacks"] = battlerType.levelAttacks.toString();
       battlerTypeJson["rarity"] = battlerType.rarity.toString();
       
