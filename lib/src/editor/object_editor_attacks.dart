@@ -14,7 +14,6 @@ class ObjectEditorAttacks {
   
   static void setUp() {
     querySelector("#add_attack_button").onClick.listen((MouseEvent e) {
-      // TODO: will have to use unique ids or something, like a database, so they can be deleted cleanly
       World.attacks["New Attack"] = new Attack("New Attack", Attack.CATEGORY_PHYSICAL, 0);
       update();
       ObjectEditor.update();
@@ -27,7 +26,6 @@ class ObjectEditorAttacks {
       "    <td>Num</td><td>Name</td><td>Category</td><td>Power</td>"+
       "  </tr>";
     for(int i=0; i<World.attacks.keys.length; i++) {
-      // TODO: change these div ids to be more specific so they don't collide with anything in the map editor
       String key = World.attacks.keys.elementAt(i);
       
       attacksHtml +=
@@ -47,7 +45,7 @@ class ObjectEditorAttacks {
     attacksHtml += "</table>";
     querySelector("#attacks_container").innerHtml = attacksHtml;
     
-    setAttackDeleteButtonListeners();
+    Editor.setDeleteButtonListeners(World.attacks, "attack", listeners);
     
     Function inputChangeFunction = (Event e) {
       if(e.target is InputElement) {
@@ -104,22 +102,6 @@ class ObjectEditorAttacks {
         listeners["#attacks_${attr}_${i}"] = 
             querySelector('#attacks_${attr}_${i}').onInput.listen(inputChangeFunction);
       }
-    }
-  }
-  
-  // TODO: generalize functions like this and put in main editor class
-  static void setAttackDeleteButtonListeners() {
-    for(int i=0; i<World.attacks.keys.length; i++) {
-      if(listeners["#delete_attack_${i}"] != null)
-        listeners["#delete_attack_${i}"].cancel();
-      
-      listeners["#delete_attack_${i}"] = querySelector("#delete_attack_${i}").onClick.listen((MouseEvent e) {
-        bool confirm = window.confirm('Are you sure you would like to delete this attack?');
-        if(confirm) {
-          World.attacks.remove(World.attacks.keys.elementAt(i));
-          Editor.update();
-        }
-      });
     }
   }
   
