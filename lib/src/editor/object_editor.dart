@@ -3,6 +3,7 @@ library dart_rpg.object_editor;
 import 'dart:html';
 
 import 'object_editor_attacks.dart';
+import 'object_editor_battler_types.dart';
 
 class ObjectEditor {
   static List<String> objectEditorTabs = ["attacks", "battler_types", "characters", "items"];
@@ -35,8 +36,8 @@ class ObjectEditor {
     objectEditorTabHeaderDivs[objectEditorTabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
     
     ObjectEditorAttacks.setUp();
-    /*
     ObjectEditorBattlerTypes.setUp();
+    /*
     ObjectEditorCharacters.setUp();
     ObjectEditorItems.setUp();
     */
@@ -44,17 +45,17 @@ class ObjectEditor {
   
   static void update() {
     ObjectEditorAttacks.update();
+    ObjectEditorBattlerTypes.update();
     /*
-    ObjectEditorBattlerTypes.setUp();
-    ObjectEditorCharacters.setUp();
-    ObjectEditorItems.setUp();
+    ObjectEditorCharacters.update();
+    ObjectEditorItems.update();
     */
   }
   
   static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {
     ObjectEditorAttacks.export(exportJson);
-    /*
     ObjectEditorBattlerTypes.export(exportJson);
+    /*
     ObjectEditorCharacters.export(exportJson);
     ObjectEditorItems.export(exportJson);
     */

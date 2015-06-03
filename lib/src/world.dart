@@ -53,7 +53,7 @@ class World {
     "Attack 74b": new Attack("Attack 74b", Attack.CATEGORY_MAGICAL, 9)
   };
   
-  static final Map<String, BattlerType> battlerTypes = {
+  static Map<String, BattlerType> battlerTypes = {
     "Player": new BattlerType(
       237, "Player", 8, 8, 8, 8, 8, 8,
       {

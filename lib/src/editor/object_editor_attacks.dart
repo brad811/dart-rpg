@@ -67,7 +67,7 @@ class ObjectEditorAttacks {
         try {
           String name = (querySelector('#attacks_name_${i}') as InputElement).value;
           World.attacks[name] = new Attack(
-            (querySelector('#attacks_name_${i}') as InputElement).value,
+            name,
             int.parse((querySelector('#attacks_category_${i}') as SelectElement).value),
             int.parse((querySelector('#attacks_power_${i}') as InputElement).value)
           );
