@@ -38,7 +38,7 @@ class ObjectEditorAttacks {
         "      <option value='"+Attack.CATEGORY_MAGICAL.toString()+"'>Magical</option>"+
         "    </select>"+
         "  </td>"+
-        "  <td><input id='attacks_power_${i}' type='text' value='${ World.attacks[key].power }' /></td>"+
+        "  <td><input class='number' id='attacks_power_${i}' type='text' value='${ World.attacks[key].power }' /></td>"+
         "  <td><button id='delete_attack_${i}'>Delete</button></td>" +
         "</tr>";
     }

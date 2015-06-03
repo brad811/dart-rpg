@@ -34,12 +34,13 @@ class ObjectEditorBattlerTypes {
       "  <tr>"+
       "    <td>Num</td>"+
       "    <td>Sprite Id</td>"+
-      "    <td>Base Health</td>"+
-      "    <td>Base Physical Attack</td>"+
-      "    <td>Base Magical Attack</td>"+
-      "    <td>Base Physical Defense</td>"+
-      "    <td>Base Magical Defense</td>"+
-      "    <td>Base Speed</td>"+
+      "    <td>Name</td>"+
+      "    <td>Health</td>"+
+      "    <td>Physical<br />Attack</td>"+
+      "    <td>Magical<br />Attack</td>"+
+      "    <td>Physical<br />Defense</td>"+
+      "    <td>Magical<br />Defense</td>"+
+      "    <td>Speed</td>"+
       "    <td>Level Attacks</td>"+
       "    <td>Rarity</td>"+
       "  </tr>";
@@ -49,16 +50,16 @@ class ObjectEditorBattlerTypes {
       battlerTypesHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input id='battler_types_sprite_id_${i}' type='text' value='${ World.battlerTypes[key].spriteId }' /></td>"+
+        "  <td><input class='number' id='battler_types_sprite_id_${i}' type='text' value='${ World.battlerTypes[key].spriteId }' /></td>"+
         "  <td><input id='battler_types_name_${i}' type='text' value='${ World.battlerTypes[key].name }' /></td>"+
-        "  <td><input id='battler_types_base_health_${i}' type='text' value='${ World.battlerTypes[key].baseHealth }' /></td>"+
-        "  <td><input id='battler_types_base_physical_attack_${i}' type='text' value='${ World.battlerTypes[key].basePhysicalAttack }' /></td>"+
-        "  <td><input id='battler_types_base_magical_attack_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalAttack }' /></td>"+
-        "  <td><input id='battler_types_base_physical_defense_${i}' type='text' value='${ World.battlerTypes[key].basePhysicalDefense }' /></td>"+
-        "  <td><input id='battler_types_base_magical_defense_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalDefense }' /></td>"+
-        "  <td><input id='battler_types_base_speed_${i}' type='text' value='${ World.battlerTypes[key].baseSpeed }' /></td>"+
+        "  <td><input class='number' id='battler_types_base_health_${i}' type='text' value='${ World.battlerTypes[key].baseHealth }' /></td>"+
+        "  <td><input class='number' id='battler_types_base_physical_attack_${i}' type='text' value='${ World.battlerTypes[key].basePhysicalAttack }' /></td>"+
+        "  <td><input class='number' id='battler_types_base_magical_attack_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalAttack }' /></td>"+
+        "  <td><input class='number' id='battler_types_base_physical_defense_${i}' type='text' value='${ World.battlerTypes[key].basePhysicalDefense }' /></td>"+
+        "  <td><input class='number' id='battler_types_base_magical_defense_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalDefense }' /></td>"+
+        "  <td><input class='number' id='battler_types_base_speed_${i}' type='text' value='${ World.battlerTypes[key].baseSpeed }' /></td>"+
         "  <td>Level Attacks</td>"+
-        "  <td><input id='battler_types_rarity_${i}' type='text' value='${ World.battlerTypes[key].rarity }' /></td>"+
+        "  <td><input class='number' id='battler_types_rarity_${i}' type='text' value='${ World.battlerTypes[key].rarity }' /></td>"+
         "  <td><button id='delete_battler_type_${i}'>Delete</button></td>" +
         "</tr>";
     }

@@ -187,6 +187,10 @@ body {
  * Object Editor
  */
 
+.number {
+  width: 30px;
+}
+
 #object_editor_tab td {
   vertical-align: top;
 }
