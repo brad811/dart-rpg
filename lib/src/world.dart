@@ -240,6 +240,7 @@ class World {
     Map<String, Map> obj = JSON.decode(jsonString);
     
     parseAttacks(obj["attacks"]);
+    parseBattlerTypes(obj["battlerTypes"]);
     parseMaps(obj["maps"]);
   }
   
@@ -251,6 +252,29 @@ class World {
           int.parse(attacksObject[attackName]["category"]),
           int.parse(attacksObject[attackName]["power"])
       );
+    }
+  }
+  
+  void parseBattlerTypes(Map<String, Map> battlerTypesObject) {
+    battlerTypes = {};
+    for(String battlerTypeName in battlerTypesObject.keys) {
+      battlerTypes[battlerTypeName] = new BattlerType(
+          int.parse(battlerTypesObject[battlerTypeName]["spriteId"]),
+          battlerTypeName,
+          int.parse(battlerTypesObject[battlerTypeName]["health"]),
+          int.parse(battlerTypesObject[battlerTypeName]["physicalAttack"]),
+          int.parse(battlerTypesObject[battlerTypeName]["magicalAttack"]),
+          int.parse(battlerTypesObject[battlerTypeName]["physicalDefense"]),
+          int.parse(battlerTypesObject[battlerTypeName]["magicalDefense"]),
+          int.parse(battlerTypesObject[battlerTypeName]["speed"]),
+          {},
+          double.parse(battlerTypesObject[battlerTypeName]["rarity"])
+      );
+      
+      Map<String, String> levelAttacks = battlerTypesObject[battlerTypeName]["levelAttacks"];
+      levelAttacks.forEach((String level, String attackName) {
+        battlerTypes[battlerTypeName].levelAttacks[int.parse(level)] = World.attacks[attackName];
+      });
     }
   }
   
