@@ -33,9 +33,18 @@ class ObjectEditorAttacks {
         "  <td>${i}</td>"+
         "  <td><input id='attacks_name_${i}' type='text' value='${ World.attacks[key].name }' /></td>"+
         "  <td>"+
-        "    <select id='attacks_category_${i}'>"+
-        "      <option value='"+Attack.CATEGORY_PHYSICAL.toString()+"'>Physical</option>"+
-        "      <option value='"+Attack.CATEGORY_MAGICAL.toString()+"'>Magical</option>"+
+        "    <select id='attacks_category_${i}'>";
+      
+      String physical_selected = "", magical_selected = "";
+      if(World.attacks[key].category == Attack.CATEGORY_PHYSICAL) {
+        physical_selected = "selected";
+      } else if(World.attacks[key].category == Attack.CATEGORY_MAGICAL) {
+        magical_selected = "selected";
+      }
+      attacksHtml += "<option value='"+Attack.CATEGORY_PHYSICAL.toString()+"' ${physical_selected}>Physical</option>";
+      attacksHtml += "<option value='"+Attack.CATEGORY_MAGICAL.toString()+"' ${magical_selected}>Magical</option>";
+      
+      attacksHtml +=
         "    </select>"+
         "  </td>"+
         "  <td><input class='number' id='attacks_power_${i}' type='text' value='${ World.attacks[key].power }' /></td>"+
@@ -90,6 +99,9 @@ class ObjectEditorAttacks {
         inputElement = querySelector('#' + target.id);
         inputElement.focus();
         inputElement.setSelectionRange(position, position);
+      } else {
+        // update everything
+        Editor.update();
       }
     };
     
