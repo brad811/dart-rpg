@@ -43,62 +43,26 @@ class World {
   Map<String, GameMap> maps = {};
   String curMap = "";
   
-  static Map<String, Attack> attacks = {
-    "Punch": new Attack("Punch", Attack.CATEGORY_PHYSICAL, 10),
-    "Kick": new Attack("Kick", Attack.CATEGORY_PHYSICAL, 10),
-    "Poke": new Attack("Poke", Attack.CATEGORY_PHYSICAL, 6),
-    "Headbutt": new Attack("Headbutt", Attack.CATEGORY_PHYSICAL, 8),
-    "Flail": new Attack("Flail", Attack.CATEGORY_PHYSICAL, 4),
-    "Jab": new Attack("Jab", Attack.CATEGORY_PHYSICAL, 7),
-    "Attack 74b": new Attack("Attack 74b", Attack.CATEGORY_MAGICAL, 9)
-  };
+  static Map<String, Attack> attacks = {};
   
-  static Map<String, BattlerType> battlerTypes = {
-    "Player": new BattlerType(
-      237, "Player", 8, 8, 8, 8, 8, 8,
-      {
-        1: attacks["Punch"],
-        2: attacks["Kick"]
-      },
-      1.0
-    ),
-    
-    "Common": new BattlerType(
-      237, "Common", 4, 4, 4, 4, 4, 4,
-      {
-        1: attacks["Poke"],
-        2: attacks["Headbutt"],
-        3: attacks["Flail"]
-      },
-      0.8
-    ),
-    
-    "Rare": new BattlerType(
-      237, "Rare", 6, 6, 6, 6, 6, 6,
-      {
-        1: attacks["Jab"],
-        2: attacks["Attack 74b"]
-      },
-      1.2
-    )
-  };
+  static Map<String, BattlerType> battlerTypes = {};
   
   final int
     viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
     viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
   
   World(Function callback) {
-    Main.player = new Player(3, 3);
-    Main.player.battler = new Battler(
-      "Player",
-      battlerTypes["Player"], 3,
-      battlerTypes["Player"].levelAttacks.values.toList()
-    );
-    
-    Main.player.inventory.addItem(new ItemPotion(), 2);
-    
     // TODO: improve editor so less is needed in world class
     loadGame(() {
+      Main.player = new Player(3, 3);
+      Main.player.battler = new Battler(
+        "Player",
+        battlerTypes["Player"], 3,
+        battlerTypes["Player"].levelAttacks.values.toList()
+      );
+      
+      Main.player.inventory.addItem(new ItemPotion(), 2);
+      
       curMap = "apartment";
       
       Battler common = new Battler(null, battlerTypes["Common"], 5, battlerTypes["Common"].levelAttacks.values.toList());
