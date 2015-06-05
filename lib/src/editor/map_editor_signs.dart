@@ -54,7 +54,7 @@ class MapEditorSigns {
     String signsHtml;
     signsHtml = "<table>"+
       "  <tr>"+
-      "    <td>Num</td><td>X</td><td>Y</td><td>Pic</td><td>Text</td>"+
+      "    <td>Num</td><td>X</td><td>Y</td><td>Pic</td><td>Text</td><td></td>"+
       "  </tr>";
     for(int i=0; i<signs[Main.world.curMap].length; i++) {
       signsHtml +=

@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/battler.dart';
+import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
@@ -15,14 +16,12 @@ class MapEditorBattlers {
   static Map<String, List<BattlerChance<Battler, double>>> battlerChances = {};
   static Map<String, StreamSubscription> listeners = {};
   
-  // TODO: allow management of battler types
-  
   static void setUp() {
     querySelector("#add_battler_button").onClick.listen((MouseEvent e) {
       battlerChances[Main.world.curMap].add(
         new BattlerChance(
-          new Battler( "Common", World.battlerTypes["Common"], 2, [] ),
-          0
+          new Battler( World.battlerTypes.keys.first, World.battlerTypes.values.first, 2, [] ),
+          1.0
         )
       );
       
@@ -43,15 +42,25 @@ class MapEditorBattlers {
     String battlersHtml;
     battlersHtml = "<table>"+
       "  <tr>"+
-      "    <td>#</td><td>Name</td><td>Type</td><td>Level</td>"+
+      "    <td>#</td><td>Battler Type</td><td>Level</td><td>Chance</td><td></td>"+
       "  </tr>";
     for(int i=0; i<battlerChances[Main.world.curMap].length; i++) {
       battlersHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input class='battlers_name_input' id='battlers_name_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.name }' /></td>"+
-        "  <td><input id='battlers_type_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.battlerType.name }' /></td>"+
-        "  <td><input id='battlers_level_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.level }' /></td>"+
+        "  <td>";
+      
+      battlersHtml += "<select id='map_battler_type_${i}'>";
+      World.battlerTypes.forEach((String name, BattlerType battlerType) {
+        battlersHtml += "<option value='${battlerType.name}'>${battlerType.name}</option>";
+      });
+      battlersHtml += "</select>";
+      
+      battlersHtml +=
+        "  </td>"+
+        "  <td><input id='map_battler_level_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].battler.level }' /></td>"+
+        "  <td><input id='map_battler_chance_${i}' type='text' value='${ battlerChances[Main.world.curMap][i].chance }' /></td>"+
+        "  <td><button id='delete_map_battler_${i}'>Delete</button></td>" +
         "</tr>";
     }
     battlersHtml += "</table>";
@@ -81,7 +90,7 @@ class MapEditorBattlers {
     };
     
     for(int i=0; i<battlerChances[Main.world.curMap].length; i++) {
-      List<String> attrs = ["name", "type", "level"];
+      List<String> attrs = [/*"name", */"type", "level"];
       for(String attr in attrs) {
         if(listeners["#battlers_${attr}_${i}"] != null)
           listeners["#battlers_${attr}_${i}"].cancel();

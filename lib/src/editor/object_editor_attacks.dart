@@ -41,14 +41,14 @@ class ObjectEditorAttacks {
       } else if(World.attacks[key].category == Attack.CATEGORY_MAGICAL) {
         magical_selected = "selected";
       }
-      attacksHtml += "<option value='"+Attack.CATEGORY_PHYSICAL.toString()+"' ${physical_selected}>Physical</option>";
-      attacksHtml += "<option value='"+Attack.CATEGORY_MAGICAL.toString()+"' ${magical_selected}>Magical</option>";
+      attacksHtml += "<option value='${Attack.CATEGORY_PHYSICAL}' ${physical_selected}>Physical</option>";
+      attacksHtml += "<option value='${Attack.CATEGORY_MAGICAL}' ${magical_selected}>Magical</option>";
       
       attacksHtml +=
         "    </select>"+
         "  </td>"+
         "  <td><input class='number' id='attacks_power_${i}' type='text' value='${ World.attacks[key].power }' /></td>"+
-        "  <td><button id='delete_attack_${i}'>Delete</button></td>" +
+        "  <td><button id='delete_attack_${i}'>Delete</button></td>"+
         "</tr>";
     }
     attacksHtml += "</table>";

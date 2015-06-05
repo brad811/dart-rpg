@@ -19,7 +19,6 @@ class ObjectEditorBattlerTypes {
   
   static void setUp() {
     querySelector("#add_battler_type_button").onClick.listen((MouseEvent e) {
-      // TODO: make rarity map-specific
       World.battlerTypes["New Battler Type"] = new BattlerType(
           0, "New Battler",
           0, 0, 0, 0, 0, 0,

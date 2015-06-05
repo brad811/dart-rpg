@@ -63,7 +63,7 @@ class MapEditorWarps {
     String warpsHtml;
     warpsHtml = "<table>"+
       "  <tr>"+
-      "    <td>Num</td><td>X</td><td>Y</td><td>Dest Map</td><td>Dest X</td><td>Dest Y</td>"+
+      "    <td>Num</td><td>X</td><td>Y</td><td>Dest Map</td><td>Dest X</td><td>Dest Y</td><td></td>"+
       "  </tr>";
     for(int i=0; i<warps[Main.world.curMap].length; i++) {
       warpsHtml +=
