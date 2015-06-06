@@ -13,7 +13,7 @@ class BattlerChance<Battler, double> {
   Battler battler;
   double chance;
   
-  BattlerChance(this.battler, this.chance);
+  BattlerChance(Battler this.battler, double this.chance);
 }
 
 class EncounterTile extends Tile {
