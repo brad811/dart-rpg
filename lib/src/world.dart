@@ -52,8 +52,8 @@ class World {
     viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
   
   World(Function callback) {
-    // TODO: improve editor so less is needed in world class
     loadGame(() {
+      // TODO: move player settings to editor
       Main.player = new Player(3, 3);
       Main.player.battler = new Battler(
         "Player",
@@ -63,15 +63,10 @@ class World {
       
       Main.player.inventory.addItem(new ItemPotion(), 2);
       
+      // TODO: move starting map setting to editor
       curMap = "apartment";
       
-      Battler common = new Battler(null, battlerTypes["Common"], 5, battlerTypes["Common"].levelAttacks.values.toList());
-      Battler rare = new Battler(null, battlerTypes["Rare"], 5, battlerTypes["Rare"].levelAttacks.values.toList());
-      maps["main"].battlerChances = [
-        new BattlerChance(common, 0.8),
-        new BattlerChance(rare, 0.2)
-      ];
-      
+      // TODO: move characters to editor
       // Character
       Character someKid = addCharacter(
         "main",
@@ -295,6 +290,27 @@ class World {
             }
           }
         }
+      }
+      
+      maps[mapName].battlerChances = [];
+      
+      for(int i=0; i<mapsObject[mapName]["battlers"].length; i++) {
+        //String mapBattlerName = mapsObject[mapName]["battlers"][i]["name"];
+        String mapBattlerType = mapsObject[mapName]["battlers"][i]["type"];
+        int mapBattlerLevel = mapsObject[mapName]["battlers"][i]["level"];
+        double mapBattlerChance = mapsObject[mapName]["battlers"][i]["chance"];
+        
+        Battler battler = new Battler(
+          mapBattlerType, World.battlerTypes[mapBattlerType],
+          mapBattlerLevel, World.battlerTypes[mapBattlerType].levelAttacks.values.toList()
+        );
+        
+        BattlerChance battlerChance = new BattlerChance(
+          battler,
+          mapBattlerChance
+        );
+        
+        maps[mapName].battlerChances.add(battlerChance);
       }
     }
   }

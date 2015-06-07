@@ -18,7 +18,7 @@ class MapEditorBattlers {
     querySelector("#add_battler_button").onClick.listen((MouseEvent e) {
       Main.world.maps[Main.world.curMap].battlerChances.add(
         new BattlerChance(
-          new Battler( World.battlerTypes.keys.first, World.battlerTypes.values.first, 2, [] ),
+          new Battler( World.battlerTypes.keys.first, World.battlerTypes.values.first, 1, [] ),
           1.0
         )
       );
@@ -55,6 +55,7 @@ class MapEditorBattlers {
         if(Main.world.maps[Main.world.curMap].battlerChances[i].battler.name == name) {
           battlersHtml += " selected";
         }
+        
         battlersHtml += ">${battlerType.name}</option>";
       });
       battlersHtml += "</select>";
@@ -150,7 +151,7 @@ class MapEditorBattlers {
     for(BattlerChance battlerChance in Main.world.maps[Main.world.curMap].battlerChances) {
       jsonMap["battlers"].add({
         "name": battlerChance.battler.name,
-        "type": battlerChance.battler.battlerType.name,
+        "type": battlerChance.battler.name,
         "level": battlerChance.battler.level,
         "chance": battlerChance.chance
       });

@@ -9,11 +9,11 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 
-class BattlerChance<Battler, double> {
+class BattlerChance {
   Battler battler;
   double chance;
   
-  BattlerChance(Battler this.battler, double this.chance);
+  BattlerChance(this.battler, this.chance);
 }
 
 class EncounterTile extends Tile {
