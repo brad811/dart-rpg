@@ -294,6 +294,7 @@ class World {
       
       maps[mapName].battlerChances = [];
       
+      double totalChance = 0.0;
       for(int i=0; i<mapsObject[mapName]["battlers"].length; i++) {
         //String mapBattlerName = mapsObject[mapName]["battlers"][i]["name"];
         String mapBattlerType = mapsObject[mapName]["battlers"][i]["type"];
@@ -310,8 +311,15 @@ class World {
           mapBattlerChance
         );
         
+        totalChance += mapBattlerChance;
+        
         maps[mapName].battlerChances.add(battlerChance);
       }
+      
+      // normalize the chances
+      maps[mapName].battlerChances.forEach((BattlerChance battlerChance) {
+        battlerChance.chance /= totalChance;
+      });
     }
   }
   
