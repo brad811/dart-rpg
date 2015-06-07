@@ -59,15 +59,28 @@ class ObjectEditorBattlerTypes {
         "  <td><input class='number' id='battler_types_magical_defense_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalDefense }' /></td>"+
         "  <td><input class='number' id='battler_types_speed_${i}' type='text' value='${ World.battlerTypes[key].baseSpeed }' /></td>"+
         "  <td>";
-        
-      World.battlerTypes[key].levelAttacks.forEach((int level, Attack attack) {
-        battlerTypesHtml += "(${level},${attack.name})";
+      
+      // TODO: enable adding and deleting level attacks
+      World.battlerTypes[key].levelAttacks.forEach((int level, Attack levelAttack) {
+        battlerTypesHtml += "<input class='number' type='text' value='${level}' />";
+        battlerTypesHtml += "<select>";
+        World.attacks.forEach((String name, Attack attack) {
+          battlerTypesHtml += "<option ";
+          if(name == levelAttack.name) {
+            battlerTypesHtml += "selected";
+          }
+          battlerTypesHtml += ">${attack.name}</option>";
+        });
+        battlerTypesHtml += "</select>";
+        battlerTypesHtml += "<button>Delete attack</button><br />";
       });
+      
+      battlerTypesHtml += "<button>Add attack</button>";
         
       battlerTypesHtml +=
         "  </td>"+
         "  <td><input class='number' id='battler_types_rarity_${i}' type='text' value='${ World.battlerTypes[key].rarity }' /></td>"+
-        "  <td><button id='delete_battler_type_${i}'>Delete</button></td>" +
+        "  <td><button id='delete_battler_type_${i}'>Delete battler type</button></td>" +
         "</tr>";
     }
     battlerTypesHtml += "</table>";
