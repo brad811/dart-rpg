@@ -33,7 +33,17 @@ class MapEditorBattlers {
       "  <tr>"+
       "    <td>#</td><td>Battler Type</td><td>Level</td><td>Chance</td><td></td>"+
       "  </tr>";
+    
+    double totalChance = 0.0;
     for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {
+      totalChance += Main.world.maps[Main.world.curMap].battlerChances[i].chance;
+    }
+    
+    for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {
+      int percentChance = 0;
+      if(totalChance != 0)
+        percentChance = (Main.world.maps[Main.world.curMap].battlerChances[i].chance / totalChance * 100).round();
+      
       battlersHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
@@ -52,7 +62,7 @@ class MapEditorBattlers {
       battlersHtml +=
         "  </td>"+
         "  <td><input id='map_battler_level_${i}' type='text' value='${ Main.world.maps[Main.world.curMap].battlerChances[i].battler.level }' /></td>"+
-        "  <td><input id='map_battler_chance_${i}' type='text' value='${ Main.world.maps[Main.world.curMap].battlerChances[i].chance }' /></td>"+
+        "  <td><input id='map_battler_chance_${i}' type='text' value='${ Main.world.maps[Main.world.curMap].battlerChances[i].chance }' /> ${percentChance}%</td>"+
         "  <td><button id='delete_map_battler_${i}'>Delete</button></td>" +
         "</tr>";
     }
@@ -64,7 +74,11 @@ class MapEditorBattlers {
         InputElement target = e.target;
         
         // enforce number format
-        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+        if(target.id.contains("map_battler_level_")) {
+          target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+        } else if(target.id.contains("map_battler_chance_")) {
+          target.value = target.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
+        }
       }
       
       Main.world.maps[Main.world.curMap].battlerChances = new List<BattlerChance>();
@@ -103,7 +117,7 @@ class MapEditorBattlers {
     };
     
     for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {
-      List<String> attrs = [/*"name", */"type", "level"];
+      List<String> attrs = ["type", "level", "chance"];
       for(String attr in attrs) {
         if(listeners["#map_battler_${attr}_${i}"] != null)
           listeners["#map_battler_${attr}_${i}"].cancel();

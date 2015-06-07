@@ -41,7 +41,7 @@ class MapEditorMaps {
       MapEditorCharacters.characters["new map"] = [];
       MapEditorWarps.warps["new map"] = [];
       MapEditorSigns.signs["new map"] = [];
-      MapEditorBattlers.battlerChances["new map"] = [];
+      Main.world.maps["new map"].battlerChances = [];
       
       update();
     });
@@ -106,7 +106,7 @@ class MapEditorMaps {
           newCharacters[newName] = MapEditorCharacters.characters[key];
           newWarps[newName] = MapEditorWarps.warps[key];
           newSigns[newName] = MapEditorSigns.signs[key];
-          newBattlers[newName] = MapEditorBattlers.battlerChances[key];
+          newBattlers[newName] = Main.world.maps[key].battlerChances;
           
           if(newName != key && Main.world.curMap == key && changedByUser)
             Main.world.curMap = newName;
@@ -124,7 +124,9 @@ class MapEditorMaps {
       MapEditorCharacters.characters = newCharacters;
       MapEditorWarps.warps = newWarps;
       MapEditorSigns.signs = newSigns;
-      MapEditorBattlers.battlerChances = newBattlers;
+      Main.world.maps.forEach((String mapName, GameMap map) {
+        map.battlerChances = newBattlers[mapName];
+      });
       
       setMapSelectorButtonListeners();
       
