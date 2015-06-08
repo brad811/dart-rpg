@@ -14,7 +14,6 @@ import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'map_editor.dart';
-import 'map_editor_battlers.dart';
 import 'map_editor_characters.dart';
 import 'map_editor_signs.dart';
 import 'map_editor_warps.dart';

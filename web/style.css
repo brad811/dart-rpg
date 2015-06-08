@@ -183,6 +183,11 @@ body {
   margin-left: 10px;
 }
 
+#export_json_object_editor {
+  width: 100%;
+  height: 100%;
+}
+
 /*
  * Object Editor
  */

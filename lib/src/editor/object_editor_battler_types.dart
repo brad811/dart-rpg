@@ -61,9 +61,10 @@ class ObjectEditorBattlerTypes {
         "  <td>";
       
       // TODO: enable adding and deleting level attacks
+      int j = 0;
       World.battlerTypes[key].levelAttacks.forEach((int level, Attack levelAttack) {
-        battlerTypesHtml += "<input class='number' type='text' value='${level}' />";
-        battlerTypesHtml += "<select>";
+        battlerTypesHtml += "<input class='number' id='battler_types_${i}_attack_${j}_level' type='text' value='${level}' />";
+        battlerTypesHtml += "<select id='battler_types_${i}_attack_${j}_name'>";
         World.attacks.forEach((String name, Attack attack) {
           battlerTypesHtml += "<option ";
           if(name == levelAttack.name) {
@@ -73,6 +74,8 @@ class ObjectEditorBattlerTypes {
         });
         battlerTypesHtml += "</select>";
         battlerTypesHtml += "<button>Delete attack</button><br />";
+        
+        j++;
       });
       
       battlerTypesHtml += "<button>Add attack</button>";
@@ -97,46 +100,67 @@ class ObjectEditorBattlerTypes {
           int i = 0;
           for(; World.battlerTypes.keys.contains(target.value + "_${i}"); i++) {}
           target.value += "_${i}";
-        } else if(target.id.contains("battler_types_power_")) {
+        } else if(target.id.contains("battler_types_magical_") || target.id.contains("battler_types_physical_")
+            || target.id.contains("battler_types_health_") || target.id.contains("battler_types_sprite_")
+            || target.id.contains("battler_types_speed_")) {
           // enforce number format
           target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+        } else if(target.id.contains("battler_types_rarity_")) {
+          target.value = target.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
         }
       }
       
       World.battlerTypes = new Map<String, BattlerType>();
       for(int i=0; querySelector('#battler_types_name_${i}') != null; i++) {
         try {
-          String name = (querySelector('#battler_types_name_${i}') as InputElement).value;
+          String name = Editor.getTextInputStringValue('#battler_types_name_${i}');
+          
+          Map<int, Attack> levelAttacks = new Map<int, Attack>();
+          for(int j=0; querySelector("#battler_types_${i}_attack_${j}_level") != null; j++) {
+            int level = Editor.getTextInputIntValue("#battler_types_${i}_attack_${j}_level", 1);
+            
+            Attack attack = new Attack(
+              Editor.getSelectInputStringValue("#battler_types_${i}_attack_${j}_name"),
+              Editor.getTextInputIntValue("#battler_types_${i}_attack_${j}_category", 0),
+              Editor.getTextInputIntValue("#battler_types_${i}_attack_${j}_power", 1)
+            );
+            
+            World.battlerTypes[name].levelAttacks[level] = attack;
+          }
+          
           World.battlerTypes[name] = new BattlerType(
-            int.parse((querySelector('#battler_types_sprite_id_${i}') as InputElement).value),
+            Editor.getTextInputIntValue('#battler_types_sprite_id_${i}', 1),
             name,
-            int.parse((querySelector('#battler_types_health_${i}') as InputElement).value),
-            int.parse((querySelector('#battler_types_physical_attack_${i}') as InputElement).value),
-            int.parse((querySelector('#battler_types_magical_attack_${i}') as InputElement).value),
-            int.parse((querySelector('#battler_types_physical_defense_${i}') as InputElement).value),
-            int.parse((querySelector('#battler_types_magical_defense_${i}') as InputElement).value),
-            int.parse((querySelector('#battler_types_speed_${i}') as InputElement).value),
-            {},
-            double.parse((querySelector('#battler_types_rarity_${i}') as InputElement).value)
+            Editor.getTextInputIntValue('#battler_types_health_${i}', 1),
+            Editor.getTextInputIntValue('#battler_types_physical_attack_${i}', 1),
+            Editor.getTextInputIntValue('#battler_types_magical_attack_${i}', 1),
+            Editor.getTextInputIntValue('#battler_types_physical_defense_${i}', 1),
+            Editor.getTextInputIntValue('#battler_types_magical_defense_${i}', 1),
+            Editor.getTextInputIntValue('#battler_types_speed_${i}', 1),
+            levelAttacks,
+            Editor.getTextInputDoubleValue('#battler_types_rarity_${i}', 1.0)
           );
-        } catch(e) {
+        } catch(e, stackTrace) {
           // could not update this battler type
           print("Error updating battler type: " + e.toString());
+          print(stackTrace);
         }
       }
       
       // TODO: perhaps move into base editor class
-      if(e.target is InputElement) {
+      if(e.target is TextInputElement) {
         // save the cursor location
-        InputElement target = e.target;
-        InputElement inputElement = querySelector('#' + target.id);
+        TextInputElement target = e.target;
+        TextInputElement inputElement = querySelector('#' + target.id);
         int position = inputElement.selectionStart;
+        String valueBefore = inputElement.value;
         
         // update everything
         Editor.update();
         
         // restore the cursor position
         inputElement = querySelector('#' + target.id);
+        inputElement.value = valueBefore;
         inputElement.focus();
         inputElement.setSelectionRange(position, position);
       }

@@ -68,6 +68,9 @@ class Editor {
     
     TextAreaElement textarea = querySelector("#export_json");
     textarea.value = JSON.encode(exportJson);
+    
+    TextAreaElement textarea2 = querySelector("#export_json_object_editor");
+    textarea2.value = JSON.encode(exportJson);
   }
   
   static void setUpTabs() {
@@ -106,6 +109,30 @@ class Editor {
           Editor.update();
         }
       });
+    }
+  }
+  
+  static String getSelectInputStringValue(String divId) {
+    return (querySelector(divId) as SelectElement).value;
+  }
+  
+  static String getTextInputStringValue(String divId) {
+    return (querySelector(divId) as TextInputElement).value;
+  }
+  
+  static int getTextInputIntValue(String divId, int defaultValue) {
+    try {
+      return int.parse((querySelector(divId) as TextInputElement).value);
+    } catch(e) {
+      return defaultValue;
+    }
+  }
+  
+  static double getTextInputDoubleValue(String divId, double defaultValue) {
+    try {
+      return double.parse((querySelector(divId) as TextInputElement).value);
+    } catch(e) {
+      return defaultValue;
     }
   }
 }
