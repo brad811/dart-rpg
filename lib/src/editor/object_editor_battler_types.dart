@@ -63,7 +63,6 @@ class ObjectEditorBattlerTypes {
       // TODO: enable adding and deleting level attacks
       int j = 0;
       World.battlerTypes[key].levelAttacks.forEach((int level, Attack levelAttack) {
-        print("Level attack: (${level},${levelAttack})");
         battlerTypesHtml += "<input class='number' id='battler_types_${i}_attack_${j}_level' type='text' value='${level}' />";
         battlerTypesHtml += "<select id='battler_types_${i}_attack_${j}_name'>";
         World.attacks.forEach((String name, Attack attack) {
@@ -121,7 +120,6 @@ class ObjectEditorBattlerTypes {
         try {
           String name = Editor.getTextInputStringValue('#battler_types_name_${i}');
           
-          print("Deleting...");
           Map<int, Attack> levelAttacks = new Map<int, Attack>();
           for(int j=0; querySelector("#battler_types_${i}_attack_${j}_level") != null; j++) {
             int level = Editor.getTextInputIntValue("#battler_types_${i}_attack_${j}_level", 1);
@@ -129,7 +127,6 @@ class ObjectEditorBattlerTypes {
             Attack attack = World.attacks[attackName];
             
             levelAttacks[level] = attack;
-            print("Adding: ${attack}");
           }
           
           World.battlerTypes[name] = new BattlerType(
