@@ -78,7 +78,7 @@ class ObjectEditorBattlerTypes {
         j++;
       });
       
-      battlerTypesHtml += "<button id='battler_type_${i}_add_attack'>Add attack</button>";
+      battlerTypesHtml += "<button id='add_battler_type_${i}_attack'>Add attack</button>";
         
       battlerTypesHtml +=
         "  </td>"+
@@ -88,6 +88,16 @@ class ObjectEditorBattlerTypes {
     }
     battlerTypesHtml += "</table>";
     querySelector("#battler_types_container").innerHtml = battlerTypesHtml;
+    
+    for(int i=0; i<World.battlerTypes.keys.length; i++) {
+      querySelector("#add_battler_type_${i}_attack").onClick.listen((MouseEvent e) {
+        BattlerType battlerType = World.battlerTypes.values.elementAt(i);
+        int nextLevel = 1;
+        for(;  battlerType.levelAttacks[nextLevel] != null; nextLevel++);
+        battlerType.levelAttacks[nextLevel] = World.attacks.values.first;
+        Editor.update();
+      });
+    }
     
     Editor.setDeleteButtonListeners(World.battlerTypes, "battler_type", listeners);
     
