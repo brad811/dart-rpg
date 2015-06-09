@@ -96,7 +96,7 @@ class Editor {
   }
   
   static void setDeleteButtonListeners(
-      Map<String, Object> target, String targetName, Map<String, StreamSubscription> listeners) {
+      Map<Object, Object> target, String targetName, Map<String, StreamSubscription> listeners) {
     for(int i=0; i<target.keys.length; i++) {
       if(listeners["#delete_${targetName}_${i}"] != null)
         listeners["#delete_${targetName}_${i}"].cancel();

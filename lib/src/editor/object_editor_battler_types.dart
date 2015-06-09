@@ -63,6 +63,7 @@ class ObjectEditorBattlerTypes {
       // TODO: enable adding and deleting level attacks
       int j = 0;
       World.battlerTypes[key].levelAttacks.forEach((int level, Attack levelAttack) {
+        print("Level attack: (${level},${levelAttack})");
         battlerTypesHtml += "<input class='number' id='battler_types_${i}_attack_${j}_level' type='text' value='${level}' />";
         battlerTypesHtml += "<select id='battler_types_${i}_attack_${j}_name'>";
         World.attacks.forEach((String name, Attack attack) {
@@ -73,12 +74,12 @@ class ObjectEditorBattlerTypes {
           battlerTypesHtml += ">${attack.name}</option>";
         });
         battlerTypesHtml += "</select>";
-        battlerTypesHtml += "<button>Delete attack</button><br />";
+        battlerTypesHtml += "<button id='delete_battler_type_${i}_attack_${j}'>Delete attack</button><br />";
         
         j++;
       });
       
-      battlerTypesHtml += "<button>Add attack</button>";
+      battlerTypesHtml += "<button id='battler_type_${i}_add_attack'>Add attack</button>";
         
       battlerTypesHtml +=
         "  </td>"+
@@ -91,6 +92,11 @@ class ObjectEditorBattlerTypes {
     
     Editor.setDeleteButtonListeners(World.battlerTypes, "battler_type", listeners);
     
+    for(int i=0; i<World.battlerTypes.keys.length; i++) {
+      BattlerType battlerType = World.battlerTypes.values.elementAt(i);
+      Editor.setDeleteButtonListeners(battlerType.levelAttacks, "battler_type_${i}_attack", listeners);
+    }
+    
     Function inputChangeFunction = (Event e) {
       if(e.target is InputElement) {
         InputElement target = e.target;
@@ -102,7 +108,7 @@ class ObjectEditorBattlerTypes {
           target.value += "_${i}";
         } else if(target.id.contains("battler_types_magical_") || target.id.contains("battler_types_physical_")
             || target.id.contains("battler_types_health_") || target.id.contains("battler_types_sprite_")
-            || target.id.contains("battler_types_speed_")) {
+            || target.id.contains("battler_types_speed_") || target.id.contains("_level")) {
           // enforce number format
           target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
         } else if(target.id.contains("battler_types_rarity_")) {
@@ -115,17 +121,15 @@ class ObjectEditorBattlerTypes {
         try {
           String name = Editor.getTextInputStringValue('#battler_types_name_${i}');
           
+          print("Deleting...");
           Map<int, Attack> levelAttacks = new Map<int, Attack>();
           for(int j=0; querySelector("#battler_types_${i}_attack_${j}_level") != null; j++) {
             int level = Editor.getTextInputIntValue("#battler_types_${i}_attack_${j}_level", 1);
+            String attackName = Editor.getSelectInputStringValue("#battler_types_${i}_attack_${j}_name");
+            Attack attack = World.attacks[attackName];
             
-            Attack attack = new Attack(
-              Editor.getSelectInputStringValue("#battler_types_${i}_attack_${j}_name"),
-              Editor.getTextInputIntValue("#battler_types_${i}_attack_${j}_category", 0),
-              Editor.getTextInputIntValue("#battler_types_${i}_attack_${j}_power", 1)
-            );
-            
-            World.battlerTypes[name].levelAttacks[level] = attack;
+            levelAttacks[level] = attack;
+            print("Adding: ${attack}");
           }
           
           World.battlerTypes[name] = new BattlerType(
@@ -163,6 +167,9 @@ class ObjectEditorBattlerTypes {
         inputElement.value = valueBefore;
         inputElement.focus();
         inputElement.setSelectionRange(position, position);
+      } else {
+        // update everything
+        Editor.update();
       }
     };
     
@@ -180,6 +187,22 @@ class ObjectEditorBattlerTypes {
         
         listeners["#battler_types_${attr}_${i}"] = 
             querySelector('#battler_types_${attr}_${i}').onInput.listen(inputChangeFunction);
+      }
+    }
+    
+    for(int i=0; i<World.battlerTypes.keys.length; i++) {
+      for(int j=0; j<World.battlerTypes.values.elementAt(i).levelAttacks.values.length; j++) {
+        if(listeners["#battler_types_${i}_attack_${j}_level"] != null)
+          listeners["#battler_types_${i}_attack_${j}_level"].cancel();
+        
+        listeners["#battler_types_${i}_attack_${j}_level"] = 
+            querySelector('#battler_types_${i}_attack_${j}_level').onInput.listen(inputChangeFunction);
+        
+        if(listeners["#battler_types_${i}_attack_${j}_name"] != null)
+          listeners["#battler_types_${i}_attack_${j}_name"].cancel();
+        
+        listeners["#battler_types_${i}_attack_${j}_name"] = 
+            querySelector('#battler_types_${i}_attack_${j}_name').onInput.listen(inputChangeFunction);
       }
     }
   }
