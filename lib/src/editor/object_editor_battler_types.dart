@@ -60,7 +60,6 @@ class ObjectEditorBattlerTypes {
         "  <td><input class='number' id='battler_types_speed_${i}' type='text' value='${ World.battlerTypes[key].baseSpeed }' /></td>"+
         "  <td>";
       
-      // TODO: enable adding and deleting level attacks
       int j = 0;
       World.battlerTypes[key].levelAttacks.forEach((int level, Attack levelAttack) {
         battlerTypesHtml += "<input class='number' id='battler_types_${i}_attack_${j}_level' type='text' value='${level}' />";
