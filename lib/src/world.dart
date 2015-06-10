@@ -250,10 +250,7 @@ class World {
       
       // set the map the game will start on
       if(mapsObject[mapName]["startMap"] == true) {
-        print("Start map: ${mapName}, ${mapsObject[mapName]["startMap"]}");
         startMap = mapName;
-      } else {
-        print("Not the start map: ${mapName}, ${mapsObject[mapName]["startMap"]}");
       }
       
       List<List<List<Tile>>> mapTiles = maps[mapName].tiles;
