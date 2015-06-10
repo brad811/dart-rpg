@@ -42,6 +42,7 @@ class World {
   
   Map<String, GameMap> maps = {};
   String curMap = "";
+  String startMap = "";
   
   static Map<String, Attack> attacks = {};
   
@@ -63,8 +64,8 @@ class World {
       
       Main.player.inventory.addItem(new ItemPotion(), 2);
       
-      // TODO: move starting map setting to editor
-      curMap = "apartment";
+      // move to the start map
+      curMap = startMap;
       
       // TODO: move characters to editor
       // Character
@@ -246,6 +247,15 @@ class World {
       maps[mapName] = gameMap;
       maps[mapName].tiles = [];
       maps[mapName].characters = [];
+      
+      // set the map the game will start on
+      if(mapsObject[mapName]["startMap"] == true) {
+        print("Start map: ${mapName}, ${mapsObject[mapName]["startMap"]}");
+        startMap = mapName;
+      } else {
+        print("Not the start map: ${mapName}, ${mapsObject[mapName]["startMap"]}");
+      }
+      
       List<List<List<Tile>>> mapTiles = maps[mapName].tiles;
       
       for(int y=0; y<mapsObject[mapName]['tiles'].length; y++) {

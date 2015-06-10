@@ -48,7 +48,19 @@ class MapEditorMaps {
   
   static void update() {
     String mapsHtml;
-    mapsHtml = "<table>"+
+    
+    mapsHtml = "<hr />Start map: <select id='start_map'>";
+    for(int i=0; i<Main.world.maps.keys.length; i++) {
+      String mapName = Main.world.maps.keys.elementAt(i);
+      mapsHtml += "<option";
+      if(Main.world.startMap == mapName) {
+        mapsHtml += " selected";
+      }
+      mapsHtml += ">${mapName}</option>";
+    }
+    mapsHtml += "</select><hr />";
+    
+    mapsHtml += "<table>"+
       "  <tr>"+
       "    <td>Num</td><td>Name</td><td>X Size</td><td>Y Size</td><td>Chars</td>"+
       "  </tr>";
@@ -138,6 +150,17 @@ class MapEditorMaps {
       
       listeners["#maps_name_${i}"] = querySelector('#maps_name_${i}').onInput.listen(inputChangeFunction);
     }
+    
+    // set the listener for the start map dropdown
+    Function startMapChangeFunction = (Event e) {
+      Main.world.startMap = (querySelector('#start_map') as SelectElement).value;
+      MapEditor.updateMap(shouldExport: true);
+    };
+    
+    if(listeners["#start_map"] != null)
+      listeners["#start_map"].cancel();
+    
+    listeners["#start_map"] = querySelector('#start_map').onInput.listen(startMapChangeFunction);
     
     setUpLayerVisibilityToggles();
     setUpMapSizeButtons();

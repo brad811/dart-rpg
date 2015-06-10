@@ -429,6 +429,9 @@ class MapEditor {
       MapEditorBattlers.export(exportJson["maps"][key], key);
       
       exportJson["maps"][key]['tiles'] = jsonMap;
+      if(Main.world.startMap == key) {
+        exportJson["maps"][key]['startMap'] = true;
+      }
     }
   }
 }
