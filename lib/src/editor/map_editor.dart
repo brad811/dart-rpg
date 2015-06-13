@@ -431,6 +431,8 @@ class MapEditor {
       exportJson["maps"][key]['tiles'] = jsonMap;
       if(Main.world.startMap == key) {
         exportJson["maps"][key]['startMap'] = true;
+        exportJson["maps"][key]['startX'] = Main.world.startX;
+        exportJson["maps"][key]['startY'] = Main.world.startY;
       }
     }
   }

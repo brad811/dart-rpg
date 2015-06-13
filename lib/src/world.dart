@@ -42,7 +42,9 @@ class World {
   
   Map<String, GameMap> maps = {};
   String curMap = "";
+  
   String startMap = "";
+  int startX = 0, startY = 0;
   
   static Map<String, Attack> attacks = {};
   
@@ -55,7 +57,7 @@ class World {
   World(Function callback) {
     loadGame(() {
       // TODO: move player settings to editor
-      Main.player = new Player(3, 3);
+      Main.player = new Player(startX, startY);
       Main.player.battler = new Battler(
         "Player",
         battlerTypes["Player"], 3,
@@ -251,6 +253,8 @@ class World {
       // set the map the game will start on
       if(mapsObject[mapName]["startMap"] == true) {
         startMap = mapName;
+        startX = mapsObject[mapName]["startX"];
+        startY = mapsObject[mapName]["startY"];
       }
       
       List<List<List<Tile>>> mapTiles = maps[mapName].tiles;

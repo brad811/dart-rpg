@@ -58,7 +58,10 @@ class MapEditorMaps {
       }
       mapsHtml += ">${mapName}</option>";
     }
-    mapsHtml += "</select><hr />";
+    mapsHtml += "</select>&nbsp;&nbsp;&nbsp;&nbsp;";
+    mapsHtml += "X: <input id='player_start_x' type='text' class='number' value='${Main.world.startX}' />&nbsp;&nbsp;&nbsp;&nbsp;";
+    mapsHtml += "Y: <input id='player_start_y' type='text' class='number' value='${Main.world.startY}' />";
+    mapsHtml += "<hr />";
     
     mapsHtml += "<table>"+
       "  <tr>"+
@@ -151,16 +154,30 @@ class MapEditorMaps {
       listeners["#maps_name_${i}"] = querySelector('#maps_name_${i}').onInput.listen(inputChangeFunction);
     }
     
-    // set the listener for the start map dropdown
+    // set the listener for the start map and location
     Function startMapChangeFunction = (Event e) {
       Main.world.startMap = (querySelector('#start_map') as SelectElement).value;
+      
+      if(e.target is TextInputElement) {
+        TextInputElement target = e.target as TextInputElement;
+        if(target.id.contains("player_start_")) {
+          // enforce number format
+          target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+        }
+      }
+      
+      Main.world.startX = int.parse((querySelector('#player_start_x') as TextInputElement).value);
+      Main.world.startY = int.parse((querySelector('#player_start_y') as TextInputElement).value);
       MapEditor.updateMap(shouldExport: true);
     };
     
-    if(listeners["#start_map"] != null)
-      listeners["#start_map"].cancel();
-    
-    listeners["#start_map"] = querySelector('#start_map').onInput.listen(startMapChangeFunction);
+    List<String> ids = ["start_map", "player_start_x", "player_start_y"];
+    ids.forEach((String id) {
+      if(listeners["#${id}"] != null)
+        listeners["#${id}"].cancel();
+      
+      listeners["#${id}"] = querySelector('#${id}').onInput.listen(startMapChangeFunction);
+    });
     
     setUpLayerVisibilityToggles();
     setUpMapSizeButtons();
