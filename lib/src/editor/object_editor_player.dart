@@ -3,9 +3,12 @@ library dart_rpg.object_editor_player;
 import 'dart:async';
 import 'dart:html';
 
+import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
+
+import 'package:dart_rpg/src/editor/editor.dart';
 
 class ObjectEditorPlayer {
   static Map<String, StreamSubscription> listeners = {};
@@ -18,16 +21,16 @@ class ObjectEditorPlayer {
     // TODO: everything else for this tab
     String playerHtml = "<table>"+
       "  <tr>"+
-      "    <td>Name</td><td>Battler Type</td><td>Level</td><td>X</td><td>Y</td>"+
+      "    <td>Name</td><td>Battler Type</td><td>Level</td>"+
       "  </tr>"+
       "  <tr>"+
-      "    <td><input type='text' value='${Main.player.battler.name}' /></td>"+
+      "    <td><input id='player_name' type='text' value='${Main.player.battler.name}' /></td>"+
       "    <td>";
       
-    playerHtml += "<select id='object_editor_player_battler_type'>";
+    playerHtml += "<select id='player_battler_type'>";
     World.battlerTypes.forEach((String name, BattlerType battlerType) {
       playerHtml += "<option value='${battlerType.name}'";
-      if(Main.player.battler.name == name) {
+      if(Main.player.battler.battlerType.name == name) {
         playerHtml += " selected";
       }
       
@@ -37,16 +40,63 @@ class ObjectEditorPlayer {
       
     playerHtml +=
       "    </td>"+
-      "    <td><input type='text' class='number' value='${Main.player.battler.level}' /></td>"+
+      "    <td><input id='player_level' type='text' class='number' value='${Main.player.battler.level}' /></td>"+
       "  </tr>";
     playerHtml += "</table>";
     querySelector("#player_container").innerHtml = playerHtml;
+    
+    // set the listener for the start map and location
+    Function inputChangeFunction = (Event e) {
+      String battlerType = (querySelector('#player_battler_type') as SelectElement).value;
+      
+      if(e.target is TextInputElement) {
+        TextInputElement target = e.target as TextInputElement;
+        if(target.id.contains("player_level")) {
+          // enforce number format
+          target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+        }
+      }
+      
+      Main.player.battler = new Battler(
+        (querySelector('#player_name') as TextInputElement).value,
+        World.battlerTypes[battlerType],
+        int.parse((querySelector('#player_level') as TextInputElement).value),
+        World.battlerTypes[battlerType].levelAttacks.values.toList()
+      );
+      
+      if(e.target is TextInputElement) {
+        // save the cursor location
+        TextInputElement target = e.target;
+        TextInputElement inputElement = querySelector('#' + target.id);
+        int position = inputElement.selectionStart;
+        
+        // update everything
+        Editor.update();
+        
+        // restore the cursor position
+        inputElement = querySelector('#' + target.id);
+        inputElement.focus();
+        inputElement.setSelectionRange(position, position);
+      } else {
+        // update everything
+        Editor.update();
+      }
+    };
+    
+    List<String> ids = ["player_name", "player_battler_type", "player_level"];
+    ids.forEach((String id) {
+      if(listeners["#${id}"] != null)
+        listeners["#${id}"].cancel();
+      
+      listeners["#${id}"] = querySelector('#${id}').onInput.listen(inputChangeFunction);
+    });
   }
   
   static void export(Map<String, Object> exportJson) {
     Map<String, String> playerJson = {};
-    playerJson["x"] = Main.player.mapX.toString();
-    playerJson["y"] = Main.player.mapY.toString();
+    playerJson["name"] = Main.player.battler.name;
+    playerJson["battlerType"] = Main.player.battler.battlerType.name;
+    playerJson["level"] = Main.player.battler.level.toString();
     
     exportJson["player"] = playerJson;
   }

@@ -86,10 +86,10 @@ class ObjectEditorAttacks {
         }
       }
       
-      if(e.target is InputElement) {
+      if(e.target is TextInputElement) {
         // save the cursor location
-        InputElement target = e.target;
-        InputElement inputElement = querySelector('#' + target.id);
+        TextInputElement target = e.target;
+        TextInputElement inputElement = querySelector('#' + target.id);
         int position = inputElement.selectionStart;
         
         // update everything

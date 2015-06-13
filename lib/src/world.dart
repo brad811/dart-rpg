@@ -204,6 +204,7 @@ class World {
     parseAttacks(obj["attacks"]);
     parseBattlerTypes(obj["battlerTypes"]);
     parseMaps(obj["maps"]);
+    parsePlayer(obj["player"]);
   }
   
   void parseAttacks(Map<String, Map> attacksObject) {
@@ -332,6 +333,15 @@ class World {
         battlerChance.chance /= totalChance;
       });
     }
+  }
+  
+  void parsePlayer(Map<String, String> playerObject) {
+    Main.player = new Player(startX, startY);
+    Main.player.battler = new Battler(
+      playerObject["name"],
+      battlerTypes[playerObject["battlerType"]], int.parse(playerObject["level"]),
+      battlerTypes[playerObject["battlerType"]].levelAttacks.values.toList()
+    );
   }
   
   void chainCharacterMovement(Character character, List<int> directions, Function callback) {
