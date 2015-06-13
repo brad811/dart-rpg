@@ -56,14 +56,7 @@ class World {
   
   World(Function callback) {
     loadGame(() {
-      // TODO: move player settings to editor
-      Main.player = new Player(startX, startY);
-      Main.player.battler = new Battler(
-        "Player",
-        battlerTypes["Player"], 3,
-        battlerTypes["Player"].levelAttacks.values.toList()
-      );
-      
+      // TODO: move player inventory settings to editor
       Main.player.inventory.addItem(new ItemPotion(), 2);
       
       // move to the start map
