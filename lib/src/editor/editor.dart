@@ -112,6 +112,43 @@ class Editor {
     }
   }
   
+  static void updateAndRetainValue(Event e) {
+    if(e.target is TextInputElement) {
+      // save the cursor location
+      TextInputElement target = e.target;
+      TextInputElement inputElement = querySelector('#' + target.id);
+      int position = inputElement.selectionStart;
+      String valueBefore = inputElement.value;
+      
+      // update everything
+      Editor.update();
+      
+      // restore the cursor position
+      inputElement = querySelector('#' + target.id);
+      inputElement.value = valueBefore;
+      inputElement.focus();
+      inputElement.setSelectionRange(position, position);
+    } else if(e.target is TextAreaElement) {
+      // save the cursor location
+      TextAreaElement target = e.target;
+      TextAreaElement inputElement = querySelector('#' + target.id);
+      int position = inputElement.selectionStart;
+      String valueBefore = inputElement.value;
+      
+      // update everything
+      Editor.update();
+      
+      // restore the cursor position
+      inputElement = querySelector('#' + target.id);
+      inputElement.value = valueBefore;
+      inputElement.focus();
+      inputElement.setSelectionRange(position, position);
+    } else {
+      // update everything
+      Editor.update();
+    }
+  }
+  
   static String getSelectInputStringValue(String divId) {
     return (querySelector(divId) as SelectElement).value;
   }

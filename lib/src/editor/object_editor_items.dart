@@ -26,15 +26,15 @@ class ObjectEditorItems {
       "    <td>Num</td><td>Picture Id</td><td>Name</td><td>Base Price</td><td>Description</td>"+
       "  </tr>";
     for(int i=0; i<World.items.keys.length; i++) {
-      String key = World.items.keys.elementAt(i);
+      Item item = World.items.values.elementAt(i);
       
       itemsHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input class='number' id='item_picture_id_${i}' type='text' value='${i}' /></td>"+
-        "  <td><input id='item_name_${i}' type='text' value='${i}' /></td>"+
-        "  <td><input class='number' id='item_base_price_${i}' type='text' value='${i}' /></td>"+
-        "  <td><textarea id='item_description_${i}' />${i}</textarea></td>"+
+        "  <td><input class='number' id='item_picture_id_${i}' type='text' value='${item.pictureId}' /></td>"+
+        "  <td><input id='item_name_${i}' type='text' value='${item.name}' /></td>"+
+        "  <td><input class='number' id='item_base_price_${i}' type='text' value='${item.basePrice}' /></td>"+
+        "  <td><textarea id='item_description_${i}' />${item.description}</textarea></td>"+
         "  <td><button id='delete_item_${i}'>Delete</button></td>"+
         "</tr>";
     }
@@ -61,32 +61,20 @@ class ObjectEditorItems {
       World.items = new Map<String, Item>();
       for(int i=0; querySelector('#item_name_${i}') != null; i++) {
         try {
-          String name = (querySelector('#item_name_${i}') as InputElement).value;
-          World.items[name] = new Item();
+          String name = (querySelector('#item_name_${i}') as TextInputElement).value;
+          World.items[name] = new Item(
+            Editor.getTextInputIntValue('#item_picture_id_${i}', 1),
+            name,
+            Editor.getTextInputIntValue('#item_base_price_${i}', 1),
+            (querySelector('#item_description_${i}') as TextAreaElement).value
+          );
         } catch(e) {
           // could not update this item
           print("Error updating item: " + e.toString());
         }
       }
       
-      // TODO: account for textarea
-      if(e.target is TextInputElement) {
-        // save the cursor location
-        TextInputElement target = e.target;
-        TextInputElement inputElement = querySelector('#' + target.id);
-        int position = inputElement.selectionStart;
-        
-        // update everything
-        Editor.update();
-        
-        // restore the cursor position
-        inputElement = querySelector('#' + target.id);
-        inputElement.focus();
-        inputElement.setSelectionRange(position, position);
-      } else {
-        // update everything
-        Editor.update();
-      }
+      Editor.updateAndRetainValue(e);
     };
     
     List<String> attrs = ["picture_id", "name", "base_price", "description"];
