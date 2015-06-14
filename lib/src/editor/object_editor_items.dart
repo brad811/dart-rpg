@@ -9,6 +9,10 @@ import 'package:dart_rpg/src/world.dart';
 import 'editor.dart';
 import 'object_editor.dart';
 
+// TODO: item effects
+// TODO: when you can use items
+// TODO: item targets
+
 class ObjectEditorItems {
   static Map<String, StreamSubscription> listeners = {};
   

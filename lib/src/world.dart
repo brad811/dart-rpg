@@ -198,6 +198,7 @@ class World {
     parseAttacks(obj["attacks"]);
     parseBattlerTypes(obj["battlerTypes"]);
     parseMaps(obj["maps"]);
+    parseItems(obj["items"]);
     parsePlayer(obj["player"]);
   }
   
@@ -326,6 +327,18 @@ class World {
       maps[mapName].battlerChances.forEach((BattlerChance battlerChance) {
         battlerChance.chance /= totalChance;
       });
+    }
+  }
+  
+  void parseItems(Map<String, Map> attacksObject) {
+    items = {};
+    for(String itemName in attacksObject.keys) {
+      items[itemName] = new Item(
+          int.parse(attacksObject[itemName]["pictureId"]),
+          itemName,
+          int.parse(attacksObject[itemName]["basePrice"]),
+          attacksObject[itemName]["description"]
+      );
     }
   }
   
