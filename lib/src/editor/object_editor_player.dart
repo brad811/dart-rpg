@@ -64,23 +64,7 @@ class ObjectEditorPlayer {
         World.battlerTypes[battlerType].levelAttacks.values.toList()
       );
       
-      if(e.target is TextInputElement) {
-        // save the cursor location
-        TextInputElement target = e.target;
-        TextInputElement inputElement = querySelector('#' + target.id);
-        int position = inputElement.selectionStart;
-        
-        // update everything
-        Editor.update();
-        
-        // restore the cursor position
-        inputElement = querySelector('#' + target.id);
-        inputElement.focus();
-        inputElement.setSelectionRange(position, position);
-      } else {
-        // update everything
-        Editor.update();
-      }
+      Editor.updateAndRetainValue(e);
     };
     
     List<String> ids = ["player_name", "player_battler_type", "player_level"];

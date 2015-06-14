@@ -86,23 +86,7 @@ class ObjectEditorAttacks {
         }
       }
       
-      if(e.target is TextInputElement) {
-        // save the cursor location
-        TextInputElement target = e.target;
-        TextInputElement inputElement = querySelector('#' + target.id);
-        int position = inputElement.selectionStart;
-        
-        // update everything
-        Editor.update();
-        
-        // restore the cursor position
-        inputElement = querySelector('#' + target.id);
-        inputElement.focus();
-        inputElement.setSelectionRange(position, position);
-      } else {
-        // update everything
-        Editor.update();
-      }
+      Editor.updateAndRetainValue(e);
     };
     
     List<String> attrs = ["name", "category", "power"];

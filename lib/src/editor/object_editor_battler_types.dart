@@ -157,26 +157,7 @@ class ObjectEditorBattlerTypes {
         }
       }
       
-      // TODO: perhaps move into base editor class
-      if(e.target is TextInputElement) {
-        // save the cursor location
-        TextInputElement target = e.target;
-        TextInputElement inputElement = querySelector('#' + target.id);
-        int position = inputElement.selectionStart;
-        String valueBefore = inputElement.value;
-        
-        // update everything
-        Editor.update();
-        
-        // restore the cursor position
-        inputElement = querySelector('#' + target.id);
-        inputElement.value = valueBefore;
-        inputElement.focus();
-        inputElement.setSelectionRange(position, position);
-      } else {
-        // update everything
-        Editor.update();
-      }
+      Editor.updateAndRetainValue(e);
     };
     
     // TODO: perhaps move into base editor class
