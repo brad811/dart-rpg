@@ -16,6 +16,7 @@ import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/inventory.dart';
+import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/item_potion.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
@@ -47,8 +48,8 @@ class World {
   int startX = 0, startY = 0;
   
   static Map<String, Attack> attacks = {};
-  
   static Map<String, BattlerType> battlerTypes = {};
+  static Map<String, Item> items = {};
   
   final int
     viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
