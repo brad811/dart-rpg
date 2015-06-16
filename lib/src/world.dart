@@ -193,7 +193,12 @@ class World {
   }
   
   void parseGame(String jsonString) {
-    Map<String, Map> obj = JSON.decode(jsonString);
+    TextAreaElement gameJson = querySelector("#game_json");
+    if(gameJson != null && gameJson.value == "") {
+      gameJson.value = jsonString;
+    }
+    
+    Map<String, Map> obj = JSON.decode(gameJson.value);
     
     parseAttacks(obj["attacks"]);
     parseBattlerTypes(obj["battlerTypes"]);

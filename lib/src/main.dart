@@ -31,6 +31,8 @@ class Main {
   static bool inBattle = false;
   static Battle battle;
   
+  static Timer tickTimer = null;
+  
   static void init() {
     c = querySelector('canvas');
     ctx = c.getContext("2d");
@@ -62,15 +64,29 @@ class Main {
       Input.keys.remove(e.keyCode);
     });
     
-    world = new World(() {
-      focusObject = player;
-      tick();
+    Function createWorld = () {
+      timeScale = 0.0;
+      world = new World(() {
+        focusObject = player;
+        timeScale = 1.0;
+        tick();
+      });
+    };
+    
+    ButtonElement loadGameButton = querySelector("#load_game_button");
+    loadGameButton.onClick.listen((MouseEvent e) {
+      createWorld();
     });
+    
+    createWorld();
   }
   
   static void tick() {
     // Keeps the value from being set to 0 in between checking it and dividing by it
     var curTimeScale = timeScale;
+    
+    if(world.maps[world.curMap] == null)
+      return;
  
     // Draw black background
     ctx.fillStyle = "#000000";
@@ -109,11 +125,14 @@ class Main {
     
     Gui.render();
     Input.handleKey(focusObject);
-
+    
+    if(tickTimer != null)
+      tickTimer.cancel();
+    
     if(curTimeScale > 0.0) {
-      new Timer(new Duration(milliseconds: (timeDelay * (1/curTimeScale)).round()), () => tick());
+      tickTimer = new Timer(new Duration(milliseconds: (timeDelay * (1/curTimeScale)).round()), () => tick());
     } else {
-      new Timer(new Duration(milliseconds: timeDelay), () => tick());
+      tickTimer = new Timer(new Duration(milliseconds: timeDelay), () => tick());
     }
   }
 }
