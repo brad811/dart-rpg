@@ -12,6 +12,7 @@ import 'object_editor.dart';
 // TODO: item effects
 // TODO: when you can use items
 // TODO: item targets
+// TODO: max length of things
 
 class ObjectEditorItems {
   static Map<String, StreamSubscription> listeners = {};
