@@ -45,35 +45,34 @@ class ObjectEditorPlayer {
     playerHtml += "</table>";
     querySelector("#player_container").innerHtml = playerHtml;
     
-    // set the listener for the start map and location
-    Function inputChangeFunction = (Event e) {
-      String battlerType = (querySelector('#player_battler_type') as SelectElement).value;
-      
-      if(e.target is TextInputElement) {
-        TextInputElement target = e.target as TextInputElement;
-        if(target.id.contains("player_level")) {
-          // enforce number format
-          target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-        }
-      }
-      
-      Main.player.battler = new Battler(
-        (querySelector('#player_name') as TextInputElement).value,
-        World.battlerTypes[battlerType],
-        int.parse((querySelector('#player_level') as TextInputElement).value),
-        World.battlerTypes[battlerType].levelAttacks.values.toList()
-      );
-      
-      Editor.updateAndRetainValue(e);
-    };
-    
     List<String> ids = ["player_name", "player_battler_type", "player_level"];
     ids.forEach((String id) {
       if(listeners["#${id}"] != null)
         listeners["#${id}"].cancel();
       
-      listeners["#${id}"] = querySelector('#${id}').onInput.listen(inputChangeFunction);
+      listeners["#${id}"] = querySelector('#${id}').onInput.listen(onInputChange);
     });
+  }
+  
+  static void onInputChange(Event e) {
+    String battlerType = (querySelector('#player_battler_type') as SelectElement).value;
+    
+    if(e.target is TextInputElement) {
+      TextInputElement target = e.target as TextInputElement;
+      if(target.id.contains("player_level")) {
+        // enforce number format
+        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+      }
+    }
+    
+    Main.player.battler = new Battler(
+      (querySelector('#player_name') as TextInputElement).value,
+      World.battlerTypes[battlerType],
+      int.parse((querySelector('#player_level') as TextInputElement).value),
+      World.battlerTypes[battlerType].levelAttacks.values.toList()
+    );
+    
+    Editor.updateAndRetainValue(e);
   }
   
   static void export(Map<String, Object> exportJson) {

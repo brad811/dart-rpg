@@ -18,11 +18,13 @@ class ObjectEditorItems {
   static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
-    querySelector("#add_item_button").onClick.listen((MouseEvent e) {
-      World.items["New Item"] = new Item();
-      update();
-      ObjectEditor.update();
-    });
+    querySelector("#add_item_button").onClick.listen(addNewItem);
+  }
+  
+  static void addNewItem(MouseEvent e) {
+    World.items["New Item"] = new Item();
+    update();
+    ObjectEditor.update();
   }
   
   static void update() {
@@ -48,40 +50,6 @@ class ObjectEditorItems {
     
     Editor.setDeleteButtonListeners(World.items, "item", listeners);
     
-    Function inputChangeFunction = (Event e) {
-      if(e.target is InputElement) {
-        InputElement target = e.target;
-        
-        if(target.id.contains("item_name_") && World.items.keys.contains(target.value)) {
-          // avoid name collisions
-          int i = 0;
-          for(; World.items.keys.contains(target.value + "_${i}"); i++) {}
-          target.value += "_${i}";
-        } else if(target.id.contains("item_picture_id_") || target.id.contains("item_base_price_")) {
-          // enforce number format
-          target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-        }
-      }
-      
-      World.items = new Map<String, Item>();
-      for(int i=0; querySelector('#item_name_${i}') != null; i++) {
-        try {
-          String name = (querySelector('#item_name_${i}') as TextInputElement).value;
-          World.items[name] = new Item(
-            Editor.getTextInputIntValue('#item_picture_id_${i}', 1),
-            name,
-            Editor.getTextInputIntValue('#item_base_price_${i}', 1),
-            (querySelector('#item_description_${i}') as TextAreaElement).value
-          );
-        } catch(e) {
-          // could not update this item
-          print("Error updating item: " + e.toString());
-        }
-      }
-      
-      Editor.updateAndRetainValue(e);
-    };
-    
     List<String> attrs = ["picture_id", "name", "base_price", "description"];
     for(int i=0; i<World.items.keys.length; i++) {
       for(String attr in attrs) {
@@ -89,9 +57,43 @@ class ObjectEditorItems {
           listeners["#item_${attr}_${i}"].cancel();
         
         listeners["#item_${attr}_${i}"] = 
-            querySelector('#item_${attr}_${i}').onInput.listen(inputChangeFunction);
+            querySelector('#item_${attr}_${i}').onInput.listen(onInputChange);
       }
     }
+  }
+  
+  static void onInputChange(Event e) {
+    if(e.target is InputElement) {
+      InputElement target = e.target;
+      
+      if(target.id.contains("item_name_") && World.items.keys.contains(target.value)) {
+        // avoid name collisions
+        int i = 0;
+        for(; World.items.keys.contains(target.value + "_${i}"); i++) {}
+        target.value += "_${i}";
+      } else if(target.id.contains("item_picture_id_") || target.id.contains("item_base_price_")) {
+        // enforce number format
+        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+      }
+    }
+    
+    World.items = new Map<String, Item>();
+    for(int i=0; querySelector('#item_name_${i}') != null; i++) {
+      try {
+        String name = (querySelector('#item_name_${i}') as TextInputElement).value;
+        World.items[name] = new Item(
+          Editor.getTextInputIntValue('#item_picture_id_${i}', 1),
+          name,
+          Editor.getTextInputIntValue('#item_base_price_${i}', 1),
+          (querySelector('#item_description_${i}') as TextAreaElement).value
+        );
+      } catch(e) {
+        // could not update this item
+        print("Error updating item: " + e.toString());
+      }
+    }
+    
+    Editor.updateAndRetainValue(e);
   }
   
   static void export(Map<String, Object> exportJson) {

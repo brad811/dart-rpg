@@ -17,17 +17,7 @@ class MapEditorWarps {
   static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
-    querySelector("#add_warp_button").onClick.listen((MouseEvent e) {
-      warps[Main.world.curMap].add(
-        new WarpTile(
-          false,
-          new Sprite.int(0, 0, 0),
-          Main.world.curMap, 0, 0
-        )
-      );
-      
-      Editor.update();
-    });
+    querySelector("#add_warp_button").onClick.listen(addNewWarp);
     
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
@@ -57,6 +47,18 @@ class MapEditorWarps {
         }
       }
     }
+  }
+  
+  static void addNewWarp(MouseEvent e) {
+    warps[Main.world.curMap].add(
+      new WarpTile(
+        false,
+        new Sprite.int(0, 0, 0),
+        Main.world.curMap, 0, 0
+      )
+    );
+    
+    Editor.update();
   }
   
   static void update() {
@@ -94,22 +96,6 @@ class MapEditorWarps {
     
     setWarpDeleteButtonListeners();
     
-    Function inputChangeFunction = (Event e) {
-      for(int i=0; i<warps[Main.world.curMap].length; i++) {
-        try {
-          warps[Main.world.curMap][i].sprite.posX = double.parse((querySelector('#warps_posx_${i}') as InputElement).value);
-          warps[Main.world.curMap][i].sprite.posY = double.parse((querySelector('#warps_posy_${i}') as InputElement).value);
-          warps[Main.world.curMap][i].destMap = (querySelector('#warps_destMap_${i}') as SelectElement).value;
-          warps[Main.world.curMap][i].destX = int.parse((querySelector('#warps_destx_${i}') as InputElement).value);
-          warps[Main.world.curMap][i].destY = int.parse((querySelector('#warps_desty_${i}') as InputElement).value);
-        } catch(e) {
-          // could not update this warp
-        }
-      }
-      
-      MapEditor.updateMap(shouldExport: true);
-    };
-    
     for(int i=0; i<warps[Main.world.curMap].length; i++) {
       List<String> attrs = ["posx", "posy", "destMap", "destx", "desty"];
       for(String attr in attrs) {
@@ -117,9 +103,25 @@ class MapEditorWarps {
           listeners["#warps_${attr}_${i}"].cancel();
         
         listeners["#warps_${attr}_${i}"] = 
-            querySelector('#warps_${attr}_${i}').onInput.listen(inputChangeFunction);
+            querySelector('#warps_${attr}_${i}').onInput.listen(onInputChange);
       }
     }
+  }
+  
+  static void onInputChange(Event e) {
+    for(int i=0; i<warps[Main.world.curMap].length; i++) {
+      try {
+        warps[Main.world.curMap][i].sprite.posX = double.parse((querySelector('#warps_posx_${i}') as InputElement).value);
+        warps[Main.world.curMap][i].sprite.posY = double.parse((querySelector('#warps_posy_${i}') as InputElement).value);
+        warps[Main.world.curMap][i].destMap = (querySelector('#warps_destMap_${i}') as SelectElement).value;
+        warps[Main.world.curMap][i].destX = int.parse((querySelector('#warps_destx_${i}') as InputElement).value);
+        warps[Main.world.curMap][i].destY = int.parse((querySelector('#warps_desty_${i}') as InputElement).value);
+      } catch(e) {
+        // could not update this warp
+      }
+    }
+    
+    MapEditor.updateMap(shouldExport: true);
   }
   
   static void setWarpDeleteButtonListeners() {

@@ -18,15 +18,17 @@ class ObjectEditorBattlerTypes {
   //   but still have a pretty display name like "Bob"
   
   static void setUp() {
-    querySelector("#add_battler_type_button").onClick.listen((MouseEvent e) {
-      World.battlerTypes["New Battler Type"] = new BattlerType(
-          0, "New Battler",
-          0, 0, 0, 0, 0, 0,
-          {}, 1.0
-        );
-      update();
-      ObjectEditor.update();
-    });
+    querySelector("#add_battler_type_button").onClick.listen(addNewBattlerType);
+  }
+  
+  static void addNewBattlerType(MouseEvent e) {
+    World.battlerTypes["New Battler Type"] = new BattlerType(
+        0, "New Battler",
+        0, 0, 0, 0, 0, 0,
+        {}, 1.0
+      );
+    update();
+    ObjectEditor.update();
   }
   
   static void update() {
@@ -105,67 +107,12 @@ class ObjectEditorBattlerTypes {
       Editor.setDeleteButtonListeners(battlerType.levelAttacks, "battler_type_${i}_attack", listeners);
     }
     
-    Function inputChangeFunction = (Event e) {
-      if(e.target is InputElement) {
-        InputElement target = e.target;
-        
-        if(target.id.contains("battler_types_name_") && World.battlerTypes.keys.contains(target.value)) {
-          // avoid name collisions
-          int i = 0;
-          for(; World.battlerTypes.keys.contains(target.value + "_${i}"); i++) {}
-          target.value += "_${i}";
-        } else if(target.id.contains("battler_types_magical_") || target.id.contains("battler_types_physical_")
-            || target.id.contains("battler_types_health_") || target.id.contains("battler_types_sprite_")
-            || target.id.contains("battler_types_speed_") || target.id.contains("_level")) {
-          // enforce number format
-          target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-        } else if(target.id.contains("battler_types_rarity_")) {
-          target.value = target.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
-        }
-      }
-      
-      World.battlerTypes = new Map<String, BattlerType>();
-      for(int i=0; querySelector('#battler_types_name_${i}') != null; i++) {
-        try {
-          String name = Editor.getTextInputStringValue('#battler_types_name_${i}');
-          
-          Map<int, Attack> levelAttacks = new Map<int, Attack>();
-          for(int j=0; querySelector("#battler_types_${i}_attack_${j}_level") != null; j++) {
-            int level = Editor.getTextInputIntValue("#battler_types_${i}_attack_${j}_level", 1);
-            String attackName = Editor.getSelectInputStringValue("#battler_types_${i}_attack_${j}_name");
-            Attack attack = World.attacks[attackName];
-            
-            levelAttacks[level] = attack;
-          }
-          
-          World.battlerTypes[name] = new BattlerType(
-            Editor.getTextInputIntValue('#battler_types_sprite_id_${i}', 1),
-            name,
-            Editor.getTextInputIntValue('#battler_types_health_${i}', 1),
-            Editor.getTextInputIntValue('#battler_types_physical_attack_${i}', 1),
-            Editor.getTextInputIntValue('#battler_types_magical_attack_${i}', 1),
-            Editor.getTextInputIntValue('#battler_types_physical_defense_${i}', 1),
-            Editor.getTextInputIntValue('#battler_types_magical_defense_${i}', 1),
-            Editor.getTextInputIntValue('#battler_types_speed_${i}', 1),
-            levelAttacks,
-            Editor.getTextInputDoubleValue('#battler_types_rarity_${i}', 1.0)
-          );
-        } catch(e, stackTrace) {
-          // could not update this battler type
-          print("Error updating battler type: " + e.toString());
-          print(stackTrace);
-        }
-      }
-      
-      Editor.updateAndRetainValue(e);
-    };
-    
     // TODO: perhaps move into base editor class
     List<String> attrs = [
       "sprite_id", "name",
       "health", "physical_attack", "magical_attack",
       "physical_defense", "magical_defense", "speed",
-      /* level attacks? */ "rarity"
+      "rarity"
     ];
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
       for(String attr in attrs) {
@@ -173,7 +120,7 @@ class ObjectEditorBattlerTypes {
           listeners["#battler_types_${attr}_${i}"].cancel();
         
         listeners["#battler_types_${attr}_${i}"] = 
-            querySelector('#battler_types_${attr}_${i}').onInput.listen(inputChangeFunction);
+            querySelector('#battler_types_${attr}_${i}').onInput.listen(onInputChange);
       }
     }
     
@@ -183,15 +130,70 @@ class ObjectEditorBattlerTypes {
           listeners["#battler_types_${i}_attack_${j}_level"].cancel();
         
         listeners["#battler_types_${i}_attack_${j}_level"] = 
-            querySelector('#battler_types_${i}_attack_${j}_level').onInput.listen(inputChangeFunction);
+            querySelector('#battler_types_${i}_attack_${j}_level').onInput.listen(onInputChange);
         
         if(listeners["#battler_types_${i}_attack_${j}_name"] != null)
           listeners["#battler_types_${i}_attack_${j}_name"].cancel();
         
         listeners["#battler_types_${i}_attack_${j}_name"] = 
-            querySelector('#battler_types_${i}_attack_${j}_name').onInput.listen(inputChangeFunction);
+            querySelector('#battler_types_${i}_attack_${j}_name').onInput.listen(onInputChange);
       }
     }
+  }
+  
+  static void onInputChange(Event e) {
+    if(e.target is InputElement) {
+      InputElement target = e.target;
+      
+      if(target.id.contains("battler_types_name_") && World.battlerTypes.keys.contains(target.value)) {
+        // avoid name collisions
+        int i = 0;
+        for(; World.battlerTypes.keys.contains(target.value + "_${i}"); i++) {}
+        target.value += "_${i}";
+      } else if(target.id.contains("battler_types_magical_") || target.id.contains("battler_types_physical_")
+          || target.id.contains("battler_types_health_") || target.id.contains("battler_types_sprite_")
+          || target.id.contains("battler_types_speed_") || target.id.contains("_level")) {
+        // enforce number format
+        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+      } else if(target.id.contains("battler_types_rarity_")) {
+        target.value = target.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
+      }
+    }
+    
+    World.battlerTypes = new Map<String, BattlerType>();
+    for(int i=0; querySelector('#battler_types_name_${i}') != null; i++) {
+      try {
+        String name = Editor.getTextInputStringValue('#battler_types_name_${i}');
+        
+        Map<int, Attack> levelAttacks = new Map<int, Attack>();
+        for(int j=0; querySelector("#battler_types_${i}_attack_${j}_level") != null; j++) {
+          int level = Editor.getTextInputIntValue("#battler_types_${i}_attack_${j}_level", 1);
+          String attackName = Editor.getSelectInputStringValue("#battler_types_${i}_attack_${j}_name");
+          Attack attack = World.attacks[attackName];
+          
+          levelAttacks[level] = attack;
+        }
+        
+        World.battlerTypes[name] = new BattlerType(
+          Editor.getTextInputIntValue('#battler_types_sprite_id_${i}', 1),
+          name,
+          Editor.getTextInputIntValue('#battler_types_health_${i}', 1),
+          Editor.getTextInputIntValue('#battler_types_physical_attack_${i}', 1),
+          Editor.getTextInputIntValue('#battler_types_magical_attack_${i}', 1),
+          Editor.getTextInputIntValue('#battler_types_physical_defense_${i}', 1),
+          Editor.getTextInputIntValue('#battler_types_magical_defense_${i}', 1),
+          Editor.getTextInputIntValue('#battler_types_speed_${i}', 1),
+          levelAttacks,
+          Editor.getTextInputDoubleValue('#battler_types_rarity_${i}', 1.0)
+        );
+      } catch(e, stackTrace) {
+        // could not update this battler type
+        print("Error updating battler type: " + e.toString());
+        print(stackTrace);
+      }
+    }
+    
+    Editor.updateAndRetainValue(e);
   }
   
   static void export(Map<String, Object> exportJson) {

@@ -13,11 +13,13 @@ class ObjectEditorAttacks {
   static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
-    querySelector("#add_attack_button").onClick.listen((MouseEvent e) {
-      World.attacks["New Attack"] = new Attack("New Attack", Attack.CATEGORY_PHYSICAL, 0);
-      update();
-      ObjectEditor.update();
-    });
+    querySelector("#add_attack_button").onClick.listen(addNewAttack);
+  }
+  
+  static void addNewAttack(MouseEvent e) {
+    World.attacks["New Attack"] = new Attack("New Attack", Attack.CATEGORY_PHYSICAL, 0);
+    update();
+    ObjectEditor.update();
   }
   
   static void update() {
@@ -56,39 +58,6 @@ class ObjectEditorAttacks {
     
     Editor.setDeleteButtonListeners(World.attacks, "attack", listeners);
     
-    Function inputChangeFunction = (Event e) {
-      if(e.target is InputElement) {
-        InputElement target = e.target;
-        
-        if(target.id.contains("attacks_name_") && World.attacks.keys.contains(target.value)) {
-          // avoid name collisions
-          int i = 0;
-          for(; World.attacks.keys.contains(target.value + "_${i}"); i++) {}
-          target.value += "_${i}";
-        } else if(target.id.contains("attacks_power_")) {
-          // enforce number format
-          target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-        }
-      }
-      
-      World.attacks = new Map<String, Attack>();
-      for(int i=0; querySelector('#attacks_name_${i}') != null; i++) {
-        try {
-          String name = (querySelector('#attacks_name_${i}') as InputElement).value;
-          World.attacks[name] = new Attack(
-            name,
-            int.parse((querySelector('#attacks_category_${i}') as SelectElement).value),
-            int.parse((querySelector('#attacks_power_${i}') as InputElement).value)
-          );
-        } catch(e) {
-          // could not update this attack
-          print("Error updating attack: " + e.toString());
-        }
-      }
-      
-      Editor.updateAndRetainValue(e);
-    };
-    
     List<String> attrs = ["name", "category", "power"];
     for(int i=0; i<World.attacks.keys.length; i++) {
       for(String attr in attrs) {
@@ -96,9 +65,42 @@ class ObjectEditorAttacks {
           listeners["#attacks_${attr}_${i}"].cancel();
         
         listeners["#attacks_${attr}_${i}"] = 
-            querySelector('#attacks_${attr}_${i}').onInput.listen(inputChangeFunction);
+            querySelector('#attacks_${attr}_${i}').onInput.listen(onInputChange);
       }
     }
+  }
+  
+  static void onInputChange(Event e) {
+    if(e.target is InputElement) {
+      InputElement target = e.target;
+      
+      if(target.id.contains("attacks_name_") && World.attacks.keys.contains(target.value)) {
+        // avoid name collisions
+        int i = 0;
+        for(; World.attacks.keys.contains(target.value + "_${i}"); i++) {}
+        target.value += "_${i}";
+      } else if(target.id.contains("attacks_power_")) {
+        // enforce number format
+        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+      }
+    }
+    
+    World.attacks = new Map<String, Attack>();
+    for(int i=0; querySelector('#attacks_name_${i}') != null; i++) {
+      try {
+        String name = (querySelector('#attacks_name_${i}') as InputElement).value;
+        World.attacks[name] = new Attack(
+          name,
+          int.parse((querySelector('#attacks_category_${i}') as SelectElement).value),
+          int.parse((querySelector('#attacks_power_${i}') as InputElement).value)
+        );
+      } catch(e) {
+        // could not update this attack
+        print("Error updating attack: " + e.toString());
+      }
+    }
+    
+    Editor.updateAndRetainValue(e);
   }
   
   static void export(Map<String, Object> exportJson) {

@@ -17,10 +17,7 @@ class MapEditorSigns {
   static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
-    querySelector("#add_sign_button").onClick.listen((MouseEvent e) {
-      signs[Main.world.curMap].add( new Sign(false, new Sprite.int(0, 0, 0), 234, "Text") );
-      Editor.update();
-    });
+    querySelector("#add_sign_button").onClick.listen(addNewSign);
     
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
@@ -50,6 +47,11 @@ class MapEditorSigns {
     }
   }
   
+  static void addNewSign(MouseEvent e) {
+    signs[Main.world.curMap].add( new Sign(false, new Sprite.int(0, 0, 0), 234, "Text") );
+    Editor.update();
+  }
+  
   static void update() {
     String signsHtml;
     signsHtml = "<table>"+
@@ -72,27 +74,6 @@ class MapEditorSigns {
     
     setSignDeleteButtonListeners();
     
-    Function inputChangeFunction = (Event e) {
-      for(int i=0; i<signs[Main.world.curMap].length; i++) {
-        try {
-          signs[Main.world.curMap][i] = new Sign(
-            false,
-            new Sprite(
-              0,
-              double.parse((querySelector('#signs_posx_${i}') as InputElement).value),
-              double.parse((querySelector('#signs_posy_${i}') as InputElement).value)
-            ),
-            int.parse((querySelector('#signs_pic_${i}') as InputElement).value),
-            (querySelector('#signs_text_${i}') as TextAreaElement).value
-          );
-        } catch(e) {
-          // could not update this sign
-        }
-      }
-      
-      MapEditor.updateMap(shouldExport: true);
-    };
-    
     for(int i=0; i<signs[Main.world.curMap].length; i++) {
       List<String> attrs = ["posx", "posy", "pic", "text"];
       for(String attr in attrs) {
@@ -100,9 +81,30 @@ class MapEditorSigns {
           listeners["#signs_${attr}_${i}"].cancel();
         
         listeners["#signs_${attr}_${i}"] = 
-            querySelector('#signs_${attr}_${i}').onInput.listen(inputChangeFunction);
+            querySelector('#signs_${attr}_${i}').onInput.listen(onInputChange);
       }
     }
+  }
+  
+  static void onInputChange(Event e) {
+    for(int i=0; i<signs[Main.world.curMap].length; i++) {
+      try {
+        signs[Main.world.curMap][i] = new Sign(
+          false,
+          new Sprite(
+            0,
+            double.parse((querySelector('#signs_posx_${i}') as InputElement).value),
+            double.parse((querySelector('#signs_posy_${i}') as InputElement).value)
+          ),
+          int.parse((querySelector('#signs_pic_${i}') as InputElement).value),
+          (querySelector('#signs_text_${i}') as TextAreaElement).value
+        );
+      } catch(e) {
+        // could not update this sign
+      }
+    }
+    
+    MapEditor.updateMap(shouldExport: true);
   }
   
   static void setSignDeleteButtonListeners() {

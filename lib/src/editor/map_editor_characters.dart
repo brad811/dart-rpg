@@ -14,16 +14,7 @@ class MapEditorCharacters {
   static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
-    querySelector("#add_character_button").onClick.listen((MouseEvent e) {
-      characters[Main.world.curMap].add(
-        new Character(
-          0, 0,
-          0, 0
-        )
-      );
-      
-      Editor.update();
-    });
+    querySelector("#add_character_button").onClick.listen(addNewCharacter);
     
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
@@ -34,6 +25,17 @@ class MapEditorCharacters {
         characters[key].add(character);
       }
     }
+  }
+  
+  static void addNewCharacter(MouseEvent e) {
+    characters[Main.world.curMap].add(
+      new Character(
+        0, 0,
+        0, 0
+      )
+    );
+    
+    Editor.update();
   }
   
   static void update() {
@@ -58,24 +60,6 @@ class MapEditorCharacters {
     charactersHtml += "</table>";
     querySelector("#characters_container").innerHtml = charactersHtml;
     
-    Function inputChangeFunction = (Event e) {
-      for(int i=0; i<characters[Main.world.curMap].length; i++) {
-        try {
-          characters[Main.world.curMap][i].spriteId = int.parse((querySelector('#characters_spriteid_${i}') as InputElement).value);
-          characters[Main.world.curMap][i].pictureId = int.parse((querySelector('#characters_picid_${i}') as InputElement).value);
-          characters[Main.world.curMap][i].mapX = int.parse((querySelector('#characters_mapx_${i}') as InputElement).value);
-          characters[Main.world.curMap][i].mapY = int.parse((querySelector('#characters_mapy_${i}') as InputElement).value);
-          characters[Main.world.curMap][i].sizeX = int.parse((querySelector('#characters_sizex_${i}') as InputElement).value);
-          characters[Main.world.curMap][i].sizeY = int.parse((querySelector('#characters_sizey_${i}') as InputElement).value);
-          characters[Main.world.curMap][i].solid = true;
-        } catch(e) {
-          // could not update this character
-        }
-      }
-      
-      MapEditor.updateMap(shouldExport: true);
-    };
-    
     for(int i=0; i<characters[Main.world.curMap].length; i++) {
       List<String> attrs = ["spriteid", "picid", "mapx", "mapy", "sizex", "sizey", "solid"];
       for(String attr in attrs) {
@@ -83,9 +67,27 @@ class MapEditorCharacters {
           listeners["#characters_${attr}_${i}"].cancel();
         
         listeners["#characters_${attr}_${i}"] = 
-            querySelector('#characters_${attr}_${i}').onInput.listen(inputChangeFunction);
+            querySelector('#characters_${attr}_${i}').onInput.listen(onInputChange);
       }
     }
+  }
+  
+  static void onInputChange(Event e) {
+    for(int i=0; i<characters[Main.world.curMap].length; i++) {
+      try {
+        characters[Main.world.curMap][i].spriteId = int.parse((querySelector('#characters_spriteid_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].pictureId = int.parse((querySelector('#characters_picid_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].mapX = int.parse((querySelector('#characters_mapx_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].mapY = int.parse((querySelector('#characters_mapy_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].sizeX = int.parse((querySelector('#characters_sizex_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].sizeY = int.parse((querySelector('#characters_sizey_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].solid = true;
+      } catch(e) {
+        // could not update this character
+      }
+    }
+    
+    MapEditor.updateMap(shouldExport: true);
   }
   
   static void export(Map jsonMap, String key) {
