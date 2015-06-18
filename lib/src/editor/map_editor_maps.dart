@@ -22,28 +22,30 @@ class MapEditorMaps {
   static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
-    querySelector("#add_map_button").onClick.listen((MouseEvent e) {
-      // check if a new map already exists so we don't overwrite it
-      if(Main.world.maps["new map"] != null)
-        return;
-      
-      List nulls = [];
-      for(int i=0; i<World.layers.length; i++)
-        nulls.add(null);
-      
-      Main.world.maps["new map"] = new GameMap(
-        "new map",
-        [ [ nulls ] ],
-        []
-      );
-      
-      MapEditorCharacters.characters["new map"] = [];
-      MapEditorWarps.warps["new map"] = [];
-      MapEditorSigns.signs["new map"] = [];
-      Main.world.maps["new map"].battlerChances = [];
-      
-      update();
-    });
+    querySelector("#add_map_button").onClick.listen(addNewMap);
+  }
+  
+  static void addNewMap(MouseEvent e) {
+    // check if a new map already exists so we don't overwrite it
+    if(Main.world.maps["new map"] != null)
+      return;
+    
+    List nulls = [];
+    for(int i=0; i<World.layers.length; i++)
+      nulls.add(null);
+    
+    Main.world.maps["new map"] = new GameMap(
+      "new map",
+      [ [ nulls ] ],
+      []
+    );
+    
+    MapEditorCharacters.characters["new map"] = [];
+    MapEditorWarps.warps["new map"] = [];
+    MapEditorSigns.signs["new map"] = [];
+    Main.world.maps["new map"].battlerChances = [];
+    
+    update();
   }
   
   static void update() {
@@ -65,7 +67,7 @@ class MapEditorMaps {
     
     mapsHtml += "<table>"+
       "  <tr>"+
-      "    <td>Num</td><td>Name</td><td>X Size</td><td>Y Size</td><td>Chars</td>"+
+      "    <td>Num</td><td>Name</td><td>X Size</td><td>Y Size</td><td>Chars</td><td></td>"+
       "  </tr>";
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
@@ -76,111 +78,113 @@ class MapEditorMaps {
         mapsHtml += "  <td>${i}</td>";
         
       mapsHtml +=
-        "  <td><input id='maps_name_${i}' type='text' value='${ Main.world.maps[key].name }' /></td>"+
+        "  <td><input id='map_name_${i}' type='text' value='${ Main.world.maps[key].name }' /></td>"+
         "  <td>${ Main.world.maps[key].tiles[0].length }</td>"+
         "  <td>${ Main.world.maps[key].tiles.length }</td>"+
         "  <td>${ Main.world.maps[key].characters.length }</td>"+
+        "  <td><button id='delete_map_${i}'>Delete</button></td>"+
         "</tr>";
     }
     mapsHtml += "</table>";
     querySelector("#maps_container").innerHtml = mapsHtml;
     
     setMapSelectorButtonListeners();
-    
-    Function inputChangeFunction = (Event e) {
-      Map<String, GameMap> newMaps = {};
-      Map<String, List<Character>> newCharacters = {};
-      Map<String, List<WarpTile>> newWarps = {};
-      Map<String, List<Sign>> newSigns = {};
-      Map<String, List<BattlerChance>> newBattlers = {};
-      bool changedByUser;
-      
-      for(int i=0; i<Main.world.maps.length; i++) {
-        changedByUser = false;
-        String key = Main.world.maps.keys.elementAt(i);
-        try {
-          String newName = (querySelector('#maps_name_${i}') as TextInputElement).value;
-          
-          if(key != newName)
-            changedByUser = true;
-          
-          if(newMaps.keys.contains(newName)) {
-            int j=0;
-            while(newMaps.keys.contains("${newName}_${j}")) {
-              j++;
-            }
-            
-            newName = "${newName}_${j}";
-            (querySelector('#maps_name_${i}') as TextInputElement).value = newName;
-          }
-          
-          newMaps[newName] = Main.world.maps[key];
-          newMaps[newName].name = newName;
-          
-          newCharacters[newName] = MapEditorCharacters.characters[key];
-          newWarps[newName] = MapEditorWarps.warps[key];
-          newSigns[newName] = MapEditorSigns.signs[key];
-          newBattlers[newName] = Main.world.maps[key].battlerChances;
-          
-          if(newName != key && Main.world.curMap == key && changedByUser)
-            Main.world.curMap = newName;
-          
-          if(newName != key) {
-            // TODO: update all warp destinations that include this one
-          }
-        } catch(e) {
-          // could not update this map
-          print("Error updating map name: ${e}");
-        }
-      }
-      
-      Main.world.maps = newMaps;
-      MapEditorCharacters.characters = newCharacters;
-      MapEditorWarps.warps = newWarps;
-      MapEditorSigns.signs = newSigns;
-      Main.world.maps.forEach((String mapName, GameMap map) {
-        map.battlerChances = newBattlers[mapName];
-      });
-      
-      setMapSelectorButtonListeners();
-      
-      MapEditor.updateMap(shouldExport: true);
-    };
+    setMapDeleteButtonListeners();
     
     for(int i=0; i<Main.world.maps.length; i++) {
-      if(listeners["#maps_name_${i}"] != null)
-        listeners["#maps_name_${i}"].cancel();
+      if(listeners["#map_name_${i}"] != null)
+        listeners["#map_name_${i}"].cancel();
       
-      listeners["#maps_name_${i}"] = querySelector('#maps_name_${i}').onInput.listen(inputChangeFunction);
+      listeners["#map_name_${i}"] = querySelector('#map_name_${i}').onInput.listen(onInputChange);
     }
-    
-    // set the listener for the start map and location
-    Function startMapChangeFunction = (Event e) {
-      Main.world.startMap = (querySelector('#start_map') as SelectElement).value;
-      
-      if(e.target is TextInputElement) {
-        TextInputElement target = e.target as TextInputElement;
-        if(target.id.contains("player_start_")) {
-          // enforce number format
-          target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-        }
-      }
-      
-      Main.world.startX = int.parse((querySelector('#player_start_x') as TextInputElement).value);
-      Main.world.startY = int.parse((querySelector('#player_start_y') as TextInputElement).value);
-      MapEditor.updateMap(shouldExport: true);
-    };
     
     List<String> ids = ["start_map", "player_start_x", "player_start_y"];
     ids.forEach((String id) {
       if(listeners["#${id}"] != null)
         listeners["#${id}"].cancel();
       
-      listeners["#${id}"] = querySelector('#${id}').onInput.listen(startMapChangeFunction);
+      listeners["#${id}"] = querySelector('#${id}').onInput.listen(changeStartMap);
     });
     
     setUpLayerVisibilityToggles();
     setUpMapSizeButtons();
+  }
+  
+  static void changeStartMap(Event e) {
+    Main.world.startMap = (querySelector('#start_map') as SelectElement).value;
+    
+    if(e.target is TextInputElement) {
+      TextInputElement target = e.target as TextInputElement;
+      if(target.id.contains("player_start_")) {
+        // enforce number format
+        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+      }
+    }
+    
+    Main.world.startX = int.parse((querySelector('#player_start_x') as TextInputElement).value);
+    Main.world.startY = int.parse((querySelector('#player_start_y') as TextInputElement).value);
+    MapEditor.updateMap(shouldExport: true);
+  }
+  
+  static void onInputChange(Event e) {
+    Map<String, GameMap> newMaps = {};
+    Map<String, List<Character>> newCharacters = {};
+    Map<String, List<WarpTile>> newWarps = {};
+    Map<String, List<Sign>> newSigns = {};
+    Map<String, List<BattlerChance>> newBattlers = {};
+    bool changedByUser;
+    
+    for(int i=0; i<Main.world.maps.length; i++) {
+      changedByUser = false;
+      String key = Main.world.maps.keys.elementAt(i);
+      try {
+        String newName = (querySelector('#map_name_${i}') as TextInputElement).value;
+        
+        if(key != newName)
+          changedByUser = true;
+        
+        if(newMaps.keys.contains(newName)) {
+          int j=0;
+          while(newMaps.keys.contains("${newName}_${j}")) {
+            j++;
+          }
+          
+          newName = "${newName}_${j}";
+          (querySelector('#map_name_${i}') as TextInputElement).value = newName;
+        }
+        
+        newMaps[newName] = Main.world.maps[key];
+        newMaps[newName].name = newName;
+        
+        newCharacters[newName] = MapEditorCharacters.characters[key];
+        newWarps[newName] = MapEditorWarps.warps[key];
+        newSigns[newName] = MapEditorSigns.signs[key];
+        newBattlers[newName] = Main.world.maps[key].battlerChances;
+        
+        if(newName != key && Main.world.curMap == key && changedByUser)
+          Main.world.curMap = newName;
+        
+        if(newName != key) {
+          // TODO: update all warp destinations that include this one
+        }
+      } catch(e) {
+        // could not update this map
+        print("Error updating map name: ${e}");
+      }
+    }
+    
+    Main.world.maps = newMaps;
+    MapEditorCharacters.characters = newCharacters;
+    MapEditorWarps.warps = newWarps;
+    MapEditorSigns.signs = newSigns;
+    Main.world.maps.forEach((String mapName, GameMap map) {
+      map.battlerChances = newBattlers[mapName];
+    });
+    
+    setMapSelectorButtonListeners();
+    setMapDeleteButtonListeners();
+    
+    MapEditor.updateMap(shouldExport: true);
   }
   
   static void setMapSelectorButtonListeners() {
@@ -195,6 +199,28 @@ class MapEditorMaps {
           Editor.update();
         });
       }
+    }
+  }
+  
+  static void setMapDeleteButtonListeners() {
+    for(int i=0; i<Main.world.maps.length; i++) {
+      if(listeners["#delete_map_${i}"] != null)
+        listeners["#delete_map_${i}"].cancel();
+      
+      listeners["#delete_map_${i}"] = querySelector("#delete_map_${i}").onClick.listen((MouseEvent e) {
+        bool confirm = window.confirm('Are you sure you would like to delete this map?');
+        if(confirm) {
+          // TODO: make this cleaner
+          String mapName = Main.world.maps.keys.elementAt(i);
+          Main.world.maps.remove(mapName);
+          if(Main.world.maps.length == 0) {
+            addNewMap(null);
+          }
+          
+          Main.world.curMap = Main.world.maps.keys.first;
+          Editor.update();
+        }
+      });
     }
   }
   
