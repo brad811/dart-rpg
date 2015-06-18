@@ -50,6 +50,7 @@ class World {
   static Map<String, Attack> attacks = {};
   static Map<String, BattlerType> battlerTypes = {};
   static Map<String, Item> items = {};
+  static Map<String, Character> characters = {};
   
   final int
     viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
