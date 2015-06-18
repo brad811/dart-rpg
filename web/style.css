@@ -2,12 +2,14 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
   width: 100%;
+  margin: 0;
 }
 
 .container {
 	position: absolute;
   left: 50%;
   margin-left: -320px;
+  margin-top: 10px;
   width: 642px;
 }
 
