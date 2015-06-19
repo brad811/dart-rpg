@@ -103,7 +103,6 @@ body {
   width: 532px;
   overflow-y: scroll;
   float: left;
-  margin-left: 10px;
 }
 
 #editor_tabs_container {
@@ -113,7 +112,6 @@ body {
 .tab_headers {
   height: 30px;
   float: left;
-  margin-left: 10px;
 }
 
 .tab_header {
@@ -135,7 +133,6 @@ body {
   overflow-y: scroll;
   padding: 8px;
   float: left;
-  margin-left: 10px;
 }
 
 .tab table {
@@ -177,7 +174,7 @@ body {
   clear: left;
 }
 
-#characters_container input, #warps_container input,
+#map_characters_container input, #warps_container input,
 #signs_container input, #battlers_container input {
   width: 30px;
 }
@@ -187,7 +184,7 @@ body {
   height: 60px;
 }
 
-#maps_container td, #characters_container td,
+#maps_container td, #map_characters_container td,
 #warps_container td, #signs_container td, #battlers_container td {
   text-align: center;
 }
@@ -199,7 +196,6 @@ body {
 #export_json {
   height: 60px;
   width: 532px;
-  margin-left: 10px;
 }
 
 #export_json_object_editor {
@@ -227,10 +223,6 @@ body {
 #object_editor_inner_main_area {
   height: 100%;
   padding-right: 20px;
-}
-
-#object_editor_inner_main_area div {
-  height: 100%;
 }
 
 #object_editor_inner_main_area .tab {
