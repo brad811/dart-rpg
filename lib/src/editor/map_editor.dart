@@ -31,7 +31,7 @@ class MapEditor {
     mapEditorSpriteSelectorCanvasContext,
     mapEditorSelectedSpriteCanvasContext;
   
-  static List<String> mapEditorTabs = ["maps", "tiles", "characters", "warps", "signs", "battlers"];
+  static List<String> mapEditorTabs = ["maps", "tiles", "map_characters", "warps", "signs", "battlers"];
   static Map<String, DivElement> mapEditorTabDivs = {};
   static Map<String, DivElement> mapEditorTabHeaderDivs = {};
   

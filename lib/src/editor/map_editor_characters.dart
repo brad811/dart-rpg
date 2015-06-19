@@ -14,7 +14,7 @@ class MapEditorCharacters {
   static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
-    querySelector("#add_character_button").onClick.listen(addNewCharacter);
+    querySelector("#add_map_character_button").onClick.listen(addNewCharacter);
     
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
@@ -38,6 +38,14 @@ class MapEditorCharacters {
     Editor.update();
   }
   
+  /*
+   * derp.mapX
+   * derp.mapY
+   * derp.layer
+   * derp.direction
+   * derp.solid
+   */
+  
   static void update() {
     String charactersHtml;
     charactersHtml = "<table>"+
@@ -48,26 +56,26 @@ class MapEditorCharacters {
       charactersHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input id='characters_spriteid_${i}' type='text' value='${ characters[Main.world.curMap][i].spriteId }' /></td>"+
-        "  <td><input id='characters_picid_${i}' type='text' value='${ characters[Main.world.curMap][i].pictureId }' /></td>"+
-        "  <td><input id='characters_mapx_${i}' type='text' value='${ characters[Main.world.curMap][i].mapX }' /></td>"+
-        "  <td><input id='characters_mapy_${i}' type='text' value='${ characters[Main.world.curMap][i].mapY }' /></td>"+
-        "  <td><input id='characters_sizex_${i}' type='text' value='${ characters[Main.world.curMap][i].sizeX }' /></td>"+
-        "  <td><input id='characters_sizey_${i}' type='text' value='${ characters[Main.world.curMap][i].sizeY }' /></td>"+
-        "  <td><input id='characters_solid_${i}' type='checkbox' checked='${ characters[Main.world.curMap][i].solid }' disabled /></td>"+
+        "  <td><input id='map_character_spriteid_${i}' type='text' value='${ characters[Main.world.curMap][i].spriteId }' /></td>"+
+        "  <td><input id='map_character_picid_${i}' type='text' value='${ characters[Main.world.curMap][i].pictureId }' /></td>"+
+        "  <td><input id='map_character_mapx_${i}' type='text' value='${ characters[Main.world.curMap][i].mapX }' /></td>"+
+        "  <td><input id='map_character_mapy_${i}' type='text' value='${ characters[Main.world.curMap][i].mapY }' /></td>"+
+        "  <td><input id='map_character_sizex_${i}' type='text' value='${ characters[Main.world.curMap][i].sizeX }' /></td>"+
+        "  <td><input id='map_character_sizey_${i}' type='text' value='${ characters[Main.world.curMap][i].sizeY }' /></td>"+
+        "  <td><input id='map_character_solid_${i}' type='checkbox' checked='${ characters[Main.world.curMap][i].solid }' disabled /></td>"+
         "</tr>";
     }
     charactersHtml += "</table>";
-    querySelector("#characters_container").innerHtml = charactersHtml;
+    querySelector("#map_characters_container").innerHtml = charactersHtml;
     
     for(int i=0; i<characters[Main.world.curMap].length; i++) {
       List<String> attrs = ["spriteid", "picid", "mapx", "mapy", "sizex", "sizey", "solid"];
       for(String attr in attrs) {
-        if(listeners["#characters_${attr}_${i}"] != null)
-          listeners["#characters_${attr}_${i}"].cancel();
+        if(listeners["#map_character_${attr}_${i}"] != null)
+          listeners["#map_character_${attr}_${i}"].cancel();
         
-        listeners["#characters_${attr}_${i}"] = 
-            querySelector('#characters_${attr}_${i}').onInput.listen(onInputChange);
+        listeners["#map_character_${attr}_${i}"] = 
+            querySelector('#map_character_${attr}_${i}').onInput.listen(onInputChange);
       }
     }
   }
@@ -75,12 +83,12 @@ class MapEditorCharacters {
   static void onInputChange(Event e) {
     for(int i=0; i<characters[Main.world.curMap].length; i++) {
       try {
-        characters[Main.world.curMap][i].spriteId = int.parse((querySelector('#characters_spriteid_${i}') as InputElement).value);
-        characters[Main.world.curMap][i].pictureId = int.parse((querySelector('#characters_picid_${i}') as InputElement).value);
-        characters[Main.world.curMap][i].mapX = int.parse((querySelector('#characters_mapx_${i}') as InputElement).value);
-        characters[Main.world.curMap][i].mapY = int.parse((querySelector('#characters_mapy_${i}') as InputElement).value);
-        characters[Main.world.curMap][i].sizeX = int.parse((querySelector('#characters_sizex_${i}') as InputElement).value);
-        characters[Main.world.curMap][i].sizeY = int.parse((querySelector('#characters_sizey_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].spriteId = int.parse((querySelector('#map_character_spriteid_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].pictureId = int.parse((querySelector('#map_character_picid_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].mapX = int.parse((querySelector('#map_character_mapx_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].mapY = int.parse((querySelector('#map_character_mapy_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].sizeX = int.parse((querySelector('#map_character_sizex_${i}') as InputElement).value);
+        characters[Main.world.curMap][i].sizeY = int.parse((querySelector('#map_character_sizey_${i}') as InputElement).value);
         characters[Main.world.curMap][i].solid = true;
       } catch(e) {
         // could not update this character
