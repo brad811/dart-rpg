@@ -20,6 +20,7 @@ class Main {
   static ImageElement spritesImage;
   static CanvasElement c;
   static CanvasRenderingContext2D ctx;
+  static bool gameJsonHasFocus = false;
 
   static World world;
   static Player player;
@@ -55,13 +56,32 @@ class Main {
   }
   
   static void start() {
+    TextAreaElement textArea = querySelector("#game_json");
+    textArea.onFocus.listen((Event e) {
+      print("onFocus");
+      gameJsonHasFocus = true;
+    });
+    
+    textArea.onBlur.listen((Event e) {
+      print("onBlur");
+      gameJsonHasFocus = false;
+    });
+    
     document.onKeyDown.listen((KeyboardEvent e) {
-      if (!Input.keys.contains(e.keyCode))
-        Input.keys.add(e.keyCode);
+      if(!gameJsonHasFocus) {
+        e.preventDefault();
+        
+        if(!Input.keys.contains(e.keyCode))
+          Input.keys.add(e.keyCode);
+      }
     });
     
     document.onKeyUp.listen((KeyboardEvent e) {
-      Input.keys.remove(e.keyCode);
+      if(!gameJsonHasFocus) {
+        e.preventDefault();
+        
+        Input.keys.remove(e.keyCode);
+      }
     });
     
     Function createWorld = () {
