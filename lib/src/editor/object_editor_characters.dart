@@ -41,7 +41,7 @@ class ObjectEditorCharacters {
   }
   
   static void update() {
-    String charactersHtml = "<table>"+
+    String charactersHtml = "<table class='editor_table'>"+
       "  <tr>"+
       "    <td>Num</td>"+
       "    <td>Label</td>"+

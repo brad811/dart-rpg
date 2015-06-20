@@ -54,7 +54,7 @@ class MapEditorSigns {
   
   static void update() {
     String signsHtml;
-    signsHtml = "<table>"+
+    signsHtml = "<table class='editor_table'>"+
       "  <tr>"+
       "    <td>Num</td><td>X</td><td>Y</td><td>Pic</td><td>Text</td><td></td>"+
       "  </tr>";

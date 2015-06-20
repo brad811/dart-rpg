@@ -23,7 +23,7 @@ class ObjectEditorAttacks {
   }
   
   static void update() {
-    String attacksHtml = "<table>"+
+    String attacksHtml = "<table class='editor_table'>"+
       "  <tr>"+
       "    <td>Num</td><td>Name</td><td>Category</td><td>Power</td>"+
       "  </tr>";

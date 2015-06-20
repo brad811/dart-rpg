@@ -48,7 +48,7 @@ class MapEditorCharacters {
   
   static void update() {
     String charactersHtml;
-    charactersHtml = "<table>"+
+    charactersHtml = "<table class='editor_table'>"+
       "  <tr>"+
       "    <td>Num</td><td>SpriteId</td><td>PicId</td><td>MapX</td><td>MapY</td><td>SizeX</td><td>SizeY</td><td>Solid</td>"+
       "  </tr>";

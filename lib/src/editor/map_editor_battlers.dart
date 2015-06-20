@@ -31,7 +31,7 @@ class MapEditorBattlers {
   
   static void update() {
     String battlersHtml;
-    battlersHtml = "<table>"+
+    battlersHtml = "<table class='editor_table'>"+
       "  <tr>"+
       "    <td>#</td><td>Battler Type</td><td>Level</td><td>Chance</td><td></td>"+
       "  </tr>";

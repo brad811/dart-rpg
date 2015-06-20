@@ -32,7 +32,7 @@ class ObjectEditorBattlerTypes {
   }
   
   static void update() {
-    String battlerTypesHtml = "<table>"+
+    String battlerTypesHtml = "<table class='editor_table'>"+
       "  <tr>"+
       "    <td>Num</td>"+
       "    <td>Sprite Id</td>"+

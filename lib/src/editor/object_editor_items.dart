@@ -28,7 +28,7 @@ class ObjectEditorItems {
   }
   
   static void update() {
-    String itemsHtml = "<table>"+
+    String itemsHtml = "<table class='editor_table'>"+
       "  <tr>"+
       "    <td>Num</td><td>Picture Id</td><td>Name</td><td>Base Price</td><td>Description</td>"+
       "  </tr>";

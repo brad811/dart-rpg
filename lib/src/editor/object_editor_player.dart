@@ -19,7 +19,7 @@ class ObjectEditorPlayer {
   static void update() {
     // TODO: inventory
     // TODO: everything else for this tab
-    String playerHtml = "<table>"+
+    String playerHtml = "<table class='editor_table'>"+
       "  <tr>"+
       "    <td>Name</td><td>Battler Type</td><td>Level</td>"+
       "  </tr>"+

@@ -63,7 +63,7 @@ class MapEditorWarps {
   
   static void update() {
     String warpsHtml;
-    warpsHtml = "<table>"+
+    warpsHtml = "<table class='editor_table'>"+
       "  <tr>"+
       "    <td>Num</td><td>X</td><td>Y</td><td>Dest Map</td><td>Dest X</td><td>Dest Y</td><td></td>"+
       "  </tr>";

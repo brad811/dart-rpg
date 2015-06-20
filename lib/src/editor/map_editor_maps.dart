@@ -65,7 +65,7 @@ class MapEditorMaps {
     mapsHtml += "Y: <input id='player_start_y' type='text' class='number' value='${Main.world.startY}' />";
     mapsHtml += "<hr />";
     
-    mapsHtml += "<table>"+
+    mapsHtml += "<table class='editor_table'>"+
       "  <tr>"+
       "    <td>Num</td><td>Name</td><td>X Size</td><td>Y Size</td><td>Chars</td><td></td>"+
       "  </tr>";
