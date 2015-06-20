@@ -6,7 +6,6 @@ import 'dart:html';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
-import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'editor.dart';
@@ -52,8 +51,6 @@ class ObjectEditorCharacters {
       "    <td>Level</td>"+
       "    <td>Size X</td>"+
       "    <td>Size Y</td>"+
-      "    <td>Walk Speed</td>"+
-      "    <td>Run Speed</td>"+
       "    <td>Inventory</td>"+
       "    <td>Game Event</td>"+
       "    <td>Sight Distance</td>"+
@@ -86,8 +83,6 @@ class ObjectEditorCharacters {
         "  <td><input id='character_level_${i}' type='text' class='number' value='${ World.characters[key].battler.level }' /></td>"+
         "  <td><input id='character_size_x_${i}' type='text' class='number' value='${ World.characters[key].sizeX }' /></td>"+
         "  <td><input id='character_size_y_${i}' type='text' class='number' value='${ World.characters[key].sizeY }' /></td>"+
-        "  <td><input id='character_walk_speed_${i}' type='text' class='number' value='${ World.characters[key].walkSpeed }' /></td>"+
-        "  <td><input id='character_run_speed_${i}' type='text' class='number' value='${ World.characters[key].runSpeed }' /></td>"+
         "  <td>Inventory</td>"+
         "  <td>Game Event</td>"+
         "  <td><input id='character_sight_distance_${i}' type='text' class='number' value='${ World.characters[key].sightDistance }' /></td>"+
@@ -103,7 +98,7 @@ class ObjectEditorCharacters {
     
     List<String> attrs = [
       "label", "sprite_id", "picture_id", "battler_type", "level",
-      "size_x", "size_y", "walk_speed", "run_speed", /* inventory, game_event */
+      "size_x", "size_y", /* inventory, game_event */
       "sight_distance", "pre_battle_text" /* post battle event */
     ];
     
@@ -122,22 +117,59 @@ class ObjectEditorCharacters {
     if(e.target is InputElement) {
       InputElement target = e.target;
       
-      if(target.id.contains("character_name_") && World.characters.keys.contains(target.value)) {
+      if(target.id.contains("character_label_") && World.characters.keys.contains(target.value)) {
         // avoid name collisions
         int i = 0;
         for(; World.characters.keys.contains(target.value + "_${i}"); i++) {}
         target.value += "_${i}";
-      } else if(target.id.contains("character_power_")) {
-        // enforce number format
-        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+      } else {
+        List<String> numberFields = [
+          "sprite_id", "picture_id", "level",
+          "size_x", "size_y",
+          "sight_distance"
+        ];
+        
+        numberFields.forEach((String field) {
+          if(target.id.contains("character_power_")) {
+            // enforce number format
+            target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+            return;
+          }
+        });
       }
     }
     
     World.characters = new Map<String, Character>();
-    for(int i=0; querySelector('#character_name_${i}') != null; i++) {
+    for(int i=0; querySelector('#character_label_${i}') != null; i++) {
       try {
-        String name = (querySelector('#character_name_${i}') as InputElement).value;
-        //TODO: World.characters[name] = new Character();
+        List<String> attrs = [
+          "battler_type", "level",
+          "sight_distance", "pre_battle_text" /* post battle event */
+        ];
+        
+        String name = (querySelector('#character_label_${i}') as InputElement).value;
+        Character character = new Character(
+          int.parse((querySelector('#character_sprite_id_${i}') as TextInputElement).value),
+          int.parse((querySelector('#character_picture_id_${i}') as TextInputElement).value),
+          0, 0,
+          layer: World.LAYER_BELOW,
+          sizeX: int.parse((querySelector('#character_size_x_${i}') as TextInputElement).value),
+          sizeY: int.parse((querySelector('#character_size_y_${i}') as TextInputElement).value),
+          solid: true
+        );
+        
+        String battlerTypeName = (querySelector('#character_battler_type_${i}') as SelectElement).value;
+        
+        Battler battler = new Battler(
+          "name",
+          World.battlerTypes[battlerTypeName],
+          int.parse((querySelector('#character_level_${i}') as TextInputElement).value),
+          World.battlerTypes[battlerTypeName].levelAttacks.values.toList()
+        );
+        
+        character.battler = battler;
+        
+        World.characters[name] = character;
       } catch(e) {
         // could not update this character
         print("Error updating character: " + e.toString());
