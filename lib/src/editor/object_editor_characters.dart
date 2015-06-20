@@ -58,6 +58,7 @@ class ObjectEditorCharacters {
       "    <td>Post Battle Event</td>"+
       "    <td></td>"+
       "  </tr>";
+    
     for(int i=0; i<World.characters.keys.length; i++) {
       String key = World.characters.keys.elementAt(i);
       
@@ -142,19 +143,14 @@ class ObjectEditorCharacters {
     World.characters = new Map<String, Character>();
     for(int i=0; querySelector('#character_label_${i}') != null; i++) {
       try {
-        List<String> attrs = [
-          "battler_type", "level",
-          "sight_distance", "pre_battle_text" /* post battle event */
-        ];
-        
         String name = (querySelector('#character_label_${i}') as InputElement).value;
         Character character = new Character(
-          int.parse((querySelector('#character_sprite_id_${i}') as TextInputElement).value),
-          int.parse((querySelector('#character_picture_id_${i}') as TextInputElement).value),
+          Editor.getTextInputIntValue('#character_sprite_id_${i}', 1),
+          Editor.getTextInputIntValue('#character_picture_id_${i}', 1),
           0, 0,
           layer: World.LAYER_BELOW,
-          sizeX: int.parse((querySelector('#character_size_x_${i}') as TextInputElement).value),
-          sizeY: int.parse((querySelector('#character_size_y_${i}') as TextInputElement).value),
+          sizeX: Editor.getTextInputIntValue('#character_size_x_${i}', 1),
+          sizeY: Editor.getTextInputIntValue('#character_size_y_${i}', 2),
           solid: true
         );
         
@@ -168,6 +164,9 @@ class ObjectEditorCharacters {
         );
         
         character.battler = battler;
+        character.sightDistance = Editor.getTextInputIntValue('#character_sight_distance_${i}', 1);
+        character.preBattleText = Editor.getTextInputStringValue('#character_pre_battle_text_${i}');
+        // post battle event
         
         World.characters[name] = character;
       } catch(e) {
@@ -181,14 +180,22 @@ class ObjectEditorCharacters {
   
   static void export(Map<String, Object> exportJson) {
     Map<String, Map<String, String>> charactersJson = {};
-    /* TODO: 
     World.characters.forEach((String key, Character character) {
       Map<String, String> characterJson = {};
-      characterJson["category"] = character.category.toString();
-      characterJson["power"] = character.power.toString();
-      charactersJson[character.name] = characterJson;
+      characterJson["spriteId"] = character.spriteId.toString();
+      characterJson["pictureId"] = character.pictureId.toString();
+      characterJson["battlerType"] = character.battler.battlerType.name;
+      characterJson["battlerLevel"] = character.battler.level.toString();
+      characterJson["sizeX"] = character.sizeX.toString();
+      characterJson["sizeY"] = character.sizeY.toString();
+      // inventory
+      // game event
+      characterJson["sightDistance"] = character.sightDistance.toString();
+      characterJson["preBattleText"] = character.preBattleText;
+      // post battle event
+      
+      charactersJson[key] = characterJson;
     });
-    */
     
     exportJson["characters"] = charactersJson;
   }
