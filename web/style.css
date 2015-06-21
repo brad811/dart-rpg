@@ -80,6 +80,7 @@ body {
 .editor_table td {
   padding-left: 5px !important;
   padding-right: 5px !important;
+  padding-bottom: 5px !important;
 }
 
 #editor_tabs {
@@ -157,6 +158,11 @@ body {
 
 .tab table {
   float: left;
+}
+
+h4 {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 #size_buttons_container {

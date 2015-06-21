@@ -25,6 +25,7 @@ class Editor {
   static List<String> editorTabs = ["map_editor", "object_editor"];
   static Map<String, DivElement> editorTabDivs = {};
   static Map<String, DivElement> editorTabHeaderDivs = {};
+  static bool highlightSpecialTiles = true;
   
   static void init() {
     ObjectEditor.init();

@@ -320,6 +320,9 @@ class MapEditor {
   }
   
   static void outlineTiles(List<Tile> tiles, int r, int g, int b) {
+    if(!Editor.highlightSpecialTiles)
+      return;
+    
     mapEditorCanvasContext.beginPath();
     for(Tile tile in tiles) {
       int

@@ -228,20 +228,14 @@ class MapEditorMaps {
     if(listeners["#layer_above_visible"] != null)
       listeners["#layer_above_visible"].cancel();
     
-    if(listeners["#layer_player_visible"] != null)
-      listeners["#layer_player_visible"].cancel();
-    
-    if(listeners["#layer_below_visible"] != null)
-      listeners["#layer_below_visible"].cancel();
-    
-    if(listeners["#layer_ground_visible"] != null)
-      listeners["#layer_ground_visible"].cancel();
-    
     listeners["#layer_above_visible"] = querySelector('#layer_above_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_above_visible');
       MapEditor.layerVisible[World.LAYER_ABOVE] = checkbox.checked;
       Editor.update();
     });
+    
+    if(listeners["#layer_player_visible"] != null)
+      listeners["#layer_player_visible"].cancel();
     
     listeners["#layer_player_visible"] = querySelector('#layer_player_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_player_visible');
@@ -249,15 +243,30 @@ class MapEditorMaps {
       Editor.update();
     });
     
+    if(listeners["#layer_below_visible"] != null)
+      listeners["#layer_below_visible"].cancel();
+    
     listeners["#layer_below_visible"] = querySelector('#layer_below_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_below_visible');
       MapEditor.layerVisible[World.LAYER_BELOW] = checkbox.checked;
       Editor.update();
     });
     
+    if(listeners["#layer_ground_visible"] != null)
+      listeners["#layer_ground_visible"].cancel();
+    
     listeners["#layer_ground_visible"] = querySelector('#layer_ground_visible').onChange.listen((Event e) {
       CheckboxInputElement checkbox = querySelector('#layer_ground_visible');
       MapEditor.layerVisible[World.LAYER_GROUND] = checkbox.checked;
+      Editor.update();
+    });
+    
+    if(listeners["#layer_special_visible"] != null)
+      listeners["#layer_special_visible"].cancel();
+    
+    listeners["#layer_special_visible"] = querySelector('#layer_special_visible').onChange.listen((Event e) {
+      CheckboxInputElement checkbox = querySelector('#layer_special_visible');
+      Editor.highlightSpecialTiles = checkbox.checked;
       Editor.update();
     });
   }
