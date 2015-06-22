@@ -78,9 +78,7 @@ body {
 }
 
 .editor_table td {
-  padding-left: 5px !important;
-  padding-right: 5px !important;
-  padding-bottom: 5px !important;
+  padding: 5px !important;
 }
 
 #editor_tabs {
@@ -127,6 +125,10 @@ body {
 
 #editor_tabs_container {
   height: 100%;
+}
+
+.selected {
+  background-color: #eff;
 }
 
 .tab_headers {
@@ -219,22 +221,19 @@ h4 {
   width: 100px;
 }
 
-#export_json {
+#export_json, #export_json_object_editor {
   height: 60px;
   width: 532px;
 }
 
 #object_editor_right {
-  padding: 10px;
+  padding: 10px 10px 0 26px !important;
   margin: 10px;
+  width: 532px;
 }
 
-#export_json_object_editor {
-  border: 1px solid #f00;
-  width: 100%;
+#object_editor_right table, #object_editor_right table td {
   height: 100%;
-  padding: 0;
-  border-width: 0;
 }
 
 /*
@@ -269,8 +268,4 @@ h4 {
 
 #object_editor_inner_main_area .tab td {
   text-align: center;
-}
-
-#object_editor_right {
-  width: 400px;
 }

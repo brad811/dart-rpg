@@ -13,6 +13,7 @@ import 'object_editor.dart';
 
 class ObjectEditorCharacters {
   static Map<String, StreamSubscription> listeners = {};
+  static int selectedRow;
   
   static void setUp() {
     querySelector("#add_character_button").onClick.listen(addNewCharacter);
@@ -51,11 +52,8 @@ class ObjectEditorCharacters {
       "    <td>Level</td>"+
       "    <td>Size X</td>"+
       "    <td>Size Y</td>"+
-      "    <td>Inventory</td>"+
-      "    <td>Game Event</td>"+
       "    <td>Sight Distance</td>"+
       "    <td>Pre Battle Text</td>"+
-      "    <td>Post Battle Event</td>"+
       "    <td></td>"+
       "  </tr>";
     
@@ -63,7 +61,7 @@ class ObjectEditorCharacters {
       String key = World.characters.keys.elementAt(i);
       
       charactersHtml +=
-        "<tr>"+
+        "<tr id='character_row_${i}'>"+
         "  <td>${i}</td>"+
         "  <td><input id='character_label_${i}' type='text' value='${ key }' /></td>"+
         "  <td><input id='character_sprite_id_${i}' type='text' class='number' value='${ World.characters[key].spriteId }' /></td>"+
@@ -84,16 +82,22 @@ class ObjectEditorCharacters {
         "  <td><input id='character_level_${i}' type='text' class='number' value='${ World.characters[key].battler.level }' /></td>"+
         "  <td><input id='character_size_x_${i}' type='text' class='number' value='${ World.characters[key].sizeX }' /></td>"+
         "  <td><input id='character_size_y_${i}' type='text' class='number' value='${ World.characters[key].sizeY }' /></td>"+
-        "  <td>Inventory</td>"+
-        "  <td>Game Event</td>"+
         "  <td><input id='character_sight_distance_${i}' type='text' class='number' value='${ World.characters[key].sightDistance }' /></td>"+
         "  <td><input id='character_pre_battle_text_${i}' type='text' value='${ World.characters[key].preBattleText }' /></td>"+
-        "  <td>Post Battle Event</td>"+
         "  <td><button id='delete_character_${i}'>Delete</button></td>"+
         "</tr>";
     }
     charactersHtml += "</table>";
     querySelector("#characters_container").innerHtml = charactersHtml;
+    
+    // TODO: add inventory, game event, and post battle event to right half
+    // inventory tab, game event tab, battle tab
+    // move level, sight distance, and pre-battle text under battle tab
+    
+    // highlight the selected row
+    if(querySelector("#character_row_${selectedRow}") != null) {
+      querySelector("#character_row_${selectedRow}").classes.add("selected");
+    }
     
     Editor.setDeleteButtonListeners(World.characters, "character", listeners);
     
@@ -110,7 +114,18 @@ class ObjectEditorCharacters {
         
         listeners["#character_${attr}_${i}"] = 
             querySelector('#character_${attr}_${i}').onInput.listen(onInputChange);
-      }
+      }      
+      
+      // when a row is clicked, set it as selected and highlight it
+      querySelector("#character_row_${i}").onClick.listen((Event e) {
+        selectedRow = i;
+        
+        for(int j=0; j<World.characters.keys.length; j++) {
+          querySelector("#character_row_${j}").classes.remove("selected");
+        }
+        
+        querySelector("#character_row_${i}").classes.add("selected");
+      });
     }
   }
   
