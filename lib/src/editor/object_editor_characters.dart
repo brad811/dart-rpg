@@ -13,7 +13,7 @@ import 'object_editor.dart';
 
 class ObjectEditorCharacters {
   static Map<String, StreamSubscription> listeners = {};
-  static int selectedRow;
+  static int selected;
   
   static void setUp() {
     querySelector("#add_character_button").onClick.listen(addNewCharacter);
@@ -91,12 +91,12 @@ class ObjectEditorCharacters {
     querySelector("#characters_container").innerHtml = charactersHtml;
     
     // TODO: add inventory, game event, and post battle event to right half
-    // inventory tab, game event tab, battle tab
-    // move level, sight distance, and pre-battle text under battle tab
+    // TODO: move level, sight distance, and pre-battle text under battle tab
     
     // highlight the selected row
-    if(querySelector("#character_row_${selectedRow}") != null) {
-      querySelector("#character_row_${selectedRow}").classes.add("selected");
+    if(querySelector("#character_row_${selected}") != null) {
+      querySelector("#character_row_${selected}").classes.add("selected");
+      querySelector("#characters_advanced").style.display = "block";
     }
     
     Editor.setDeleteButtonListeners(World.characters, "character", listeners);
@@ -118,13 +118,14 @@ class ObjectEditorCharacters {
       
       // when a row is clicked, set it as selected and highlight it
       querySelector("#character_row_${i}").onClick.listen((Event e) {
-        selectedRow = i;
+        selected = i;
         
         for(int j=0; j<World.characters.keys.length; j++) {
           querySelector("#character_row_${j}").classes.remove("selected");
         }
         
         querySelector("#character_row_${i}").classes.add("selected");
+        querySelector("#characters_advanced").style.display = "block";
       });
     }
   }

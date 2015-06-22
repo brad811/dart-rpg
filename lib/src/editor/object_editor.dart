@@ -28,10 +28,19 @@ class ObjectEditor {
         for(String tabb in objectEditorTabs) {
           objectEditorTabDivs[tabb].style.display = "none";
           objectEditorTabHeaderDivs[tabb].style.backgroundColor = "";
+          
+          // hide any advanced sections in the right half
+          if(querySelector("#${tabb}_advanced") != null) {
+            querySelector("#${tabb}_advanced").style.display = "none";
+          }
         }
         
         objectEditorTabDivs[tab].style.display = "block";
         objectEditorTabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
+        
+        // un-select any character rows and redraw the character tab
+        ObjectEditorCharacters.selected = null;
+        ObjectEditorCharacters.update();
       });
     }
     

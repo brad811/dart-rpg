@@ -121,9 +121,10 @@ body {
   width: 532px;
   overflow-y: scroll;
   float: left;
+  margin-bottom: 10px;
 }
 
-#editor_tabs_container {
+#editor_tabs_container, #object_editor_tabs_container {
   height: 100%;
 }
 
@@ -134,7 +135,6 @@ body {
 .tab_headers {
   height: 30px;
   float: left;
-  padding-top: 10px !important;
 }
 
 .tab_header {
@@ -226,8 +226,12 @@ h4 {
   width: 532px;
 }
 
+/*
+ * Object Editor
+ */
+ 
 #object_editor_right {
-  padding: 10px 10px 0 26px !important;
+  padding: 0 0 0 26px !important;
   margin: 10px;
   width: 532px;
 }
@@ -235,10 +239,6 @@ h4 {
 #object_editor_right table, #object_editor_right table td {
   height: 100%;
 }
-
-/*
- * Object Editor
- */
 
 .number {
   width: 30px;
@@ -268,4 +268,12 @@ h4 {
 
 #object_editor_inner_main_area .tab td {
   text-align: center;
+}
+
+#character_advanced {
+  display: none;
+}
+
+#character_advanced .tab_headers {
+  padding-top: 0 !important;
 }
