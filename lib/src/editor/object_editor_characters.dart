@@ -12,16 +12,14 @@ import 'editor.dart';
 import 'object_editor.dart';
 
 class ObjectEditorCharacters {
+  static List<String> advancedTabs = ["character_inventory", "character_game_event", "character_battle"];
   static Map<String, StreamSubscription> listeners = {};
   static int selected;
   
   static void setUp() {
+    Editor.setUpTabs(advancedTabs);
     querySelector("#add_character_button").onClick.listen(addNewCharacter);
   }
-  
-  // TODO: this might have to be a different type
-  // Perhaps have CharacterType or MapCharacter in map editor
-  // because this should not have map information like location and layer
   
   static void addNewCharacter(MouseEvent e) {
     Character newCharacter = new Character(
@@ -96,7 +94,7 @@ class ObjectEditorCharacters {
     // highlight the selected row
     if(querySelector("#character_row_${selected}") != null) {
       querySelector("#character_row_${selected}").classes.add("selected");
-      querySelector("#characters_advanced").style.display = "block";
+      querySelector("#characters_advanced").style.display = "";
     }
     
     Editor.setDeleteButtonListeners(World.characters, "character", listeners);
@@ -125,7 +123,7 @@ class ObjectEditorCharacters {
         }
         
         querySelector("#character_row_${i}").classes.add("selected");
-        querySelector("#characters_advanced").style.display = "block";
+        querySelector("#characters_advanced").style.display = "";
       });
     }
   }

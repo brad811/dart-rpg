@@ -23,8 +23,6 @@ import 'object_editor.dart';
 
 class Editor {
   static List<String> editorTabs = ["map_editor", "object_editor"];
-  static Map<String, DivElement> editorTabDivs = {};
-  static Map<String, DivElement> editorTabHeaderDivs = {};
   static bool highlightSpecialTiles = true;
   
   static void init() {
@@ -39,7 +37,7 @@ class Editor {
       Main.world.loadGame(() {
         MapEditor.setUp();
         ObjectEditor.setUp();
-        Editor.setUpTabs();
+        Editor.setUpTabs(editorTabs);
         
         Editor.update();
         
@@ -74,26 +72,29 @@ class Editor {
     textarea2.value = JSON.encode(exportJson);
   }
   
-  static void setUpTabs() {
-    for(String tab in editorTabs) {
-      editorTabDivs[tab] = querySelector("#${tab}_tab");
-      editorTabDivs[tab].style.display = "none";
+  static void setUpTabs(List<String> tabs) {
+    Map<String, DivElement> tabDivs = {};
+    Map<String, DivElement> tabHeaderDivs = {};
+    
+    for(String tab in tabs) {
+      tabDivs[tab] = querySelector("#${tab}_tab");
+      tabDivs[tab].style.display = "none";
       
-      editorTabHeaderDivs[tab] = querySelector("#${tab}_tab_header");
+      tabHeaderDivs[tab] = querySelector("#${tab}_tab_header");
       
-      editorTabHeaderDivs[tab].onClick.listen((MouseEvent e) {
-        for(String tabb in editorTabs) {
-          editorTabDivs[tabb].style.display = "none";
-          editorTabHeaderDivs[tabb].style.backgroundColor = "";
+      tabHeaderDivs[tab].onClick.listen((MouseEvent e) {
+        for(String tabb in tabs) {
+          tabDivs[tabb].style.display = "none";
+          tabHeaderDivs[tabb].style.backgroundColor = "";
         }
         
-        editorTabDivs[tab].style.display = "";
-        editorTabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
+        tabDivs[tab].style.display = "";
+        tabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
       });
     }
     
-    editorTabDivs[editorTabDivs.keys.first].style.display = "";
-    editorTabHeaderDivs[editorTabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
+    tabDivs[tabDivs.keys.first].style.display = "";
+    tabHeaderDivs[tabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
   }
   
   static void setDeleteButtonListeners(
