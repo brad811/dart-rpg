@@ -22,7 +22,7 @@ class ObjectEditorItems {
   }
   
   static void addNewItem(MouseEvent e) {
-    World.items["New Item"] = new Item();
+    World.items["Item"] = new Item();
     update();
     ObjectEditor.update();
   }
