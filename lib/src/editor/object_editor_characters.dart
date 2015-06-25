@@ -95,6 +95,8 @@ class ObjectEditorCharacters {
         querySelector("#character_row_${i}").classes.add("selected");
         querySelector("#characters_advanced").style.display = "";
       });
+      
+      // set listeners for inventory
     }
   }
   
@@ -263,7 +265,19 @@ class ObjectEditorCharacters {
       characterJson["battlerLevel"] = character.battler.level.toString();
       characterJson["sizeX"] = character.sizeX.toString();
       characterJson["sizeY"] = character.sizeY.toString();
+      
       // inventory
+      List<Map<String, String>> inventoryJson = [];
+      character.inventory.itemNames().forEach((String itemName) {
+        Map<String, String> itemJson = {};
+        itemJson["item"] = itemName;
+        itemJson["quantity"] = character.inventory.getQuantity(itemName).toString();
+        
+        inventoryJson.add(itemJson);
+      });
+      
+      characterJson["inventory"] = inventoryJson.toString();
+      
       // game event
       characterJson["sightDistance"] = character.sightDistance.toString();
       characterJson["preBattleText"] = character.preBattleText;
