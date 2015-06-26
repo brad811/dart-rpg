@@ -6,6 +6,7 @@ import 'dart:html';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'editor.dart';
@@ -20,6 +21,7 @@ class ObjectEditorCharacters {
     Editor.setUpTabs(advancedTabs);
     querySelector("#add_character_button").onClick.listen(addNewCharacter);
     querySelector("#add_inventory_item_button").onClick.listen(addInventoryItem);
+    querySelector("#characters_advanced").classes.remove("hidden");
   }
   
   static void addNewCharacter(MouseEvent e) {
@@ -64,15 +66,23 @@ class ObjectEditorCharacters {
     // highlight the selected row
     if(querySelector("#character_row_${selected}") != null) {
       querySelector("#character_row_${selected}").classes.add("selected");
-      querySelector("#characters_advanced").style.display = "";
+      querySelector("#characters_advanced").classes.remove("hidden");
     }
     
     Editor.setDeleteButtonListeners(World.characters, "character", listeners);
+    
+    for(int i=0; i<World.characters.keys.length; i++) {
+      Editor.setDeleteButtonListeners(World.characters.values.elementAt(i).inventory.itemStacks, "character_${i}_item", listeners);
+    }
     
     List<String> attrs = [
       "label", "sprite_id", "picture_id", "battler_type", "level",
       "size_x", "size_y", /* inventory, game_event */
       "sight_distance", "pre_battle_text" /* post battle event */
+    ];
+    
+    List<String> advanced_attrs = [
+      "inventory_item", "inventory_quantity"
     ];
     
     for(int i=0; i<World.characters.keys.length; i++) {
@@ -89,14 +99,32 @@ class ObjectEditorCharacters {
         selected = i;
         
         for(int j=0; j<World.characters.keys.length; j++) {
+          // un-highlight other character rows
           querySelector("#character_row_${j}").classes.remove("selected");
+          
+          // hide the inventory items for other characters
+          querySelector("#character_${j}_inventory_table").classes.add("hidden");
         }
         
         querySelector("#character_row_${i}").classes.add("selected");
-        querySelector("#characters_advanced").style.display = "";
+        querySelector("#characters_advanced").classes.remove("hidden");
+        
+        // show the inventory table for the selected character
+        querySelector("#character_${i}_inventory_table").classes.remove("hidden");
       });
       
-      // set listeners for inventory
+      Character character = World.characters.values.elementAt(i);
+      for(int j=0; j<character.inventory.itemNames().length; j++) {
+        for(String advanced_attr in advanced_attrs) {
+          String elementSelector = "#character_${i}_${advanced_attr}_${j}";
+          
+          if(listeners[elementSelector] != null) {
+            listeners[elementSelector].cancel();
+          }
+          
+          listeners[elementSelector] = querySelector(elementSelector).onInput.listen(onInputChange);
+        }
+      }
     }
   }
   
@@ -149,46 +177,50 @@ class ObjectEditorCharacters {
     
     charactersHtml += "</table>";
     
-    querySelector("#characters_container").innerHtml = charactersHtml;
+    querySelector("#characters_container").setInnerHtml(charactersHtml);
   }
   
   static void buildInventoryHtml() {
-    if(selected == null)
-      return;
-    
     String inventoryHtml = "";
     
-    inventoryHtml += "<table>";
-    inventoryHtml += "<tr><td>Num</td><td>Item</td><td>Quantity</td><td></td></tr>";
-    Character selectedCharacter = World.characters.values.elementAt(selected);
-    for(int i=0; i<selectedCharacter.inventory.itemNames().length; i++) {
-      String curItemName = selectedCharacter.inventory.itemNames().elementAt(i);
-      inventoryHtml += "<tr>";
-      inventoryHtml += "  <td>${i}</td>";
-      inventoryHtml += "  <td><select>";
-      World.items.keys.forEach((String itemOptionName) {
-        String selectedString = "";
-        
-        if(itemOptionName != curItemName && selectedCharacter.inventory.itemNames().contains(itemOptionName)) {
-          // don't show items that are already somewhere else in the character's inventory
-          return;
-        }
-        
-        if(itemOptionName == curItemName) {
-          selectedString = "selected=\"selected\"";
-        }
-        inventoryHtml += "<option ${selectedString}>${itemOptionName}</option>";
-      });
-      inventoryHtml += "  </select></td>";
-      inventoryHtml += "  <td><input type='text' class='number' value='${selectedCharacter.inventory.getQuantity(curItemName)}' /></td>";
-      inventoryHtml += "  <td><button id='delete_inventory_item_${i}'>Delete</button></td>";
-      inventoryHtml += "</tr>";
+    for(int i=0; i<World.characters.keys.length; i++) {
+      String visibleString = "class='hidden'";
+      if(selected == i) {
+        visibleString = "";
+      }
+      
+      inventoryHtml += "<table id='character_${i}_inventory_table' ${visibleString}>";
+      inventoryHtml += "<tr><td>Num</td><td>Item</td><td>Quantity</td><td></td></tr>";
+      Character character = World.characters.values.elementAt(i);
+      for(int j=0; j<character.inventory.itemNames().length; j++) {
+        String curItemName = character.inventory.itemNames().elementAt(j);
+        inventoryHtml += "<tr>";
+        inventoryHtml += "  <td>${j}</td>";
+        inventoryHtml += "  <td><select id='character_${i}_inventory_item_${j}'>";
+        World.items.keys.forEach((String itemOptionName) {
+          String selectedString = "";
+          
+          if(itemOptionName != curItemName && character.inventory.itemNames().contains(itemOptionName)) {
+            // don't show items that are already somewhere else in the character's inventory
+            return;
+          }
+          
+          if(itemOptionName == curItemName) {
+            selectedString = "selected=\"selected\"";
+          }
+          inventoryHtml += "<option ${selectedString}>${itemOptionName}</option>";
+        });
+        inventoryHtml += "  </select></td>";
+        inventoryHtml += "  <td><input id='character_${i}_inventory_quantity_${j}' type='text' class='number' value='${character.inventory.getQuantity(curItemName)}' /></td>";
+        inventoryHtml += "  <td><button id='delete_character_${i}_item_${j}'>Delete</button></td>";
+        inventoryHtml += "</tr>";
+      }
+      
+      inventoryHtml += "</table>";
     }
     
-    inventoryHtml += "</table>";
-    
-    
-    querySelector("#inventory_container").innerHtml = inventoryHtml;
+    // TODO: replace all .innerHtml with .setInnerHtml()
+    querySelector("#inventory_container").setInnerHtml(inventoryHtml);
   }
   
   static void onInputChange(Event e) {
@@ -252,13 +284,24 @@ class ObjectEditorCharacters {
       }
     }
     
+    for(int i=0; i<World.characters.keys.length; i++) {
+      Character character = World.characters.values.elementAt(i);
+      character.inventory = new Inventory([]);
+      
+      for(int j=0; querySelector('#character_${i}_inventory_item_${j}') != null; j++) {
+        String itemName = (querySelector('#character_${i}_inventory_item_${j}') as SelectElement).value;
+        int itemQuantity = int.parse((querySelector('#character_${i}_inventory_quantity_${j}') as TextInputElement).value);
+        character.inventory.addItem(World.items[itemName], itemQuantity);
+      }
+    }
+    
     Editor.updateAndRetainValue(e);
   }
   
   static void export(Map<String, Object> exportJson) {
     Map<String, Map<String, String>> charactersJson = {};
     World.characters.forEach((String key, Character character) {
-      Map<String, String> characterJson = {};
+      Map<String, Object> characterJson = {};
       characterJson["spriteId"] = character.spriteId.toString();
       characterJson["pictureId"] = character.pictureId.toString();
       characterJson["battlerType"] = character.battler.battlerType.name;
@@ -276,7 +319,7 @@ class ObjectEditorCharacters {
         inventoryJson.add(itemJson);
       });
       
-      characterJson["inventory"] = inventoryJson.toString();
+      characterJson["inventory"] = inventoryJson;
       
       // game event
       characterJson["sightDistance"] = character.sightDistance.toString();

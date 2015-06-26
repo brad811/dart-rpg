@@ -270,10 +270,12 @@ h4 {
   text-align: center;
 }
 
-#character_advanced {
+#object_editor_tabs_container td {
+  text-align: center;
+  padding: 5px;
+}
+
+.hidden {
   display: none;
 }
 
-#character_advanced .tab_headers {
-  padding-top: 0 !important;
-}

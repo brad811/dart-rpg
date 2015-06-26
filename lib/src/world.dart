@@ -207,6 +207,7 @@ class World {
     parseBattlerTypes(obj["battlerTypes"]);
     parseMaps(obj["maps"]);
     parseItems(obj["items"]);
+    parseCharacters(obj["characters"]);
     parsePlayer(obj["player"]);
   }
   
@@ -347,6 +348,39 @@ class World {
           int.parse(attacksObject[itemName]["basePrice"]),
           attacksObject[itemName]["description"]
       );
+    }
+  }
+  
+  void parseCharacters(Map<String, Map> charactersObject) {
+    // TODO: import characters from maps
+    characters = {};
+    for(String characterName in charactersObject.keys) {
+      characters[characterName] = new Character(
+          int.parse(charactersObject[characterName]["spriteId"]),
+          int.parse(charactersObject[characterName]["pictureId"]),
+          1, 1,
+          layer: World.LAYER_PLAYER,
+          sizeX: 1, sizeY: 2,
+          solid: true
+      );
+      
+      // TODO: get battler info from advanced character battler tab
+      String battlerTypeName = charactersObject[characterName]["battlerType"];
+      BattlerType battlerType = World.battlerTypes[battlerTypeName];
+      characters[characterName].battler = new Battler(
+          battlerType.name,
+          battlerType,
+          int.parse(charactersObject[characterName]["battlerLevel"]),
+          battlerType.levelAttacks.values.toList()
+        );
+      
+      characters[characterName].inventory = new Inventory([]);
+      List<Map<String, String>> characterItems = charactersObject[characterName]["inventory"];
+      for(int i=0; i<characterItems.length; i++) {
+        String itemName = characterItems.elementAt(i)["item"];
+        int itemQuantity = int.parse(characterItems.elementAt(i)["quantity"]);
+        characters[characterName].inventory.addItem(World.items[itemName], itemQuantity);
+      }
     }
   }
   

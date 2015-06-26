@@ -10,7 +10,7 @@ class ItemStack {
 }
 
 class Inventory {
-  Map<String, ItemStack> _itemStacks = new Map<String, ItemStack>();
+  Map<String, ItemStack> itemStacks = new Map<String, ItemStack>();
   int money = 0;
   
   Inventory(List<ItemStack> itemStacks) {
@@ -20,20 +20,20 @@ class Inventory {
   }
   
   Item getItem(String itemName) {
-    return _itemStacks[itemName].item;
+    return itemStacks[itemName].item;
   }
   
   Item removeItem(String itemName, [int quantity = 1]) {
     if(itemName == null || itemName.length == 0)
       return null;
 
-    if(_itemStacks.containsKey(itemName)) {
-      _itemStacks[itemName].quantity -= quantity;
-      if(_itemStacks[itemName].quantity <= 0) {
-        _itemStacks.remove(itemName);
+    if(itemStacks.containsKey(itemName)) {
+      itemStacks[itemName].quantity -= quantity;
+      if(itemStacks[itemName].quantity <= 0) {
+        itemStacks.remove(itemName);
       }
       
-      return _itemStacks[itemName].item;
+      return itemStacks[itemName].item;
     }
     
     // TODO: handle no more items left differently?
@@ -44,21 +44,21 @@ class Inventory {
     if(item == null)
       return;
     
-    if(_itemStacks.containsKey(item.name)) {
-      _itemStacks[item.name].quantity += quantity;
+    if(itemStacks.containsKey(item.name)) {
+      itemStacks[item.name].quantity += quantity;
     } else {
-      _itemStacks[item.name] = new ItemStack(item, quantity);
+      itemStacks[item.name] = new ItemStack(item, quantity);
     }
   }
   
   int getQuantity(String itemName) {
-    if(_itemStacks.containsKey(itemName))
-      return _itemStacks[itemName].quantity;
+    if(itemStacks.containsKey(itemName))
+      return itemStacks[itemName].quantity;
     else
       return 0;
   }
   
   List<String> itemNames() {
-    return _itemStacks.keys.toList();
+    return itemStacks.keys.toList();
   }
 }

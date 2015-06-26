@@ -20,22 +20,22 @@ class ObjectEditor {
   static void setUp() {
     for(String tab in objectEditorTabs) {
       objectEditorTabDivs[tab] = querySelector("#object_editor_${tab}_tab");
-      objectEditorTabDivs[tab].style.display = "none";
+      objectEditorTabDivs[tab].classes.add("hidden");
       
       objectEditorTabHeaderDivs[tab] = querySelector("#object_editor_${tab}_tab_header");
       
       objectEditorTabHeaderDivs[tab].onClick.listen((MouseEvent e) {
         for(String tabb in objectEditorTabs) {
-          objectEditorTabDivs[tabb].style.display = "none";
+          objectEditorTabDivs[tabb].classes.add("hidden");
           objectEditorTabHeaderDivs[tabb].style.backgroundColor = "";
           
           // hide any advanced sections in the right half
           if(querySelector("#${tabb}_advanced") != null) {
-            querySelector("#${tabb}_advanced").style.display = "none";
+            querySelector("#${tabb}_advanced").classes.add("hidden");
           }
         }
         
-        objectEditorTabDivs[tab].style.display = "block";
+        objectEditorTabDivs[tab].classes.remove("hidden");
         objectEditorTabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
         
         // un-select any character rows and redraw the character tab
@@ -44,7 +44,7 @@ class ObjectEditor {
       });
     }
     
-    objectEditorTabDivs[objectEditorTabDivs.keys.first].style.display = "block";
+    objectEditorTabDivs[objectEditorTabDivs.keys.first].classes.remove("hidden");
     objectEditorTabHeaderDivs[objectEditorTabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
     
     ObjectEditorAttacks.setUp();
