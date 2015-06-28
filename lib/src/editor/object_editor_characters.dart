@@ -298,7 +298,7 @@ class ObjectEditorCharacters {
         );
         
         character.battler = battler;
-        character.sightDistance = Editor.getTextInputIntValue('#character_${i}_sight_distance', 1);
+        character.sightDistance = Editor.getTextInputIntValue('#character_${i}_sight_distance', 0);
         character.preBattleText = Editor.getTextAreaStringValue('#character_${i}_pre_battle_text');
         // post battle event
         
@@ -329,8 +329,6 @@ class ObjectEditorCharacters {
       Map<String, Object> characterJson = {};
       characterJson["spriteId"] = character.spriteId.toString();
       characterJson["pictureId"] = character.pictureId.toString();
-      characterJson["battlerType"] = character.battler.battlerType.name;
-      characterJson["battlerLevel"] = character.battler.level.toString();
       characterJson["sizeX"] = character.sizeX.toString();
       characterJson["sizeY"] = character.sizeY.toString();
       
@@ -349,6 +347,8 @@ class ObjectEditorCharacters {
       // TODO: game event
       
       // battle
+      characterJson["battlerType"] = character.battler.battlerType.name;
+      characterJson["battlerLevel"] = character.battler.level.toString();
       characterJson["sightDistance"] = character.sightDistance.toString();
       characterJson["preBattleText"] = character.preBattleText;
       // TODO: post battle event

@@ -360,7 +360,8 @@ class World {
           int.parse(charactersObject[characterName]["pictureId"]),
           1, 1,
           layer: World.LAYER_PLAYER,
-          sizeX: 1, sizeY: 2,
+          sizeX: int.parse(charactersObject[characterName]["sizeX"]),
+          sizeY: int.parse(charactersObject[characterName]["sizeY"]),
           solid: true
       );
       
@@ -373,6 +374,9 @@ class World {
           int.parse(charactersObject[characterName]["battlerLevel"]),
           battlerType.levelAttacks.values.toList()
         );
+      
+      characters[characterName].sightDistance = charactersObject[characterName]["sightDistance"];
+      characters[characterName].preBattleText = charactersObject[characterName]["preBattleText"];
       
       characters[characterName].inventory = new Inventory([]);
       List<Map<String, String>> characterItems = charactersObject[characterName]["inventory"];
