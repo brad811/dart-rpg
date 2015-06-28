@@ -17,6 +17,8 @@ class ObjectEditorCharacters {
   static Map<String, StreamSubscription> listeners = {};
   static int selected;
   
+  // TODO: change more query selectors to Editor.getValue
+  
   static void setUp() {
     Editor.setUpTabs(advancedTabs);
     querySelector("#add_character_button").onClick.listen(addNewCharacter);
@@ -77,9 +79,15 @@ class ObjectEditorCharacters {
     }
     
     List<String> attrs = [
-      "label", "sprite_id", "picture_id", //"battler_type", "level",
-      "size_x", "size_y" /* inventory, game_event */
-      /*"sight_distance", "pre_battle_text" post battle event */
+      // main
+      "label", "sprite_id", "picture_id", "size_x", "size_y",
+      
+      // battle
+      "battler_type", "battler_level", "sight_distance", "pre_battle_text"
+      
+      //
+      /* inventory, game_event */
+      /* post battle event */
     ];
     
     List<String> advanced_attrs = [
@@ -88,11 +96,11 @@ class ObjectEditorCharacters {
     
     for(int i=0; i<World.characters.keys.length; i++) {
       for(String attr in attrs) {
-        if(listeners["#character_${attr}_${i}"] != null)
-          listeners["#character_${attr}_${i}"].cancel();
+        if(listeners["#character_${i}_${attr}"] != null)
+          listeners["#character_${i}_${attr}"].cancel();
         
-        listeners["#character_${attr}_${i}"] = 
-            querySelector('#character_${attr}_${i}').onInput.listen(onInputChange);
+        listeners["#character_${i}_${attr}"] = 
+            querySelector('#character_${i}_${attr}').onInput.listen(onInputChange);
       }      
       
       // when a row is clicked, set it as selected and highlight it
@@ -149,11 +157,11 @@ class ObjectEditorCharacters {
       charactersHtml +=
         "<tr id='character_row_${i}'>"+
         "  <td>${i}</td>"+
-        "  <td><input id='character_label_${i}' type='text' value='${ key }' /></td>"+
-        "  <td><input id='character_sprite_id_${i}' type='text' class='number' value='${ World.characters[key].spriteId }' /></td>"+
-        "  <td><input id='character_picture_id_${i}' type='text' class='number' value='${ World.characters[key].pictureId }' /></td>"+
-        "  <td><input id='character_size_x_${i}' type='text' class='number' value='${ World.characters[key].sizeX }' /></td>"+
-        "  <td><input id='character_size_y_${i}' type='text' class='number' value='${ World.characters[key].sizeY }' /></td>"+
+        "  <td><input id='character_${i}_label' type='text' value='${ key }' /></td>"+
+        "  <td><input id='character_${i}_sprite_id' type='text' class='number' value='${ World.characters[key].spriteId }' /></td>"+
+        "  <td><input id='character_${i}_picture_id' type='text' class='number' value='${ World.characters[key].pictureId }' /></td>"+
+        "  <td><input id='character_${i}_size_x' type='text' class='number' value='${ World.characters[key].sizeX }' /></td>"+
+        "  <td><input id='character_${i}_size_y' type='text' class='number' value='${ World.characters[key].sizeY }' /></td>"+
         "  <td><button id='delete_character_${i}'>Delete</button></td>"+
         "</tr>";
     }
@@ -211,16 +219,16 @@ class ObjectEditorCharacters {
     
     for(int i=0; i<World.characters.keys.length; i++) {
       String visibleString = "class='hidden'";
-      print("Selected battle: ${selected}");
       if(selected == i) {
         visibleString = "";
       }
       
       Character character = World.characters.values.elementAt(i);
       
-      battleHtml += "<div id='character_${i}_battle_container' ${visibleString}>";
+      battleHtml += "<table id='character_${i}_battle_container' ${visibleString}>";
+      battleHtml += "<tr><td>Battler Type</td><td>Level</td><td>Sight Distance</td><td>Pre Battle Text</td></tr>";
       
-      battleHtml += "Battler Type: <select id='character_battler_type_${i}'>";
+      battleHtml += "<tr><td><select id='character_${i}_battler_type'>";
       World.battlerTypes.forEach((String name, BattlerType battlerType) {
         battleHtml += "<option value='${battlerType.name}'";
         if(character.battler.battlerType.name == name) {
@@ -229,16 +237,15 @@ class ObjectEditorCharacters {
         
         battleHtml += ">${battlerType.name}</option>";
       });
-      battleHtml += "</select><br />";
+      battleHtml += "</select></td>";
       
-      battleHtml += "Level: <input type='text' class='number' value='${character.battler.level}' /><br />";
-      battleHtml += "Sight Distance: <input type='text' class='number' value='${character.sightDistance}' /><br />";
-      battleHtml += "Pre Battle Text: <textarea>${character.preBattleText}</textarea><br />";
+      battleHtml += "<td><input id='character_${i}_battler_level' type='text' class='number' value='${character.battler.level}' /></td>";
+      battleHtml += "<td><input id='character_${i}_sight_distance' type='text' class='number' value='${character.sightDistance}' /></td>";
+      battleHtml += "<td><textarea id='character_${i}_pre_battle_text'>${character.preBattleText}</textarea></td>";
       
-      battleHtml += "</div>";
+      battleHtml += "</tr></table>";
     }
     
-    print("Setting battle html...");
     querySelector("#battle_container").setInnerHtml(battleHtml);
   }
   
@@ -246,54 +253,53 @@ class ObjectEditorCharacters {
     if(e.target is InputElement) {
       InputElement target = e.target;
       
-      if(target.id.contains("character_label_") && World.characters.keys.contains(target.value)) {
+      if(target.id.contains("_label") && World.characters.keys.contains(target.value)) {
         // avoid name collisions
         int i = 0;
         for(; World.characters.keys.contains(target.value + "_${i}"); i++) {}
         target.value += "_${i}";
       } else {
         List<String> numberFields = [
-          "sprite_id", "picture_id", "level",
+          "sprite_id", "picture_id", "battler_level",
           "size_x", "size_y",
-          "sight_distance"
+          "sight_distance", "character_power_"
         ];
         
         numberFields.forEach((String field) {
-          if(target.id.contains("character_power_")) {
+          if(target.id.contains(field)) {
             // enforce number format
             target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-            return;
           }
         });
       }
     }
     
     World.characters = new Map<String, Character>();
-    for(int i=0; querySelector('#character_label_${i}') != null; i++) {
+    for(int i=0; querySelector('#character_${i}_label') != null; i++) {
       try {
-        String name = (querySelector('#character_label_${i}') as InputElement).value;
+        String name = Editor.getTextInputStringValue('#character_${i}_label');
         Character character = new Character(
-          Editor.getTextInputIntValue('#character_sprite_id_${i}', 1),
-          Editor.getTextInputIntValue('#character_picture_id_${i}', 1),
+          Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
+          Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
           0, 0,
           layer: World.LAYER_BELOW,
-          sizeX: Editor.getTextInputIntValue('#character_size_x_${i}', 1),
-          sizeY: Editor.getTextInputIntValue('#character_size_y_${i}', 2),
+          sizeX: Editor.getTextInputIntValue('#character_${i}_size_x', 1),
+          sizeY: Editor.getTextInputIntValue('#character_${i}_size_y', 2),
           solid: true
         );
         
-        String battlerTypeName = (querySelector('#character_battler_type_${i}') as SelectElement).value;
+        String battlerTypeName = Editor.getSelectInputStringValue('#character_${i}_battler_type');
         
         Battler battler = new Battler(
           "name",
           World.battlerTypes[battlerTypeName],
-          int.parse((querySelector('#character_level_${i}') as TextInputElement).value),
+          Editor.getTextInputIntValue('#character_${i}_battler_level', 2),
           World.battlerTypes[battlerTypeName].levelAttacks.values.toList()
         );
         
         character.battler = battler;
-        character.sightDistance = Editor.getTextInputIntValue('#character_sight_distance_${i}', 1);
-        character.preBattleText = Editor.getTextInputStringValue('#character_pre_battle_text_${i}');
+        character.sightDistance = Editor.getTextInputIntValue('#character_${i}_sight_distance', 1);
+        character.preBattleText = Editor.getTextAreaStringValue('#character_${i}_pre_battle_text');
         // post battle event
         
         World.characters[name] = character;
@@ -340,10 +346,12 @@ class ObjectEditorCharacters {
       
       characterJson["inventory"] = inventoryJson;
       
-      // game event
+      // TODO: game event
+      
+      // battle
       characterJson["sightDistance"] = character.sightDistance.toString();
       characterJson["preBattleText"] = character.preBattleText;
-      // post battle event
+      // TODO: post battle event
       
       charactersJson[key] = characterJson;
     });
