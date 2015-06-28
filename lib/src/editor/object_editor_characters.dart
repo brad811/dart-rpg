@@ -59,6 +59,7 @@ class ObjectEditorCharacters {
   static void update() {
     buildMainHtml();
     buildInventoryHtml();
+    buildBattleHtml();
     
     // TODO: add inventory, game event, and post battle event to right half
     // TODO: move level, sight distance, and pre-battle text under battle tab
@@ -76,9 +77,9 @@ class ObjectEditorCharacters {
     }
     
     List<String> attrs = [
-      "label", "sprite_id", "picture_id", "battler_type", "level",
-      "size_x", "size_y", /* inventory, game_event */
-      "sight_distance", "pre_battle_text" /* post battle event */
+      "label", "sprite_id", "picture_id", //"battler_type", "level",
+      "size_x", "size_y" /* inventory, game_event */
+      /*"sight_distance", "pre_battle_text" post battle event */
     ];
     
     List<String> advanced_attrs = [
@@ -104,6 +105,7 @@ class ObjectEditorCharacters {
           
           // hide the inventory items for other characters
           querySelector("#character_${j}_inventory_table").classes.add("hidden");
+          querySelector("#character_${j}_battle_container").classes.add("hidden");
         }
         
         querySelector("#character_row_${i}").classes.add("selected");
@@ -111,6 +113,7 @@ class ObjectEditorCharacters {
         
         // show the inventory table for the selected character
         querySelector("#character_${i}_inventory_table").classes.remove("hidden");
+        querySelector("#character_${i}_battle_container").classes.remove("hidden");
       });
       
       Character character = World.characters.values.elementAt(i);
@@ -135,12 +138,8 @@ class ObjectEditorCharacters {
       "    <td>Label</td>"+
       "    <td>Sprite Id</td>"+
       "    <td>Picture Id</td>"+
-      "    <td>Battler</td>"+
-      "    <td>Level</td>"+
       "    <td>Size X</td>"+
       "    <td>Size Y</td>"+
-      "    <td>Sight Distance</td>"+
-      "    <td>Pre Battle Text</td>"+
       "    <td></td>"+
       "  </tr>";
     
@@ -152,27 +151,11 @@ class ObjectEditorCharacters {
         "  <td>${i}</td>"+
         "  <td><input id='character_label_${i}' type='text' value='${ key }' /></td>"+
         "  <td><input id='character_sprite_id_${i}' type='text' class='number' value='${ World.characters[key].spriteId }' /></td>"+
-        "  <td><input id='character_picture_id_${i}' type='text' class='number' value='${ World.characters[key].pictureId }' /></td>";
-        
-      charactersHtml += "<td><select id='character_battler_type_${i}'>";
-      World.battlerTypes.forEach((String name, BattlerType battlerType) {
-        charactersHtml += "<option value='${battlerType.name}'";
-        if(World.characters[key].battler.battlerType.name == name) {
-          charactersHtml += " selected";
-        }
-        
-        charactersHtml += ">${battlerType.name}</option>";
-      });
-      charactersHtml += "</select></td>";
-      
-      charactersHtml +=
-      "  <td><input id='character_level_${i}' type='text' class='number' value='${ World.characters[key].battler.level }' /></td>"+
-      "  <td><input id='character_size_x_${i}' type='text' class='number' value='${ World.characters[key].sizeX }' /></td>"+
-      "  <td><input id='character_size_y_${i}' type='text' class='number' value='${ World.characters[key].sizeY }' /></td>"+
-      "  <td><input id='character_sight_distance_${i}' type='text' class='number' value='${ World.characters[key].sightDistance }' /></td>"+
-      "  <td><input id='character_pre_battle_text_${i}' type='text' value='${ World.characters[key].preBattleText }' /></td>"+
-      "  <td><button id='delete_character_${i}'>Delete</button></td>"+
-      "</tr>";
+        "  <td><input id='character_picture_id_${i}' type='text' class='number' value='${ World.characters[key].pictureId }' /></td>"+
+        "  <td><input id='character_size_x_${i}' type='text' class='number' value='${ World.characters[key].sizeX }' /></td>"+
+        "  <td><input id='character_size_y_${i}' type='text' class='number' value='${ World.characters[key].sizeY }' /></td>"+
+        "  <td><button id='delete_character_${i}'>Delete</button></td>"+
+        "</tr>";
     }
     
     charactersHtml += "</table>";
@@ -221,6 +204,42 @@ class ObjectEditorCharacters {
     
     // TODO: replace all .innerHtml with .setInnerHtml()
     querySelector("#inventory_container").setInnerHtml(inventoryHtml);
+  }
+  
+  static void buildBattleHtml() {
+    String battleHtml = "";
+    
+    for(int i=0; i<World.characters.keys.length; i++) {
+      String visibleString = "class='hidden'";
+      print("Selected battle: ${selected}");
+      if(selected == i) {
+        visibleString = "";
+      }
+      
+      Character character = World.characters.values.elementAt(i);
+      
+      battleHtml += "<div id='character_${i}_battle_container' ${visibleString}>";
+      
+      battleHtml += "Battler Type: <select id='character_battler_type_${i}'>";
+      World.battlerTypes.forEach((String name, BattlerType battlerType) {
+        battleHtml += "<option value='${battlerType.name}'";
+        if(character.battler.battlerType.name == name) {
+          battleHtml += " selected";
+        }
+        
+        battleHtml += ">${battlerType.name}</option>";
+      });
+      battleHtml += "</select><br />";
+      
+      battleHtml += "Level: <input type='text' class='number' value='${character.battler.level}' /><br />";
+      battleHtml += "Sight Distance: <input type='text' class='number' value='${character.sightDistance}' /><br />";
+      battleHtml += "Pre Battle Text: <textarea>${character.preBattleText}</textarea><br />";
+      
+      battleHtml += "</div>";
+    }
+    
+    print("Setting battle html...");
+    querySelector("#battle_container").setInnerHtml(battleHtml);
   }
   
   static void onInputChange(Event e) {
