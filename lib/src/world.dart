@@ -375,7 +375,7 @@ class World {
           battlerType.levelAttacks.values.toList()
         );
       
-      characters[characterName].sightDistance = charactersObject[characterName]["sightDistance"];
+      characters[characterName].sightDistance = int.parse(charactersObject[characterName]["sightDistance"]);
       characters[characterName].preBattleText = charactersObject[characterName]["preBattleText"];
       
       characters[characterName].inventory = new Inventory([]);
