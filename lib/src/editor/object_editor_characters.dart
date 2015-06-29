@@ -6,6 +6,7 @@ import 'dart:html';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/world.dart';
 
@@ -23,6 +24,7 @@ class ObjectEditorCharacters {
     Editor.setUpTabs(advancedTabs);
     querySelector("#add_character_button").onClick.listen(addNewCharacter);
     querySelector("#add_inventory_item_button").onClick.listen(addInventoryItem);
+    querySelector("#add_game_event_button").onClick.listen(addGameEvent);
     querySelector("#characters_advanced").classes.remove("hidden");
   }
   
@@ -58,9 +60,29 @@ class ObjectEditorCharacters {
     ObjectEditor.update();
   }
   
+  static void addGameEvent(MouseEvent e) {
+    Character selectedCharacter = World.characters.values.elementAt(selected);
+    
+    selectedCharacter.gameEvents.add(
+        new GameEvent()
+    );
+    
+    for(int i=0; i<World.items.keys.length; i++) {
+      if(!selectedCharacter.inventory.itemNames().contains(World.items.keys.elementAt(i))) {
+        // add the first possible item that is not already in the character's inventory
+        selectedCharacter.inventory.addItem(World.items.values.elementAt(i));
+        break;
+      }
+    }
+    
+    update();
+    ObjectEditor.update();
+  }
+  
   static void update() {
     buildMainHtml();
     buildInventoryHtml();
+    buildGameEventHtml();
     buildBattleHtml();
     
     // TODO: add inventory, game event, and post battle event to right half
@@ -212,6 +234,39 @@ class ObjectEditorCharacters {
     
     // TODO: replace all .innerHtml with .setInnerHtml()
     querySelector("#inventory_container").setInnerHtml(inventoryHtml);
+  }
+  
+  static void buildGameEventHtml() {
+    String gameEventHtml = "";
+    
+    for(int i=0; i<World.characters.keys.length; i++) {
+      String visibleString = "class='hidden'";
+      if(selected == i) {
+        visibleString = "";
+      }
+      
+      Character character = World.characters.values.elementAt(i);
+      
+      // TODO: 
+      gameEventHtml += "<table id='character_${i}_game_event_table' ${visibleString}>";
+      gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td></tr>";
+      for(int j=0; j<character.gameEvents.length; j++) {
+        gameEventHtml += "<tr>";
+        gameEventHtml += "  <td>${j}</td>";
+        gameEventHtml += "  <td><select id='character_${i}_game_event_${j}'>";
+        gameEventHtml += "    <option>Text</option>";
+        gameEventHtml += "    <option>Walk</option>";
+        gameEventHtml += "    <option>Fade</option>";
+        gameEventHtml += "    <option>Warp</option>";
+        gameEventHtml += "  </select></td>";
+        gameEventHtml += "  <td>Params</td>";
+        gameEventHtml += "</tr>";
+      }
+      
+      gameEventHtml += "</table>";
+    }
+    
+    querySelector("#game_event_container").setInnerHtml(gameEventHtml);
   }
   
   static void buildBattleHtml() {

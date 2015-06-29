@@ -46,7 +46,7 @@ class Character implements InteractableInterface {
     movementAmount;
   
   bool solid;
-  List<GameEvent> gameEvents;
+  List<GameEvent> gameEvents = [];
   Function motionCallback;
   
   Battler battler;
