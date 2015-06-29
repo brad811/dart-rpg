@@ -7,7 +7,6 @@ import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
-import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -82,6 +81,6 @@ class StoreCharacter extends Character {
       new TextGameEvent(237, goodbyeMessage)
     ];
     
-    Interactable.chainGameEvents(this, storeClerkGameEvents);
+    this.gameEvents = storeClerkGameEvents;
   }
 }

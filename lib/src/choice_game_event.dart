@@ -125,13 +125,11 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
       if(remove)
         Gui.removeWindow(window);
       
-      Interactable.chainGameEvents(interactable, choices.values.toList()[curChoice]);
-      interactable.gameEvent.trigger();
+      Interactable.chainGameEvents(choices.values.toList()[curChoice]).trigger();
     } else if(keyCodes.contains(Input.BACK) && cancelEvent != null) {
       Gui.removeWindow(window);
       
-      Interactable.chainGameEvents(interactable, [cancelEvent]);
-      interactable.gameEvent.trigger();
+      Interactable.chainGameEvents([cancelEvent]).trigger();
     }
   }
 }

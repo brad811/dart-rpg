@@ -9,7 +9,7 @@ import 'package:dart_rpg/src/tile.dart';
 class InteractableTile extends Tile implements InteractableInterface, InputHandler {
   // An input handler function that gets passed in to the constructor
   dynamic handler;
-  GameEvent gameEvent;
+  List<GameEvent> gameEvents;
   
   InteractableTile(bool solid, Sprite sprite, void handler(List<int> keyCodes)) : super(solid, sprite) {
     this.handler = handler;

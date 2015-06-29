@@ -13,7 +13,6 @@ import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/gui.dart';
-import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/item.dart';
@@ -97,20 +96,21 @@ class World {
           new ChoiceGameEvent(someKid, {
             "Yes": [
               new TextGameEvent(231, "That's fine."),
-              new TextGameEvent(237, "If you say so!"),
-              new GameEvent((callback) {
-                someKid.gameEvent = characterGameEvents[0];
-              })
+              new TextGameEvent(237, "If you say so!")
             ],
             "No": [
               new TextGameEvent(231, "I hate you."),
-              new TextGameEvent(237, "::sniff sniff:: Meanie!")
+              new TextGameEvent(237, "::sniff sniff:: Meanie!"),
+              new GameEvent((callback) {
+                // TODO: make it stay here?
+                //someKid.gameEvents = characterGameEvents;
+              })
             ]
           })
         )
       ];
       
-      Interactable.chainGameEvents(someKid, characterGameEvents);
+      someKid.gameEvents = characterGameEvents;
       
       // add character that heals you
       Character healer = addCharacter(
@@ -135,7 +135,7 @@ class World {
         new TextGameEvent(237, "There you go, good as new.")
       ];
       
-      Interactable.chainGameEvents(healer, healerGameEvents);
+      healer.gameEvents = healerGameEvents;
       
       Character fighter = addCharacter(
         "main",

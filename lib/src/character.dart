@@ -4,6 +4,7 @@ import 'dart:math' as math;
 
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/game_event.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -45,7 +46,7 @@ class Character implements InteractableInterface {
     movementAmount;
   
   bool solid;
-  GameEvent gameEvent;
+  List<GameEvent> gameEvents;
   Function motionCallback;
   
   Battler battler;
@@ -256,9 +257,9 @@ class Character implements InteractableInterface {
   }
   
   void interact() {
-    if(gameEvent != null) {
+    if(gameEvents != null && gameEvents.length > 0) {
       Main.focusObject = null;
-      gameEvent.trigger();
+      Interactable.chainGameEvents(gameEvents).trigger();
     } else if(battler != null) {
       // talking to a player can make them face you and battle you
       if(Main.player.mapX < mapX)
