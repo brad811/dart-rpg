@@ -4,7 +4,6 @@ import 'dart:math' as math;
 
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/game_event.dart';
-import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -12,7 +11,7 @@ import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
-class Character implements InteractableInterface, InputHandler {
+class Character implements InteractableInterface {
   static final int
     DOWN = 0,
     RIGHT = 1,
@@ -256,15 +255,9 @@ class Character implements InteractableInterface, InputHandler {
     );
   }
   
-  void handleKeys(List<int> keyCodes) {
-    if(gameEvent != null) {
-      gameEvent.handleKeys(keyCodes);
-    }
-  }
-  
   void interact() {
     if(gameEvent != null) {
-      Main.focusObject = this;
+      Main.focusObject = null;
       gameEvent.trigger();
     } else if(battler != null) {
       // talking to a player can make them face you and battle you
