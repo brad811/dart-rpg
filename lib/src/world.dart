@@ -200,7 +200,11 @@ class World {
       gameJson.value = jsonString;
       obj = JSON.decode(gameJson.value);
     } else {
-      obj = JSON.decode(jsonString);
+      if(gameJson != null) {
+        obj = JSON.decode(gameJson.value);
+      } else {
+        obj = JSON.decode(jsonString);
+      }
     }
     
     parseAttacks(obj["attacks"]);
