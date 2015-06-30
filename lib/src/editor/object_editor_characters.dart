@@ -25,7 +25,6 @@ class ObjectEditorCharacters {
     querySelector("#add_character_button").onClick.listen(addNewCharacter);
     querySelector("#add_inventory_item_button").onClick.listen(addInventoryItem);
     querySelector("#add_game_event_button").onClick.listen(addGameEvent);
-    querySelector("#characters_advanced").classes.remove("hidden");
   }
   
   static void addNewCharacter(MouseEvent e) {
