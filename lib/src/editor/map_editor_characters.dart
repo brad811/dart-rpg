@@ -128,12 +128,24 @@ class MapEditorCharacters {
         characters[Main.world.curMap][i]["layer"] = Editor.getSelectInputIntValue("#map_character_${i}_layer", World.LAYER_BELOW);
         characters[Main.world.curMap][i]["direction"] = Editor.getSelectInputIntValue("#map_character_${i}_direction", Character.DOWN);
         characters[Main.world.curMap][i]["solid"] = (querySelector("#map_character_${i}_solid") as CheckboxInputElement).checked;
+        
+        Character character = Main.world.maps[Main.world.curMap].characters[i];
+        
+        character.name = characters[Main.world.curMap][i]["type"];
+        character.mapX = characters[Main.world.curMap][i]["mapX"];
+        character.mapY = characters[Main.world.curMap][i]["mapY"];
+        character.layer = characters[Main.world.curMap][i]["layer"];
+        character.direction = characters[Main.world.curMap][i]["direction"];
+        character.solid = characters[Main.world.curMap][i]["solid"];
+        
+        character.x = character.mapX * character.motionAmount;
+        character.y = character.mapY * character.motionAmount;
       } catch(e) {
         // could not update this character
       }
     }
     
-    MapEditor.updateMap(shouldExport: true);
+    Editor.updateAndRetainValue(e);
   }
   
   static void export(Map jsonMap, String key) {
