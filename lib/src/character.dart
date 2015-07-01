@@ -237,7 +237,12 @@ class Character implements InteractableInterface {
   }
   
   void render(List<List<Tile>> renderList) {
-    renderList[layer+1].add(
+    int higherLayer = layer+1;
+    if(higherLayer >= World.layers.last) {
+      higherLayer = layer;
+    }
+    
+    renderList[higherLayer].add(
       new Tile(
         true,
         new Sprite(
