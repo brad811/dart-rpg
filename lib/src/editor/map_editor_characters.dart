@@ -114,22 +114,7 @@ class MapEditorCharacters {
     
     for(int i=0; i<characters[Main.world.curMap].length; i++) {
       List<String> attrs = ["type", "map_x", "map_y", "layer", "direction", "solid"];
-      // TODO: perhaps move this into base editor
-      for(String attr in attrs) {
-        if(listeners["#map_character_${i}_${attr}"] != null)
-          listeners["#map_character_${i}_${attr}"].cancel();
-        
-        HtmlElement element = querySelector('#map_character_${i}_${attr}');
-        String type = element.getAttribute("type");
-        
-        if(type == "text") {
-          listeners["#map_character_${i}_${attr}"] = element.onInput.listen(onInputChange);
-        } else if(type == "checkbox") {
-          listeners["#map_character_${i}_${attr}"] = element.onChange.listen(onInputChange);
-        } else if(querySelector('#map_character_${i}_${attr}') is SelectElement) {
-          listeners["#map_character_${i}_${attr}"] = element.onChange.listen(onInputChange);
-        }
-      }
+      Editor.attachListeners(listeners, "map_character_${i}", attrs, onInputChange);
     }
   }
   
