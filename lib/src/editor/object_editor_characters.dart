@@ -8,6 +8,7 @@ import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/inventory.dart';
+import 'package:dart_rpg/src/text_game_event.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'editor.dart';
@@ -19,6 +20,7 @@ class ObjectEditorCharacters {
   static int selected;
   
   // TODO: change more query selectors to Editor.getValue
+  // TODO: update when adding new things
   
   static void setUp() {
     Editor.setUpTabs(advancedTabs);
@@ -63,16 +65,8 @@ class ObjectEditorCharacters {
     Character selectedCharacter = World.characters.values.elementAt(selected);
     
     selectedCharacter.gameEvents.add(
-        new GameEvent()
+        new TextGameEvent(1, "Text")
     );
-    
-    for(int i=0; i<World.items.keys.length; i++) {
-      if(!selectedCharacter.inventory.itemNames().contains(World.items.keys.elementAt(i))) {
-        // add the first possible item that is not already in the character's inventory
-        selectedCharacter.inventory.addItem(World.items.values.elementAt(i));
-        break;
-      }
-    }
     
     update();
     ObjectEditor.update();
@@ -85,7 +79,6 @@ class ObjectEditorCharacters {
     buildBattleHtml();
     
     // TODO: add inventory, game event, and post battle event to right half
-    // TODO: move level, sight distance, and pre-battle text under battle tab
     
     // highlight the selected row
     if(querySelector("#character_row_${selected}") != null) {
@@ -111,7 +104,7 @@ class ObjectEditorCharacters {
       /* post battle event */
     ];
     
-    List<String> advanced_attrs = [
+    List<String> inventory_attrs = [
       "inventory_item", "inventory_quantity"
     ];
     
@@ -122,7 +115,7 @@ class ObjectEditorCharacters {
         
         listeners["#character_${i}_${attr}"] = 
             querySelector('#character_${i}_${attr}').onInput.listen(onInputChange);
-      }      
+      }
       
       // when a row is clicked, set it as selected and highlight it
       querySelector("#character_row_${i}").onClick.listen((Event e) {
@@ -146,16 +139,29 @@ class ObjectEditorCharacters {
       });
       
       Character character = World.characters.values.elementAt(i);
+      
+      List<String> inputIds = [];
+      
       for(int j=0; j<character.inventory.itemNames().length; j++) {
-        for(String advanced_attr in advanced_attrs) {
-          String elementSelector = "#character_${i}_${advanced_attr}_${j}";
-          
-          if(listeners[elementSelector] != null) {
-            listeners[elementSelector].cancel();
-          }
-          
-          listeners[elementSelector] = querySelector(elementSelector).onInput.listen(onInputChange);
+        for(String inventory_attr in inventory_attrs) {
+          String elementSelector = "#character_${i}_${inventory_attr}_${j}";
+          inputIds.add(elementSelector);
         }
+      }
+      
+      for(int j=0; j<character.gameEvents.length; j++) {
+        if(character.gameEvents[j] is TextGameEvent) {
+          inputIds.add("#character_${i}_game_event_${j}_picture_id");
+          inputIds.add("#character_${i}_game_event_${j}_text");
+        }
+      }
+      
+      for(String inputId in inputIds) {
+        if(listeners[inputId] != null) {
+          listeners[inputId].cancel();
+        }
+        
+        listeners[inputId] = querySelector(inputId).onInput.listen(onInputChange);
       }
     }
   }
@@ -246,19 +252,28 @@ class ObjectEditorCharacters {
       
       Character character = World.characters.values.elementAt(i);
       
-      // TODO: 
       gameEventHtml += "<table id='character_${i}_game_event_table' ${visibleString}>";
       gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td></tr>";
       for(int j=0; j<character.gameEvents.length; j++) {
         gameEventHtml += "<tr>";
         gameEventHtml += "  <td>${j}</td>";
-        gameEventHtml += "  <td><select id='character_${i}_game_event_${j}'>";
-        gameEventHtml += "    <option>Text</option>";
-        gameEventHtml += "    <option>Walk</option>";
-        gameEventHtml += "    <option>Fade</option>";
-        gameEventHtml += "    <option>Warp</option>";
+        gameEventHtml += "  <td><select id='character_${i}_game_event_${j}_type'>";
+        
+        String paramsHtml = "";
+        
+        List<String> gameEventTypes = ["text", "walk", "fade", "warp"];
+        for(int k=0; k<gameEventTypes.length; k++) {
+          String selectedText = "";
+          if(gameEventTypes[k] == "text" && character.gameEvents[j] is TextGameEvent) {
+            selectedText = "selected='selected'";
+            paramsHtml = buildTextGameEventParamsHtml(character.gameEvents[j] as TextGameEvent, i, j);
+          }
+          
+          gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
+        }
+        
         gameEventHtml += "  </select></td>";
-        gameEventHtml += "  <td>Params</td>";
+        gameEventHtml += "  <td>${paramsHtml}</td>";
         gameEventHtml += "</tr>";
       }
       
@@ -266,6 +281,20 @@ class ObjectEditorCharacters {
     }
     
     querySelector("#game_event_container").setInnerHtml(gameEventHtml);
+  }
+  
+  static String buildTextGameEventParamsHtml(TextGameEvent textGameEvent, int i, int j) {
+    String html = "";
+    
+    html += "<table>";
+    html += "  <tr><td>Picture Id</td><td>Text</td></tr>";
+    html += "  <tr>";
+    html += "    <td><input type='text' class='number' id='character_${i}_game_event_${j}_picture_id' value='${textGameEvent.pictureSpriteId}' /></td>";
+    html += "    <td><textarea id='character_${i}_game_event_${j}_text'>${textGameEvent.text}</textarea>";
+    html += "  </tr>";
+    html += "</table>";
+    
+    return html;
   }
   
   static void buildBattleHtml() {
@@ -372,6 +401,20 @@ class ObjectEditorCharacters {
         int itemQuantity = int.parse((querySelector('#character_${i}_inventory_quantity_${j}') as TextInputElement).value);
         character.inventory.addItem(World.items[itemName], itemQuantity);
       }
+      
+      character.gameEvents = new List<GameEvent>();
+      for(int j=0; querySelector('#character_${i}_game_event_${j}_type') != null; j++) {
+        String gameEventType = Editor.getSelectInputStringValue("#character_${i}_game_event_${j}_type");
+        
+        if(gameEventType == "text") {
+          TextGameEvent textGameEvent = new TextGameEvent(
+              Editor.getTextInputIntValue("#character_${i}_game_event_${j}_picture_id", 1),
+              Editor.getTextAreaStringValue("#character_${i}_game_event_${j}_text")
+            );
+          
+          character.gameEvents.add(textGameEvent);
+        }
+      }
     }
     
     Editor.updateAndRetainValue(e);
@@ -398,7 +441,21 @@ class ObjectEditorCharacters {
       
       characterJson["inventory"] = inventoryJson;
       
-      // TODO: game event
+      // game event
+      List<Map<String, String>> gameEventsJson = [];
+      character.gameEvents.forEach((GameEvent gameEvent) {
+        Map<String, String> gameEventJson = {};
+        
+        if(gameEvent is TextGameEvent) {
+          gameEventJson["type"] = "text";
+          gameEventJson["pictureId"] = gameEvent.pictureSpriteId.toString();
+          gameEventJson["text"] = gameEvent.text;
+        }
+        
+        gameEventsJson.add(gameEventJson);
+      });
+      
+      characterJson["gameEvents"] = gameEventsJson;
       
       // battle
       characterJson["battlerType"] = character.battler.battlerType.name;
