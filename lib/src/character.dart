@@ -3,7 +3,7 @@ library dart_rpg.character;
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/battler.dart';
-import 'package:dart_rpg/src/game_event.dart';
+import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/inventory.dart';

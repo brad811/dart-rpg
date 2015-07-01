@@ -2,14 +2,14 @@ library dart_rpg.player;
 
 import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/character.dart';
-import 'package:dart_rpg/src/delayed_game_event.dart';
-import 'package:dart_rpg/src/game_event.dart';
+import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
+import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
-import 'package:dart_rpg/src/text_game_event.dart';
+import 'package:dart_rpg/src/game_event/text_game_event.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 

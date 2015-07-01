@@ -4,7 +4,7 @@ import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
-import 'package:dart_rpg/src/text_game_event.dart';
+import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class Sign extends InteractableTile implements InputHandler {
   TextGameEvent textEvent;

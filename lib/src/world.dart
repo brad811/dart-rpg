@@ -8,9 +8,7 @@ import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
-import 'package:dart_rpg/src/choice_game_event.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
-import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
@@ -22,9 +20,13 @@ import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/store_character.dart';
-import 'package:dart_rpg/src/text_game_event.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
+
+import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/choice_game_event.dart';
+import 'package:dart_rpg/src/game_event/move_game_event.dart';
+import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class World {
   static const int
@@ -423,11 +425,19 @@ class World {
     for(int i=0; i<gameEvents.length; i++) {
       if(gameEvents[i]["type"] == "text") {
         TextGameEvent textGameEvent = new TextGameEvent(
-            int.parse(gameEvents[i]["pictureId"]),
+            gameEvents[i]["pictureId"] as int,
             gameEvents[i]["text"]
           );
         
         character.gameEvents.add(textGameEvent);
+      } else if(gameEvents[i]["type"] == "move") {
+        MoveGameEvent moveGameEvent = new MoveGameEvent(
+            character,
+            gameEvents[i]["direction"] as int,
+            gameEvents[i]["distance"] as int
+          );
+        
+        character.gameEvents.add(moveGameEvent);
       }
     }
     

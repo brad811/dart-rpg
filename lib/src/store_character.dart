@@ -3,15 +3,15 @@ library dart_rpg.store_character;
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/character.dart';
-import 'package:dart_rpg/src/choice_game_event.dart';
-import 'package:dart_rpg/src/game_event.dart';
+import 'package:dart_rpg/src/game_event/choice_game_event.dart';
+import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
-import 'package:dart_rpg/src/quantity_choice_game_event.dart';
-import 'package:dart_rpg/src/text_game_event.dart';
+import 'package:dart_rpg/src/game_event/quantity_choice_game_event.dart';
+import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class StoreCharacter extends Character {
   StoreCharacter(int spriteId, int pictureId,

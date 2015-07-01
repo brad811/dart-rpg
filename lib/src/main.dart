@@ -58,12 +58,10 @@ class Main {
   static void start() {
     TextAreaElement textArea = querySelector("#game_json");
     textArea.onFocus.listen((Event e) {
-      print("onFocus");
       gameJsonHasFocus = true;
     });
     
     textArea.onBlur.listen((Event e) {
-      print("onBlur");
       gameJsonHasFocus = false;
     });
     

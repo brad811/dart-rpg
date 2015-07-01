@@ -6,13 +6,18 @@ import 'dart:html';
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
-import 'package:dart_rpg/src/game_event.dart';
 import 'package:dart_rpg/src/inventory.dart';
-import 'package:dart_rpg/src/text_game_event.dart';
 import 'package:dart_rpg/src/world.dart';
+
+import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/move_game_event.dart';
+import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 import 'editor.dart';
 import 'object_editor.dart';
+
+// TODO: add delete buttons for game events
+// TODO: make all inputs with class number take out any non 0-9 characters
 
 class ObjectEditorCharacters {
   static List<String> advancedTabs = ["character_inventory", "character_game_event", "character_battle"];
@@ -109,13 +114,7 @@ class ObjectEditorCharacters {
     ];
     
     for(int i=0; i<World.characters.keys.length; i++) {
-      for(String attr in attrs) {
-        if(listeners["#character_${i}_${attr}"] != null)
-          listeners["#character_${i}_${attr}"].cancel();
-        
-        listeners["#character_${i}_${attr}"] = 
-            querySelector('#character_${i}_${attr}').onInput.listen(onInputChange);
-      }
+      Editor.attachListeners(listeners, "character_${i}", attrs, onInputChange);
       
       // when a row is clicked, set it as selected and highlight it
       querySelector("#character_row_${i}").onClick.listen((Event e) {
@@ -127,14 +126,19 @@ class ObjectEditorCharacters {
           
           // hide the inventory items for other characters
           querySelector("#character_${j}_inventory_table").classes.add("hidden");
+          querySelector("#character_${j}_game_event_table").classes.add("hidden");
           querySelector("#character_${j}_battle_container").classes.add("hidden");
         }
         
+        // hightlight the selected character row
         querySelector("#character_row_${i}").classes.add("selected");
+        
+        // show the characters advanced area
         querySelector("#characters_advanced").classes.remove("hidden");
         
-        // show the inventory table for the selected character
+        // show the advanced tables for the selected character
         querySelector("#character_${i}_inventory_table").classes.remove("hidden");
+        querySelector("#character_${i}_game_event_table").classes.remove("hidden");
         querySelector("#character_${i}_battle_container").classes.remove("hidden");
       });
       
@@ -149,11 +153,17 @@ class ObjectEditorCharacters {
         }
       }
       
+      // game events
       for(int j=0; j<character.gameEvents.length; j++) {
+        List<String> gameEventAttrs = ["type"];
+        
         if(character.gameEvents[j] is TextGameEvent) {
-          inputIds.add("#character_${i}_game_event_${j}_picture_id");
-          inputIds.add("#character_${i}_game_event_${j}_text");
+          gameEventAttrs.addAll(["picture_id", "text"]);
+        } else if(character.gameEvents[j] is MoveGameEvent) {
+          gameEventAttrs.addAll(["direction", "distance"]);
         }
+        
+        Editor.attachListeners(listeners, "character_${i}_game_event_${j}", gameEventAttrs, onInputChange);
       }
       
       for(String inputId in inputIds) {
@@ -261,12 +271,15 @@ class ObjectEditorCharacters {
         
         String paramsHtml = "";
         
-        List<String> gameEventTypes = ["text", "walk", "fade", "warp"];
+        List<String> gameEventTypes = ["text", "move", "fade", "warp"];
         for(int k=0; k<gameEventTypes.length; k++) {
           String selectedText = "";
           if(gameEventTypes[k] == "text" && character.gameEvents[j] is TextGameEvent) {
             selectedText = "selected='selected'";
             paramsHtml = buildTextGameEventParamsHtml(character.gameEvents[j] as TextGameEvent, i, j);
+          } else if(gameEventTypes[k] == "move" && character.gameEvents[j] is MoveGameEvent) {
+            selectedText = "selected='selected'";
+            paramsHtml = buildMoveGameEventParamsHtml(character.gameEvents[j] as MoveGameEvent, i, j);
           }
           
           gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
@@ -291,6 +304,36 @@ class ObjectEditorCharacters {
     html += "  <tr>";
     html += "    <td><input type='text' class='number' id='character_${i}_game_event_${j}_picture_id' value='${textGameEvent.pictureSpriteId}' /></td>";
     html += "    <td><textarea id='character_${i}_game_event_${j}_text'>${textGameEvent.text}</textarea>";
+    html += "  </tr>";
+    html += "</table>";
+    
+    return html;
+  }
+  
+  static String buildMoveGameEventParamsHtml(MoveGameEvent moveGameEvent, int i, int j) {
+    String html = "";
+    
+    // TODO: 
+    html += "<table>";
+    html += "  <tr><td>Direction</td><td>Distance</td></tr>";
+    html += "  <tr>";
+    
+    // direction
+    html += "<td><select id='character_${i}_game_event_${j}_direction'>";
+    List<String> directions = ["Down", "Right", "Up", "Left"];
+    for(int direction=0; direction<directions.length; direction++) {
+      html += "<option value='${direction}'";
+      if(moveGameEvent.direction == direction) {
+        html += " selected";
+      }
+      
+      html += ">${directions[direction]}</option>";
+    }
+    html += "</select></td>";
+    
+    // distance
+    html += "    <td><input type='text' class='number' id='character_${i}_game_event_${j}_distance' value='${moveGameEvent.distance}' /></td>";
+    
     html += "  </tr>";
     html += "</table>";
     
@@ -413,6 +456,14 @@ class ObjectEditorCharacters {
             );
           
           character.gameEvents.add(textGameEvent);
+        } else if(gameEventType == "move") {
+          MoveGameEvent moveGameEvent = new MoveGameEvent(
+              character,
+              Editor.getSelectInputIntValue("#character_${i}_game_event_${j}_direction", Character.DOWN),
+              Editor.getTextInputIntValue("#character_${i}_game_event_${j}_distance", 1)
+            );
+          
+          character.gameEvents.add(moveGameEvent);
         }
       }
     }
@@ -444,12 +495,16 @@ class ObjectEditorCharacters {
       // game event
       List<Map<String, String>> gameEventsJson = [];
       character.gameEvents.forEach((GameEvent gameEvent) {
-        Map<String, String> gameEventJson = {};
+        Map<String, Object> gameEventJson = {};
         
         if(gameEvent is TextGameEvent) {
           gameEventJson["type"] = "text";
-          gameEventJson["pictureId"] = gameEvent.pictureSpriteId.toString();
+          gameEventJson["pictureId"] = gameEvent.pictureSpriteId;
           gameEventJson["text"] = gameEvent.text;
+        } else if(gameEvent is MoveGameEvent) {
+          gameEventJson["type"] = "move";
+          gameEventJson["direction"] = gameEvent.direction;
+          gameEventJson["distance"] = gameEvent.distance;
         }
         
         gameEventsJson.add(gameEventJson);

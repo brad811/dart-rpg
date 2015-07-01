@@ -3,11 +3,11 @@ library dart_rpg.gui;
 import 'dart:html';
 import 'dart:math' as math;
 
-import 'package:dart_rpg/src/delayed_game_event.dart';
+import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 import 'package:dart_rpg/src/gui_start_menu.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
-import 'package:dart_rpg/src/text_game_event.dart';
+import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class Gui {
   static final int

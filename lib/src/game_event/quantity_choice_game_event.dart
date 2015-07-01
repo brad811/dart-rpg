@@ -1,8 +1,8 @@
 library dart_rpg.quantity_choice_game_event;
 
-import 'package:dart_rpg/src/choice_game_event.dart';
+import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/font.dart';
-import 'package:dart_rpg/src/game_event.dart';
+import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';

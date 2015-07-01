@@ -3,7 +3,6 @@ library dart_rpg.map_editor_maps;
 import 'dart:async';
 import 'dart:html';
 
-import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/main.dart';

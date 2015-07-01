@@ -156,18 +156,20 @@ class Editor {
   static void attachListeners(
       Map<String, StreamSubscription> listeners, String prefix, List<String> attrs, Function onInputChange) {
     for(String attr in attrs) {
-      if(listeners["#${prefix}_${attr}"] != null)
-        listeners["#${prefix}_${attr}"].cancel();
+      String selector = "#${prefix}_${attr}";
       
-      HtmlElement element = querySelector("#${prefix}_${attr}");
+      if(listeners[selector] != null)
+        listeners[selector].cancel();
+      
+      HtmlElement element = querySelector(selector);
       String type = element.getAttribute("type");
       
-      if(type == "text") {
-        listeners["#${prefix}_${attr}"] = element.onInput.listen(onInputChange);
-      } else if(type == "checkbox") {
-        listeners["#${prefix}_${attr}"] = element.onChange.listen(onInputChange);
-      } else if(querySelector("#${prefix}_${attr}") is SelectElement) {
-        listeners["#${prefix}_${attr}"] = element.onChange.listen(onInputChange);
+      if(type == "text" || element is TextAreaElement) {
+        listeners[selector] = element.onInput.listen(onInputChange);
+      } else if(type == "checkbox" || element is SelectElement) {
+        listeners[selector] = element.onChange.listen(onInputChange);
+      } else {
+        print("Error: unknown input type while attaching listener!");
       }
     }
   }

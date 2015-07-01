@@ -4,17 +4,17 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/battler.dart';
-import 'package:dart_rpg/src/choice_game_event.dart';
-import 'package:dart_rpg/src/delayed_game_event.dart';
+import 'package:dart_rpg/src/game_event/choice_game_event.dart';
+import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 import 'package:dart_rpg/src/font.dart';
-import 'package:dart_rpg/src/game_event.dart';
+import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
-import 'package:dart_rpg/src/text_game_event.dart';
+import 'package:dart_rpg/src/game_event/text_game_event.dart';
 import 'package:dart_rpg/src/tile.dart';
 
 class Battle implements InteractableInterface {
