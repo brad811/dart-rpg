@@ -56,7 +56,7 @@ class ObjectEditorAttacks {
     attacksHtml += "</table>";
     querySelector("#attacks_container").innerHtml = attacksHtml;
     
-    Editor.setDeleteButtonListeners(World.attacks, "attack", listeners);
+    Editor.setMapDeleteButtonListeners(World.attacks, "attack", listeners);
     
     List<String> attrs = ["name", "category", "power"];
     for(int i=0; i<World.attacks.keys.length; i++) {

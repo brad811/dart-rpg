@@ -92,12 +92,12 @@ class ObjectEditorCharacters {
       querySelector("#characters_advanced").classes.remove("hidden");
     }
     
-    Editor.setDeleteButtonListeners(World.characters, "character", listeners);
+    Editor.setMapDeleteButtonListeners(World.characters, "character", listeners);
     
     for(int i=0; i<World.characters.keys.length; i++) {
-      Editor.setDeleteButtonListeners(World.characters.values.elementAt(i).inventory.itemStacks, "character_${i}_item", listeners);
+      Editor.setMapDeleteButtonListeners(World.characters.values.elementAt(i).inventory.itemStacks, "character_${i}_item", listeners);
       
-      //Editor.setDeleteButtonListeners(World.characters.values.elementAt(i).gameEvents, "character_${i}_game_event", listeners);
+      Editor.setListDeleteButtonListeners(World.characters.values.elementAt(i).gameEvents, "character_${i}_game_event", listeners);
     }
     
     List<String> attrs = [

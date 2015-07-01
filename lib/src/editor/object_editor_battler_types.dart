@@ -100,11 +100,11 @@ class ObjectEditorBattlerTypes {
       });
     }
     
-    Editor.setDeleteButtonListeners(World.battlerTypes, "battler_type", listeners);
+    Editor.setMapDeleteButtonListeners(World.battlerTypes, "battler_type", listeners);
     
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
       BattlerType battlerType = World.battlerTypes.values.elementAt(i);
-      Editor.setDeleteButtonListeners(battlerType.levelAttacks, "battler_type_${i}_attack", listeners);
+      Editor.setMapDeleteButtonListeners(battlerType.levelAttacks, "battler_type_${i}_attack", listeners);
     }
     
     // TODO: perhaps move into base editor class

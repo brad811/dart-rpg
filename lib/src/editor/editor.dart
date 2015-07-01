@@ -97,7 +97,7 @@ class Editor {
     tabHeaderDivs[tabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
   }
   
-  static void setDeleteButtonListeners(
+  static void setMapDeleteButtonListeners(
       Map<Object, Object> target, String targetName, Map<String, StreamSubscription> listeners) {
     for(int i=0; i<target.keys.length; i++) {
       if(listeners["#delete_${targetName}_${i}"] != null)
@@ -108,6 +108,23 @@ class Editor {
         bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
         if(confirm) {
           target.remove(target.keys.elementAt(i));
+          Editor.update();
+        }
+      });
+    }
+  }
+  
+  static void setListDeleteButtonListeners(
+      List<Object> target, String targetName, Map<String, StreamSubscription> listeners) {
+    for(int i=0; i<target.length; i++) {
+      if(listeners["#delete_${targetName}_${i}"] != null)
+        listeners["#delete_${targetName}_${i}"].cancel();
+      
+      listeners["#delete_${targetName}_${i}"] =
+          querySelector("#delete_${targetName}_${i}").onClick.listen((MouseEvent e) {
+        bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
+        if(confirm) {
+          target.removeAt(i);
           Editor.update();
         }
       });

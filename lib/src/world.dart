@@ -25,6 +25,7 @@ import 'package:dart_rpg/src/warp_tile.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
+import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
@@ -438,6 +439,12 @@ class World {
           );
         
         character.gameEvents.add(moveGameEvent);
+      } else if(gameEvents[i]["type"] == "delay") {
+        DelayGameEvent delayGameEvent = new DelayGameEvent(
+            gameEvents[i]["milliseconds"] as int
+          );
+        
+        character.gameEvents.add(delayGameEvent);
       }
     }
     

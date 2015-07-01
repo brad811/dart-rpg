@@ -48,7 +48,7 @@ class ObjectEditorItems {
     itemsHtml += "</table>";
     querySelector("#items_container").innerHtml = itemsHtml;
     
-    Editor.setDeleteButtonListeners(World.items, "item", listeners);
+    Editor.setMapDeleteButtonListeners(World.items, "item", listeners);
     
     List<String> attrs = ["picture_id", "name", "base_price", "description"];
     for(int i=0; i<World.items.keys.length; i++) {
