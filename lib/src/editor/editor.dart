@@ -151,6 +151,8 @@ class Editor {
     }
   }
   
+  // TODO: make more classes use this function
+  // TODO: maybe have listeners in base editor instead of each class since ids will be unique
   static void attachListeners(
       Map<String, StreamSubscription> listeners, String prefix, List<String> attrs, Function onInputChange) {
     for(String attr in attrs) {

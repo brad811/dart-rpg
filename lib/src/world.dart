@@ -209,7 +209,7 @@ class World {
     
     parseAttacks(obj["attacks"]);
     parseBattlerTypes(obj["battlerTypes"]);
-    parseMaps(obj["maps"]);
+    parseMaps(obj["maps"], obj["characters"]);
     parseItems(obj["items"]);
     parseCharacters(obj["characters"]);
     parsePlayer(obj["player"]);
@@ -249,7 +249,7 @@ class World {
     }
   }
   
-  void parseMaps(Map<String, Map> mapsObject) {
+  void parseMaps(Map<String, Map> mapsObject, Map<String, Map> charactersObject) {
     maps = {};
     curMap = mapsObject.keys.first;
     
@@ -340,6 +340,8 @@ class World {
       maps[mapName].battlerChances.forEach((BattlerChance battlerChance) {
         battlerChance.chance /= totalChance;
       });
+      
+      parseMapCharacters(maps[mapName], mapsObject[mapName]['characters'], charactersObject);
     }
   }
   
@@ -355,41 +357,83 @@ class World {
     }
   }
   
+  void parseMapCharacters(GameMap gameMap, List<Map<String, Object>> characters, Map<String, Map> charactersObject) {
+    for(Map<String, Object> characterMap in characters) {
+      Character character = parseCharacter(charactersObject, characterMap["type"]);
+      character.mapX = characterMap["mapX"];
+      character.mapY = characterMap["mapY"];
+      character.layer = characterMap["layer"];
+      character.direction = characterMap["direction"];
+      character.solid = characterMap["solid"];
+      
+      // fix since x and y are only calculated in constructor
+      character.x = character.mapX * character.motionAmount;
+      character.y = character.mapY * character.motionAmount;
+      
+      gameMap.characters.add(character);
+    }
+  }
+  
   void parseCharacters(Map<String, Map> charactersObject) {
-    // TODO: import characters from maps
+    // for character editor
     characters = {};
     for(String characterName in charactersObject.keys) {
-      characters[characterName] = new Character(
-          int.parse(charactersObject[characterName]["spriteId"]),
-          int.parse(charactersObject[characterName]["pictureId"]),
-          1, 1,
-          layer: World.LAYER_PLAYER,
-          sizeX: int.parse(charactersObject[characterName]["sizeX"]),
-          sizeY: int.parse(charactersObject[characterName]["sizeY"]),
-          solid: true
+      Character character = parseCharacter(charactersObject, characterName);
+      characters[characterName] = character;
+    }
+  }
+  
+  Character parseCharacter(Map<String, Map> charactersObject, String characterName) {
+    Character character = new Character(
+        int.parse(charactersObject[characterName]["spriteId"]),
+        int.parse(charactersObject[characterName]["pictureId"]),
+        1, 1,
+        layer: World.LAYER_PLAYER,
+        sizeX: int.parse(charactersObject[characterName]["sizeX"]),
+        sizeY: int.parse(charactersObject[characterName]["sizeY"]),
+        solid: true
+    );
+    
+    // TODO: get battler info from advanced character battler tab
+    String battlerTypeName = charactersObject[characterName]["battlerType"];
+    BattlerType battlerType = World.battlerTypes[battlerTypeName];
+    character.battler = new Battler(
+        battlerType.name,
+        battlerType,
+        int.parse(charactersObject[characterName]["battlerLevel"]),
+        battlerType.levelAttacks.values.toList()
       );
-      
-      // TODO: get battler info from advanced character battler tab
-      String battlerTypeName = charactersObject[characterName]["battlerType"];
-      BattlerType battlerType = World.battlerTypes[battlerTypeName];
-      characters[characterName].battler = new Battler(
-          battlerType.name,
-          battlerType,
-          int.parse(charactersObject[characterName]["battlerLevel"]),
-          battlerType.levelAttacks.values.toList()
-        );
-      
-      characters[characterName].sightDistance = int.parse(charactersObject[characterName]["sightDistance"]);
-      characters[characterName].preBattleText = charactersObject[characterName]["preBattleText"];
-      
-      characters[characterName].inventory = new Inventory([]);
-      List<Map<String, String>> characterItems = charactersObject[characterName]["inventory"];
-      for(int i=0; i<characterItems.length; i++) {
-        String itemName = characterItems.elementAt(i)["item"];
-        int itemQuantity = int.parse(characterItems.elementAt(i)["quantity"]);
-        characters[characterName].inventory.addItem(World.items[itemName], itemQuantity);
+    
+    character.sightDistance = int.parse(charactersObject[characterName]["sightDistance"]);
+    character.preBattleText = charactersObject[characterName]["preBattleText"];
+    
+    // inventory
+    character.inventory = new Inventory([]);
+    List<Map<String, String>> characterItems = charactersObject[characterName]["inventory"];
+    for(int i=0; i<characterItems.length; i++) {
+      String itemName = characterItems.elementAt(i)["item"];
+      int itemQuantity = int.parse(characterItems.elementAt(i)["quantity"]);
+      character.inventory.addItem(World.items[itemName], itemQuantity);
+    }
+    
+    // game events
+    // TODO: add other game event types
+    character.gameEvents = new List<GameEvent>();
+    List<Map<String, String>> gameEvents = charactersObject[characterName]["gameEvents"];
+    for(int i=0; i<gameEvents.length; i++) {
+      if(gameEvents[i]["type"] == "text") {
+        TextGameEvent textGameEvent = new TextGameEvent(
+            int.parse(gameEvents[i]["pictureId"]),
+            gameEvents[i]["text"]
+          );
+        
+        character.gameEvents.add(textGameEvent);
       }
     }
+    
+    character.name = characterName;
+    
+    return character;
   }
   
   void parsePlayer(Map<String, String> playerObject) {

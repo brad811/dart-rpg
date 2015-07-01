@@ -128,7 +128,7 @@ class MapEditorMaps {
   
   static void onInputChange(Event e) {
     Map<String, GameMap> newMaps = {};
-    Map<String, List<Character>> newCharacters = {};
+    Map<String, List<Map<String, Object>>> newCharacters = {};
     Map<String, List<WarpTile>> newWarps = {};
     Map<String, List<Sign>> newSigns = {};
     Map<String, List<BattlerChance>> newBattlers = {};
