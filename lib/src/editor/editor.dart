@@ -192,7 +192,11 @@ class Editor {
   }
   
   static String getSelectInputStringValue(String divId) {
-    return (querySelector(divId) as SelectElement).value;
+    try {
+      return (querySelector(divId) as SelectElement).value;
+    } catch(e) {
+      return "";
+    }
   }
   
   static int getSelectInputIntValue(String divId, int defaultValue) {
@@ -204,7 +208,11 @@ class Editor {
   }
   
   static String getTextAreaStringValue(String divId) {
-    return (querySelector(divId) as TextAreaElement).value;
+    try {
+      return (querySelector(divId) as TextAreaElement).value;
+    } catch(e) {
+      return "";
+    }
   }
   
   static String getTextInputStringValue(String divId) {
