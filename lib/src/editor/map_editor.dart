@@ -300,7 +300,21 @@ class MapEditor {
     // draw red boxes around solid tiles
     outlineTiles(solids, 255, 0, 0);
     
-    // TODO: draw blue boxes around characters
+    // draw blue boxes around characters
+    List<Tile> characterTiles = [];
+    Main.world.maps[Main.world.curMap].characters.forEach((Character character) {
+      for(int w=0; w<character.sizeX; w++) {
+        for(int h=0; h<character.sizeY; h++) {
+          characterTiles.add(
+            new Tile(
+              false,
+              new Sprite(0, (character.mapX + w).toDouble(), (character.mapY - h).toDouble())
+            )
+          );
+        }
+      }
+    });
+    outlineTiles(characterTiles, 0, 0, 255);
     
     // draw cyan boxes around layered tiles
     outlineTiles(layereds, 0, 150, 255);

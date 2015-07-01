@@ -119,6 +119,7 @@ class MapEditorCharacters {
   }
   
   static void onInputChange(Event e) {
+    // TODO: character does not move when changing character position
     for(int i=0; i<characters[Main.world.curMap].length; i++) {
       try {
         characters[Main.world.curMap][i]["type"] = Editor.getSelectInputStringValue("#map_character_${i}_type");
