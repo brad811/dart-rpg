@@ -10,6 +10,7 @@ import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
@@ -95,6 +96,8 @@ class ObjectEditorCharacters {
     
     for(int i=0; i<World.characters.keys.length; i++) {
       Editor.setDeleteButtonListeners(World.characters.values.elementAt(i).inventory.itemStacks, "character_${i}_item", listeners);
+      
+      //Editor.setDeleteButtonListeners(World.characters.values.elementAt(i).gameEvents, "character_${i}_game_event", listeners);
     }
     
     List<String> attrs = [
@@ -161,6 +164,8 @@ class ObjectEditorCharacters {
           gameEventAttrs.addAll(["picture_id", "text"]);
         } else if(character.gameEvents[j] is MoveGameEvent) {
           gameEventAttrs.addAll(["direction", "distance"]);
+        } else if(character.gameEvents[j] is DelayGameEvent) {
+          gameEventAttrs.addAll(["milliseconds"]);
         }
         
         Editor.attachListeners(listeners, "character_${i}_game_event_${j}", gameEventAttrs, onInputChange);
@@ -263,7 +268,7 @@ class ObjectEditorCharacters {
       Character character = World.characters.values.elementAt(i);
       
       gameEventHtml += "<table id='character_${i}_game_event_table' ${visibleString}>";
-      gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td></tr>";
+      gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
       for(int j=0; j<character.gameEvents.length; j++) {
         gameEventHtml += "<tr>";
         gameEventHtml += "  <td>${j}</td>";
@@ -271,7 +276,7 @@ class ObjectEditorCharacters {
         
         String paramsHtml = "";
         
-        List<String> gameEventTypes = ["text", "move", "fade", "warp"];
+        List<String> gameEventTypes = ["text", "move", "delay", "fade", "warp"];
         for(int k=0; k<gameEventTypes.length; k++) {
           String selectedText = "";
           if(gameEventTypes[k] == "text" && character.gameEvents[j] is TextGameEvent) {
@@ -280,6 +285,9 @@ class ObjectEditorCharacters {
           } else if(gameEventTypes[k] == "move" && character.gameEvents[j] is MoveGameEvent) {
             selectedText = "selected='selected'";
             paramsHtml = buildMoveGameEventParamsHtml(character.gameEvents[j] as MoveGameEvent, i, j);
+          } else if(gameEventTypes[k] == "delay" && character.gameEvents[j] is DelayGameEvent) {
+            selectedText = "selected='selected'";
+            paramsHtml = buildDelayGameEventParamsHtml(character.gameEvents[j] as DelayGameEvent, i, j);
           }
           
           gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
@@ -287,6 +295,7 @@ class ObjectEditorCharacters {
         
         gameEventHtml += "  </select></td>";
         gameEventHtml += "  <td>${paramsHtml}</td>";
+        gameEventHtml += "  <td><button id='delete_character_${i}_game_event_${j}'>Delete</button></td>";
         gameEventHtml += "</tr>";
       }
       
@@ -333,6 +342,23 @@ class ObjectEditorCharacters {
     
     // distance
     html += "    <td><input type='text' class='number' id='character_${i}_game_event_${j}_distance' value='${moveGameEvent.distance}' /></td>";
+    
+    html += "  </tr>";
+    html += "</table>";
+    
+    return html;
+  }
+  
+  static String buildDelayGameEventParamsHtml(DelayGameEvent delayGameEvent, int i, int j) {
+    String html = "";
+    
+    // TODO: 
+    html += "<table>";
+    html += "  <tr><td>Milliseconds</td></tr>";
+    html += "  <tr>";
+    
+    // milliseconds
+    html += "    <td><input type='text' class='number' id='character_${i}_game_event_${j}_milliseconds' value='${delayGameEvent.milliseconds}' /></td>";
     
     html += "  </tr>";
     html += "</table>";
@@ -464,6 +490,12 @@ class ObjectEditorCharacters {
             );
           
           character.gameEvents.add(moveGameEvent);
+        } else if(gameEventType == "delay") {
+          DelayGameEvent delayGameEvent = new DelayGameEvent(
+              Editor.getTextInputIntValue("#character_${i}_game_event_${j}_milliseconds", 100)
+            );
+          
+          character.gameEvents.add(delayGameEvent);
         }
       }
     }
@@ -505,6 +537,9 @@ class ObjectEditorCharacters {
           gameEventJson["type"] = "move";
           gameEventJson["direction"] = gameEvent.direction;
           gameEventJson["distance"] = gameEvent.distance;
+        } else if(gameEvent is DelayGameEvent) {
+          gameEventJson["type"] = "delay";
+          gameEventJson["milliseconds"] = gameEvent.milliseconds;
         }
         
         gameEventsJson.add(gameEventJson);
