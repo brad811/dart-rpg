@@ -56,6 +56,8 @@ class Character implements InteractableInterface {
   
   Inventory inventory = new Inventory([]);
   
+  String name;
+  
   // TODO: perhaps add name field
   // TODO: add wander behavior
   // TODO: add battle event with callback

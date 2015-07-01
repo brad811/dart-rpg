@@ -155,6 +155,14 @@ class Editor {
     return (querySelector(divId) as SelectElement).value;
   }
   
+  static int getSelectInputIntValue(String divId, int defaultValue) {
+    try {
+      return int.parse((querySelector(divId) as SelectElement).value);
+    } catch(e) {
+      return defaultValue;
+    }
+  }
+  
   static String getTextAreaStringValue(String divId) {
     return (querySelector(divId) as TextAreaElement).value;
   }
