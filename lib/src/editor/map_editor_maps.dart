@@ -85,7 +85,7 @@ class MapEditorMaps {
         "</tr>";
     }
     mapsHtml += "</table>";
-    querySelector("#maps_container").innerHtml = mapsHtml;
+    querySelector("#maps_container").setInnerHtml(mapsHtml);
     
     setMapSelectorButtonListeners();
     setMapDeleteButtonListeners();

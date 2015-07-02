@@ -46,7 +46,7 @@ class ObjectEditorItems {
         "</tr>";
     }
     itemsHtml += "</table>";
-    querySelector("#items_container").innerHtml = itemsHtml;
+    querySelector("#items_container").setInnerHtml(itemsHtml);
     
     Editor.setMapDeleteButtonListeners(World.items, "item", listeners);
     

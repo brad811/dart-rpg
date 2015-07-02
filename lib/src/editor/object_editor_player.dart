@@ -43,7 +43,7 @@ class ObjectEditorPlayer {
       "    <td><input id='player_level' type='text' class='number' value='${Main.player.battler.level}' /></td>"+
       "  </tr>";
     playerHtml += "</table>";
-    querySelector("#player_container").innerHtml = playerHtml;
+    querySelector("#player_container").setInnerHtml(playerHtml);
     
     List<String> ids = ["player_name", "player_battler_type", "player_level"];
     ids.forEach((String id) {

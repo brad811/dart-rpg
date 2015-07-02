@@ -110,7 +110,7 @@ class MapEditorCharacters {
       charactersHtml += "</tr>";
     }
     charactersHtml += "</table>";
-    querySelector("#map_characters_container").innerHtml = charactersHtml;
+    querySelector("#map_characters_container").setInnerHtml(charactersHtml);
     
     for(int i=0; i<characters[Main.world.curMap].length; i++) {
       List<String> attrs = ["type", "map_x", "map_y", "layer", "direction", "solid"];

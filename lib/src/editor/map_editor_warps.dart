@@ -92,7 +92,7 @@ class MapEditorWarps {
         "</tr>";
     }
     warpsHtml += "</table>";
-    querySelector("#warps_container").innerHtml = warpsHtml;
+    querySelector("#warps_container").setInnerHtml(warpsHtml);
     
     setWarpDeleteButtonListeners();
     

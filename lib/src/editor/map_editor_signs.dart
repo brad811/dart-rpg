@@ -70,7 +70,7 @@ class MapEditorSigns {
         "</tr>";
     }
     signsHtml += "</table>";
-    querySelector("#signs_container").innerHtml = signsHtml;
+    querySelector("#signs_container").setInnerHtml(signsHtml);
     
     setSignDeleteButtonListeners();
     

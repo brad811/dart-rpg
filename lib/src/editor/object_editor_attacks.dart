@@ -54,7 +54,7 @@ class ObjectEditorAttacks {
         "</tr>";
     }
     attacksHtml += "</table>";
-    querySelector("#attacks_container").innerHtml = attacksHtml;
+    querySelector("#attacks_container").setInnerHtml(attacksHtml);
     
     Editor.setMapDeleteButtonListeners(World.attacks, "attack", listeners);
     

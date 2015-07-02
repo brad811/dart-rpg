@@ -70,7 +70,7 @@ class MapEditorBattlers {
         "</tr>";
     }
     battlersHtml += "</table>";
-    querySelector("#battlers_container").innerHtml = battlersHtml;
+    querySelector("#battlers_container").setInnerHtml(battlersHtml);
     
     for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {
       List<String> attrs = ["type", "level", "chance"];

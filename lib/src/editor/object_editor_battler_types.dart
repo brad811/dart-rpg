@@ -88,7 +88,7 @@ class ObjectEditorBattlerTypes {
         "</tr>";
     }
     battlerTypesHtml += "</table>";
-    querySelector("#battler_types_container").innerHtml = battlerTypesHtml;
+    querySelector("#battler_types_container").setInnerHtml(battlerTypesHtml);
     
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
       querySelector("#add_battler_type_${i}_attack").onClick.listen((MouseEvent e) {

@@ -252,7 +252,6 @@ class ObjectEditorCharacters {
       inventoryHtml += "</table>";
     }
     
-    // TODO: replace all .innerHtml with .setInnerHtml()
     querySelector("#inventory_container").setInnerHtml(inventoryHtml);
   }
   
