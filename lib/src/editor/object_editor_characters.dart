@@ -102,7 +102,7 @@ class ObjectEditorCharacters {
     
     List<String> attrs = [
       // main
-      "label", "sprite_id", "picture_id", "size_x", "size_y",
+      "label", "name", "sprite_id", "picture_id", "size_x", "size_y",
       
       // battle
       "battler_type", "battler_level", "sight_distance", "pre_battle_text"
@@ -186,6 +186,7 @@ class ObjectEditorCharacters {
       "  <tr>"+
       "    <td>Num</td>"+
       "    <td>Label</td>"+
+      "    <td>Name</td>"+
       "    <td>Sprite Id</td>"+
       "    <td>Picture Id</td>"+
       "    <td>Size X</td>"+
@@ -200,6 +201,7 @@ class ObjectEditorCharacters {
         "<tr id='character_row_${i}'>"+
         "  <td>${i}</td>"+
         "  <td><input id='character_${i}_label' type='text' value='${ key }' /></td>"+
+        "  <td><input id='character_${i}_name' type='text' value='${ World.characters[key].name }' /></td>"+
         "  <td><input id='character_${i}_sprite_id' type='text' class='number' value='${ World.characters[key].spriteId }' /></td>"+
         "  <td><input id='character_${i}_picture_id' type='text' class='number' value='${ World.characters[key].pictureId }' /></td>"+
         "  <td><input id='character_${i}_size_x' type='text' class='number' value='${ World.characters[key].sizeX }' /></td>"+
@@ -428,7 +430,6 @@ class ObjectEditorCharacters {
     World.characters = new Map<String, Character>();
     for(int i=0; querySelector('#character_${i}_label') != null; i++) {
       try {
-        String name = Editor.getTextInputStringValue('#character_${i}_label');
         Character character = new Character(
           Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
           Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
@@ -439,8 +440,11 @@ class ObjectEditorCharacters {
           solid: true
         );
         
+        character.name = Editor.getTextInputStringValue('#character_${i}_name');
+        
         String battlerTypeName = Editor.getSelectInputStringValue('#character_${i}_battler_type');
         
+        // TODO: add battler name field
         Battler battler = new Battler(
           "name",
           World.battlerTypes[battlerTypeName],
@@ -453,7 +457,8 @@ class ObjectEditorCharacters {
         character.preBattleText = Editor.getTextAreaStringValue('#character_${i}_pre_battle_text');
         // post battle event
         
-        World.characters[name] = character;
+        String label = Editor.getTextInputStringValue('#character_${i}_label');
+        World.characters[label] = character;
       } catch(e) {
         // could not update this character
         print("Error updating character: " + e.toString());
@@ -510,6 +515,7 @@ class ObjectEditorCharacters {
       characterJson["pictureId"] = character.pictureId.toString();
       characterJson["sizeX"] = character.sizeX.toString();
       characterJson["sizeY"] = character.sizeY.toString();
+      characterJson["name"] = character.name;
       
       // inventory
       List<Map<String, String>> inventoryJson = [];

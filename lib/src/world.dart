@@ -214,8 +214,9 @@ class World {
     parseBattlerTypes(obj["battlerTypes"]);
     parseMaps(obj["maps"], obj["characters"]);
     parseItems(obj["items"]);
-    parseCharacters(obj["characters"]);
     parsePlayer(obj["player"]);
+    
+    parseCharacters(obj["characters"]);
   }
   
   void parseAttacks(Map<String, Map> attacksObject) {
@@ -368,6 +369,7 @@ class World {
       character.layer = characterMap["layer"];
       character.direction = characterMap["direction"];
       character.solid = characterMap["solid"];
+      character.name = characterMap["name"];
       
       // fix since x and y are only calculated in constructor
       character.x = character.mapX * character.motionAmount;
@@ -380,39 +382,41 @@ class World {
   void parseCharacters(Map<String, Map> charactersObject) {
     // for character editor
     characters = {};
-    for(String characterName in charactersObject.keys) {
-      Character character = parseCharacter(charactersObject, characterName);
-      characters[characterName] = character;
+    for(String characterLabel in charactersObject.keys) {
+      Character character = parseCharacter(charactersObject, characterLabel);
+      characters[characterLabel] = character;
     }
   }
   
-  Character parseCharacter(Map<String, Map> charactersObject, String characterName) {
+  Character parseCharacter(Map<String, Map> charactersObject, String characterLabel) {
     Character character = new Character(
-        int.parse(charactersObject[characterName]["spriteId"]),
-        int.parse(charactersObject[characterName]["pictureId"]),
+        int.parse(charactersObject[characterLabel]["spriteId"]),
+        int.parse(charactersObject[characterLabel]["pictureId"]),
         1, 1,
         layer: World.LAYER_PLAYER,
-        sizeX: int.parse(charactersObject[characterName]["sizeX"]),
-        sizeY: int.parse(charactersObject[characterName]["sizeY"]),
+        sizeX: int.parse(charactersObject[characterLabel]["sizeX"]),
+        sizeY: int.parse(charactersObject[characterLabel]["sizeY"]),
         solid: true
     );
     
+    character.name = charactersObject[characterLabel]["name"];
+    
     // TODO: get battler info from advanced character battler tab
-    String battlerTypeName = charactersObject[characterName]["battlerType"];
+    String battlerTypeName = charactersObject[characterLabel]["battlerType"];
     BattlerType battlerType = World.battlerTypes[battlerTypeName];
     character.battler = new Battler(
         battlerType.name,
         battlerType,
-        int.parse(charactersObject[characterName]["battlerLevel"]),
+        int.parse(charactersObject[characterLabel]["battlerLevel"]),
         battlerType.levelAttacks.values.toList()
       );
     
-    character.sightDistance = int.parse(charactersObject[characterName]["sightDistance"]);
-    character.preBattleText = charactersObject[characterName]["preBattleText"];
+    character.sightDistance = int.parse(charactersObject[characterLabel]["sightDistance"]);
+    character.preBattleText = charactersObject[characterLabel]["preBattleText"];
     
     // inventory
     character.inventory = new Inventory([]);
-    List<Map<String, String>> characterItems = charactersObject[characterName]["inventory"];
+    List<Map<String, String>> characterItems = charactersObject[characterLabel]["inventory"];
     for(int i=0; i<characterItems.length; i++) {
       String itemName = characterItems.elementAt(i)["item"];
       int itemQuantity = int.parse(characterItems.elementAt(i)["quantity"]);
@@ -422,7 +426,7 @@ class World {
     // game events
     // TODO: add other game event types
     character.gameEvents = new List<GameEvent>();
-    List<Map<String, String>> gameEvents = charactersObject[characterName]["gameEvents"];
+    List<Map<String, String>> gameEvents = charactersObject[characterLabel]["gameEvents"];
     for(int i=0; i<gameEvents.length; i++) {
       if(gameEvents[i]["type"] == "text") {
         TextGameEvent textGameEvent = new TextGameEvent(
@@ -447,8 +451,6 @@ class World {
         character.gameEvents.add(delayGameEvent);
       }
     }
-    
-    character.name = characterName;
     
     return character;
   }
