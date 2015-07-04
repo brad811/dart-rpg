@@ -47,23 +47,23 @@ class ObjectEditorBattlerTypes {
       battlerTypesHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input class='number' id='battler_types_sprite_id_${i}' type='text' value='${ World.battlerTypes[key].spriteId }' /></td>"+
-        "  <td><input id='battler_types_name_${i}' type='text' value='${ World.battlerTypes[key].name }' /></td>"+
+        "  <td><input class='number' id='battler_type_${i}_sprite_id' type='text' value='${ World.battlerTypes[key].spriteId }' /></td>"+
+        "  <td><input id='battler_type_${i}_name' type='text' value='${ World.battlerTypes[key].name }' /></td>"+
         
         "  <td>"+
         "    <table>"+
         "      <tr>"+
-        "        <td>Health: </td><td><input class='number' id='battler_types_health_${i}' type='text' value='${ World.battlerTypes[key].baseHealth }' /></td>"+
+        "        <td>Health: </td><td><input class='number' id='battler_type_${i}_health' type='text' value='${ World.battlerTypes[key].baseHealth }' /></td>"+
         "      </tr><tr>"+
-        "        <td>Speed: </td><td><input class='number' id='battler_types_speed_${i}' type='text' value='${ World.battlerTypes[key].baseSpeed }' /></td>"+
+        "        <td>Speed: </td><td><input class='number' id='battler_type_${i}_speed' type='text' value='${ World.battlerTypes[key].baseSpeed }' /></td>"+
         "      </tr><tr>"+
-        "        <td>Phys Atk: </td><td><input class='number' id='battler_types_physical_attack_${i}' type='text' value='${ World.battlerTypes[key].basePhysicalAttack }' /></td>"+
+        "        <td>Phys Atk: </td><td><input class='number' id='battler_type_${i}_physical_attack' type='text' value='${ World.battlerTypes[key].basePhysicalAttack }' /></td>"+
         "      </tr><tr>"+
-        "        <td>Magic Atk: </td><td><input class='number' id='battler_types_magical_attack_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalAttack }' /></td>"+
+        "        <td>Magic Atk: </td><td><input class='number' id='battler_type_${i}_magical_attack' type='text' value='${ World.battlerTypes[key].baseMagicalAttack }' /></td>"+
         "      </tr><tr>"+
-        "        <td>Phys Def: </td><td><input class='number' id='battler_types_physical_defense_${i}' type='text' value='${ World.battlerTypes[key].basePhysicalDefense }' /></td>"+
+        "        <td>Phys Def: </td><td><input class='number' id='battler_type_${i}_physical_defense' type='text' value='${ World.battlerTypes[key].basePhysicalDefense }' /></td>"+
         "      </tr><tr>"+
-        "        <td>Magic Def: </td><td><input class='number' id='battler_types_magical_defense_${i}' type='text' value='${ World.battlerTypes[key].baseMagicalDefense }' /></td>"+
+        "        <td>Magic Def: </td><td><input class='number' id='battler_type_${i}_magical_defense' type='text' value='${ World.battlerTypes[key].baseMagicalDefense }' /></td>"+
         "      </tr>"+
         "    </table>"+
         "  </td>"+
@@ -72,8 +72,8 @@ class ObjectEditorBattlerTypes {
       
       int j = 0;
       World.battlerTypes[key].levelAttacks.forEach((int level, Attack levelAttack) {
-        battlerTypesHtml += "<input class='number' id='battler_types_${i}_attack_${j}_level' type='text' value='${level}' />";
-        battlerTypesHtml += "<select id='battler_types_${i}_attack_${j}_name'>";
+        battlerTypesHtml += "<input class='number' id='battler_type_${i}_attack_${j}_level' type='text' value='${level}' />";
+        battlerTypesHtml += "<select id='battler_type_${i}_attack_${j}_name'>";
         World.attacks.forEach((String name, Attack attack) {
           battlerTypesHtml += "<option ";
           if(name == levelAttack.name) {
@@ -91,7 +91,7 @@ class ObjectEditorBattlerTypes {
         
       battlerTypesHtml +=
         "  </td>"+
-        "  <td><input class='number' id='battler_types_rarity_${i}' type='text' value='${ World.battlerTypes[key].rarity }' /></td>"+
+        "  <td><input class='number' id='battler_type_${i}_rarity' type='text' value='${ World.battlerTypes[key].rarity }' /></td>"+
         "  <td><button id='delete_battler_type_${i}'>Delete battler</button></td>" +
         "</tr>";
     }
@@ -115,36 +115,22 @@ class ObjectEditorBattlerTypes {
       Editor.setMapDeleteButtonListeners(battlerType.levelAttacks, "battler_type_${i}_attack", listeners);
     }
     
-    // TODO: perhaps move into base editor class
     List<String> attrs = [
       "sprite_id", "name",
       "health", "physical_attack", "magical_attack",
       "physical_defense", "magical_defense", "speed",
       "rarity"
     ];
-    for(int i=0; i<World.battlerTypes.keys.length; i++) {
-      for(String attr in attrs) {
-        if(listeners["#battler_types_${attr}_${i}"] != null)
-          listeners["#battler_types_${attr}_${i}"].cancel();
-        
-        listeners["#battler_types_${attr}_${i}"] = 
-            querySelector('#battler_types_${attr}_${i}').onInput.listen(onInputChange);
-      }
-    }
+    
+    List<String> attackAttrs = [
+      "level", "name"
+    ];
     
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
+      Editor.attachListeners(listeners, "battler_type_${i}", attrs, onInputChange);
+      
       for(int j=0; j<World.battlerTypes.values.elementAt(i).levelAttacks.values.length; j++) {
-        if(listeners["#battler_types_${i}_attack_${j}_level"] != null)
-          listeners["#battler_types_${i}_attack_${j}_level"].cancel();
-        
-        listeners["#battler_types_${i}_attack_${j}_level"] = 
-            querySelector('#battler_types_${i}_attack_${j}_level').onInput.listen(onInputChange);
-        
-        if(listeners["#battler_types_${i}_attack_${j}_name"] != null)
-          listeners["#battler_types_${i}_attack_${j}_name"].cancel();
-        
-        listeners["#battler_types_${i}_attack_${j}_name"] = 
-            querySelector('#battler_types_${i}_attack_${j}_name').onInput.listen(onInputChange);
+        Editor.attachListeners(listeners, "battler_type_${i}_attack_${j}", attackAttrs, onInputChange);
       }
     }
   }
@@ -153,46 +139,46 @@ class ObjectEditorBattlerTypes {
     if(e.target is InputElement) {
       InputElement target = e.target;
       
-      if(target.id.contains("battler_types_name_") && World.battlerTypes.keys.contains(target.value)) {
+      if(target.id.contains("_name") && World.battlerTypes.keys.contains(target.value)) {
         // avoid name collisions
         int i = 0;
         for(; World.battlerTypes.keys.contains(target.value + "_${i}"); i++) {}
         target.value += "_${i}";
-      } else if(target.id.contains("battler_types_magical_") || target.id.contains("battler_types_physical_")
-          || target.id.contains("battler_types_health_") || target.id.contains("battler_types_sprite_")
-          || target.id.contains("battler_types_speed_") || target.id.contains("_level")) {
+      } else if(target.id.contains("_magical_") || target.id.contains("_physical_")
+          || target.id.contains("_health") || target.id.contains("_sprite")
+          || target.id.contains("_speed") || target.id.contains("_level")) {
         // enforce number format
         target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-      } else if(target.id.contains("battler_types_rarity_")) {
+      } else if(target.id.contains("_rarity")) {
         target.value = target.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
       }
     }
     
     World.battlerTypes = new Map<String, BattlerType>();
-    for(int i=0; querySelector('#battler_types_name_${i}') != null; i++) {
+    for(int i=0; querySelector('#battler_type_${i}_name') != null; i++) {
       try {
-        String name = Editor.getTextInputStringValue('#battler_types_name_${i}');
+        String name = Editor.getTextInputStringValue('#battler_type_${i}_name');
         
         Map<int, Attack> levelAttacks = new Map<int, Attack>();
-        for(int j=0; querySelector("#battler_types_${i}_attack_${j}_level") != null; j++) {
-          int level = Editor.getTextInputIntValue("#battler_types_${i}_attack_${j}_level", 1);
-          String attackName = Editor.getSelectInputStringValue("#battler_types_${i}_attack_${j}_name");
+        for(int j=0; querySelector("#battler_type_${i}_attack_${j}_level") != null; j++) {
+          int level = Editor.getTextInputIntValue("#battler_type_${i}_attack_${j}_level", 1);
+          String attackName = Editor.getSelectInputStringValue("#battler_type_${i}_attack_${j}_name");
           Attack attack = World.attacks[attackName];
           
           levelAttacks[level] = attack;
         }
         
         World.battlerTypes[name] = new BattlerType(
-          Editor.getTextInputIntValue('#battler_types_sprite_id_${i}', 1),
+          Editor.getTextInputIntValue('#battler_type_${i}_sprite_id', 1),
           name,
-          Editor.getTextInputIntValue('#battler_types_health_${i}', 1),
-          Editor.getTextInputIntValue('#battler_types_physical_attack_${i}', 1),
-          Editor.getTextInputIntValue('#battler_types_magical_attack_${i}', 1),
-          Editor.getTextInputIntValue('#battler_types_physical_defense_${i}', 1),
-          Editor.getTextInputIntValue('#battler_types_magical_defense_${i}', 1),
-          Editor.getTextInputIntValue('#battler_types_speed_${i}', 1),
+          Editor.getTextInputIntValue('#battler_type_${i}_health', 1),
+          Editor.getTextInputIntValue('#battler_type_${i}_physical_attack', 1),
+          Editor.getTextInputIntValue('#battler_type_${i}_magical_attack', 1),
+          Editor.getTextInputIntValue('#battler_type_${i}_physical_defense', 1),
+          Editor.getTextInputIntValue('#battler_type_${i}_magical_defense', 1),
+          Editor.getTextInputIntValue('#battler_type_${i}_speed', 1),
           levelAttacks,
-          Editor.getTextInputDoubleValue('#battler_types_rarity_${i}', 1.0)
+          Editor.getTextInputDoubleValue('#battler_type_${i}_rarity', 1.0)
         );
       } catch(e, stackTrace) {
         // could not update this battler type
