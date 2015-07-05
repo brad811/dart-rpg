@@ -80,6 +80,7 @@ class Gui {
     Main.ctx.putImageData(imageData, 0, 0);
   }
   
+  // fade to black and then back to normal, and then perform an action
   static void fadeDarkAction(Function action, [Function callback]) {
     List<int> fadeLevels = [
       FADE_BLACK_LOW,
@@ -89,9 +90,10 @@ class Gui {
       FADE_BLACK_LOW,
       FADE_NORMAL
     ];
-    fadeAction(fadeLevels, action, callback);
+    fullFadeAction(fadeLevels, action, callback);
   }
   
+  // fade to white and then back to normal, and then perform an action
   static void fadeLightAction(Function action, [Function callback]) {
     List<int> fadeLevels = [
       FADE_WHITE_LOW,
@@ -101,10 +103,10 @@ class Gui {
       FADE_WHITE_LOW,
       FADE_NORMAL
     ];
-    fadeAction(fadeLevels, action, callback);
+    fullFadeAction(fadeLevels, action, callback);
   }
   
-  static void fadeAction(List<int> fadeLevels, Function action, [Function callback]) {
+  static void fullFadeAction(List<int> fadeLevels, Function action, [Function callback]) {
     Main.timeScale = 0.0;
     fadeOutLevel = fadeLevels[0];
     

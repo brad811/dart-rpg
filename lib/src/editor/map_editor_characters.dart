@@ -8,7 +8,6 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'editor.dart';
-import 'map_editor.dart';
 
 // TODO: editor tabs need to update everything because of this class
 
@@ -26,7 +25,7 @@ class MapEditorCharacters {
       
       for(Character character in mapCharacters) {
         characters[key].add({
-          "type": character.name,
+          "type": character.type,
           "mapX": character.mapX,
           "mapY": character.mapY,
           "layer": character.layer,
@@ -119,7 +118,6 @@ class MapEditorCharacters {
   }
   
   static void onInputChange(Event e) {
-    // TODO: character does not move when changing character position
     for(int i=0; i<characters[Main.world.curMap].length; i++) {
       try {
         characters[Main.world.curMap][i]["type"] = Editor.getSelectInputStringValue("#map_character_${i}_type");
@@ -129,6 +127,7 @@ class MapEditorCharacters {
         characters[Main.world.curMap][i]["direction"] = Editor.getSelectInputIntValue("#map_character_${i}_direction", Character.DOWN);
         characters[Main.world.curMap][i]["solid"] = (querySelector("#map_character_${i}_solid") as CheckboxInputElement).checked;
         
+        // TODO: fix a bug involving this
         Character character = Main.world.maps[Main.world.curMap].characters[i];
         
         character.name = characters[Main.world.curMap][i]["type"];

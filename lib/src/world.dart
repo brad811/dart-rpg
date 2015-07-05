@@ -26,6 +26,7 @@ import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event/delay_game_event.dart';
+import 'package:dart_rpg/src/game_event/fade_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
@@ -369,7 +370,8 @@ class World {
       character.layer = characterMap["layer"];
       character.direction = characterMap["direction"];
       character.solid = characterMap["solid"];
-      character.name = characterMap["name"];
+      
+      character.type = characterMap["type"];
       
       // fix since x and y are only calculated in constructor
       character.x = character.mapX * character.motionAmount;
@@ -449,6 +451,12 @@ class World {
           );
         
         character.gameEvents.add(delayGameEvent);
+      } else if(gameEvents[i]["type"] == "fade") {
+        FadeGameEvent fadeGameEvent = new FadeGameEvent(
+            gameEvents[i]["fade_type"] as int
+          );
+        
+        character.gameEvents.add(fadeGameEvent);
       }
     }
     

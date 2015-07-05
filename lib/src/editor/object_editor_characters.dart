@@ -11,6 +11,7 @@ import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/delay_game_event.dart';
+import 'package:dart_rpg/src/game_event/fade_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
@@ -166,6 +167,8 @@ class ObjectEditorCharacters {
           gameEventAttrs.addAll(["direction", "distance"]);
         } else if(character.gameEvents[j] is DelayGameEvent) {
           gameEventAttrs.addAll(["milliseconds"]);
+        } else if(character.gameEvents[j] is FadeGameEvent) {
+          gameEventAttrs.addAll(["type"]);
         }
         
         Editor.attachListeners(listeners, "character_${i}_game_event_${j}", gameEventAttrs, onInputChange);
@@ -289,6 +292,9 @@ class ObjectEditorCharacters {
           } else if(gameEventTypes[k] == "delay" && character.gameEvents[j] is DelayGameEvent) {
             selectedText = "selected='selected'";
             paramsHtml = buildDelayGameEventParamsHtml(character.gameEvents[j] as DelayGameEvent, i, j);
+          } else if(gameEventTypes[k] == "fade" && character.gameEvents[j] is FadeGameEvent) {
+            selectedText = "selected='selected'";
+            paramsHtml = buildFadeGameEventParamsHtml(character.gameEvents[j] as FadeGameEvent, i, j);
           }
           
           gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
@@ -323,7 +329,6 @@ class ObjectEditorCharacters {
   static String buildMoveGameEventParamsHtml(MoveGameEvent moveGameEvent, int i, int j) {
     String html = "";
     
-    // TODO: 
     html += "<table>";
     html += "  <tr><td>Direction</td><td>Distance</td></tr>";
     html += "  <tr>";
@@ -353,13 +358,38 @@ class ObjectEditorCharacters {
   static String buildDelayGameEventParamsHtml(DelayGameEvent delayGameEvent, int i, int j) {
     String html = "";
     
-    // TODO: 
     html += "<table>";
     html += "  <tr><td>Milliseconds</td></tr>";
     html += "  <tr>";
     
     // milliseconds
     html += "    <td><input type='text' class='number' id='character_${i}_game_event_${j}_milliseconds' value='${delayGameEvent.milliseconds}' /></td>";
+    
+    html += "  </tr>";
+    html += "</table>";
+    
+    return html;
+  }
+  
+  static String buildFadeGameEventParamsHtml(FadeGameEvent fadeGameEvent, int i, int j) {
+    String html = "";
+    
+    html += "<table>";
+    html += "  <tr><td>Fade Type</td></tr>";
+    html += "  <tr>";
+    
+    // fade type
+    html += "<td><select id='character_${i}_game_event_${j}_fade_type'>";
+    List<String> fadeTypes = ["Normal to white", "White to normal", "Normal to black", "Black to normal"];
+    for(int fadeType=0; fadeType<fadeTypes.length; fadeType++) {
+      html += "<option value='${fadeType}'";
+      if(fadeGameEvent.fadeType == fadeType) {
+        html += " selected";
+      }
+      
+      html += ">${fadeTypes.elementAt(fadeType)}</option>";
+    }
+    html += "</select></td>";
     
     html += "  </tr>";
     html += "</table>";
@@ -500,6 +530,12 @@ class ObjectEditorCharacters {
             );
           
           character.gameEvents.add(delayGameEvent);
+        } else if(gameEventType == "fade") {
+          FadeGameEvent fadeGameEvent = new FadeGameEvent(
+              Editor.getSelectInputIntValue("#character_${i}_game_event_${j}_fade_type", 2)
+            );
+          
+          character.gameEvents.add(fadeGameEvent);
         }
       }
     }
@@ -545,6 +581,9 @@ class ObjectEditorCharacters {
         } else if(gameEvent is DelayGameEvent) {
           gameEventJson["type"] = "delay";
           gameEventJson["milliseconds"] = gameEvent.milliseconds;
+        } else if(gameEvent is FadeGameEvent) {
+          gameEventJson["type"] = "fade";
+          gameEventJson["fade_type"] = gameEvent.fadeType;
         }
         
         gameEventsJson.add(gameEventJson);
