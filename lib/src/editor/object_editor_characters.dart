@@ -168,7 +168,7 @@ class ObjectEditorCharacters {
         } else if(character.gameEvents[j] is DelayGameEvent) {
           gameEventAttrs.addAll(["milliseconds"]);
         } else if(character.gameEvents[j] is FadeGameEvent) {
-          gameEventAttrs.addAll(["type"]);
+          gameEventAttrs.addAll(["fade_type"]);
         }
         
         Editor.attachListeners(listeners, "character_${i}_game_event_${j}", gameEventAttrs, onInputChange);

@@ -7,8 +7,6 @@ import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 
 class FadeGameEvent extends GameEvent {
-  int milliseconds;
-  
   int fadeType = 0;
   
   static final int
@@ -24,7 +22,7 @@ class FadeGameEvent extends GameEvent {
     [Gui.FADE_BLACK_MED, Gui.FADE_BLACK_LOW, Gui.FADE_NORMAL]
   ];
   
-  FadeGameEvent(this.milliseconds, [Function callback]) : super(null, callback);
+  FadeGameEvent(this.fadeType, [Function callback]) : super(null, callback);
   
   void trigger() {
     Main.player.inputEnabled = false;
