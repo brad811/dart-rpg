@@ -10,13 +10,11 @@ import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
-import 'package:dart_rpg/src/game_event/delay_game_event.dart';
-import 'package:dart_rpg/src/game_event/fade_game_event.dart';
-import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 import 'editor.dart';
 import 'object_editor.dart';
+import 'object_editor_game_events.dart';
 
 // TODO: add delete buttons for game events
 // TODO: make all inputs with class number take out any non 0-9 characters
@@ -161,16 +159,9 @@ class ObjectEditorCharacters {
       for(int j=0; j<character.gameEvents.length; j++) {
         List<String> gameEventAttrs = ["type"];
         
-        if(character.gameEvents[j] is TextGameEvent) {
-          gameEventAttrs.addAll(["picture_id", "text"]);
-        } else if(character.gameEvents[j] is MoveGameEvent) {
-          gameEventAttrs.addAll(["direction", "distance"]);
-        } else if(character.gameEvents[j] is DelayGameEvent) {
-          gameEventAttrs.addAll(["milliseconds"]);
-        } else if(character.gameEvents[j] is FadeGameEvent) {
-          gameEventAttrs.addAll(["fade_type"]);
-        }
+        gameEventAttrs.addAll(ObjectEditorGameEvents.getAttributes(character.gameEvents[j]));
         
+        // TODO: fix this
         Editor.attachListeners(listeners, "character_${i}_game_event_${j}", gameEventAttrs, onInputChange);
       }
       
@@ -274,127 +265,13 @@ class ObjectEditorCharacters {
       gameEventHtml += "<table id='character_${i}_game_event_table' ${visibleString}>";
       gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
       for(int j=0; j<character.gameEvents.length; j++) {
-        gameEventHtml += "<tr>";
-        gameEventHtml += "  <td>${j}</td>";
-        gameEventHtml += "  <td><select id='character_${i}_game_event_${j}_type'>";
-        
-        String paramsHtml = "";
-        
-        List<String> gameEventTypes = ["text", "move", "delay", "fade", "warp"];
-        for(int k=0; k<gameEventTypes.length; k++) {
-          String selectedText = "";
-          if(gameEventTypes[k] == "text" && character.gameEvents[j] is TextGameEvent) {
-            selectedText = "selected='selected'";
-            paramsHtml = buildTextGameEventParamsHtml(character.gameEvents[j] as TextGameEvent, i, j);
-          } else if(gameEventTypes[k] == "move" && character.gameEvents[j] is MoveGameEvent) {
-            selectedText = "selected='selected'";
-            paramsHtml = buildMoveGameEventParamsHtml(character.gameEvents[j] as MoveGameEvent, i, j);
-          } else if(gameEventTypes[k] == "delay" && character.gameEvents[j] is DelayGameEvent) {
-            selectedText = "selected='selected'";
-            paramsHtml = buildDelayGameEventParamsHtml(character.gameEvents[j] as DelayGameEvent, i, j);
-          } else if(gameEventTypes[k] == "fade" && character.gameEvents[j] is FadeGameEvent) {
-            selectedText = "selected='selected'";
-            paramsHtml = buildFadeGameEventParamsHtml(character.gameEvents[j] as FadeGameEvent, i, j);
-          }
-          
-          gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
-        }
-        
-        gameEventHtml += "  </select></td>";
-        gameEventHtml += "  <td>${paramsHtml}</td>";
-        gameEventHtml += "  <td><button id='delete_character_${i}_game_event_${j}'>Delete</button></td>";
-        gameEventHtml += "</tr>";
+        gameEventHtml += ObjectEditorGameEvents.buildGameEventTableRowHtml(character.gameEvents[j], "character_${i}_game_event_${j}", j);
       }
       
       gameEventHtml += "</table>";
     }
     
     querySelector("#game_event_container").setInnerHtml(gameEventHtml);
-  }
-  
-  static String buildTextGameEventParamsHtml(TextGameEvent textGameEvent, int i, int j) {
-    String html = "";
-    
-    html += "<table>";
-    html += "  <tr><td>Picture Id</td><td>Text</td></tr>";
-    html += "  <tr>";
-    html += "    <td><input type='text' class='number' id='character_${i}_game_event_${j}_picture_id' value='${textGameEvent.pictureSpriteId}' /></td>";
-    html += "    <td><textarea id='character_${i}_game_event_${j}_text'>${textGameEvent.text}</textarea>";
-    html += "  </tr>";
-    html += "</table>";
-    
-    return html;
-  }
-  
-  static String buildMoveGameEventParamsHtml(MoveGameEvent moveGameEvent, int i, int j) {
-    String html = "";
-    
-    html += "<table>";
-    html += "  <tr><td>Direction</td><td>Distance</td></tr>";
-    html += "  <tr>";
-    
-    // direction
-    html += "<td><select id='character_${i}_game_event_${j}_direction'>";
-    List<String> directions = ["Down", "Right", "Up", "Left"];
-    for(int direction=0; direction<directions.length; direction++) {
-      html += "<option value='${direction}'";
-      if(moveGameEvent.direction == direction) {
-        html += " selected";
-      }
-      
-      html += ">${directions[direction]}</option>";
-    }
-    html += "</select></td>";
-    
-    // distance
-    html += "    <td><input type='text' class='number' id='character_${i}_game_event_${j}_distance' value='${moveGameEvent.distance}' /></td>";
-    
-    html += "  </tr>";
-    html += "</table>";
-    
-    return html;
-  }
-  
-  static String buildDelayGameEventParamsHtml(DelayGameEvent delayGameEvent, int i, int j) {
-    String html = "";
-    
-    html += "<table>";
-    html += "  <tr><td>Milliseconds</td></tr>";
-    html += "  <tr>";
-    
-    // milliseconds
-    html += "    <td><input type='text' class='number' id='character_${i}_game_event_${j}_milliseconds' value='${delayGameEvent.milliseconds}' /></td>";
-    
-    html += "  </tr>";
-    html += "</table>";
-    
-    return html;
-  }
-  
-  static String buildFadeGameEventParamsHtml(FadeGameEvent fadeGameEvent, int i, int j) {
-    String html = "";
-    
-    html += "<table>";
-    html += "  <tr><td>Fade Type</td></tr>";
-    html += "  <tr>";
-    
-    // fade type
-    html += "<td><select id='character_${i}_game_event_${j}_fade_type'>";
-    List<String> fadeTypes = ["Normal to white", "White to normal", "Normal to black", "Black to normal"];
-    for(int fadeType=0; fadeType<fadeTypes.length; fadeType++) {
-      html += "<option value='${fadeType}'";
-      if(fadeGameEvent.fadeType == fadeType) {
-        html += " selected";
-      }
-      
-      html += ">${fadeTypes.elementAt(fadeType)}</option>";
-    }
-    html += "</select></td>";
-    
-    html += "  </tr>";
-    html += "</table>";
-    
-    return html;
   }
   
   static void buildBattleHtml() {
@@ -507,36 +384,9 @@ class ObjectEditorCharacters {
       
       character.gameEvents = new List<GameEvent>();
       for(int j=0; querySelector('#character_${i}_game_event_${j}_type') != null; j++) {
-        String gameEventType = Editor.getSelectInputStringValue("#character_${i}_game_event_${j}_type");
-        
-        if(gameEventType == "text") {
-          TextGameEvent textGameEvent = new TextGameEvent(
-              Editor.getTextInputIntValue("#character_${i}_game_event_${j}_picture_id", 1),
-              Editor.getTextAreaStringValue("#character_${i}_game_event_${j}_text")
-            );
-          
-          character.gameEvents.add(textGameEvent);
-        } else if(gameEventType == "move") {
-          MoveGameEvent moveGameEvent = new MoveGameEvent(
-              character,
-              Editor.getSelectInputIntValue("#character_${i}_game_event_${j}_direction", Character.DOWN),
-              Editor.getTextInputIntValue("#character_${i}_game_event_${j}_distance", 1)
-            );
-          
-          character.gameEvents.add(moveGameEvent);
-        } else if(gameEventType == "delay") {
-          DelayGameEvent delayGameEvent = new DelayGameEvent(
-              Editor.getTextInputIntValue("#character_${i}_game_event_${j}_milliseconds", 100)
-            );
-          
-          character.gameEvents.add(delayGameEvent);
-        } else if(gameEventType == "fade") {
-          FadeGameEvent fadeGameEvent = new FadeGameEvent(
-              Editor.getSelectInputIntValue("#character_${i}_game_event_${j}_fade_type", 2)
-            );
-          
-          character.gameEvents.add(fadeGameEvent);
-        }
+        character.gameEvents.add(
+            ObjectEditorGameEvents.buildGameEvent("character_${i}_game_event_${j}", character)
+          );
       }
     }
     
@@ -568,25 +418,9 @@ class ObjectEditorCharacters {
       // game event
       List<Map<String, String>> gameEventsJson = [];
       character.gameEvents.forEach((GameEvent gameEvent) {
-        Map<String, Object> gameEventJson = {};
-        
-        if(gameEvent is TextGameEvent) {
-          gameEventJson["type"] = "text";
-          gameEventJson["pictureId"] = gameEvent.pictureSpriteId;
-          gameEventJson["text"] = gameEvent.text;
-        } else if(gameEvent is MoveGameEvent) {
-          gameEventJson["type"] = "move";
-          gameEventJson["direction"] = gameEvent.direction;
-          gameEventJson["distance"] = gameEvent.distance;
-        } else if(gameEvent is DelayGameEvent) {
-          gameEventJson["type"] = "delay";
-          gameEventJson["milliseconds"] = gameEvent.milliseconds;
-        } else if(gameEvent is FadeGameEvent) {
-          gameEventJson["type"] = "fade";
-          gameEventJson["fade_type"] = gameEvent.fadeType;
-        }
-        
-        gameEventsJson.add(gameEventJson);
+        gameEventsJson.add(
+            ObjectEditorGameEvents.buildGameEventJson(gameEvent)
+          );
       });
       
       characterJson["gameEvents"] = gameEventsJson;

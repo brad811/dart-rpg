@@ -7,8 +7,6 @@ import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'package:dart_rpg/src/game_map.dart';
-
 import 'editor.dart';
 
 // TODO: editor tabs need to update everything because of this class
