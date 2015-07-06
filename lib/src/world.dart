@@ -10,7 +10,6 @@ import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/game_map.dart';
-import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/item.dart';
@@ -27,6 +26,7 @@ import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/fade_game_event.dart';
+import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
@@ -115,31 +115,6 @@ class World {
       ];
       
       someKid.gameEvents = characterGameEvents;
-      
-      // add character that heals you
-      Character healer = addCharacter(
-        "house",
-        new Character(
-          Tile.PLAYER,
-          237,
-          5, 1, layer: LAYER_BELOW
-        )
-      );
-      
-      List<GameEvent> healerGameEvents = [];
-      healerGameEvents = [
-        new TextGameEvent(237, "Take a quick rest, you'll feel much better."),
-        new GameEvent((callback) {
-          Gui.fadeLightAction(() {
-            Main.player.battler.curHealth = Main.player.battler.startingHealth;
-            Main.player.battler.displayHealth = Main.player.battler.startingHealth;
-          }, callback);
-          //Main.player.inputEnabled = false;
-        }),
-        new TextGameEvent(237, "There you go, good as new.")
-      ];
-      
-      healer.gameEvents = healerGameEvents;
       
       Character fighter = addCharacter(
         "main",
@@ -462,6 +437,13 @@ class World {
           );
         
         character.gameEvents.add(fadeGameEvent);
+      } else if(gameEvents[i]["type"] == "heal") {
+        HealGameEvent healGameEvent = new HealGameEvent(
+            Main.player,
+            gameEvents[i]["amount"] as int
+          );
+        
+        character.gameEvents.add(healGameEvent);
       }
     }
     

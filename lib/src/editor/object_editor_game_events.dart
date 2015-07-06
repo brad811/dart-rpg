@@ -1,10 +1,12 @@
 library dart_rpg.object_editor_game_events;
 
 import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/main.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/fade_game_event.dart';
+import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
@@ -20,6 +22,8 @@ class ObjectEditorGameEvents {
       return ["milliseconds"];
     } else if(gameEvent is FadeGameEvent) {
       return ["fade_type"];
+    } else if(gameEvent is HealGameEvent) {
+      return ["character", "amount"];
     } else {
       return [];
     }
@@ -55,6 +59,12 @@ class ObjectEditorGameEvents {
         );
       
       return fadeGameEvent;
+    } else if(gameEventType == "heal") {
+      HealGameEvent healGameEvent = new HealGameEvent(
+          Main.player, Editor.getTextInputIntValue("#${prefix}_amount", 0)
+        );
+      
+      return healGameEvent;
     } else {
       return null;
     }
@@ -77,6 +87,10 @@ class ObjectEditorGameEvents {
     } else if(gameEvent is FadeGameEvent) {
       gameEventJson["type"] = "fade";
       gameEventJson["fade_type"] = gameEvent.fadeType;
+    } else if(gameEvent is HealGameEvent) {
+      gameEventJson["type"] = "heal";
+      gameEventJson["character"] = gameEvent.character.name;
+      gameEventJson["amount"] = gameEvent.amount;
     }
     
     return gameEventJson;
@@ -105,6 +119,9 @@ class ObjectEditorGameEvents {
       } else if(gameEventTypes[k] == "fade" && gameEvent is FadeGameEvent) {
         selectedText = "selected='selected'";
         paramsHtml = ObjectEditorGameEvents.buildFadeGameEventParamsHtml(gameEvent, prefix);
+      } else if(gameEventTypes[k] == "heal" && gameEvent is HealGameEvent) {
+        selectedText = "selected='selected'";
+        paramsHtml = ObjectEditorGameEvents.buildHealGameEventParamsHtml(gameEvent, prefix);
       }
       
       gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
@@ -196,6 +213,27 @@ class ObjectEditorGameEvents {
       html += ">${fadeTypes.elementAt(fadeType)}</option>";
     }
     html += "</select></td>";
+    
+    html += "  </tr>";
+    html += "</table>";
+    
+    return html;
+  }
+  
+  static String buildHealGameEventParamsHtml(HealGameEvent healGameEvent, String prefix) {
+    String html = "";
+    
+    html += "<table>";
+    html += "  <tr><td>Character</td><td>Amount</td></tr>";
+    html += "  <tr>";
+    
+    // character
+    html += "<td><select id='${prefix}_character'>";
+    html += "  <option value='Player'>Player</option>";
+    html += "</select></td>";
+    
+    // amount
+    html += "    <td><input type='text' class='number' id='${prefix}_amount' value='${healGameEvent.amount}' /></td>";
     
     html += "  </tr>";
     html += "</table>";
