@@ -12,6 +12,8 @@ import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 import 'editor.dart';
 
+// TODO: make this its own editor tab
+
 class ObjectEditorGameEvents {
   static List<String> getAttributes(GameEvent gameEvent) {
     if(gameEvent is TextGameEvent) {
