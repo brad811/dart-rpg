@@ -7,6 +7,7 @@ import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/inventory.dart';
+import 'package:dart_rpg/src/store_character.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -20,7 +21,7 @@ import 'object_editor_game_events.dart';
 // TODO: make all inputs with class number take out any non 0-9 characters
 
 class ObjectEditorCharacters {
-  static List<String> advancedTabs = ["character_inventory", "character_game_event", "character_battle"];
+  static List<String> advancedTabs = ["character_inventory", "character_game_event", "character_battle", "character_store"];
   static Map<String, StreamSubscription> listeners = {};
   static int selected;
   
@@ -82,6 +83,7 @@ class ObjectEditorCharacters {
     buildInventoryHtml();
     buildGameEventHtml();
     buildBattleHtml();
+    buildStoreHtml();
     
     // TODO: add inventory, game event, and post battle event to right half
     
@@ -130,6 +132,7 @@ class ObjectEditorCharacters {
           querySelector("#character_${j}_inventory_table").classes.add("hidden");
           querySelector("#character_${j}_game_event_table").classes.add("hidden");
           querySelector("#character_${j}_battle_container").classes.add("hidden");
+          querySelector("#character_${j}_store_container").classes.add("hidden");
         }
         
         // hightlight the selected character row
@@ -142,6 +145,7 @@ class ObjectEditorCharacters {
         querySelector("#character_${i}_inventory_table").classes.remove("hidden");
         querySelector("#character_${i}_game_event_table").classes.remove("hidden");
         querySelector("#character_${i}_battle_container").classes.remove("hidden");
+        querySelector("#character_${i}_store_container").classes.remove("hidden");
       });
       
       Character character = World.characters.values.elementAt(i);
@@ -307,6 +311,40 @@ class ObjectEditorCharacters {
     }
     
     querySelector("#battle_container").setInnerHtml(battleHtml);
+  }
+  
+  static void buildStoreHtml() {
+    String battleHtml = "";
+    
+    for(int i=0; i<World.characters.keys.length; i++) {
+      String visibleString = "class='hidden'";
+      if(selected == i) {
+        visibleString = "";
+      }
+      
+      Character character = World.characters.values.elementAt(i);
+      
+      String helloMessage = "", goodbyeMessage = "";
+      
+      if(character is StoreCharacter) {
+        helloMessage = character.helloMessage;
+        goodbyeMessage = character.goodbyeMessage;
+      }
+      
+      // TODO: disable inputs if character is not a store character
+      // TODO: discount field?
+      // TODO: checkbox to enable store character
+      // TODO: onInputChange
+      
+      battleHtml += "<table id='character_${i}_store_container' ${visibleString}>";
+      battleHtml += "<tr><td>Hello Message</td><td>Goodbye Message</td></tr>";
+      battleHtml += "<td><input id='character_${i}_store_hello_message' type='text' value='${helloMessage}' /></td>";
+      battleHtml += "<td><input id='character_${i}_store_goodbye_message' type='text' value='${goodbyeMessage}' /></td>";
+      battleHtml += "</tr>";
+      battleHtml += "</table>";
+    }
+    
+    querySelector("#store_container").setInnerHtml(battleHtml);
   }
   
   static void onInputChange(Event e) {

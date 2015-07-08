@@ -119,8 +119,7 @@ class World {
       Character fighter = addCharacter(
         "main",
         new Character(
-          Tile.PLAYER,
-          237,
+          Tile.PLAYER, 237,
           35, 13, layer: LAYER_BELOW
         )
       );

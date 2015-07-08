@@ -14,8 +14,12 @@ import 'package:dart_rpg/src/game_event/quantity_choice_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class StoreCharacter extends Character {
+  String
+    helloMessage,
+    goodbyeMessage;
+  
   StoreCharacter(int spriteId, int pictureId,
-        String helloMessage, String goodbyeMessage, List<ItemStack> storeItemStacks,
+        this.helloMessage, this.goodbyeMessage, List<ItemStack> storeItemStacks,
         int mapX, int mapY,
         {int layer, int sizeX, int sizeY, bool solid})
         : super(spriteId, pictureId, mapX, mapY, layer: layer, sizeX: sizeX, sizeY: sizeY, solid: solid) {
