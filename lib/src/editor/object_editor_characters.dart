@@ -397,6 +397,7 @@ class ObjectEditorCharacters {
     for(int i=0; querySelector('#character_${i}_label') != null; i++) {
       try {
         bool isStoreCharacter = Editor.getCheckboxInputBoolValue("#character_${i}_is_store_character");
+        
         Character character;
         if(isStoreCharacter) {
           character = new StoreCharacter(
@@ -478,6 +479,13 @@ class ObjectEditorCharacters {
       characterJson["sizeX"] = character.sizeX.toString();
       characterJson["sizeY"] = character.sizeY.toString();
       characterJson["name"] = character.name;
+      
+      if(character is StoreCharacter) {
+        characterJson["store"] = {
+          "helloMessage": character.helloMessage,
+          "goodbyeMessage": character.goodbyeMessage
+        };
+      }
       
       // inventory
       List<Map<String, String>> inventoryJson = [];

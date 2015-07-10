@@ -370,15 +370,33 @@ class World {
   }
   
   Character parseCharacter(Map<String, Map> charactersObject, String characterLabel) {
-    Character character = new Character(
-        int.parse(charactersObject[characterLabel]["spriteId"]),
-        int.parse(charactersObject[characterLabel]["pictureId"]),
-        1, 1,
-        layer: World.LAYER_PLAYER,
-        sizeX: int.parse(charactersObject[characterLabel]["sizeX"]),
-        sizeY: int.parse(charactersObject[characterLabel]["sizeY"]),
-        solid: true
-    );
+    bool isStoreCharacter = charactersObject[characterLabel]["store"] != null;
+    
+    Character character;
+    if(isStoreCharacter) {
+      character = new StoreCharacter(
+          int.parse(charactersObject[characterLabel]["spriteId"]),
+          int.parse(charactersObject[characterLabel]["pictureId"]),
+          charactersObject[characterLabel]["store"]["helloMessage"],
+          charactersObject[characterLabel]["store"]["goodbyeMessage"],
+          [],
+          1, 1,
+          layer: World.LAYER_PLAYER,
+          sizeX: int.parse(charactersObject[characterLabel]["sizeX"]),
+          sizeY: int.parse(charactersObject[characterLabel]["sizeY"]),
+          solid: true
+      );
+    } else {
+      character = new Character(
+          int.parse(charactersObject[characterLabel]["spriteId"]),
+          int.parse(charactersObject[characterLabel]["pictureId"]),
+          1, 1,
+          layer: World.LAYER_PLAYER,
+          sizeX: int.parse(charactersObject[characterLabel]["sizeX"]),
+          sizeY: int.parse(charactersObject[characterLabel]["sizeY"]),
+          solid: true
+      );
+    }
     
     character.name = charactersObject[characterLabel]["name"];
     
