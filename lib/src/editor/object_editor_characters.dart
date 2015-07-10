@@ -16,7 +16,6 @@ import 'editor.dart';
 import 'object_editor.dart';
 import 'object_editor_game_events.dart';
 
-// TODO: add delete buttons for game events
 // TODO: make all inputs with class number take out any non 0-9 characters
 
 class ObjectEditorCharacters {
@@ -24,7 +23,6 @@ class ObjectEditorCharacters {
   static Map<String, StreamSubscription> listeners = {};
   static int selected;
   
-  // TODO: change more query selectors to Editor.getValue
   // TODO: update when adding new things
   
   static void setUp() {
@@ -83,7 +81,9 @@ class ObjectEditorCharacters {
     buildGameEventHtml();
     buildBattleHtml();
     
-    // TODO: add inventory, game event, and post battle event to right half
+    // TODO: add post battle event to right half
+    // TODO: maybe make game events trigger when person spots you from sight distance instead of just battle
+    //   and make battle an event type (this would remove "pre battle text")
     
     // highlight the selected row
     if(querySelector("#character_row_${selected}") != null) {
@@ -161,7 +161,6 @@ class ObjectEditorCharacters {
         
         gameEventAttrs.addAll(ObjectEditorGameEvents.getAttributes(character.gameEvents[j]));
         
-        // TODO: fix this
         Editor.attachListeners(listeners, "character_${i}_game_event_${j}", gameEventAttrs, onInputChange);
       }
       
@@ -284,8 +283,6 @@ class ObjectEditorCharacters {
       }
       
       Character character = World.characters.values.elementAt(i);
-      
-      // TODO: add checkbox to enable/disable battle encounters
       
       battleHtml += "<table id='character_${i}_battle_container' ${visibleString}>";
       battleHtml += "<tr><td>Battler Type</td><td>Level</td><td>Sight Distance</td><td>Pre Battle Text</td></tr>";
@@ -432,7 +429,6 @@ class ObjectEditorCharacters {
       characterJson["battlerLevel"] = character.battler.level.toString();
       characterJson["sightDistance"] = character.sightDistance.toString();
       characterJson["preBattleText"] = character.preBattleText;
-      // TODO: post battle event
       
       charactersJson[key] = characterJson;
     });
