@@ -106,7 +106,10 @@ class ObjectEditorCharacters {
       "label", "name", "sprite_id", "picture_id", "size_x", "size_y",
       
       // battle
-      "battler_type", "battler_level", "sight_distance", "pre_battle_text"
+      "battler_type", "battler_level", "sight_distance", "pre_battle_text",
+      
+      // store
+      "is_store_character", "store_hello_message", "store_goodbye_message"
       
       //
       /* inventory, game_event */
@@ -289,6 +292,8 @@ class ObjectEditorCharacters {
       
       Character character = World.characters.values.elementAt(i);
       
+      // TODO: add checkbox to enable/disable battle encounters
+      
       battleHtml += "<table id='character_${i}_battle_container' ${visibleString}>";
       battleHtml += "<tr><td>Battler Type</td><td>Level</td><td>Sight Distance</td><td>Pre Battle Text</td></tr>";
       
@@ -314,7 +319,7 @@ class ObjectEditorCharacters {
   }
   
   static void buildStoreHtml() {
-    String battleHtml = "";
+    String storeHtml = "";
     
     for(int i=0; i<World.characters.keys.length; i++) {
       String visibleString = "class='hidden'";
@@ -326,25 +331,41 @@ class ObjectEditorCharacters {
       
       String helloMessage = "", goodbyeMessage = "";
       
+      bool isStoreCharacter = false;
       if(character is StoreCharacter) {
+        isStoreCharacter = true;
         helloMessage = character.helloMessage;
         goodbyeMessage = character.goodbyeMessage;
       }
       
-      // TODO: disable inputs if character is not a store character
-      // TODO: discount field?
-      // TODO: checkbox to enable store character
+      // TODO: add a discount field?
       // TODO: onInputChange
       
-      battleHtml += "<table id='character_${i}_store_container' ${visibleString}>";
-      battleHtml += "<tr><td>Hello Message</td><td>Goodbye Message</td></tr>";
-      battleHtml += "<td><input id='character_${i}_store_hello_message' type='text' value='${helloMessage}' /></td>";
-      battleHtml += "<td><input id='character_${i}_store_goodbye_message' type='text' value='${goodbyeMessage}' /></td>";
-      battleHtml += "</tr>";
-      battleHtml += "</table>";
+      storeHtml += "<div id='character_${i}_store_container' ${visibleString}>";
+      
+      storeHtml += "<input type='checkbox' id='character_${i}_is_store_character' ";
+      if(isStoreCharacter)
+        storeHtml += "checked='checked' ";
+      storeHtml += "/>Store character<hr>";
+      
+      storeHtml += "  Hello Message<br />";
+      storeHtml += "  <textarea id='character_${i}_store_hello_message' ";
+      if(!isStoreCharacter)
+        storeHtml += "readonly";
+      storeHtml += ">${helloMessage}</textarea>";
+      
+      storeHtml += "  <br /><br />";
+      
+      storeHtml += "  Goodbye Message<br />";
+      storeHtml += "  <textarea id='character_${i}_store_goodbye_message' ";
+      if(!isStoreCharacter)
+        storeHtml += "readonly";
+      storeHtml += ">${goodbyeMessage}</textarea>";
+      
+      storeHtml += "</div>";
     }
     
-    querySelector("#store_container").setInnerHtml(battleHtml);
+    querySelector("#store_container").setInnerHtml(storeHtml);
   }
   
   static void onInputChange(Event e) {
@@ -375,15 +396,32 @@ class ObjectEditorCharacters {
     World.characters = new Map<String, Character>();
     for(int i=0; querySelector('#character_${i}_label') != null; i++) {
       try {
-        Character character = new Character(
-          Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
-          Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
-          0, 0,
-          layer: World.LAYER_BELOW,
-          sizeX: Editor.getTextInputIntValue('#character_${i}_size_x', 1),
-          sizeY: Editor.getTextInputIntValue('#character_${i}_size_y', 2),
-          solid: true
-        );
+        bool isStoreCharacter = Editor.getCheckboxInputBoolValue("#character_${i}_is_store_character");
+        Character character;
+        if(isStoreCharacter) {
+          character = new StoreCharacter(
+            Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
+            Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
+            Editor.getTextAreaStringValue("#character_${i}_store_hello_message"),
+            Editor.getTextAreaStringValue("#character_${i}_store_goodbye_message"),
+            [],
+            0, 0,
+            layer: World.LAYER_BELOW,
+            sizeX: Editor.getTextInputIntValue('#character_${i}_size_x', 1),
+            sizeY: Editor.getTextInputIntValue('#character_${i}_size_y', 2),
+            solid: true
+          );
+        } else {
+          character = new Character(
+            Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
+            Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
+            0, 0,
+            layer: World.LAYER_BELOW,
+            sizeX: Editor.getTextInputIntValue('#character_${i}_size_x', 1),
+            sizeY: Editor.getTextInputIntValue('#character_${i}_size_y', 2),
+            solid: true
+          );
+        }
         
         character.name = Editor.getTextInputStringValue('#character_${i}_name');
         

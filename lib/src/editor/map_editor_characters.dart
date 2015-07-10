@@ -130,7 +130,7 @@ class MapEditorCharacters {
         characters[Main.world.curMap][i]["mapY"] = Editor.getTextInputIntValue("#map_character_${i}_map_y", 0);
         characters[Main.world.curMap][i]["layer"] = Editor.getSelectInputIntValue("#map_character_${i}_layer", World.LAYER_BELOW);
         characters[Main.world.curMap][i]["direction"] = Editor.getSelectInputIntValue("#map_character_${i}_direction", Character.DOWN);
-        characters[Main.world.curMap][i]["solid"] = (querySelector("#map_character_${i}_solid") as CheckboxInputElement).checked;
+        characters[Main.world.curMap][i]["solid"] = Editor.getCheckboxInputBoolValue("#map_character_${i}_solid");
         
         // TODO: fix a bug involving this
         Character character = Main.world.maps[Main.world.curMap].characters[i];

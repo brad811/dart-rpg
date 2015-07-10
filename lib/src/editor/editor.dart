@@ -132,7 +132,7 @@ class Editor {
   }
   
   static void updateAndRetainValue(Event e) {
-    if(e.target is TextInputElement) {
+    if(e.target is TextInputElement && !(e.target is CheckboxInputElement)) {
       // save the cursor location
       TextInputElement target = e.target;
       TextInputElement inputElement = querySelector('#' + target.id);
@@ -232,6 +232,14 @@ class Editor {
       return double.parse((querySelector(divId) as TextInputElement).value);
     } catch(e) {
       return defaultValue;
+    }
+  }
+  
+  static bool getCheckboxInputBoolValue(String divId) {
+    try {
+      return (querySelector(divId) as CheckboxInputElement).checked;
+    } catch(e) {
+      return false;
     }
   }
 }
