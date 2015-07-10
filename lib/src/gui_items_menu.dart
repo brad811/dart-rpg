@@ -8,7 +8,6 @@ import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
-import 'package:dart_rpg/src/store_character.dart';
 
 class GuiItemsMenu {
   static final double
@@ -23,7 +22,7 @@ class GuiItemsMenu {
   static bool backEnabled = true;
   static bool storeMode = false;
   static Character character;
-  static StoreCharacter storeCharacter;
+  static Character storeCharacter;
   
   static Function playerMoneyWindow = () {
     Gui.renderWindow(0, 10, 10, 2);
@@ -119,7 +118,7 @@ class GuiItemsMenu {
   });
   
   static trigger(Character character, Function callback,
-      [bool backEnabled = true, StoreCharacter storeCharacter]) {
+      [bool backEnabled = true, Character storeCharacter]) {
     GuiItemsMenu.character = character;
     GuiItemsMenu.backEnabled = backEnabled;
     

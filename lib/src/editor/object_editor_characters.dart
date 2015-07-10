@@ -7,7 +7,6 @@ import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/inventory.dart';
-import 'package:dart_rpg/src/store_character.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -21,7 +20,7 @@ import 'object_editor_game_events.dart';
 // TODO: make all inputs with class number take out any non 0-9 characters
 
 class ObjectEditorCharacters {
-  static List<String> advancedTabs = ["character_inventory", "character_game_event", "character_battle", "character_store"];
+  static List<String> advancedTabs = ["character_inventory", "character_game_event", "character_battle"];
   static Map<String, StreamSubscription> listeners = {};
   static int selected;
   
@@ -83,7 +82,6 @@ class ObjectEditorCharacters {
     buildInventoryHtml();
     buildGameEventHtml();
     buildBattleHtml();
-    buildStoreHtml();
     
     // TODO: add inventory, game event, and post battle event to right half
     
@@ -106,10 +104,7 @@ class ObjectEditorCharacters {
       "label", "name", "sprite_id", "picture_id", "size_x", "size_y",
       
       // battle
-      "battler_type", "battler_level", "sight_distance", "pre_battle_text",
-      
-      // store
-      "is_store_character", "store_hello_message", "store_goodbye_message"
+      "battler_type", "battler_level", "sight_distance", "pre_battle_text"
       
       //
       /* inventory, game_event */
@@ -135,7 +130,6 @@ class ObjectEditorCharacters {
           querySelector("#character_${j}_inventory_table").classes.add("hidden");
           querySelector("#character_${j}_game_event_table").classes.add("hidden");
           querySelector("#character_${j}_battle_container").classes.add("hidden");
-          querySelector("#character_${j}_store_container").classes.add("hidden");
         }
         
         // hightlight the selected character row
@@ -148,7 +142,6 @@ class ObjectEditorCharacters {
         querySelector("#character_${i}_inventory_table").classes.remove("hidden");
         querySelector("#character_${i}_game_event_table").classes.remove("hidden");
         querySelector("#character_${i}_battle_container").classes.remove("hidden");
-        querySelector("#character_${i}_store_container").classes.remove("hidden");
       });
       
       Character character = World.characters.values.elementAt(i);
@@ -318,56 +311,6 @@ class ObjectEditorCharacters {
     querySelector("#battle_container").setInnerHtml(battleHtml);
   }
   
-  static void buildStoreHtml() {
-    String storeHtml = "";
-    
-    for(int i=0; i<World.characters.keys.length; i++) {
-      String visibleString = "class='hidden'";
-      if(selected == i) {
-        visibleString = "";
-      }
-      
-      Character character = World.characters.values.elementAt(i);
-      
-      String helloMessage = "", goodbyeMessage = "";
-      
-      bool isStoreCharacter = false;
-      if(character is StoreCharacter) {
-        isStoreCharacter = true;
-        helloMessage = character.helloMessage;
-        goodbyeMessage = character.goodbyeMessage;
-      }
-      
-      // TODO: add a discount field?
-      // TODO: onInputChange
-      
-      storeHtml += "<div id='character_${i}_store_container' ${visibleString}>";
-      
-      storeHtml += "<input type='checkbox' id='character_${i}_is_store_character' ";
-      if(isStoreCharacter)
-        storeHtml += "checked='checked' ";
-      storeHtml += "/>Store character<hr>";
-      
-      storeHtml += "  Hello Message<br />";
-      storeHtml += "  <textarea id='character_${i}_store_hello_message' ";
-      if(!isStoreCharacter)
-        storeHtml += "readonly";
-      storeHtml += ">${helloMessage}</textarea>";
-      
-      storeHtml += "  <br /><br />";
-      
-      storeHtml += "  Goodbye Message<br />";
-      storeHtml += "  <textarea id='character_${i}_store_goodbye_message' ";
-      if(!isStoreCharacter)
-        storeHtml += "readonly";
-      storeHtml += ">${goodbyeMessage}</textarea>";
-      
-      storeHtml += "</div>";
-    }
-    
-    querySelector("#store_container").setInnerHtml(storeHtml);
-  }
-  
   static void onInputChange(Event e) {
     if(e.target is InputElement) {
       InputElement target = e.target;
@@ -396,33 +339,15 @@ class ObjectEditorCharacters {
     World.characters = new Map<String, Character>();
     for(int i=0; querySelector('#character_${i}_label') != null; i++) {
       try {
-        bool isStoreCharacter = Editor.getCheckboxInputBoolValue("#character_${i}_is_store_character");
-        
-        Character character;
-        if(isStoreCharacter) {
-          character = new StoreCharacter(
-            Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
-            Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
-            Editor.getTextAreaStringValue("#character_${i}_store_hello_message"),
-            Editor.getTextAreaStringValue("#character_${i}_store_goodbye_message"),
-            [],
-            0, 0,
-            layer: World.LAYER_BELOW,
-            sizeX: Editor.getTextInputIntValue('#character_${i}_size_x', 1),
-            sizeY: Editor.getTextInputIntValue('#character_${i}_size_y', 2),
-            solid: true
-          );
-        } else {
-          character = new Character(
-            Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
-            Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
-            0, 0,
-            layer: World.LAYER_BELOW,
-            sizeX: Editor.getTextInputIntValue('#character_${i}_size_x', 1),
-            sizeY: Editor.getTextInputIntValue('#character_${i}_size_y', 2),
-            solid: true
-          );
-        }
+        Character character = new Character(
+          Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
+          Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
+          0, 0,
+          layer: World.LAYER_BELOW,
+          sizeX: Editor.getTextInputIntValue('#character_${i}_size_x', 1),
+          sizeY: Editor.getTextInputIntValue('#character_${i}_size_y', 2),
+          solid: true
+        );
         
         character.name = Editor.getTextInputStringValue('#character_${i}_name');
         
@@ -479,13 +404,6 @@ class ObjectEditorCharacters {
       characterJson["sizeX"] = character.sizeX.toString();
       characterJson["sizeY"] = character.sizeY.toString();
       characterJson["name"] = character.name;
-      
-      if(character is StoreCharacter) {
-        characterJson["store"] = {
-          "helloMessage": character.helloMessage,
-          "goodbyeMessage": character.goodbyeMessage
-        };
-      }
       
       // inventory
       List<Map<String, String>> inventoryJson = [];

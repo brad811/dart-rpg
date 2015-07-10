@@ -8,6 +8,7 @@ import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/fade_game_event.dart';
 import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
+import 'package:dart_rpg/src/game_event/store_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 import 'editor.dart';
@@ -26,6 +27,8 @@ class ObjectEditorGameEvents {
       return ["fade_type"];
     } else if(gameEvent is HealGameEvent) {
       return ["character", "amount"];
+    } else if(gameEvent is StoreGameEvent) {
+      return [];
     } else {
       return [];
     }
@@ -67,6 +70,12 @@ class ObjectEditorGameEvents {
         );
       
       return healGameEvent;
+    } else if(gameEventType == "store") {
+      StoreGameEvent storeGameEvent = new StoreGameEvent(
+          character
+        );
+      
+      return storeGameEvent;
     } else {
       return null;
     }
@@ -93,6 +102,8 @@ class ObjectEditorGameEvents {
       gameEventJson["type"] = "heal";
       gameEventJson["character"] = gameEvent.character.name;
       gameEventJson["amount"] = gameEvent.amount;
+    } else if(gameEvent is StoreGameEvent) {
+      gameEventJson["type"] = "store";
     }
     
     return gameEventJson;
@@ -106,7 +117,7 @@ class ObjectEditorGameEvents {
     
     String paramsHtml = "";
     
-    List<String> gameEventTypes = ["text", "move", "delay", "fade", "heal", "warp"];
+    List<String> gameEventTypes = ["text", "move", "delay", "fade", "heal", "store", "warp"];
     for(int k=0; k<gameEventTypes.length; k++) {
       String selectedText = "";
       if(gameEventTypes[k] == "text" && gameEvent is TextGameEvent) {
@@ -124,6 +135,9 @@ class ObjectEditorGameEvents {
       } else if(gameEventTypes[k] == "heal" && gameEvent is HealGameEvent) {
         selectedText = "selected='selected'";
         paramsHtml = ObjectEditorGameEvents.buildHealGameEventParamsHtml(gameEvent, prefix);
+      } else if(gameEventTypes[k] == "store" && gameEvent is StoreGameEvent) {
+        selectedText = "selected='selected'";
+        paramsHtml = ObjectEditorGameEvents.buildStoreGameEventParamsHtml(gameEvent, prefix);
       }
       
       gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
@@ -239,6 +253,12 @@ class ObjectEditorGameEvents {
     
     html += "  </tr>";
     html += "</table>";
+    
+    return html;
+  }
+  
+  static String buildStoreGameEventParamsHtml(StoreGameEvent storeGameEvent, String prefix) {
+    String html = "";
     
     return html;
   }

@@ -18,7 +18,6 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
-import 'package:dart_rpg/src/store_character.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 
@@ -28,6 +27,7 @@ import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/fade_game_event.dart';
 import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
+import 'package:dart_rpg/src/game_event/store_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class World {
@@ -138,20 +138,6 @@ class World {
         }).trigger();
       });
       
-      // add store clerk
-      addStoreCharacter(
-        "store",
-        new StoreCharacter(
-          Tile.PLAYER, 237,
-          "Welcome! What are you looking for today?",
-          "Thanks for coming in!",
-          [
-            new ItemStack(new ItemPotion(), 10)
-          ],
-          5, 1, layer: LAYER_BELOW
-        )
-      );
-      
       Main.player.inventory.money = 500;
       
       callback();
@@ -192,8 +178,8 @@ class World {
     
     parseAttacks(obj["attacks"]);
     parseBattlerTypes(obj["battlerTypes"]);
-    parseMaps(obj["maps"], obj["characters"]);
     parseItems(obj["items"]);
+    parseMaps(obj["maps"], obj["characters"]);
     parsePlayer(obj["player"]);
     
     parseCharacters(obj["characters"]);
@@ -370,33 +356,15 @@ class World {
   }
   
   Character parseCharacter(Map<String, Map> charactersObject, String characterLabel) {
-    bool isStoreCharacter = charactersObject[characterLabel]["store"] != null;
-    
-    Character character;
-    if(isStoreCharacter) {
-      character = new StoreCharacter(
-          int.parse(charactersObject[characterLabel]["spriteId"]),
-          int.parse(charactersObject[characterLabel]["pictureId"]),
-          charactersObject[characterLabel]["store"]["helloMessage"],
-          charactersObject[characterLabel]["store"]["goodbyeMessage"],
-          [],
-          1, 1,
-          layer: World.LAYER_PLAYER,
-          sizeX: int.parse(charactersObject[characterLabel]["sizeX"]),
-          sizeY: int.parse(charactersObject[characterLabel]["sizeY"]),
-          solid: true
-      );
-    } else {
-      character = new Character(
-          int.parse(charactersObject[characterLabel]["spriteId"]),
-          int.parse(charactersObject[characterLabel]["pictureId"]),
-          1, 1,
-          layer: World.LAYER_PLAYER,
-          sizeX: int.parse(charactersObject[characterLabel]["sizeX"]),
-          sizeY: int.parse(charactersObject[characterLabel]["sizeY"]),
-          solid: true
-      );
-    }
+    Character character = new Character(
+      int.parse(charactersObject[characterLabel]["spriteId"]),
+      int.parse(charactersObject[characterLabel]["pictureId"]),
+      1, 1,
+      layer: World.LAYER_PLAYER,
+      sizeX: int.parse(charactersObject[characterLabel]["sizeX"]),
+      sizeY: int.parse(charactersObject[characterLabel]["sizeY"]),
+      solid: true
+    );
     
     character.name = charactersObject[characterLabel]["name"];
     
@@ -461,6 +429,12 @@ class World {
           );
         
         character.gameEvents.add(healGameEvent);
+      } else if(gameEvents[i]["type"] == "store") {
+        StoreGameEvent storeGameEvent = new StoreGameEvent(
+            character
+          );
+        
+        character.gameEvents.add(storeGameEvent);
       }
     }
     
@@ -491,11 +465,6 @@ class World {
   Character addCharacter(String map, Character character) {
     maps[map].characters.add(character);
     return character;
-  }
-  
-  StoreCharacter addStoreCharacter(String map, StoreCharacter storeCharacter) {
-    maps[map].characters.add(storeCharacter);
-    return storeCharacter;
   }
   
   void addInteractableObject(
