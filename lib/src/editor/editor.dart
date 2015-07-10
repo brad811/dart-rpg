@@ -132,9 +132,15 @@ class Editor {
   }
   
   static void updateAndRetainValue(Event e) {
-    if(e.target is TextInputElement && !(e.target is CheckboxInputElement)) {
+    if(e.target is TextInputElement) {
       // save the cursor location
       TextInputElement target = e.target;
+      
+      if(target.getAttribute("type") == "checkbox") {
+        Editor.update();
+        return;
+      }
+      
       TextInputElement inputElement = querySelector('#' + target.id);
       int position = inputElement.selectionStart;
       String valueBefore = inputElement.value;
