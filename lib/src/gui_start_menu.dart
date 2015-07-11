@@ -31,14 +31,27 @@ class GuiStartMenu {
       if(item == null) {
         start.trigger();
       } else {
-        item = Main.player.inventory.removeItem(item.name);
-        // TODO: add confirm dialog before using item from start menu
-        TextGameEvent text = item.use(Main.player.battler);
-        text.callback = () {
-          Main.focusObject = Main.player;
-          items.trigger();
-        };
-        text.trigger();
+        // confirm dialog before using item from start menu
+        new TextGameEvent.choice(237, "Use the ${item.name}?",
+            new ChoiceGameEvent(Main.player,
+              {
+                "Yes": [new GameEvent((_) {
+                  item = Main.player.inventory.removeItem(item.name);
+                  
+                  TextGameEvent text = item.use(Main.player.battler);
+                  text.callback = () {
+                    Main.focusObject = Main.player;
+                    items.trigger();
+                  };
+                  text.trigger();
+                })],
+                "No": [new GameEvent((_) {
+                  Gui.clear();
+                  items.trigger();
+                })]
+              }
+            )
+        ).trigger();
       }
     });
   });
