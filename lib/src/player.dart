@@ -74,7 +74,7 @@ class Player extends Character implements InputHandler {
             (Main.player.mapX - i == character.mapX && Main.player.mapY == character.mapY)
           )
         ) {
-          startCharacterBattle(character);
+          startCharacterEncounter(character);
           
           // TODO: should we not return in case you are in sight of more than
           // one character? This would allow for simple consecutive battles
@@ -84,9 +84,7 @@ class Player extends Character implements InputHandler {
     }
   }
   
-  void startCharacterBattle(Character character) {
-    // TODO: make a helper class to chain together complex game events
-    //   like chaining character movements, delayed game events, etc.
+  void startCharacterEncounter(Character character) {
     Main.player.inputEnabled = false;
     
     Tile target = Main.world.maps[Main.world.curMap]
@@ -99,6 +97,7 @@ class Player extends Character implements InputHandler {
     List<DelayedGameEvent> delayedGameEvents = [
       new DelayedGameEvent(0, () {
         Main.timeScale = 0.0;
+        // TODO: give this icon an assigned location on the sprite sheet
         Main.world.maps[Main.world.curMap]
           .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE] =
             new Tile(false, new Sprite.int(99, character.mapX, character.mapY - character.sizeY));
@@ -135,6 +134,7 @@ class Player extends Character implements InputHandler {
             character,
             new List<int>.generate(movementAmount, (int i) => movementDirection, growable: true),
             () {
+              // TODO: character.interact();
               new TextGameEvent(237, character.preBattleText, () {
                 Gui.fadeLightAction((){},(){
                   Gui.fadeDarkAction((){}, (){
