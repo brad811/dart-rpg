@@ -9,7 +9,7 @@ import 'object_editor_items.dart';
 import 'object_editor_player.dart';
 
 class ObjectEditor {
-  static List<String> objectEditorTabs = ["attacks", "battler_types", "characters", "items", "player"];
+  static List<String> objectEditorTabs = ["attacks", "battler_types", "characters", "items", "player", "game_events"];
   static Map<String, DivElement> objectEditorTabDivs = {};
   static Map<String, DivElement> objectEditorTabHeaderDivs = {};
   
@@ -52,6 +52,7 @@ class ObjectEditor {
     ObjectEditorCharacters.setUp();
     ObjectEditorItems.setUp();
     ObjectEditorPlayer.setUp();
+    //ObjectEditorGameEvents.setUp();
   }
   
   static void update() {
@@ -60,6 +61,7 @@ class ObjectEditor {
     ObjectEditorCharacters.update();
     ObjectEditorItems.update();
     ObjectEditorPlayer.update();
+    //ObjectEditorGameEvents.update();
   }
   
   static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {
@@ -68,5 +70,6 @@ class ObjectEditor {
     ObjectEditorCharacters.export(exportJson);
     ObjectEditorItems.export(exportJson);
     ObjectEditorPlayer.export(exportJson);
+    //ObjectEditorGameEvents.export(exportJson);
   }
 }
