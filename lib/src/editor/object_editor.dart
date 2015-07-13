@@ -10,7 +10,7 @@ import 'object_editor_items.dart';
 import 'object_editor_player.dart';
 
 class ObjectEditor {
-  static List<String> objectEditorTabs = ["attacks", "battler_types", "characters", "items", "player", "game_events"];
+  static List<String> objectEditorTabs = ["attacks", "battler_types", "characters", "items", "player", "game_event_chains"];
   static Map<String, DivElement> objectEditorTabDivs = {};
   static Map<String, DivElement> objectEditorTabHeaderDivs = {};
   
