@@ -10,7 +10,6 @@ import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
-import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 import 'editor.dart';
 import 'object_editor.dart';
@@ -63,17 +62,6 @@ class ObjectEditorCharacters {
     ObjectEditor.update();
   }
   
-  static void addGameEvent(MouseEvent e) {
-    Character selectedCharacter = World.characters.values.elementAt(selected);
-    
-    selectedCharacter.gameEvents.add(
-        new TextGameEvent(1, "Text")
-    );
-    
-    update();
-    ObjectEditor.update();
-  }
-  
   static void update() {
     buildMainHtml();
     buildInventoryHtml();
@@ -94,8 +82,6 @@ class ObjectEditorCharacters {
     
     for(int i=0; i<World.characters.keys.length; i++) {
       Editor.setMapDeleteButtonListeners(World.characters.values.elementAt(i).inventory.itemStacks, "character_${i}_item", listeners);
-      
-      Editor.setListDeleteButtonListeners(World.characters.values.elementAt(i).gameEvents, "character_${i}_game_event", listeners);
     }
     
     List<String> attrs = [
@@ -152,15 +138,6 @@ class ObjectEditorCharacters {
           String elementSelector = "#character_${i}_${inventory_attr}_${j}";
           inputIds.add(elementSelector);
         }
-      }
-      
-      // game events
-      for(int j=0; j<character.gameEvents.length; j++) {
-        List<String> gameEventAttrs = ["type"];
-        
-        gameEventAttrs.addAll(ObjectEditorGameEvents.getAttributes(character.gameEvents[j]));
-        
-        Editor.attachListeners(listeners, "character_${i}_game_event_${j}", gameEventAttrs, onInputChange);
       }
       
       for(String inputId in inputIds) {
@@ -252,6 +229,8 @@ class ObjectEditorCharacters {
   static void buildGameEventHtml() {
     String gameEventHtml = "";
     
+    // TODO: add select to choose game event chain
+    
     for(int i=0; i<World.characters.keys.length; i++) {
       String visibleString = "class='hidden'";
       if(selected == i) {
@@ -263,7 +242,13 @@ class ObjectEditorCharacters {
       gameEventHtml += "<table id='character_${i}_game_event_table' ${visibleString}>";
       gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
       for(int j=0; j<character.gameEvents.length; j++) {
-        gameEventHtml += ObjectEditorGameEvents.buildGameEventTableRowHtml(character.gameEvents[j], "character_${i}_game_event_${j}", j);
+        gameEventHtml +=
+            ObjectEditorGameEvents.buildGameEventTableRowHtml(
+                character.gameEvents[j],
+                "character_${i}_game_event_${j}",
+                j,
+                readOnly: true
+              );
       }
       
       gameEventHtml += "</table>";

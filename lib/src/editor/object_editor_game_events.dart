@@ -306,11 +306,17 @@ class ObjectEditorGameEvents {
     return gameEventJson;
   }
   
-  static String buildGameEventTableRowHtml(GameEvent gameEvent, String prefix, int num) {
+  static String buildGameEventTableRowHtml(GameEvent gameEvent, String prefix, int num, {bool readOnly: false}) {
     String gameEventHtml = "";
     gameEventHtml += "<tr>";
     gameEventHtml += "  <td>${num}</td>";
-    gameEventHtml += "  <td><select id='${prefix}_type'>";
+    
+    String disabledString = "";
+    if(readOnly) {
+      disabledString = "disabled='disabled' ";
+    }
+    
+    gameEventHtml += "  <td><select id='${prefix}_type' ${disabledString}>";
     
     String paramsHtml = "";
     
@@ -319,22 +325,22 @@ class ObjectEditorGameEvents {
       String selectedText = "";
       if(gameEventTypes[k] == "text" && gameEvent is TextGameEvent) {
         selectedText = "selected='selected'";
-        paramsHtml = ObjectEditorGameEvents.buildTextGameEventParamsHtml(gameEvent, prefix);
+        paramsHtml = ObjectEditorGameEvents.buildTextGameEventParamsHtml(gameEvent, prefix, readOnly);
       } else if(gameEventTypes[k] == "move" && gameEvent is MoveGameEvent) {
         selectedText = "selected='selected'";
-        paramsHtml = ObjectEditorGameEvents.buildMoveGameEventParamsHtml(gameEvent, prefix);
+        paramsHtml = ObjectEditorGameEvents.buildMoveGameEventParamsHtml(gameEvent, prefix, readOnly);
       } else if(gameEventTypes[k] == "delay" && gameEvent is DelayGameEvent) {
         selectedText = "selected='selected'";
-        paramsHtml = ObjectEditorGameEvents.buildDelayGameEventParamsHtml(gameEvent, prefix);
+        paramsHtml = ObjectEditorGameEvents.buildDelayGameEventParamsHtml(gameEvent, prefix, readOnly);
       } else if(gameEventTypes[k] == "fade" && gameEvent is FadeGameEvent) {
         selectedText = "selected='selected'";
-        paramsHtml = ObjectEditorGameEvents.buildFadeGameEventParamsHtml(gameEvent, prefix);
+        paramsHtml = ObjectEditorGameEvents.buildFadeGameEventParamsHtml(gameEvent, prefix, readOnly);
       } else if(gameEventTypes[k] == "heal" && gameEvent is HealGameEvent) {
         selectedText = "selected='selected'";
-        paramsHtml = ObjectEditorGameEvents.buildHealGameEventParamsHtml(gameEvent, prefix);
+        paramsHtml = ObjectEditorGameEvents.buildHealGameEventParamsHtml(gameEvent, prefix, readOnly);
       } else if(gameEventTypes[k] == "store" && gameEvent is StoreGameEvent) {
         selectedText = "selected='selected'";
-        paramsHtml = ObjectEditorGameEvents.buildStoreGameEventParamsHtml(gameEvent, prefix);
+        paramsHtml = ObjectEditorGameEvents.buildStoreGameEventParamsHtml(gameEvent, prefix, readOnly);
       }
       
       gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
@@ -342,35 +348,53 @@ class ObjectEditorGameEvents {
     
     gameEventHtml += "  </select></td>";
     gameEventHtml += "  <td>${paramsHtml}</td>";
-    gameEventHtml += "  <td><button id='delete_${prefix}'>Delete</button></td>";
+    gameEventHtml += "  <td>";
+    
+    if(!readOnly) {
+      gameEventHtml += "<button id='delete_${prefix}'>Delete</button>";
+    }
+    
+    gameEventHtml += "</td>";
     gameEventHtml += "</tr>";
     
     return gameEventHtml;
   }
   
-  static String buildTextGameEventParamsHtml(TextGameEvent textGameEvent, String prefix) {
+  static String buildTextGameEventParamsHtml(TextGameEvent textGameEvent, String prefix, bool readOnly) {
     String html = "";
+    
+    String readOnlyString = "";
+    if(readOnly) {
+      readOnlyString = "readonly";
+    }
     
     html += "<table>";
     html += "  <tr><td>Picture Id</td><td>Text</td></tr>";
     html += "  <tr>";
-    html += "    <td><input type='text' class='number' id='${prefix}_picture_id' value='${textGameEvent.pictureSpriteId}' /></td>";
-    html += "    <td><textarea id='${prefix}_text'>${textGameEvent.text}</textarea>";
+    html += "    <td><input type='text' class='number' id='${prefix}_picture_id' value='${textGameEvent.pictureSpriteId}' ${readOnlyString} /></td>";
+    html += "    <td><textarea id='${prefix}_text' ${readOnlyString}>${textGameEvent.text}</textarea>";
     html += "  </tr>";
     html += "</table>";
     
     return html;
   }
   
-  static String buildMoveGameEventParamsHtml(MoveGameEvent moveGameEvent, String prefix) {
+  static String buildMoveGameEventParamsHtml(MoveGameEvent moveGameEvent, String prefix, bool readOnly) {
     String html = "";
+    
+    String disabledString = "";
+    String readOnlyString = "";
+    if(readOnly) {
+      disabledString = "disabled='disabled' ";
+      readOnlyString = "readonly";
+    }
     
     html += "<table>";
     html += "  <tr><td>Direction</td><td>Distance</td></tr>";
     html += "  <tr>";
     
     // direction
-    html += "<td><select id='${prefix}_direction'>";
+    html += "<td><select id='${prefix}_direction' ${disabledString}>";
     List<String> directions = ["Down", "Right", "Up", "Left"];
     for(int direction=0; direction<directions.length; direction++) {
       html += "<option value='${direction}'";
@@ -383,7 +407,7 @@ class ObjectEditorGameEvents {
     html += "</select></td>";
     
     // distance
-    html += "    <td><input type='text' class='number' id='${prefix}_distance' value='${moveGameEvent.distance}' /></td>";
+    html += "    <td><input type='text' class='number' id='${prefix}_distance' value='${moveGameEvent.distance}' ${readOnlyString} /></td>";
     
     html += "  </tr>";
     html += "</table>";
@@ -391,15 +415,20 @@ class ObjectEditorGameEvents {
     return html;
   }
   
-  static String buildDelayGameEventParamsHtml(DelayGameEvent delayGameEvent, String prefix) {
+  static String buildDelayGameEventParamsHtml(DelayGameEvent delayGameEvent, String prefix, bool readOnly) {
     String html = "";
+    
+    String readOnlyString = "";
+    if(readOnly) {
+      readOnlyString = "readonly";
+    }
     
     html += "<table>";
     html += "  <tr><td>Milliseconds</td></tr>";
     html += "  <tr>";
     
     // milliseconds
-    html += "    <td><input type='text' class='number' id='${prefix}_milliseconds' value='${delayGameEvent.milliseconds}' /></td>";
+    html += "    <td><input type='text' class='number' id='${prefix}_milliseconds' value='${delayGameEvent.milliseconds}' ${readOnlyString} /></td>";
     
     html += "  </tr>";
     html += "</table>";
@@ -407,15 +436,20 @@ class ObjectEditorGameEvents {
     return html;
   }
   
-  static String buildFadeGameEventParamsHtml(FadeGameEvent fadeGameEvent, String prefix) {
+  static String buildFadeGameEventParamsHtml(FadeGameEvent fadeGameEvent, String prefix, bool readOnly) {
     String html = "";
+    
+    String disabledString = "";
+    if(readOnly) {
+      disabledString = "disabled='disabled' ";
+    }
     
     html += "<table>";
     html += "  <tr><td>Fade Type</td></tr>";
     html += "  <tr>";
     
     // fade type
-    html += "<td><select id='${prefix}_fade_type'>";
+    html += "<td><select id='${prefix}_fade_type' ${disabledString}>";
     List<String> fadeTypes = ["Normal to white", "White to normal", "Normal to black", "Black to normal"];
     for(int fadeType=0; fadeType<fadeTypes.length; fadeType++) {
       html += "<option value='${fadeType}'";
@@ -433,20 +467,27 @@ class ObjectEditorGameEvents {
     return html;
   }
   
-  static String buildHealGameEventParamsHtml(HealGameEvent healGameEvent, String prefix) {
+  static String buildHealGameEventParamsHtml(HealGameEvent healGameEvent, String prefix, bool readOnly) {
     String html = "";
+    
+    String disabledString = "";
+    String readOnlyString = "";
+    if(readOnly) {
+      disabledString = "disabled='disabled' ";
+      readOnlyString = "readonly";
+    }
     
     html += "<table>";
     html += "  <tr><td>Character</td><td>Amount</td></tr>";
     html += "  <tr>";
     
     // character
-    html += "<td><select id='${prefix}_character'>";
+    html += "<td><select id='${prefix}_character' ${disabledString}>";
     html += "  <option value='Player'>Player</option>";
     html += "</select></td>";
     
     // amount
-    html += "    <td><input type='text' class='number' id='${prefix}_amount' value='${healGameEvent.amount}' /></td>";
+    html += "    <td><input type='text' class='number' id='${prefix}_amount' value='${healGameEvent.amount}' ${readOnlyString} /></td>";
     
     html += "  </tr>";
     html += "</table>";
@@ -454,7 +495,7 @@ class ObjectEditorGameEvents {
     return html;
   }
   
-  static String buildStoreGameEventParamsHtml(StoreGameEvent storeGameEvent, String prefix) {
+  static String buildStoreGameEventParamsHtml(StoreGameEvent storeGameEvent, String prefix, bool readOnly) {
     String html = "";
     
     return html;
