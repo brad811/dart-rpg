@@ -5,6 +5,7 @@ import 'dart:html';
 import 'object_editor_attacks.dart';
 import 'object_editor_battler_types.dart';
 import 'object_editor_characters.dart';
+import 'object_editor_game_events.dart';
 import 'object_editor_items.dart';
 import 'object_editor_player.dart';
 
@@ -52,7 +53,7 @@ class ObjectEditor {
     ObjectEditorCharacters.setUp();
     ObjectEditorItems.setUp();
     ObjectEditorPlayer.setUp();
-    //ObjectEditorGameEvents.setUp();
+    ObjectEditorGameEvents.setUp();
   }
   
   static void update() {
@@ -61,7 +62,7 @@ class ObjectEditor {
     ObjectEditorCharacters.update();
     ObjectEditorItems.update();
     ObjectEditorPlayer.update();
-    //ObjectEditorGameEvents.update();
+    ObjectEditorGameEvents.update();
   }
   
   static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {

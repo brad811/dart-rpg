@@ -1,5 +1,8 @@
 library dart_rpg.object_editor_game_events;
 
+import 'dart:async';
+import 'dart:html';
+
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
 
@@ -12,10 +15,68 @@ import 'package:dart_rpg/src/game_event/store_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 import 'editor.dart';
+import 'object_editor.dart';
 
-// TODO: make this its own editor tab
+// TODO: change it so that this is a list of game event chains that all contain a list of game events
 
 class ObjectEditorGameEvents {
+  static List<GameEvent> gameEvents = new List<GameEvent>();
+  static Map<String, StreamSubscription> listeners = {};
+  
+  static void setUp() {
+    querySelector("#add_game_event_button").onClick.listen(addGameEvent);
+  }
+  
+  static void addGameEvent(MouseEvent e) {
+    gameEvents.add(
+        new TextGameEvent(1, "Text")
+    );
+    
+    // TODO: needed?
+    update();
+    ObjectEditor.update();
+  }
+  
+  static void update() {
+    buildGameEventHtml();
+      
+    // game events
+    for(int i=0; i<gameEvents.length; i++) {
+      List<String> gameEventAttrs = ["type"];
+      
+      gameEventAttrs.addAll(getAttributes(gameEvents[i]));
+      
+      Editor.attachListeners(listeners, "game_event_${i}", gameEventAttrs, onInputChange);
+    }
+  }
+  
+  static void buildGameEventHtml() {
+    String gameEventHtml = "";
+    
+    gameEventHtml += "<table id='game_event_table' class='editor_table'>";
+    gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
+  
+    for(int i=0; i<gameEvents.length; i++) {
+      gameEventHtml += buildGameEventTableRowHtml(gameEvents[i], "game_event_${i}", i);
+    }
+    
+    gameEventHtml += "</table>";
+    
+    querySelector("#game_events_container").setInnerHtml(gameEventHtml);
+  }
+  
+  static void onInputChange(Event e) {
+    gameEvents = new List<GameEvent>();
+    for(int i=0; querySelector('#game_event_${i}_type') != null; i++) {
+      // TODO: on import, change the character
+      gameEvents.add(
+          buildGameEvent("game_event_${i}", Main.player)
+        );
+    }
+    
+    Editor.updateAndRetainValue(e);
+  }
+  
   static List<String> getAttributes(GameEvent gameEvent) {
     if(gameEvent is TextGameEvent) {
       return ["picture_id", "text"];

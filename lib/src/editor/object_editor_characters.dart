@@ -29,7 +29,6 @@ class ObjectEditorCharacters {
     Editor.setUpTabs(advancedTabs);
     querySelector("#add_character_button").onClick.listen(addNewCharacter);
     querySelector("#add_inventory_item_button").onClick.listen(addInventoryItem);
-    querySelector("#add_game_event_button").onClick.listen(addGameEvent);
   }
   
   static void addNewCharacter(MouseEvent e) {
@@ -270,7 +269,7 @@ class ObjectEditorCharacters {
       gameEventHtml += "</table>";
     }
     
-    querySelector("#game_event_container").setInnerHtml(gameEventHtml);
+    querySelector("#character_game_event_container").setInnerHtml(gameEventHtml);
   }
   
   static void buildBattleHtml() {
