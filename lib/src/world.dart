@@ -119,31 +119,6 @@ class World {
       ];
       
       //someKid.gameEvents = characterGameEvents;
-      /*
-      Character fighter = addCharacter(
-        "main",
-        new Character(
-          Tile.PLAYER, 237,
-          35, 13, layer: LAYER_BELOW
-        )
-      );
-      
-      fighter.sightDistance = 2;
-      fighter.preBattleText = "Hey, before you leave, let's see how strong you are!";
-      fighter.direction = Character.DOWN;
-      fighter.battler = new Battler(
-        "Player",
-        battlerTypes["Player"], 4,
-        battlerTypes["Player"].levelAttacks.values.toList()
-      );
-      fighter.postBattleEvent = new GameEvent((Function a) {
-        new TextGameEvent(237, "Ouch! Clearly I have more training to do...", () {
-          Main.focusObject = Main.player;
-        }).trigger(fighter);
-      });
-      */
-      
-      Main.player.inventory.money = 500;
       
       callback();
     });
@@ -405,9 +380,11 @@ class World {
     Main.player = new Player(startX, startY);
     Main.player.battler = new Battler(
       playerObject["name"],
-      battlerTypes[playerObject["battlerType"]], int.parse(playerObject["level"]),
+      battlerTypes[playerObject["battlerType"]], playerObject["level"] as int,
       battlerTypes[playerObject["battlerType"]].levelAttacks.values.toList()
     );
+    
+    Main.player.inventory.money = playerObject["money"] as int;
   }
   
   void parseGameEventChains(Map<String, List<Map<String, String>>> gameEventChainsObject) {

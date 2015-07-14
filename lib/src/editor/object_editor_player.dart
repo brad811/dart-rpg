@@ -18,10 +18,9 @@ class ObjectEditorPlayer {
   
   static void update() {
     // TODO: inventory
-    // TODO: everything else for this tab
     String playerHtml = "<table class='editor_table'>"+
       "  <tr>"+
-      "    <td>Name</td><td>Battler Type</td><td>Level</td>"+
+      "    <td>Name</td><td>Battler Type</td><td>Level</td><td>Money</td>"+
       "  </tr>"+
       "  <tr>"+
       "    <td><input id='player_name' type='text' value='${Main.player.battler.name}' /></td>"+
@@ -41,11 +40,12 @@ class ObjectEditorPlayer {
     playerHtml +=
       "    </td>"+
       "    <td><input id='player_level' type='text' class='number' value='${Main.player.battler.level}' /></td>"+
+      "    <td><input id='player_money' type='text' class='number' value='${Main.player.inventory.money}' /></td>"+
       "  </tr>";
     playerHtml += "</table>";
     querySelector("#player_container").setInnerHtml(playerHtml);
     
-    List<String> ids = ["player_name", "player_battler_type", "player_level"];
+    List<String> ids = ["player_name", "player_battler_type", "player_level", "player_money"];
     ids.forEach((String id) {
       if(listeners["#${id}"] != null)
         listeners["#${id}"].cancel();
@@ -59,27 +59,32 @@ class ObjectEditorPlayer {
     
     if(e.target is TextInputElement) {
       TextInputElement target = e.target as TextInputElement;
-      if(target.id.contains("player_level")) {
+      if(target.id.contains("player_level") || target.id.contains("player_money")) {
         // enforce number format
+        int selectionStart = (e.target as TextInputElement).selectionStart;
         target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
+        (e.target as TextInputElement).selectionStart = selectionStart;
       }
     }
     
     Main.player.battler = new Battler(
-      (querySelector('#player_name') as TextInputElement).value,
+      Editor.getTextInputStringValue('#player_name'),
       World.battlerTypes[battlerType],
-      int.parse((querySelector('#player_level') as TextInputElement).value),
+      Editor.getTextInputIntValue('#player_level', 2),
       World.battlerTypes[battlerType].levelAttacks.values.toList()
     );
+    
+    Main.player.inventory.money = Editor.getTextInputIntValue("#player_money", 0);
     
     Editor.updateAndRetainValue(e);
   }
   
   static void export(Map<String, Object> exportJson) {
-    Map<String, String> playerJson = {};
+    Map<String, Object> playerJson = {};
     playerJson["name"] = Main.player.battler.name;
     playerJson["battlerType"] = Main.player.battler.battlerType.name;
-    playerJson["level"] = Main.player.battler.level.toString();
+    playerJson["level"] = Main.player.battler.level;
+    playerJson["money"] = Main.player.inventory.money;
     
     exportJson["player"] = playerJson;
   }
