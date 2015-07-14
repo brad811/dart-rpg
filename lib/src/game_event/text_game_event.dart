@@ -1,17 +1,20 @@
 library dart_rpg.text_game_event;
 
-import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/font.dart';
-import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input.dart';
+import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
+
+import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 
 class TextGameEvent extends GameEvent {
   int pictureSpriteId;
   String text;
   ChoiceGameEvent choiceGameEvent;
+  InteractableInterface interactable;
   
   static List<String>
       originalTextLines = [],
@@ -33,7 +36,8 @@ class TextGameEvent extends GameEvent {
     return textGameEvent;
   }
   
-  void trigger() {
+  void trigger(InteractableInterface interactable) {
+    this.interactable = interactable;
     textLines = Gui.splitText(text, conversationWindowWidth);
     
     // Take input focus and show the GUI window
@@ -43,7 +47,7 @@ class TextGameEvent extends GameEvent {
     Main.focusObject = this;
     
     if(textLines.length <= Gui.maxLines && choiceGameEvent != null) {
-      choiceGameEvent.trigger();
+      choiceGameEvent.trigger(interactable);
     }
   }
   
@@ -55,7 +59,7 @@ class TextGameEvent extends GameEvent {
       if(textLines.length <= Gui.maxLines && choiceGameEvent != null) {
         // TODO: is this line still needed?
         //choiceGameEvent.callbacks = [callback];
-        choiceGameEvent.trigger();
+        choiceGameEvent.trigger(interactable);
       }
     } else {
       // Close the text box

@@ -64,7 +64,7 @@ class GuiItemsMenu {
     
     GameEvent onCancel = new GameEvent((Function a) {
       Gui.removeWindow(descriptionWindow);
-      callbackEvent.trigger();
+      callbackEvent.trigger(Main.player);
     });
     
     GameEvent onChange = new GameEvent((Function callback) {
@@ -112,9 +112,9 @@ class GuiItemsMenu {
         onChangeEvent: onChange
     );
     
-    onChange.trigger();
+    onChange.trigger(Main.player);
     
-    itemChoice.trigger();
+    itemChoice.trigger(Main.player);
   });
   
   static trigger(Character character, Function callback,
@@ -131,6 +131,6 @@ class GuiItemsMenu {
     }
     
     items.callback = callback;
-    items.trigger();
+    items.trigger(Main.player);
   }
 }

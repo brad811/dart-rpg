@@ -11,9 +11,9 @@ import 'package:dart_rpg/src/main.dart';
 class QuantityChoiceGameEvent extends ChoiceGameEvent implements InputHandler {
   int price = -1;
   
-  QuantityChoiceGameEvent(InteractableInterface interactable, int min, int max,
+  QuantityChoiceGameEvent(int min, int max,
       {Function callback, GameEvent cancelEvent, GameEvent onChangeEvent, this.price})
-      : super(interactable, new Map<String, List<GameEvent>>(),
+      : super(new Map<String, List<GameEvent>>(),
           cancelEvent: cancelEvent, onChangeEvent: onChangeEvent) {
     for(int i=max; i>=min; i--) {
       List<GameEvent> events = [new GameEvent((_) { callback(i); })];
@@ -27,7 +27,7 @@ class QuantityChoiceGameEvent extends ChoiceGameEvent implements InputHandler {
     this.curChoice = this.choices.length - 1;
   }
   
-  void trigger() {
+  void trigger(InteractableInterface interactable) {
     Main.focusObject = this;
     
     window = () {

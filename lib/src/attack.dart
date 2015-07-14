@@ -1,6 +1,8 @@
 library dart_rpg.attack;
 
 import 'package:dart_rpg/src/battler.dart';
+import 'package:dart_rpg/src/main.dart';
+
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class Attack {
@@ -30,7 +32,7 @@ class Attack {
       defender.curHealth -= calculateDamage(attacker, defender);
       callback();
     });
-    textGameEvent.trigger();
+    textGameEvent.trigger(Main.player);
   }
   
   int calculateDamage(Battler attacker, Battler defender) {

@@ -10,7 +10,7 @@ import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 
 class ChoiceGameEvent extends GameEvent implements InputHandler {
-  final InteractableInterface interactable;
+  InteractableInterface interactable;
   final Map<String, List<GameEvent>> choices;
   GameEvent cancelEvent;
   GameEvent onChangeEvent;
@@ -27,7 +27,7 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     sizeX = 3,
     sizeY = 2;
   
-  ChoiceGameEvent(this.interactable, this.choices, {this.cancelEvent, this.onChangeEvent}) : super() {
+  ChoiceGameEvent(this.choices, {this.cancelEvent, this.onChangeEvent}) : super() {
     int maxLength = 0;
     for(int i=0; i<choices.keys.toList().length; i++) {
       if(choices.keys.toList()[i].length > maxLength)
@@ -42,7 +42,7 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
       Map<String, List<GameEvent>> choices,
       int posX, int posY, int sizeX, int sizeY, {GameEvent cancelEvent, GameEvent onChangeEvent}) {
     ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(
-        interactable, choices,
+        choices,
         cancelEvent: cancelEvent,
         onChangeEvent: onChangeEvent
       );
@@ -57,7 +57,8 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     return choiceGameEvent;
   }
   
-  void trigger() {
+  void trigger(InteractableInterface interactable) {
+    this.interactable = interactable;
     Main.focusObject = this;
     
     // reverse the list so they get rendered in order
@@ -112,7 +113,7 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
       }
       
       if(onChangeEvent != null)
-        onChangeEvent.trigger();
+        onChangeEvent.trigger(interactable);
     } else if(keyCodes.contains(Input.DOWN)) {
       curChoice++;
       if(curChoice > choices.keys.toList().length - 1) {
@@ -120,16 +121,16 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
       }
       
       if(onChangeEvent != null)
-        onChangeEvent.trigger();
+        onChangeEvent.trigger(interactable);
     } else if(keyCodes.contains(Input.CONFIRM)) {
       if(remove)
         Gui.removeWindow(window);
       
-      Interactable.chainGameEvents(choices.values.toList()[curChoice]).trigger();
+      Interactable.chainGameEvents(interactable, choices.values.toList()[curChoice]).trigger(interactable);
     } else if(keyCodes.contains(Input.BACK) && cancelEvent != null) {
       Gui.removeWindow(window);
       
-      Interactable.chainGameEvents([cancelEvent]).trigger();
+      Interactable.chainGameEvents(interactable, [cancelEvent]).trigger(interactable);
     }
   }
 }

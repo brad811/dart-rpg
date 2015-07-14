@@ -56,6 +56,7 @@ class World {
   static Map<String, BattlerType> battlerTypes = {};
   static Map<String, Item> items = {};
   static Map<String, Character> characters = {};
+  static Map<String, List<GameEvent>> gameEventChains = {};
   
   final int
     viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
@@ -99,7 +100,7 @@ class World {
           );
         }),
         new TextGameEvent.choice(237, "See?",
-          new ChoiceGameEvent(someKid, {
+          new ChoiceGameEvent({
             "Yes": [
               new TextGameEvent(231, "That's fine."),
               new TextGameEvent(237, "If you say so!")
@@ -116,7 +117,7 @@ class World {
         )
       ];
       
-      someKid.gameEvents = characterGameEvents;
+      //someKid.gameEvents = characterGameEvents;
       
       Character fighter = addCharacter(
         "main",
@@ -137,7 +138,7 @@ class World {
       fighter.postBattleEvent = new GameEvent((Function a) {
         new TextGameEvent(237, "Ouch! Clearly I have more training to do...", () {
           Main.focusObject = Main.player;
-        }).trigger();
+        }).trigger(fighter);
       });
       
       Main.player.inventory.money = 500;
@@ -181,6 +182,7 @@ class World {
     parseAttacks(obj["attacks"]);
     parseBattlerTypes(obj["battlerTypes"]);
     parseItems(obj["items"]);
+    parseGameEventChains(obj["gameEventChains"]);
     parseMaps(obj["maps"], obj["characters"]);
     parsePlayer(obj["player"]);
     
@@ -393,52 +395,7 @@ class World {
     }
     
     // game events
-    // TODO: add other game event types
-    character.gameEvents = new List<GameEvent>();
-    List<Map<String, String>> gameEvents = charactersObject[characterLabel]["gameEvents"];
-    for(int i=0; i<gameEvents.length; i++) {
-      if(gameEvents[i]["type"] == "text") {
-        TextGameEvent textGameEvent = new TextGameEvent(
-            gameEvents[i]["pictureId"] as int,
-            gameEvents[i]["text"]
-          );
-        
-        character.gameEvents.add(textGameEvent);
-      } else if(gameEvents[i]["type"] == "move") {
-        MoveGameEvent moveGameEvent = new MoveGameEvent(
-            character,
-            gameEvents[i]["direction"] as int,
-            gameEvents[i]["distance"] as int
-          );
-        
-        character.gameEvents.add(moveGameEvent);
-      } else if(gameEvents[i]["type"] == "delay") {
-        DelayGameEvent delayGameEvent = new DelayGameEvent(
-            gameEvents[i]["milliseconds"] as int
-          );
-        
-        character.gameEvents.add(delayGameEvent);
-      } else if(gameEvents[i]["type"] == "fade") {
-        FadeGameEvent fadeGameEvent = new FadeGameEvent(
-            gameEvents[i]["fade_type"] as int
-          );
-        
-        character.gameEvents.add(fadeGameEvent);
-      } else if(gameEvents[i]["type"] == "heal") {
-        HealGameEvent healGameEvent = new HealGameEvent(
-            Main.player,
-            gameEvents[i]["amount"] as int
-          );
-        
-        character.gameEvents.add(healGameEvent);
-      } else if(gameEvents[i]["type"] == "store") {
-        StoreGameEvent storeGameEvent = new StoreGameEvent(
-            character
-          );
-        
-        character.gameEvents.add(storeGameEvent);
-      }
-    }
+    character.gameEventChain = charactersObject[characterLabel]["gameEventChain"];
     
     return character;
   }
@@ -450,6 +407,54 @@ class World {
       battlerTypes[playerObject["battlerType"]], int.parse(playerObject["level"]),
       battlerTypes[playerObject["battlerType"]].levelAttacks.values.toList()
     );
+  }
+  
+  void parseGameEventChains(Map<String, List<Map<String, String>>> gameEventChainsObject) {
+    gameEventChainsObject.forEach((String key, List<Map<String, String>> gameEvents) {
+      List<GameEvent> gameEventChain = [];
+      for(int i=0; i<gameEvents.length; i++) {
+        if(gameEvents[i]["type"] == "text") {
+          TextGameEvent textGameEvent = new TextGameEvent(
+              gameEvents[i]["pictureId"] as int,
+              gameEvents[i]["text"]
+            );
+          
+          gameEventChain.add(textGameEvent);
+        } else if(gameEvents[i]["type"] == "move") {
+          MoveGameEvent moveGameEvent = new MoveGameEvent(
+              gameEvents[i]["direction"] as int,
+              gameEvents[i]["distance"] as int
+            );
+          
+          gameEventChain.add(moveGameEvent);
+        } else if(gameEvents[i]["type"] == "delay") {
+          DelayGameEvent delayGameEvent = new DelayGameEvent(
+              gameEvents[i]["milliseconds"] as int
+            );
+          
+          gameEventChain.add(delayGameEvent);
+        } else if(gameEvents[i]["type"] == "fade") {
+          FadeGameEvent fadeGameEvent = new FadeGameEvent(
+              gameEvents[i]["fade_type"] as int
+            );
+          
+          gameEventChain.add(fadeGameEvent);
+        } else if(gameEvents[i]["type"] == "heal") {
+          HealGameEvent healGameEvent = new HealGameEvent(
+              Main.player,
+              gameEvents[i]["amount"] as int
+            );
+          
+          gameEventChain.add(healGameEvent);
+        } else if(gameEvents[i]["type"] == "store") {
+          StoreGameEvent storeGameEvent = new StoreGameEvent();
+          
+          gameEventChain.add(storeGameEvent);
+        }
+        
+        World.gameEventChains[key] = gameEventChain;
+      }
+    });
   }
   
   void chainCharacterMovement(Character character, List<int> directions, Function callback) {

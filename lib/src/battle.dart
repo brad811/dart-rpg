@@ -18,7 +18,8 @@ import 'package:dart_rpg/src/game_event/text_game_event.dart';
 import 'package:dart_rpg/src/tile.dart';
 
 class Battle implements InteractableInterface {
-  List<GameEvent> gameEvents;
+  String gameEventChain;
+  //List<GameEvent> gameEvents;
   List<List<Tile>> tiles = [];
   
   ChoiceGameEvent main, fight, powers, run;
@@ -48,7 +49,7 @@ class Battle implements InteractableInterface {
       Main.inBattle = false;
       
       if(this.postBattleCallback != null) {
-        this.postBattleCallback.trigger();
+        this.postBattleCallback.trigger(this);
       } else {
         Main.focusObject = Main.player;
       }
@@ -72,7 +73,7 @@ class Battle implements InteractableInterface {
       Gui.clear();
       if(selectedItem != null) {
         new TextGameEvent.choice(237, "Use 1 ${selectedItem.name}?",
-          new ChoiceGameEvent(this, {
+          new ChoiceGameEvent({
             "Yes": [new GameEvent((Function callback) {
             TextGameEvent text = selectedItem.use(friendly);
             
@@ -83,14 +84,14 @@ class Battle implements InteractableInterface {
                 attack(friendly, -1);
               };
               
-              text.trigger();
+              text.trigger(this);
             });
            })],
             "No": []
           })
-        ).trigger();
+        ).trigger(this);
       } else {
-        main.trigger();
+        main.trigger(this);
       }
     };
     
@@ -119,7 +120,7 @@ class Battle implements InteractableInterface {
   
   void start() {
     Main.inBattle = true;
-    main.trigger();
+    main.trigger(this);
   }
   
   void attack(Battler user, int attackNum) {
@@ -127,7 +128,7 @@ class Battle implements InteractableInterface {
     
     Function callback = () {
       Gui.clear();
-      main.trigger();
+      main.trigger(this);
     };
     
     // TODO: enemy decide action
@@ -207,12 +208,12 @@ class Battle implements InteractableInterface {
       });
     };
     
-    victory.trigger();
+    victory.trigger(this);
   }
   
   void fadeOutExit() {
     Gui.fadeDarkAction(() {
-      exit.trigger();
+      exit.trigger(this);
     });
   }
   
@@ -228,7 +229,7 @@ class Battle implements InteractableInterface {
         new TextGameEvent(240, "${friendly.battlerType.name} leveled up!", () {
           friendly.levelUp();
           new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(callback));
-        }).trigger();
+        }).trigger(this);
       } else {
         new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(callback));
       }

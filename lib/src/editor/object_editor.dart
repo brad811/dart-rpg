@@ -71,6 +71,6 @@ class ObjectEditor {
     ObjectEditorCharacters.export(exportJson);
     ObjectEditorItems.export(exportJson);
     ObjectEditorPlayer.export(exportJson);
-    //ObjectEditorGameEvents.export(exportJson);
+    ObjectEditorGameEvents.export(exportJson);
   }
 }

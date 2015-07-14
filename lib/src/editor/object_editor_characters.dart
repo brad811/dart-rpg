@@ -9,8 +9,6 @@ import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'package:dart_rpg/src/game_event/game_event.dart';
-
 import 'editor.dart';
 import 'object_editor.dart';
 import 'object_editor_game_events.dart';
@@ -89,7 +87,10 @@ class ObjectEditorCharacters {
       "label", "name", "sprite_id", "picture_id", "size_x", "size_y",
       
       // battle
-      "battler_type", "battler_level", "sight_distance", "pre_battle_text"
+      "battler_type", "battler_level", "sight_distance", "pre_battle_text",
+      
+      // game event chain
+      "game_event_chain"
       
       //
       /* inventory, game_event */
@@ -113,7 +114,7 @@ class ObjectEditorCharacters {
           
           // hide the inventory items for other characters
           querySelector("#character_${j}_inventory_table").classes.add("hidden");
-          querySelector("#character_${j}_game_event_table").classes.add("hidden");
+          querySelector("#character_${j}_game_event_chain_container").classes.add("hidden");
           querySelector("#character_${j}_battle_container").classes.add("hidden");
         }
         
@@ -125,7 +126,7 @@ class ObjectEditorCharacters {
         
         // show the advanced tables for the selected character
         querySelector("#character_${i}_inventory_table").classes.remove("hidden");
-        querySelector("#character_${i}_game_event_table").classes.remove("hidden");
+        querySelector("#character_${i}_game_event_chain_container").classes.remove("hidden");
         querySelector("#character_${i}_battle_container").classes.remove("hidden");
       });
       
@@ -239,19 +240,40 @@ class ObjectEditorCharacters {
       
       Character character = World.characters.values.elementAt(i);
       
-      gameEventHtml += "<table id='character_${i}_game_event_table' ${visibleString}>";
+      gameEventHtml += "<div id='character_${i}_game_event_chain_container' ${visibleString}>";
+      gameEventHtml += "Game Event Chain: <select id='character_${i}_game_event_chain'>";
+      gameEventHtml += "  <option value=''>None</option>";
+      for(int j=0; j<World.gameEventChains.keys.length; j++) {
+        // TODO: store selected in character
+        String name = World.gameEventChains.keys.elementAt(j);
+        
+        gameEventHtml += "  <option value='${name}' ";
+        
+        if(character.gameEventChain == name) {
+          gameEventHtml += "selected='selected'";
+        }
+          
+        gameEventHtml += ">${name}</option>";
+      }
+      gameEventHtml += "</select>";
+      
+      gameEventHtml += "<table id='character_${i}_game_event_table'>";
       gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
-      for(int j=0; j<character.gameEvents.length; j++) {
-        gameEventHtml +=
-            ObjectEditorGameEvents.buildGameEventTableRowHtml(
-                character.gameEvents[j],
-                "character_${i}_game_event_${j}",
-                j,
-                readOnly: true
-              );
+      
+      if(character.gameEventChain != null && character.gameEventChain != "") {
+        for(int j=0; j<World.gameEventChains[character.gameEventChain].length; j++) {
+          gameEventHtml +=
+              ObjectEditorGameEvents.buildGameEventTableRowHtml(
+                  World.gameEventChains[character.gameEventChain][j],
+                  "character_${i}_game_event_${j}",
+                  j,
+                  readOnly: true
+                );
+        }
       }
       
       gameEventHtml += "</table>";
+      gameEventHtml += "</div>";
     }
     
     querySelector("#character_game_event_container").setInnerHtml(gameEventHtml);
@@ -365,12 +387,7 @@ class ObjectEditorCharacters {
         character.inventory.addItem(World.items[itemName], itemQuantity);
       }
       
-      character.gameEvents = new List<GameEvent>();
-      for(int j=0; querySelector('#character_${i}_game_event_${j}_type') != null; j++) {
-        character.gameEvents.add(
-            ObjectEditorGameEvents.buildGameEvent("character_${i}_game_event_${j}", character)
-          );
-      }
+      character.gameEventChain = Editor.getSelectInputStringValue("#character_${i}_game_event_chain");
     }
     
     Editor.updateAndRetainValue(e);
@@ -398,15 +415,8 @@ class ObjectEditorCharacters {
       
       characterJson["inventory"] = inventoryJson;
       
-      // game event
-      List<Map<String, String>> gameEventsJson = [];
-      character.gameEvents.forEach((GameEvent gameEvent) {
-        gameEventsJson.add(
-            ObjectEditorGameEvents.buildGameEventJson(gameEvent)
-          );
-      });
-      
-      characterJson["gameEvents"] = gameEventsJson;
+      // game event chain
+      characterJson["gameEventChain"] = character.gameEventChain;
       
       // battle
       characterJson["battlerType"] = character.battler.battlerType.name;

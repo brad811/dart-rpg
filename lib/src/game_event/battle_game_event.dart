@@ -8,11 +8,9 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
 class StoreGameEvent extends GameEvent {
-  Character character;
+  StoreGameEvent([Function callback]) : super(null, callback);
   
-  StoreGameEvent(this.character, [Function callback]) : super(null, callback);
-  
-  void trigger() {
+  void trigger(Character character) {
     Gui.fadeLightAction((){},(){
       Gui.fadeDarkAction((){}, (){
         // start the battle!

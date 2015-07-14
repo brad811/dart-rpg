@@ -46,7 +46,8 @@ class Character implements InteractableInterface {
     movementAmount;
   
   bool solid;
-  List<GameEvent> gameEvents = [];
+  String gameEventChain;
+  //List<GameEvent> gameEvents = [];
   Function motionCallback;
   
   Battler battler;
@@ -60,8 +61,6 @@ class Character implements InteractableInterface {
   
   // TODO: perhaps add name field
   // TODO: add wander behavior
-  // TODO: add battle event with callback
-  //   (to fight a character and then have them react to the battle)
   
   Character(this.spriteId, this.pictureId,
       this.mapX, this.mapY,
@@ -264,9 +263,10 @@ class Character implements InteractableInterface {
   }
   
   void interact() {
+    List<GameEvent> gameEvents = World.gameEventChains[gameEventChain];
     if(gameEvents != null && gameEvents.length > 0) {
       Main.focusObject = null;
-      Interactable.chainGameEvents(gameEvents).trigger();
+      Interactable.chainGameEvents(this, gameEvents).trigger(this);
     } else if(battler != null) {
       // talking to a player can make them face you and battle you
       if(Main.player.mapX < mapX)

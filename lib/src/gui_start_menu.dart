@@ -29,11 +29,11 @@ class GuiStartMenu {
     GuiItemsMenu.trigger(Main.player, (Item item) {
       Gui.clear();
       if(item == null) {
-        start.trigger();
+        start.trigger(Main.player);
       } else {
         // confirm dialog before using item from start menu
         new TextGameEvent.choice(237, "Use the ${item.name}?",
-            new ChoiceGameEvent(Main.player,
+            new ChoiceGameEvent(
               {
                 "Yes": [new GameEvent((_) {
                   item = Main.player.inventory.removeItem(item.name);
@@ -41,17 +41,17 @@ class GuiStartMenu {
                   TextGameEvent text = item.use(Main.player.battler);
                   text.callback = () {
                     Main.focusObject = Main.player;
-                    items.trigger();
+                    items.trigger(Main.player);
                   };
-                  text.trigger();
+                  text.trigger(Main.player);
                 })],
                 "No": [new GameEvent((_) {
                   Gui.clear();
-                  items.trigger();
+                  items.trigger(Main.player);
                 })]
               }
             )
-        ).trigger();
+        ).trigger(Main.player);
       }
     });
   });
@@ -82,7 +82,7 @@ class GuiStartMenu {
     
     GameEvent powersBack = new GameEvent((Function a) {
       Gui.clear();
-      GuiStartMenu.start.trigger();
+      GuiStartMenu.start.trigger(Main.player);
     });
     
     new ChoiceGameEvent.custom(
@@ -90,6 +90,6 @@ class GuiStartMenu {
         15, 0,
         5, 2,
         cancelEvent: powersBack
-    ).trigger();
+    ).trigger(Main.player);
   });
 }

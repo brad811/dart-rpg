@@ -151,12 +151,12 @@ class Player extends Character implements InputHandler {
                     Main.player.inputEnabled = true;
                   });
                 });
-              }).trigger();
+              }).trigger(this);
             }
           );
         }));
         
-        characterGameEvents[0].trigger();
+        characterGameEvents[0].trigger(this);
       })
     ];
     

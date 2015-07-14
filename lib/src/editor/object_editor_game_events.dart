@@ -5,6 +5,7 @@ import 'dart:html';
 
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/delay_game_event.dart';
@@ -18,7 +19,6 @@ import 'editor.dart';
 import 'object_editor.dart';
 
 class ObjectEditorGameEvents {
-  static Map<String, List<GameEvent>> gameEventChains = new Map<String, List<GameEvent>>();
   static List<String> advancedTabs = ["game_event_chain_game_events"];
   static Map<String, StreamSubscription> listeners = {};
   static int selected;
@@ -30,8 +30,8 @@ class ObjectEditorGameEvents {
   }
   
   static void addGameEventChain(MouseEvent e) {
-    if(gameEventChains["new game event chain"] == null)
-      gameEventChains["new game event chain"] = [new TextGameEvent(1, "Text")];
+    if(World.gameEventChains["new game event chain"] == null)
+      World.gameEventChains["new game event chain"] = [new TextGameEvent(1, "Text")];
     
     // TODO: needed?
     update();
@@ -39,7 +39,7 @@ class ObjectEditorGameEvents {
   }
   
   static void addGameEvent(MouseEvent e) {
-    List<GameEvent> selectedGameEventChain = gameEventChains.values.elementAt(selected);
+    List<GameEvent> selectedGameEventChain = World.gameEventChains.values.elementAt(selected);
     
     selectedGameEventChain.add(
         new TextGameEvent(1, "Text")
@@ -60,11 +60,11 @@ class ObjectEditorGameEvents {
       querySelector("#game_event_chains_advanced").classes.remove("hidden");
     }
     
-    Editor.setMapDeleteButtonListeners(gameEventChains, "game_event_chain", listeners);
+    Editor.setMapDeleteButtonListeners(World.gameEventChains, "game_event_chain", listeners);
     
-    for(int i=0; i<gameEventChains.keys.length; i++) {
+    for(int i=0; i<World.gameEventChains.keys.length; i++) {
       Editor.setListDeleteButtonListeners(
-          gameEventChains.values.elementAt(i),
+          World.gameEventChains.values.elementAt(i),
           "game_event_chain_${i}_game_event",
           listeners
         );
@@ -72,14 +72,14 @@ class ObjectEditorGameEvents {
     
     List<String> attrs = ["label"];
     
-    for(int i=0; i<gameEventChains.keys.length; i++) {
+    for(int i=0; i<World.gameEventChains.keys.length; i++) {
       Editor.attachListeners(listeners, "game_event_chain_${i}", attrs, onInputChange);
       
       // when a row is clicked, set it as selected and highlight it
       querySelector("#game_event_chain_row_${i}").onClick.listen((Event e) {
         selected = i;
         
-        for(int j=0; j<gameEventChains.keys.length; j++) {
+        for(int j=0; j<World.gameEventChains.keys.length; j++) {
           // un-highlight other game event chain rows
           querySelector("#game_event_chain_row_${j}").classes.remove("selected");
           
@@ -97,7 +97,7 @@ class ObjectEditorGameEvents {
         querySelector("#game_event_chain_${i}_game_event_table").classes.remove("hidden");
       });
       
-      List<GameEvent> gameEventChain = gameEventChains.values.elementAt(i);
+      List<GameEvent> gameEventChain = World.gameEventChains.values.elementAt(i);
       
       // game events
       for(int j=0; j<gameEventChain.length; j++) {
@@ -119,14 +119,14 @@ class ObjectEditorGameEvents {
       "    <td></td>"+
       "  </tr>";
     
-    for(int i=0; i<gameEventChains.keys.length; i++) {
-      String key = gameEventChains.keys.elementAt(i);
+    for(int i=0; i<World.gameEventChains.keys.length; i++) {
+      String key = World.gameEventChains.keys.elementAt(i);
       
       gameEventChainsHtml +=
         "<tr id='game_event_chain_row_${i}'>"+
         "  <td>${i}</td>"+
         "  <td><input id='game_event_chain_${i}_label' type='text' value='${ key }' /></td>"+
-        "  <td>${ gameEventChains[key].length }</td>"+
+        "  <td>${ World.gameEventChains[key].length }</td>"+
         "  <td><button id='delete_game_event_chain_${i}'>Delete</button></td>"+
         "</tr>";
     }
@@ -139,13 +139,13 @@ class ObjectEditorGameEvents {
   static void buildGameEventHtml() {
     String gameEventHtml = "";
     
-    for(int i=0; i<gameEventChains.keys.length; i++) {
+    for(int i=0; i<World.gameEventChains.keys.length; i++) {
       String visibleString = "class='hidden'";
       if(selected == i) {
         visibleString = "";
       }
       
-      List<GameEvent> gameEventChain = gameEventChains.values.elementAt(i);
+      List<GameEvent> gameEventChain = World.gameEventChains.values.elementAt(i);
       
       gameEventHtml += "<table id='game_event_chain_${i}_game_event_table' ${visibleString}>";
       gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
@@ -163,15 +163,15 @@ class ObjectEditorGameEvents {
     if(e.target is InputElement) {
       InputElement target = e.target;
       
-      if(target.id.contains("_label") && gameEventChains.keys.contains(target.value)) {
+      if(target.id.contains("_label") && World.gameEventChains.keys.contains(target.value)) {
         // avoid name collisions
         int i = 0;
-        for(; gameEventChains.keys.contains(target.value + "_${i}"); i++) {}
+        for(; World.gameEventChains.keys.contains(target.value + "_${i}"); i++) {}
         target.value += "_${i}";
       }
     }
     
-    gameEventChains = new Map<String, List<GameEvent>>();
+    World.gameEventChains = new Map<String, List<GameEvent>>();
     for(int i=0; querySelector('#game_event_chain_${i}_label') != null; i++) {
       try {
         List<GameEvent> gameEventChain = new List<GameEvent>();
@@ -184,7 +184,7 @@ class ObjectEditorGameEvents {
         
         String label = Editor.getTextInputStringValue('#game_event_chain_${i}_label');
         
-        gameEventChains[label] = gameEventChain;
+        World.gameEventChains[label] = gameEventChain;
       } catch(e) {
         // could not update this game event chain
         print("Error updating game event chain: " + e.toString());
@@ -195,9 +195,8 @@ class ObjectEditorGameEvents {
   }
   
   static void export(Map<String, Object> exportJson) {
-    Map<String, Map<String, String>> gameEventChainsJson = {};
-    gameEventChains.forEach((String key, List<GameEvent> gameEventChain) {
-      Map<String, Object> gameEventChainJson = {};
+    Map<String, Object> gameEventChainsJson = {};
+    World.gameEventChains.forEach((String key, List<GameEvent> gameEventChain) {
       
       // game event
       List<Map<String, String>> gameEventsJson = [];
@@ -207,7 +206,7 @@ class ObjectEditorGameEvents {
           );
       });
       
-      gameEventChainJson[key] = gameEventsJson;
+      gameEventChainsJson[key] = gameEventsJson;
     });
     
     exportJson["gameEventChains"] = gameEventChainsJson;
@@ -243,7 +242,6 @@ class ObjectEditorGameEvents {
       return textGameEvent;
     } else if(gameEventType == "move") {
       MoveGameEvent moveGameEvent = new MoveGameEvent(
-          character,
           Editor.getSelectInputIntValue("#${prefix}_direction", Character.DOWN),
           Editor.getTextInputIntValue("#${prefix}_distance", 1)
         );
@@ -268,9 +266,7 @@ class ObjectEditorGameEvents {
       
       return healGameEvent;
     } else if(gameEventType == "store") {
-      StoreGameEvent storeGameEvent = new StoreGameEvent(
-          character
-        );
+      StoreGameEvent storeGameEvent = new StoreGameEvent();
       
       return storeGameEvent;
     } else {
