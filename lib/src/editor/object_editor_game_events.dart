@@ -33,7 +33,6 @@ class ObjectEditorGameEvents {
     if(World.gameEventChains["new game event chain"] == null)
       World.gameEventChains["new game event chain"] = [new TextGameEvent(1, "Text")];
     
-    // TODO: needed?
     update();
     ObjectEditor.update();
   }
@@ -45,7 +44,6 @@ class ObjectEditorGameEvents {
         new TextGameEvent(1, "Text")
     );
     
-    // TODO: needed?
     update();
     ObjectEditor.update();
   }
@@ -176,7 +174,6 @@ class ObjectEditorGameEvents {
       try {
         List<GameEvent> gameEventChain = new List<GameEvent>();
         for(int j=0; querySelector('#game_event_chain_${i}_game_event_${j}_type') != null; j++) {
-          // TODO: change character at import
           gameEventChain.add(
               ObjectEditorGameEvents.buildGameEvent("game_event_chain_${i}_game_event_${j}", Main.player)
             );

@@ -230,8 +230,6 @@ class ObjectEditorCharacters {
   static void buildGameEventHtml() {
     String gameEventHtml = "";
     
-    // TODO: add select to choose game event chain
-    
     for(int i=0; i<World.characters.keys.length; i++) {
       String visibleString = "class='hidden'";
       if(selected == i) {
@@ -244,7 +242,6 @@ class ObjectEditorCharacters {
       gameEventHtml += "Game Event Chain: <select id='character_${i}_game_event_chain'>";
       gameEventHtml += "  <option value=''>None</option>";
       for(int j=0; j<World.gameEventChains.keys.length; j++) {
-        // TODO: store selected in character
         String name = World.gameEventChains.keys.elementAt(j);
         
         gameEventHtml += "  <option value='${name}' ";
@@ -255,7 +252,7 @@ class ObjectEditorCharacters {
           
         gameEventHtml += ">${name}</option>";
       }
-      gameEventHtml += "</select>";
+      gameEventHtml += "</select><hr />";
       
       gameEventHtml += "<table id='character_${i}_game_event_table'>";
       gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
