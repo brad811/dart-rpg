@@ -42,7 +42,7 @@ class Editor {
         Editor.update();
         
         Function resizeFunction = (Event e) {
-          querySelector('#left_half').style.width = "${window.innerWidth - 570}px";
+          querySelector('#left_half').style.width = "${window.innerWidth - 562}px";
           querySelector('#left_half').style.height = "${window.innerHeight - 60}px";
           querySelector('#container').style.height = "${window.innerHeight - 10}px";
         };

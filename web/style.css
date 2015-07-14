@@ -98,6 +98,8 @@ body {
 
 #right_half_container {
   height: 100%;
+  width: 532px;
+  margin-left: 10px;
 }
 
 #editor_main_canvas {
@@ -152,7 +154,7 @@ body {
 .tab {
   background-color: #eee;
   height: 100%;
-  width: 522px;
+  width: 516px;
   overflow-y: scroll;
   padding: 8px;
   float: left;
@@ -207,9 +209,13 @@ h4 {
   width: 30px;
 }
 
-#signs_tab textarea {
-  width: 260px;
+textarea {
+  width: 160px;
   height: 60px;
+}
+
+.export_json_container {
+  line-height: 0;
 }
 
 #maps_container td, #map_characters_container td,
@@ -223,7 +229,7 @@ h4 {
 
 #export_json, #export_json_object_editor {
   height: 60px;
-  width: 532px;
+  width: 526px;
 }
 
 /*
