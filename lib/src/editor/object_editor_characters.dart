@@ -66,10 +66,6 @@ class ObjectEditorCharacters {
     buildGameEventHtml();
     buildBattleHtml();
     
-    // TODO: add post battle event to right half
-    // TODO: maybe make game events trigger when person spots you from sight distance instead of just battle
-    //   and make battle an event type (this would remove "pre battle text")
-    
     // highlight the selected row
     if(querySelector("#character_row_${selected}") != null) {
       querySelector("#character_row_${selected}").classes.add("selected");
@@ -87,14 +83,10 @@ class ObjectEditorCharacters {
       "label", "name", "sprite_id", "picture_id", "size_x", "size_y",
       
       // battle
-      "battler_type", "battler_level", "sight_distance", "pre_battle_text",
+      "battler_type", "battler_level", "sight_distance",
       
       // game event chain
       "game_event_chain"
-      
-      //
-      /* inventory, game_event */
-      /* post battle event */
     ];
     
     List<String> inventory_attrs = [
@@ -238,6 +230,7 @@ class ObjectEditorCharacters {
       
       Character character = World.characters.values.elementAt(i);
       
+      // game event chain selector
       gameEventHtml += "<div id='character_${i}_game_event_chain_container' ${visibleString}>";
       gameEventHtml += "Game Event Chain: <select id='character_${i}_game_event_chain'>";
       gameEventHtml += "  <option value=''>None</option>";
@@ -253,6 +246,11 @@ class ObjectEditorCharacters {
         gameEventHtml += ">${name}</option>";
       }
       gameEventHtml += "</select><hr />";
+      
+      // sight distance
+      gameEventHtml += "Sight Distance: ";
+      gameEventHtml += "<input id='character_${i}_sight_distance' type='text' class='number' value='${character.sightDistance}' />";
+      gameEventHtml += "<hr />";
       
       gameEventHtml += "<table id='character_${i}_game_event_table'>";
       gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
@@ -288,7 +286,7 @@ class ObjectEditorCharacters {
       Character character = World.characters.values.elementAt(i);
       
       battleHtml += "<table id='character_${i}_battle_container' ${visibleString}>";
-      battleHtml += "<tr><td>Battler Type</td><td>Level</td><td>Sight Distance</td><td>Pre Battle Text</td></tr>";
+      battleHtml += "<tr><td>Battler Type</td><td>Level</td></tr>";
       
       battleHtml += "<tr><td><select id='character_${i}_battler_type'>";
       World.battlerTypes.forEach((String name, BattlerType battlerType) {
@@ -302,8 +300,6 @@ class ObjectEditorCharacters {
       battleHtml += "</select></td>";
       
       battleHtml += "<td><input id='character_${i}_battler_level' type='text' class='number' value='${character.battler.level}' /></td>";
-      battleHtml += "<td><input id='character_${i}_sight_distance' type='text' class='number' value='${character.sightDistance}' /></td>";
-      battleHtml += "<td><textarea id='character_${i}_pre_battle_text'>${character.preBattleText}</textarea></td>";
       
       battleHtml += "</tr></table>";
     }
@@ -363,8 +359,6 @@ class ObjectEditorCharacters {
         
         character.battler = battler;
         character.sightDistance = Editor.getTextInputIntValue('#character_${i}_sight_distance', 0);
-        character.preBattleText = Editor.getTextAreaStringValue('#character_${i}_pre_battle_text');
-        // post battle event
         
         String label = Editor.getTextInputStringValue('#character_${i}_label');
         World.characters[label] = character;
@@ -419,7 +413,6 @@ class ObjectEditorCharacters {
       characterJson["battlerType"] = character.battler.battlerType.name;
       characterJson["battlerLevel"] = character.battler.level.toString();
       characterJson["sightDistance"] = character.sightDistance.toString();
-      characterJson["preBattleText"] = character.preBattleText;
       
       charactersJson[key] = characterJson;
     });

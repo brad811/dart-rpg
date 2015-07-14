@@ -1,4 +1,4 @@
-library dart_rpg.store_game_event;
+library dart_rpg.battle_game_event;
 
 import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/character.dart';
@@ -7,8 +7,8 @@ import 'package:dart_rpg/src/main.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
-class StoreGameEvent extends GameEvent {
-  StoreGameEvent([Function callback]) : super(null, callback);
+class BattleGameEvent extends GameEvent {
+  BattleGameEvent([Function callback]) : super(null, callback);
   
   void trigger(Character character) {
     Gui.fadeLightAction((){},(){
@@ -19,7 +19,7 @@ class StoreGameEvent extends GameEvent {
         Main.battle = new Battle(
             Main.player.battler,
             character.battler,
-            character.postBattleEvent
+            new GameEvent((_) { callback(); })
         );
         
         Main.battle.start();

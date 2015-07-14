@@ -47,13 +47,10 @@ class Character implements InteractableInterface {
   
   bool solid;
   String gameEventChain;
-  //List<GameEvent> gameEvents = [];
   Function motionCallback;
   
   Battler battler;
   int sightDistance = 0;
-  String preBattleText = "";
-  GameEvent postBattleEvent;
   
   Inventory inventory = new Inventory([]);
   

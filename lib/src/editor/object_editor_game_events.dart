@@ -8,6 +8,7 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/battle_game_event.dart';
 import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/fade_game_event.dart';
 import 'package:dart_rpg/src/game_event/heal_game_event.dart';
@@ -222,6 +223,8 @@ class ObjectEditorGameEvents {
       return ["character", "amount"];
     } else if(gameEvent is StoreGameEvent) {
       return [];
+    } else if(gameEvent is BattleGameEvent) {
+      return [];
     } else {
       return [];
     }
@@ -266,6 +269,10 @@ class ObjectEditorGameEvents {
       StoreGameEvent storeGameEvent = new StoreGameEvent();
       
       return storeGameEvent;
+    } else if(gameEventType == "battle") {
+      BattleGameEvent battleGameEvent = new BattleGameEvent();
+      
+      return battleGameEvent;
     } else {
       return null;
     }
@@ -294,6 +301,8 @@ class ObjectEditorGameEvents {
       gameEventJson["amount"] = gameEvent.amount;
     } else if(gameEvent is StoreGameEvent) {
       gameEventJson["type"] = "store";
+    } else if(gameEvent is BattleGameEvent) {
+      gameEventJson["type"] = "battle";
     }
     
     return gameEventJson;
@@ -313,7 +322,7 @@ class ObjectEditorGameEvents {
     
     String paramsHtml = "";
     
-    List<String> gameEventTypes = ["text", "move", "delay", "fade", "heal", "store", "warp"];
+    List<String> gameEventTypes = ["text", "move", "delay", "fade", "heal", "store", "battle", "warp"];
     for(int k=0; k<gameEventTypes.length; k++) {
       String selectedText = "";
       if(gameEventTypes[k] == "text" && gameEvent is TextGameEvent) {
@@ -334,6 +343,9 @@ class ObjectEditorGameEvents {
       } else if(gameEventTypes[k] == "store" && gameEvent is StoreGameEvent) {
         selectedText = "selected='selected'";
         paramsHtml = ObjectEditorGameEvents.buildStoreGameEventParamsHtml(gameEvent, prefix, readOnly);
+      } else if(gameEventTypes[k] == "battle" && gameEvent is BattleGameEvent) {
+        selectedText = "selected='selected'";
+        paramsHtml = ObjectEditorGameEvents.buildBattleGameEventParamsHtml(gameEvent, prefix, readOnly);
       }
       
       gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
@@ -489,6 +501,12 @@ class ObjectEditorGameEvents {
   }
   
   static String buildStoreGameEventParamsHtml(StoreGameEvent storeGameEvent, String prefix, bool readOnly) {
+    String html = "";
+    
+    return html;
+  }
+  
+  static String buildBattleGameEventParamsHtml(BattleGameEvent battleGameEvent, String prefix, bool readOnly) {
     String html = "";
     
     return html;

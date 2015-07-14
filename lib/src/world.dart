@@ -22,6 +22,7 @@ import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/battle_game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/fade_game_event.dart';
@@ -118,7 +119,7 @@ class World {
       ];
       
       //someKid.gameEvents = characterGameEvents;
-      
+      /*
       Character fighter = addCharacter(
         "main",
         new Character(
@@ -140,6 +141,7 @@ class World {
           Main.focusObject = Main.player;
         }).trigger(fighter);
       });
+      */
       
       Main.player.inventory.money = 500;
       
@@ -383,7 +385,6 @@ class World {
       );
     
     character.sightDistance = int.parse(charactersObject[characterLabel]["sightDistance"]);
-    character.preBattleText = charactersObject[characterLabel]["preBattleText"];
     
     // inventory
     character.inventory = new Inventory([]);
@@ -450,6 +451,10 @@ class World {
           StoreGameEvent storeGameEvent = new StoreGameEvent();
           
           gameEventChain.add(storeGameEvent);
+        } else if(gameEvents[i]["type"] == "battle") {
+          BattleGameEvent battleGameEvent = new BattleGameEvent();
+          
+          gameEventChain.add(battleGameEvent);
         }
         
         World.gameEventChains[key] = gameEventChain;

@@ -133,26 +133,7 @@ class Player extends Character implements InputHandler {
           Main.world.chainCharacterMovement(
             character,
             new List<int>.generate(movementAmount, (int i) => movementDirection, growable: true),
-            () {
-              // TODO: character.interact();
-              new TextGameEvent(237, character.preBattleText, () {
-                Gui.fadeLightAction((){},(){
-                  Gui.fadeDarkAction((){}, (){
-                    // start the battle!
-                    character.battler.reset();
-                    
-                    Main.battle = new Battle(
-                        Main.player.battler,
-                        character.battler,
-                        character.postBattleEvent
-                    );
-                    
-                    Main.battle.start();
-                    Main.player.inputEnabled = true;
-                  });
-                });
-              }).trigger(this);
-            }
+            character.interact
           );
         }));
         

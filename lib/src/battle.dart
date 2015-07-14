@@ -19,7 +19,6 @@ import 'package:dart_rpg/src/tile.dart';
 
 class Battle implements InteractableInterface {
   String gameEventChain;
-  //List<GameEvent> gameEvents;
   List<List<Tile>> tiles = [];
   
   ChoiceGameEvent main, fight, powers, run;
