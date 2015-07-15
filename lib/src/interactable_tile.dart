@@ -1,6 +1,5 @@
 library dart_rpg.interactable_tile;
 
-import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/sprite.dart';

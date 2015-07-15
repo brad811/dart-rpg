@@ -13,7 +13,6 @@ import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/item.dart';
-import 'package:dart_rpg/src/item_potion.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sign.dart';
@@ -65,9 +64,6 @@ class World {
   
   World(Function callback) {
     loadGame(() {
-      // TODO: move player inventory settings to editor
-      Main.player.inventory.addItem(new ItemPotion(), 2);
-      
       // move to the start map
       curMap = startMap;
       
@@ -376,13 +372,22 @@ class World {
     return character;
   }
   
-  void parsePlayer(Map<String, String> playerObject) {
+  void parsePlayer(Map<String, Object> playerObject) {
     Main.player = new Player(startX, startY);
     Main.player.battler = new Battler(
       playerObject["name"],
       battlerTypes[playerObject["battlerType"]], playerObject["level"] as int,
       battlerTypes[playerObject["battlerType"]].levelAttacks.values.toList()
     );
+    
+    // inventory
+    Main.player.inventory = new Inventory([]);
+    List<Map<String, String>> characterItems = playerObject["inventory"];
+    for(int i=0; i<characterItems.length; i++) {
+      String itemName = characterItems.elementAt(i)["item"];
+      int itemQuantity = int.parse(characterItems.elementAt(i)["quantity"]);
+      Main.player.inventory.addItem(World.items[itemName], itemQuantity);
+    }
     
     Main.player.inventory.money = playerObject["money"] as int;
   }

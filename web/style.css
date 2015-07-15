@@ -126,7 +126,7 @@ body {
   margin-bottom: 10px;
 }
 
-#editor_tabs_container, #object_editor_tabs_container {
+#editor_tabs_container, .object_editor_tabs_container {
   height: 100%;
 }
 
@@ -276,9 +276,9 @@ textarea {
   text-align: center;
 }
 
-#object_editor_tabs_container td {
+.object_editor_tabs_container td {
   text-align: center;
-  padding: 5px;
+  padding: 5px !important;
 }
 
 .hidden {
