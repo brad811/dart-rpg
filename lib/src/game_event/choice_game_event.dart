@@ -136,4 +136,22 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
       Interactable.chainGameEvents(interactable, [cancelEvent]).trigger(interactable);
     }
   }
+  
+  static Map<String, String> generateChoiceMap(String prefix, Map<String, List<GameEvent>> gameEventChainMap) {
+    int i = 0;
+    
+    Map<String, String> generatedChoiceMap = new Map<String, String>();
+    
+    gameEventChainMap.forEach((String choiceName, List<GameEvent> chain) {
+      String chainName = "____${prefix}_choice_${i}";
+      
+      World.gameEventChains[chainName] = chain;
+      
+      generatedChoiceMap[choiceName] = chainName;
+      
+      i += 1;
+    });
+    
+    return generatedChoiceMap;
+  }
 }

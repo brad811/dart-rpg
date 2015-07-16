@@ -12,7 +12,6 @@ import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
-import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
@@ -23,7 +22,8 @@ class Battle implements InteractableInterface {
   String gameEventChain;
   List<List<Tile>> tiles = [];
   
-  //GameEvent exit;
+  ChoiceGameEvent main, fight;
+  GameEvent exit;
   Battler friendly, enemy;
   Sprite friendlySprite, enemySprite;
   
@@ -43,7 +43,7 @@ class Battle implements InteractableInterface {
       }
     }
     
-    GameEvent exit = new GameEvent((callback) {
+    exit = new GameEvent((callback) {
       Gui.clear();
       Main.inBattle = false;
       
@@ -54,26 +54,18 @@ class Battle implements InteractableInterface {
       }
     });
     
-    World.gameEventChains["tmp_battle_exit"] = [exit];
-    
-    Map<String, String> attackGameEventChains = new Map<String, String>();
+    Map<String, List<GameEvent>> attackChoices = new Map<String, List<GameEvent>>();
     for(int i=0; i<friendly.attacks.length; i++) {
-      // make a temp game event chain for this attack
-      String tmpGameEventChainName = "tmp_friendly_attack_${i}";
-      
       // create a game event that uses the current attack
       List<GameEvent> attackGameEventChain = [new GameEvent((callback) { attack(friendly, i); })];
       
-      // add the game event to the world's list of game event chains
-      World.gameEventChains[tmpGameEventChainName] = attackGameEventChain;
-      
       // add the generated game event chain name to the options in the choice game event
-      attackGameEventChains[friendly.attackNames.elementAt(i)] = tmpGameEventChainName;
+      attackChoices[friendly.attackNames.elementAt(i)] = attackGameEventChain;
     }
     
-    ChoiceGameEvent fight = new ChoiceGameEvent.custom(
+    fight = new ChoiceGameEvent.custom(
       this,
-      attackGameEventChains,
+      ChoiceGameEvent.generateChoiceMap("battle_friendly_attack", attackChoices),
       5, 11, 10, 5
     );
     fight.remove = true;
@@ -92,19 +84,20 @@ class Battle implements InteractableInterface {
           text.trigger(this);
         });
       });
-      World.gameEventChains["tmp_battle_item_use_confirm"] = [itemUseConfirm];
       
       Gui.clear();
       if(selectedItem != null) {
         new TextGameEvent.choice(237, "Use 1 ${selectedItem.name}?",
-            // TODO: make sure this is right
-          new ChoiceGameEvent({
-            "Yes": "tmp_battle_item_use_confirm",
-            "No": ""
-          })
+          new ChoiceGameEvent(
+            ChoiceGameEvent.generateChoiceMap("battle_item_use", {
+                "Yes": [itemUseConfirm],
+                "No": []
+              }
+            )
+          )
         ).trigger(this);
       } else {
-        World.gameEventChains["tmp_battle_main"][0].trigger(this);
+        main.trigger(this);
       }
     };
     
@@ -112,32 +105,28 @@ class Battle implements InteractableInterface {
       Gui.clear();
       GuiItemsMenu.trigger(Main.player, itemsConfirm);
     });
-    World.gameEventChains["tmp_battle_items"] = [items];
     
     // TODO: make it so that some battles cannot be run from
     // TODO: make running possibly fail
-    ChoiceGameEvent main = new ChoiceGameEvent.custom(
+    main = new ChoiceGameEvent.custom(
       this,
-      {
-        "Fight": "tmp_battle_fight",
-        "Powers": "tmp_battle_fight",
-        "Items": "tmp_battle_items",
-        "Run": "tmp_battle_exit"
-      },
+      ChoiceGameEvent.generateChoiceMap("battle", {
+        "Fight": [fight],
+        "Powers": [fight],
+        "Items": [items],
+        "Run": [exit]
+      }),
       15, 11, 5, 5
     );
     main.remove = false;
-    World.gameEventChains["tmp_battle_main"] = [main];
     
     // go back to the main screen from the fight screen
     fight.cancelEvent = main;
-    
-    World.gameEventChains["tmp_battle_fight"] = [fight];
   }
   
   void start() {
     Main.inBattle = true;
-    World.gameEventChains["tmp_battle_main"][0].trigger(this);
+    main.trigger(this);
   }
   
   void attack(Battler user, int attackNum) {
@@ -145,7 +134,7 @@ class Battle implements InteractableInterface {
     
     Function callback = () {
       Gui.clear();
-      World.gameEventChains["tmp_battle_main"][0].trigger(this);
+      main.trigger(this);
     };
     
     // TODO: enemy decide action
@@ -230,7 +219,7 @@ class Battle implements InteractableInterface {
   
   void fadeOutExit() {
     Gui.fadeDarkAction(() {
-      World.gameEventChains["tmp_battle_exit"][0].trigger(this);
+      exit.trigger(this);
     });
   }
   
