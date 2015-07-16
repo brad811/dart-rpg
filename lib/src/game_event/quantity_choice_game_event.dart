@@ -19,9 +19,9 @@ class QuantityChoiceGameEvent extends ChoiceGameEvent implements InputHandler {
     for(int i=max; i>=min; i--) {
       List<GameEvent> events = [new GameEvent((_) { callback(i); })];
       
-      World.gameEventChains["tmp_choice_${i}"] = events;
+      World.gameEventChains["____tmp_quantity_choice_${i}"] = events;
       
-      this.choiceGameEventChains[i.toString()] = "tmp_choice_${i}";
+      this.choiceGameEventChains[i.toString()] = "____tmp_quantity_choice_${i}";
     }
     
     this.posX = 10;

@@ -88,7 +88,6 @@ class Main {
       world = new World(() {
         focusObject = player;
         timeScale = 1.0;
-        GuiStartMenu.init();
         tick();
       });
     };

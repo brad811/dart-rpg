@@ -8,7 +8,6 @@ import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
-import 'package:dart_rpg/src/world.dart';
 
 class GuiItemsMenu {
   static final double
@@ -105,21 +104,18 @@ class GuiItemsMenu {
       }
     });
     
-    Map<String, String> itemChoices = new Map<String, String>();
+    Map<String, List<GameEvent>> itemChoices = new Map<String, List<GameEvent>>();
     
     int i = 0;
     items.forEach((String key, List<GameEvent> chain) {
-      String tempGameEventChainName = "tmp_item_choice_${i}";
-      
-      World.gameEventChains[tempGameEventChainName] = chain;
-      
-      itemChoices[key] = tempGameEventChainName;
+      itemChoices[key] = chain;
       
       i += 1;
     });
     
     itemChoice = new ChoiceGameEvent.custom(
-        Main.player, itemChoices,
+        Main.player,
+        ChoiceGameEvent.generateChoiceMap("start_menu_items", itemChoices),
         0, 0,
         10, 10,
         cancelEvent: onCancel,

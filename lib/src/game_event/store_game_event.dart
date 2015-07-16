@@ -8,7 +8,6 @@ import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
-import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
@@ -47,20 +46,23 @@ class StoreGameEvent extends GameEvent {
                 GuiItemsMenu.trigger(character, itemPurchaseCallback, true, character);
               }).trigger(character);
             });
-            World.gameEventChains["tmp_store_purchase_confirm"] = [purchaseConfirm];
             
             GameEvent purchaseCancel = new GameEvent((_) {
               Gui.clear();
               GuiItemsMenu.trigger(character, itemPurchaseCallback, true, character);
             });
-            World.gameEventChains["tmp_store_purchase_cancel"] = [purchaseCancel];
             
             // show a confirmation message before completing purchase
             new TextGameEvent.choice(237, "Buy $quantity of ${item.name} for \$${item.basePrice * quantity}?",
-              new ChoiceGameEvent({
-                "Yes": "tmp_store_purchase_confirm",
-                "No": "tmp_store_purchase_cancel"
-              })
+              new ChoiceGameEvent(
+                ChoiceGameEvent.generateChoiceMap(
+                  "store_purchase",
+                  {
+                    "Yes": [purchaseConfirm],
+                    "No": [purchaseCancel]
+                  }
+                )
+              )
             ).trigger(character);
           },
           cancelEvent: new GameEvent((_) { // onCancel event
