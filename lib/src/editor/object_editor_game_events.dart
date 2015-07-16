@@ -9,6 +9,7 @@ import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/battle_game_event.dart';
+import 'package:dart_rpg/src/game_event/chain_game_event.dart';
 import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/fade_game_event.dart';
 import 'package:dart_rpg/src/game_event/heal_game_event.dart';
@@ -18,6 +19,9 @@ import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 import 'editor.dart';
 import 'object_editor.dart';
+
+// TODO: warp game event
+// TODO: choice game event
 
 class ObjectEditorGameEvents {
   static List<String> advancedTabs = ["game_event_chain_game_events"];
@@ -225,6 +229,8 @@ class ObjectEditorGameEvents {
       return [];
     } else if(gameEvent is BattleGameEvent) {
       return [];
+    } else if(gameEvent is ChainGameEvent) {
+      return ["game_event_chain"];
     } else {
       return [];
     }
@@ -273,6 +279,12 @@ class ObjectEditorGameEvents {
       BattleGameEvent battleGameEvent = new BattleGameEvent();
       
       return battleGameEvent;
+    } else if(gameEventType == "chain") {
+      ChainGameEvent chainGameEvent = new ChainGameEvent(
+          Editor.getSelectInputStringValue("#${prefix}_game_event_chain")
+        );
+      
+      return chainGameEvent;
     } else {
       return null;
     }
@@ -303,6 +315,9 @@ class ObjectEditorGameEvents {
       gameEventJson["type"] = "store";
     } else if(gameEvent is BattleGameEvent) {
       gameEventJson["type"] = "battle";
+    } else if(gameEvent is ChainGameEvent) {
+      gameEventJson["type"] = "chain";
+      gameEventJson["game_event_chain"] = gameEvent.gameEventChain;
     }
     
     return gameEventJson;
@@ -322,7 +337,7 @@ class ObjectEditorGameEvents {
     
     String paramsHtml = "";
     
-    List<String> gameEventTypes = ["text", "move", "delay", "fade", "heal", "store", "battle", "warp"];
+    List<String> gameEventTypes = ["text", "move", "delay", "fade", "heal", "store", "battle", "chain", "warp"];
     for(int k=0; k<gameEventTypes.length; k++) {
       String selectedText = "";
       if(gameEventTypes[k] == "text" && gameEvent is TextGameEvent) {
@@ -346,6 +361,9 @@ class ObjectEditorGameEvents {
       } else if(gameEventTypes[k] == "battle" && gameEvent is BattleGameEvent) {
         selectedText = "selected='selected'";
         paramsHtml = ObjectEditorGameEvents.buildBattleGameEventParamsHtml(gameEvent, prefix, readOnly);
+      } else if(gameEventTypes[k] == "chain" && gameEvent is ChainGameEvent) {
+        selectedText = "selected='selected'";
+        paramsHtml = ObjectEditorGameEvents.buildChainGameEventParamsHtml(gameEvent, prefix, readOnly);
       }
       
       gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
@@ -508,6 +526,37 @@ class ObjectEditorGameEvents {
   
   static String buildBattleGameEventParamsHtml(BattleGameEvent battleGameEvent, String prefix, bool readOnly) {
     String html = "";
+    
+    return html;
+  }
+  
+  static String buildChainGameEventParamsHtml(ChainGameEvent chainGameEvent, String prefix, bool readOnly) {
+    String html = "";
+    
+    String disabledString = "";
+    if(readOnly) {
+      disabledString = "disabled='disabled' ";
+    }
+    
+    html += "<table>";
+    html += "  <tr><td>Game Event Chain</td></tr>";
+    html += "  <tr>";
+    
+    // game event chain
+    html += "<td><select id='${prefix}_game_event_chain' ${disabledString}>";
+    World.gameEventChains.keys.forEach((String key) {
+      html += "<option value='${key}'";
+      if(chainGameEvent.gameEventChain == key) {
+        html += " selected";
+      }
+      
+      html += ">${key}</option>";
+    });
+    
+    html += "</select></td>";
+    
+    html += "  </tr>";
+    html += "</table>";
     
     return html;
   }

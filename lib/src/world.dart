@@ -22,6 +22,7 @@ import 'package:dart_rpg/src/warp_tile.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/battle_game_event.dart';
+import 'package:dart_rpg/src/game_event/chain_game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/fade_game_event.dart';
@@ -437,6 +438,12 @@ class World {
           BattleGameEvent battleGameEvent = new BattleGameEvent();
           
           gameEventChain.add(battleGameEvent);
+        } else if(gameEvents[i]["type"] == "chain") {
+          ChainGameEvent chainGameEvent = new ChainGameEvent(
+              gameEvents[i]["game_event_chain"]
+            );
+          
+          gameEventChain.add(chainGameEvent);
         }
         
         World.gameEventChains[key] = gameEventChain;
