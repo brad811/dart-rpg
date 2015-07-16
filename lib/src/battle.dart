@@ -4,26 +4,26 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/battler.dart';
-import 'package:dart_rpg/src/game_event/choice_game_event.dart';
-import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 import 'package:dart_rpg/src/font.dart';
-import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
-import 'package:dart_rpg/src/game_event/text_game_event.dart';
 import 'package:dart_rpg/src/tile.dart';
+import 'package:dart_rpg/src/world.dart';
+
+import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/choice_game_event.dart';
+import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
+import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class Battle implements InteractableInterface {
   String gameEventChain;
   List<List<Tile>> tiles = [];
   
-  ChoiceGameEvent main, fight, powers, run;
-  GameEvent items;
-  GameEvent exit;
+  //GameEvent exit;
   Battler friendly, enemy;
   Sprite friendlySprite, enemySprite;
   
@@ -43,7 +43,7 @@ class Battle implements InteractableInterface {
       }
     }
     
-    exit = new GameEvent((callback) {
+    GameEvent exit = new GameEvent((callback) {
       Gui.clear();
       Main.inBattle = false;
       
@@ -54,72 +54,90 @@ class Battle implements InteractableInterface {
       }
     });
     
-    Map<String, List<GameEvent>> friendlyAttackMap = new Map<String, List<GameEvent>>();
+    World.gameEventChains["tmp_battle_exit"] = [exit];
+    
+    Map<String, String> attackGameEventChains = new Map<String, String>();
     for(int i=0; i<friendly.attacks.length; i++) {
-      friendlyAttackMap.putIfAbsent(
-        friendly.attackNames[i], () { return [new GameEvent((callback) { attack(friendly, i); })]; }
-      );
+      // make a temp game event chain for this attack
+      String tmpGameEventChainName = "tmp_friendly_attack_${i}";
+      
+      // create a game event that uses the current attack
+      List<GameEvent> attackGameEventChain = [new GameEvent((callback) { attack(friendly, i); })];
+      
+      // add the game event to the world's list of game event chains
+      World.gameEventChains[tmpGameEventChainName] = attackGameEventChain;
+      
+      // add the generated game event chain name to the options in the choice game event
+      attackGameEventChains[friendly.attackNames.elementAt(i)] = tmpGameEventChainName;
     }
     
-    fight = new ChoiceGameEvent.custom(
+    ChoiceGameEvent fight = new ChoiceGameEvent.custom(
       this,
-      friendlyAttackMap,
+      attackGameEventChains,
       5, 11, 10, 5
     );
     fight.remove = true;
     
     Function itemsConfirm = (Item selectedItem) {
+      GameEvent itemUseConfirm = new GameEvent((Function callback) {
+        TextGameEvent text = selectedItem.use(friendly);
+        
+        // TODO: only show health change if health-changing item was used?
+        Gui.clear();
+        showHealthChange(friendly, () {
+          text.callback = () {
+            attack(friendly, -1);
+          };
+          
+          text.trigger(this);
+        });
+      });
+      World.gameEventChains["tmp_battle_item_use_confirm"] = [itemUseConfirm];
+      
       Gui.clear();
       if(selectedItem != null) {
         new TextGameEvent.choice(237, "Use 1 ${selectedItem.name}?",
+            // TODO: make sure this is right
           new ChoiceGameEvent({
-            "Yes": [new GameEvent((Function callback) {
-            TextGameEvent text = selectedItem.use(friendly);
-            
-            // TODO: only show health change if health-changing item was used?
-            Gui.clear();
-            showHealthChange(friendly, () {
-              text.callback = () {
-                attack(friendly, -1);
-              };
-              
-              text.trigger(this);
-            });
-           })],
-            "No": []
+            "Yes": "tmp_battle_item_use_confirm",
+            "No": ""
           })
         ).trigger(this);
       } else {
-        main.trigger(this);
+        World.gameEventChains["tmp_battle_main"][0].trigger(this);
       }
     };
     
-    items = new GameEvent((Function callback) {
+    GameEvent items = new GameEvent((Function callback) {
       Gui.clear();
       GuiItemsMenu.trigger(Main.player, itemsConfirm);
     });
+    World.gameEventChains["tmp_battle_items"] = [items];
     
     // TODO: make it so that some battles cannot be run from
     // TODO: make running possibly fail
-    main = new ChoiceGameEvent.custom(
+    ChoiceGameEvent main = new ChoiceGameEvent.custom(
       this,
       {
-        "Fight": [fight],
-        "Powers": [fight],
-        "Items": [items],
-        "Run": [exit]
+        "Fight": "tmp_battle_fight",
+        "Powers": "tmp_battle_fight",
+        "Items": "tmp_battle_items",
+        "Run": "tmp_battle_exit"
       },
       15, 11, 5, 5
     );
     main.remove = false;
+    World.gameEventChains["tmp_battle_main"] = [main];
     
     // go back to the main screen from the fight screen
     fight.cancelEvent = main;
+    
+    World.gameEventChains["tmp_battle_fight"] = [fight];
   }
   
   void start() {
     Main.inBattle = true;
-    main.trigger(this);
+    World.gameEventChains["tmp_battle_main"][0].trigger(this);
   }
   
   void attack(Battler user, int attackNum) {
@@ -127,7 +145,7 @@ class Battle implements InteractableInterface {
     
     Function callback = () {
       Gui.clear();
-      main.trigger(this);
+      World.gameEventChains["tmp_battle_main"][0].trigger(this);
     };
     
     // TODO: enemy decide action
@@ -212,7 +230,7 @@ class Battle implements InteractableInterface {
   
   void fadeOutExit() {
     Gui.fadeDarkAction(() {
-      exit.trigger(this);
+      World.gameEventChains["tmp_battle_exit"][0].trigger(this);
     });
   }
   

@@ -26,14 +26,18 @@ class Inventory {
   Item removeItem(String itemName, [int quantity = 1]) {
     if(itemName == null || itemName.length == 0)
       return null;
+    
+    Item item = null;
 
     if(itemStacks.containsKey(itemName)) {
+      item = itemStacks[itemName].item;
+      
       itemStacks[itemName].quantity -= quantity;
       if(itemStacks[itemName].quantity <= 0) {
         itemStacks.remove(itemName);
       }
       
-      return itemStacks[itemName].item;
+      return item;
     }
     
     // TODO: handle no more items left differently?

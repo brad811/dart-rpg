@@ -17,6 +17,6 @@ class Item {
   ]);
   
   TextGameEvent use(Battler target) {
-    return null;
+    return new TextGameEvent(240, "The item had no effect!");
   }
 }

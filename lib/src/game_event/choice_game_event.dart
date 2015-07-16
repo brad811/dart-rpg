@@ -8,10 +8,11 @@ import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/world.dart';
 
 class ChoiceGameEvent extends GameEvent implements InputHandler {
   InteractableInterface interactable;
-  final Map<String, List<GameEvent>> choices;
+  final Map<String, String> choiceGameEventChains;
   GameEvent cancelEvent;
   GameEvent onChangeEvent;
   Function window;
@@ -27,11 +28,11 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     sizeX = 3,
     sizeY = 2;
   
-  ChoiceGameEvent(this.choices, {this.cancelEvent, this.onChangeEvent}) : super() {
+  ChoiceGameEvent(this.choiceGameEventChains, {this.cancelEvent, this.onChangeEvent}) : super() {
     int maxLength = 0;
-    for(int i=0; i<choices.keys.toList().length; i++) {
-      if(choices.keys.toList()[i].length > maxLength)
-        maxLength = choices.keys.toList()[i].length;
+    for(int i=0; i<choiceGameEventChains.keys.toList().length; i++) {
+      if(choiceGameEventChains.keys.toList()[i].length > maxLength)
+        maxLength = choiceGameEventChains.keys.toList()[i].length;
     }
     
     addWidth = ((maxLength - 3) / 2).round();
@@ -39,10 +40,10 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
   
   factory ChoiceGameEvent.custom(
       InteractableInterface interactable,
-      Map<String, List<GameEvent>> choices,
+      Map<String, String> choiceGameEventChains,
       int posX, int posY, int sizeX, int sizeY, {GameEvent cancelEvent, GameEvent onChangeEvent}) {
     ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(
-        choices,
+        choiceGameEventChains,
         cancelEvent: cancelEvent,
         onChangeEvent: onChangeEvent
       );
@@ -62,7 +63,7 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     Main.focusObject = this;
     
     // reverse the list so they get rendered in order
-    List<String> myChoices = choices.keys.toList().reversed.toList();
+    List<String> myChoices = choiceGameEventChains.keys.toList().reversed.toList();
     
     window = () {
       if(isCustom) {
@@ -109,14 +110,14 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     if(keyCodes.contains(Input.UP)) {
       curChoice--;
       if(curChoice < 0) {
-        curChoice = choices.keys.toList().length - 1;
+        curChoice = choiceGameEventChains.keys.toList().length - 1;
       }
       
       if(onChangeEvent != null)
         onChangeEvent.trigger(interactable);
     } else if(keyCodes.contains(Input.DOWN)) {
       curChoice++;
-      if(curChoice > choices.keys.toList().length - 1) {
+      if(curChoice > choiceGameEventChains.keys.toList().length - 1) {
         curChoice = 0;
       }
       
@@ -126,7 +127,9 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
       if(remove)
         Gui.removeWindow(window);
       
-      Interactable.chainGameEvents(interactable, choices.values.toList()[curChoice]).trigger(interactable);
+      List<GameEvent> choice = World.gameEventChains[choiceGameEventChains.values.toList()[curChoice]];
+      
+      Interactable.chainGameEvents(interactable, choice).trigger(interactable);
     } else if(keyCodes.contains(Input.BACK) && cancelEvent != null) {
       Gui.removeWindow(window);
       

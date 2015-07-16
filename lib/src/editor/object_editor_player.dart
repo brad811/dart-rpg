@@ -161,7 +161,7 @@ class ObjectEditorPlayer {
     
     if(e.target is TextInputElement) {
       TextInputElement target = e.target as TextInputElement;
-      if(target.id.contains("player_level") || target.id.contains("player_money")) {
+      if(target.id.contains("player_battler_level") || target.id.contains("player_money")) {
         // enforce number format
         int selectionStart = (e.target as TextInputElement).selectionStart;
         target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
@@ -172,7 +172,7 @@ class ObjectEditorPlayer {
     Main.player.battler = new Battler(
       Editor.getTextInputStringValue('#player_name'),
       World.battlerTypes[battlerType],
-      Editor.getTextInputIntValue('#player_level', 2),
+      Editor.getTextInputIntValue('#player_battler_level', 2),
       World.battlerTypes[battlerType].levelAttacks.values.toList()
     );
     

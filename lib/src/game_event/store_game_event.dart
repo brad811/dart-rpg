@@ -8,6 +8,7 @@ import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
@@ -35,24 +36,30 @@ class StoreGameEvent extends GameEvent {
           );
         new QuantityChoiceGameEvent(1, max,
           callback: (int quantity) {
+            GameEvent purchaseConfirm = new GameEvent((_) {
+              Main.player.inventory.money -= item.basePrice * quantity;
+              character.inventory.money += item.basePrice * quantity;
+              character.inventory.removeItem(item.name, quantity);
+              Main.player.inventory.addItem(item, quantity);
+              
+              new TextGameEvent(237, "Thank you! Here you go.", () {
+                Gui.clear();
+                GuiItemsMenu.trigger(character, itemPurchaseCallback, true, character);
+              }).trigger(character);
+            });
+            World.gameEventChains["tmp_store_purchase_confirm"] = [purchaseConfirm];
+            
+            GameEvent purchaseCancel = new GameEvent((_) {
+              Gui.clear();
+              GuiItemsMenu.trigger(character, itemPurchaseCallback, true, character);
+            });
+            World.gameEventChains["tmp_store_purchase_cancel"] = [purchaseCancel];
+            
             // show a confirmation message before completing purchase
             new TextGameEvent.choice(237, "Buy $quantity of ${item.name} for \$${item.basePrice * quantity}?",
               new ChoiceGameEvent({
-                "Yes": [new GameEvent((_) {
-                  Main.player.inventory.money -= item.basePrice * quantity;
-                  character.inventory.money += item.basePrice * quantity;
-                  character.inventory.removeItem(item.name, quantity);
-                  Main.player.inventory.addItem(item, quantity);
-                  
-                  new TextGameEvent(237, "Thank you! Here you go.", () {
-                    Gui.clear();
-                    GuiItemsMenu.trigger(character, itemPurchaseCallback, true, character);
-                  }).trigger(character);
-                })],
-                "No": [new GameEvent((_) {
-                  Gui.clear();
-                  GuiItemsMenu.trigger(character, itemPurchaseCallback, true, character);
-                })]
+                "Yes": "tmp_store_purchase_confirm",
+                "No": "tmp_store_purchase_cancel"
               })
             ).trigger(character);
           },

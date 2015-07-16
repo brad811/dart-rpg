@@ -10,6 +10,7 @@ import 'package:dart_rpg/src/world.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/battle_game_event.dart';
 import 'package:dart_rpg/src/game_event/chain_game_event.dart';
+import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/fade_game_event.dart';
 import 'package:dart_rpg/src/game_event/heal_game_event.dart';
@@ -231,6 +232,8 @@ class ObjectEditorGameEvents {
       return [];
     } else if(gameEvent is ChainGameEvent) {
       return ["game_event_chain"];
+    } else if(gameEvent is ChoiceGameEvent) {
+      return ["choices", "cancel_event"];
     } else {
       return [];
     }
@@ -285,6 +288,13 @@ class ObjectEditorGameEvents {
         );
       
       return chainGameEvent;
+    } else if(gameEventType == "choice") {
+      // TODO: get choices
+      ChoiceGameEvent choiceGameevent = new ChoiceGameEvent(
+          {}
+        );
+      
+      return choiceGameevent;
     } else {
       return null;
     }
@@ -318,6 +328,11 @@ class ObjectEditorGameEvents {
     } else if(gameEvent is ChainGameEvent) {
       gameEventJson["type"] = "chain";
       gameEventJson["game_event_chain"] = gameEvent.gameEventChain;
+    } else if(gameEvent is ChoiceGameEvent) {
+      // TODO
+      gameEventJson["type"] = "choice";
+      //gameEventJson["choices"] = gameEvent.choices;
+      //gameEventJson["cancel_event"] = gameEvent.gameEventChain;
     }
     
     return gameEventJson;
@@ -337,7 +352,7 @@ class ObjectEditorGameEvents {
     
     String paramsHtml = "";
     
-    List<String> gameEventTypes = ["text", "move", "delay", "fade", "heal", "store", "battle", "chain", "warp"];
+    List<String> gameEventTypes = ["text", "move", "delay", "fade", "heal", "store", "battle", "chain", "choice", "warp"];
     for(int k=0; k<gameEventTypes.length; k++) {
       String selectedText = "";
       if(gameEventTypes[k] == "text" && gameEvent is TextGameEvent) {
@@ -364,6 +379,9 @@ class ObjectEditorGameEvents {
       } else if(gameEventTypes[k] == "chain" && gameEvent is ChainGameEvent) {
         selectedText = "selected='selected'";
         paramsHtml = ObjectEditorGameEvents.buildChainGameEventParamsHtml(gameEvent, prefix, readOnly);
+      } else if(gameEventTypes[k] == "choice" && gameEvent is ChoiceGameEvent) {
+        selectedText = "selected='selected'";
+        paramsHtml = ObjectEditorGameEvents.buildChoiceGameEventParamsHtml(gameEvent, prefix, readOnly);
       }
       
       gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
@@ -557,6 +575,13 @@ class ObjectEditorGameEvents {
     
     html += "  </tr>";
     html += "</table>";
+    
+    return html;
+  }
+  
+  static String buildChoiceGameEventParamsHtml(ChoiceGameEvent choiceGameEvent, String prefix, bool readOnly) {
+    // TODO
+    String html = "";
     
     return html;
   }

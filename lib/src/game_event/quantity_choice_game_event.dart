@@ -7,31 +7,35 @@ import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/world.dart';
 
 class QuantityChoiceGameEvent extends ChoiceGameEvent implements InputHandler {
   int price = -1;
   
   QuantityChoiceGameEvent(int min, int max,
       {Function callback, GameEvent cancelEvent, GameEvent onChangeEvent, this.price})
-      : super(new Map<String, List<GameEvent>>(),
+      : super(new Map<String, String>(),
           cancelEvent: cancelEvent, onChangeEvent: onChangeEvent) {
     for(int i=max; i>=min; i--) {
       List<GameEvent> events = [new GameEvent((_) { callback(i); })];
-      this.choices.addAll({i.toString(): events});
+      
+      World.gameEventChains["tmp_choice_${i}"] = events;
+      
+      this.choiceGameEventChains[i.toString()] = "tmp_choice_${i}";
     }
     
     this.posX = 10;
     this.posY = 10;
     this.sizeX = 10;
     this.sizeY = 2;
-    this.curChoice = this.choices.length - 1;
+    this.curChoice = this.choiceGameEventChains.keys.length - 1;
   }
   
   void trigger(InteractableInterface interactable) {
     Main.focusObject = this;
     
     window = () {
-      int curChoiceValue = int.parse(choices.keys.toList().elementAt(curChoice));
+      int curChoiceValue = int.parse(choiceGameEventChains.keys.toList().elementAt(curChoice));
       
       // show the currently selected quantity
       Gui.renderWindow(
@@ -42,7 +46,7 @@ class QuantityChoiceGameEvent extends ChoiceGameEvent implements InputHandler {
       Font.renderStaticText(
         posX*2 + 14.0,
         posY*2 + 1.75,
-        choices.keys.toList().elementAt(curChoice)
+        choiceGameEventChains.keys.toList().elementAt(curChoice)
       );
       
       Font.renderStaticText(
