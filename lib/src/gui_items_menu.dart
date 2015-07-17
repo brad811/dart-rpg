@@ -104,18 +104,9 @@ class GuiItemsMenu {
       }
     });
     
-    Map<String, List<GameEvent>> itemChoices = new Map<String, List<GameEvent>>();
-    
-    int i = 0;
-    items.forEach((String key, List<GameEvent> chain) {
-      itemChoices[key] = chain;
-      
-      i += 1;
-    });
-    
     itemChoice = new ChoiceGameEvent.custom(
         Main.player,
-        ChoiceGameEvent.generateChoiceMap("start_menu_items", itemChoices),
+        ChoiceGameEvent.generateChoiceMap("start_menu_items", items),
         0, 0,
         10, 10,
         cancelEvent: onCancel,

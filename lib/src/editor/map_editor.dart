@@ -79,7 +79,7 @@ class MapEditor {
       }
     }
     
-    for(int layer in World.layers) {
+    for(int i=0; i<World.layers.length; i++) {
       layerVisible.add(true);
     }
     

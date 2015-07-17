@@ -22,7 +22,6 @@ import 'editor.dart';
 import 'object_editor.dart';
 
 // TODO: warp game event
-// TODO: choice game event
 
 class ObjectEditorGameEvents {
   static List<String> advancedTabs = ["game_event_chain_game_events"];

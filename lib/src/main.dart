@@ -6,7 +6,6 @@ import 'dart:html';
 import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/gui.dart';
-import 'package:dart_rpg/src/gui_start_menu.dart';
 import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/player.dart';

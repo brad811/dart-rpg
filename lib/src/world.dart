@@ -68,55 +68,6 @@ class World {
       // move to the start map
       curMap = startMap;
       
-      // TODO: move characters to editor
-      // Character
-      Character someKid = addCharacter(
-        "main",
-        new Character(
-          Tile.PLAYER,
-          237,
-          11, 15,
-          layer: LAYER_BELOW
-        )
-      );
-      
-      someKid.direction = Character.RIGHT;
-      
-      List<GameEvent> characterGameEvents = [];
-      characterGameEvents = [
-        new TextGameEvent(237, "I'm like a kid, right?"),
-        new GameEvent((callback) {
-          Main.player.inputEnabled = false;
-          chainCharacterMovement(
-            someKid,
-            [Character.LEFT, Character.LEFT, Character.LEFT,
-              Character.RIGHT, Character.RIGHT, Character.RIGHT],
-            () {
-              Main.player.inputEnabled = true;
-              callback();
-            }
-          );
-        }),
-        new TextGameEvent.choice(237, "See?",
-          new ChoiceGameEvent({
-            "Yes": [
-              new TextGameEvent(231, "That's fine."),
-              new TextGameEvent(237, "If you say so!")
-            ],
-            "No": [
-              new TextGameEvent(231, "I hate you."),
-              new TextGameEvent(237, "::sniff sniff:: Meanie!"),
-              new GameEvent((callback) {
-                // TODO: make it stay here?
-                //someKid.gameEvents = characterGameEvents;
-              })
-            ]
-          })
-        )
-      ];
-      
-      //someKid.gameEvents = characterGameEvents;
-      
       callback();
     });
   }
