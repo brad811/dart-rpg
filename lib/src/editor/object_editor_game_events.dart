@@ -110,6 +110,18 @@ class ObjectEditorGameEvents {
         gameEventAttrs.addAll(ObjectEditorGameEvents.getAttributes(gameEventChain[j]));
         
         Editor.attachListeners(listeners, "game_event_chain_${i}_game_event_${j}", gameEventAttrs, onInputChange);
+        
+        if(gameEventChain.elementAt(j) is ChoiceGameEvent) {
+          querySelector("#game_event_chain_${i}_game_event_${j}_add_choice").onClick.listen((MouseEvent e) {
+            if(World.gameEventChains.keys.length > 0) {
+              ChoiceGameEvent choiceGameEvent = gameEventChain.elementAt(j) as ChoiceGameEvent;
+              if(choiceGameEvent.choiceGameEventChains["New choice"] == null) {
+                choiceGameEvent.choiceGameEventChains["New choice"] = World.gameEventChains.keys.first;
+                Editor.update();
+              }
+            }
+          });
+        }
       }
     }
   }
@@ -233,7 +245,15 @@ class ObjectEditorGameEvents {
     } else if(gameEvent is ChainGameEvent) {
       return ["game_event_chain"];
     } else if(gameEvent is ChoiceGameEvent) {
-      return ["choices", "cancel_event"];
+      //TODO: List<String> attrs = ["cancel_event"];
+      List<String> attrs = [];
+      
+      for(int i=0; i<gameEvent.choiceGameEventChains.keys.length; i++) {
+        attrs.add("choice_name_${i}");
+        attrs.add("chain_name_${i}");
+      }
+      
+      return attrs;
     } else {
       return [];
     }
@@ -289,12 +309,17 @@ class ObjectEditorGameEvents {
       
       return chainGameEvent;
     } else if(gameEventType == "choice") {
-      // TODO: get choices
-      ChoiceGameEvent choiceGameevent = new ChoiceGameEvent(
-          {}
-        );
+      Map<String, String> choices = new Map<String, String>();
+      for(int i=0; querySelector("#${prefix}_choice_name_${i}") != null; i++) {
+        String choiceName = Editor.getTextInputStringValue("#${prefix}_choice_name_${i}");
+        String chainName = Editor.getSelectInputStringValue("#${prefix}_chain_name_${i}");
+        
+        choices[choiceName] = chainName;
+      }
       
-      return choiceGameevent;
+      ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(choices);
+      
+      return choiceGameEvent;
     } else {
       return null;
     }
@@ -329,10 +354,9 @@ class ObjectEditorGameEvents {
       gameEventJson["type"] = "chain";
       gameEventJson["game_event_chain"] = gameEvent.gameEventChain;
     } else if(gameEvent is ChoiceGameEvent) {
-      // TODO
       gameEventJson["type"] = "choice";
-      //gameEventJson["choices"] = gameEvent.choices;
-      //gameEventJson["cancel_event"] = gameEvent.gameEventChain;
+      gameEventJson["choices"] = gameEvent.choiceGameEventChains;
+      gameEventJson["cancel_event"] = gameEvent.cancelEvent;
     }
     
     return gameEventJson;
@@ -580,8 +604,45 @@ class ObjectEditorGameEvents {
   }
   
   static String buildChoiceGameEventParamsHtml(ChoiceGameEvent choiceGameEvent, String prefix, bool readOnly) {
-    // TODO
     String html = "";
+    
+    String disabledString = "";
+    String readOnlyString = "";
+    if(readOnly) {
+      disabledString = "disabled='disabled' ";
+      readOnlyString = "readonly";
+    }
+    
+    html += "<table>";
+    html += "  <tr><td>Choice Name</td><td>Game Event Chain</td></tr>";
+    
+    int i = 0;
+    choiceGameEvent.choiceGameEventChains.forEach((String choiceName, String chainName) {
+      // choice name
+      html += "<tr><td>";
+      html += "<input type='text' id='${prefix}_choice_name_${i}' value='${choiceName}' ${readOnlyString} />";
+      html += "</td>";
+      
+      // game event chain
+      html += "<td><select id='${prefix}_chain_name_${i}' ${disabledString}>";
+      
+      World.gameEventChains.keys.forEach((String key) {
+        html += "<option value='${key}'";
+        if(chainName == key) {
+          html += " selected";
+        }
+        
+        html += ">${key}</option>";
+      });
+      
+      html += "</select></td></tr>";
+      
+      i += 1;
+    });
+    
+    html += "</table>";
+    
+    html += "<br /><button id='${prefix}_add_choice'>Add choice</button>";
     
     return html;
   }

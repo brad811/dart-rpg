@@ -444,6 +444,12 @@ class World {
             );
           
           gameEventChain.add(chainGameEvent);
+        } else if(gameEvents[i]["type"] == "choice") {
+          ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(
+              gameEvents[i]["choices"] as Map<String, String>
+            );
+          
+          gameEventChain.add(choiceGameEvent);
         }
         
         World.gameEventChains[key] = gameEventChain;
