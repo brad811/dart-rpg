@@ -93,28 +93,9 @@ class ObjectEditorCharacters {
       
       // when a row is clicked, set it as selected and highlight it
       Editor.attachButtonListener("#character_row_${i}", (Event e) {
-        selected = i;
-        
-        for(int j=0; j<World.characters.keys.length; j++) {
-          // un-highlight other character rows
-          querySelector("#character_row_${j}").classes.remove("selected");
-          
-          // hide the inventory items for other characters
-          querySelector("#character_${j}_inventory_table").classes.add("hidden");
-          querySelector("#character_${j}_game_event_chain_container").classes.add("hidden");
-          querySelector("#character_${j}_battle_container").classes.add("hidden");
+        if(querySelector("#character_row_${i}") != null) {
+          selectRow(i);
         }
-        
-        // hightlight the selected character row
-        querySelector("#character_row_${i}").classes.add("selected");
-        
-        // show the characters advanced area
-        querySelector("#characters_advanced").classes.remove("hidden");
-        
-        // show the advanced tables for the selected character
-        querySelector("#character_${i}_inventory_table").classes.remove("hidden");
-        querySelector("#character_${i}_game_event_chain_container").classes.remove("hidden");
-        querySelector("#character_${i}_battle_container").classes.remove("hidden");
       });
       
       Character character = World.characters.values.elementAt(i);
@@ -123,6 +104,31 @@ class ObjectEditorCharacters {
         Editor.attachInputListeners("character_${i}_inventory_${j}", ["item", "quantity"], onInputChange);
       }
     }
+  }
+  
+  static void selectRow(int i) {
+    selected = i;
+    
+    for(int j=0; j<World.characters.keys.length; j++) {
+      // un-highlight other character rows
+      querySelector("#character_row_${j}").classes.remove("selected");
+      
+      // hide the inventory items for other characters
+      querySelector("#character_${j}_inventory_table").classes.add("hidden");
+      querySelector("#character_${j}_game_event_chain_container").classes.add("hidden");
+      querySelector("#character_${j}_battle_container").classes.add("hidden");
+    }
+    
+    // hightlight the selected character row
+    querySelector("#character_row_${i}").classes.add("selected");
+    
+    // show the characters advanced area
+    querySelector("#characters_advanced").classes.remove("hidden");
+    
+    // show the advanced tables for the selected character
+    querySelector("#character_${i}_inventory_table").classes.remove("hidden");
+    querySelector("#character_${i}_game_event_chain_container").classes.remove("hidden");
+    querySelector("#character_${i}_battle_container").classes.remove("hidden");
   }
   
   static void buildMainHtml() {
@@ -237,15 +243,16 @@ class ObjectEditorCharacters {
       gameEventHtml += "<table id='character_${i}_game_event_table'>";
       gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
       
-      if(character.gameEventChain != null && character.gameEventChain != "") {
+      if(character.gameEventChain != null && character.gameEventChain != ""
+          && World.gameEventChains[character.gameEventChain] != null) {
         for(int j=0; j<World.gameEventChains[character.gameEventChain].length; j++) {
           gameEventHtml +=
-              ObjectEditorGameEvents.buildGameEventTableRowHtml(
-                  World.gameEventChains[character.gameEventChain][j],
-                  "character_${i}_game_event_${j}",
-                  j,
-                  readOnly: true
-                );
+            ObjectEditorGameEvents.buildGameEventTableRowHtml(
+              World.gameEventChains[character.gameEventChain][j],
+              "character_${i}_game_event_${j}",
+              j,
+              readOnly: true
+            );
         }
       }
       

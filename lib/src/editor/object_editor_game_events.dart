@@ -72,29 +72,18 @@ class ObjectEditorGameEvents {
     
     List<String> attrs = ["label"];
     
+    print("Update: ${World.gameEventChains.keys}");
+    
     for(int i=0; i<World.gameEventChains.keys.length; i++) {
       Editor.attachInputListeners("game_event_chain_${i}", attrs, onInputChange);
       
+      print("Forloop: ${World.gameEventChains.keys}");
+      
       // when a row is clicked, set it as selected and highlight it
       Editor.attachButtonListener("#game_event_chain_row_${i}", (Event e) {
-        selected = i;
-        
-        for(int j=0; j<World.gameEventChains.keys.length; j++) {
-          // un-highlight other game event chain rows
-          querySelector("#game_event_chain_row_${j}").classes.remove("selected");
-          
-          // hide the advanced tab tables for other game event chains
-          querySelector("#game_event_chain_${j}_game_event_table").classes.add("hidden");
+        if(querySelector("#game_event_chain_row_${i}") != null) {
+          selectRow(i);
         }
-        
-        // hightlight the selected game event chain row
-        querySelector("#game_event_chain_row_${i}").classes.add("selected");
-        
-        // show the game event chains advanced area
-        querySelector("#game_event_chains_advanced").classes.remove("hidden");
-        
-        // show the advanced tables for the selected game event chain
-        querySelector("#game_event_chain_${i}_game_event_table").classes.remove("hidden");
       });
       
       List<GameEvent> gameEventChain = World.gameEventChains.values.elementAt(i);
@@ -120,6 +109,30 @@ class ObjectEditorGameEvents {
         }
       }
     }
+  }
+  
+  static void selectRow(int i) {
+    selected = i;
+    
+    for(int j=0; j<World.gameEventChains.keys.length; j++) {
+      // un-highlight other game event chain rows
+      querySelector("#game_event_chain_row_${j}").classes.remove("selected");
+      
+      // hide the advanced tab tables for other game event chains
+      querySelector("#game_event_chain_${j}_game_event_table").classes.add("hidden");
+    }
+    
+    print("Listener: ${World.gameEventChains.keys}");
+    print("Div: #game_event_chain_row_${i}");
+    
+    // hightlight the selected game event chain row
+    querySelector("#game_event_chain_row_${i}").classes.add("selected");
+    
+    // show the game event chains advanced area
+    querySelector("#game_event_chains_advanced").classes.remove("hidden");
+    
+    // show the advanced tables for the selected game event chain
+    querySelector("#game_event_chain_${i}_game_event_table").classes.remove("hidden");
   }
   
   static void buildMainHtml() {
