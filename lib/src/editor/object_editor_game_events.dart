@@ -72,12 +72,8 @@ class ObjectEditorGameEvents {
     
     List<String> attrs = ["label"];
     
-    print("Update: ${World.gameEventChains.keys}");
-    
     for(int i=0; i<World.gameEventChains.keys.length; i++) {
       Editor.attachInputListeners("game_event_chain_${i}", attrs, onInputChange);
-      
-      print("Forloop: ${World.gameEventChains.keys}");
       
       // when a row is clicked, set it as selected and highlight it
       Editor.attachButtonListener("#game_event_chain_row_${i}", (Event e) {
@@ -121,9 +117,6 @@ class ObjectEditorGameEvents {
       // hide the advanced tab tables for other game event chains
       querySelector("#game_event_chain_${j}_game_event_table").classes.add("hidden");
     }
-    
-    print("Listener: ${World.gameEventChains.keys}");
-    print("Div: #game_event_chain_row_${i}");
     
     // hightlight the selected game event chain row
     querySelector("#game_event_chain_row_${i}").classes.add("selected");
