@@ -69,6 +69,8 @@ class MapEditorBattlers {
     battlersHtml += "</table>";
     querySelector("#battlers_container").setInnerHtml(battlersHtml);
     
+    setMapBattlerDeleteButtonListeners();
+    
     for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {
       Editor.attachInputListeners("map_battler_${i}", ["type", "level", "chance"], onInputChange);
     }
@@ -89,23 +91,17 @@ class MapEditorBattlers {
     Main.world.maps[Main.world.curMap].battlerChances = new List<BattlerChance>();
     for(int i=0; querySelector('#map_battler_${i}_type') != null; i++) {
       try {
-        String battlerTypeName = (querySelector('#map_battler_${i}_type') as SelectElement).value;
+        String battlerTypeName = Editor.getSelectInputStringValue('#map_battler_${i}_type');
+        int battlerTypeLevel = Editor.getTextInputIntValue('#map_battler_${i}_level', 1);
+        double battlerTypeChance = Editor.getTextInputDoubleValue('#map_battler_${i}_chance', 1.0);
         
-        int battlerTypeLevel;
-        try {
-          battlerTypeLevel = int.parse((querySelector('#map_battler_${i}_level') as InputElement).value);
-        } catch(e) {
-          battlerTypeLevel = 1;
-        }
+        Battler battler = new Battler(
+          null,
+          World.battlerTypes[battlerTypeName],
+          battlerTypeLevel,
+          World.battlerTypes[battlerTypeName].levelAttacks.values.toList()
+        );
         
-        double battlerTypeChance;
-        try {
-          battlerTypeChance = double.parse((querySelector('#map_battler_${i}_chance') as InputElement).value);
-        } catch(e) {
-          battlerTypeChance = 1.0;
-        }
-        
-        Battler battler = new Battler(null, World.battlerTypes[battlerTypeName], battlerTypeLevel, World.battlerTypes[battlerTypeName].levelAttacks.values.toList());
         BattlerChance battlerChance = new BattlerChance(battler, battlerTypeChance);
         Main.world.maps[Main.world.curMap].battlerChances.add(battlerChance);
       } catch(e) {
@@ -114,27 +110,15 @@ class MapEditorBattlers {
       }
     }
     
-    // TODO: perhaps move into base editor class
-    // If this gets moved into base, add "unique" flag
-    // that means the value does not get set to valueBefore
-    if(e.target is InputElement) {
-      // save the cursor location
-      InputElement target = e.target;
-      InputElement inputElement = querySelector('#' + target.id);
-      int position = inputElement.selectionStart;
-      String valueBefore = inputElement.value;
-      
-      // update everything
-      Editor.update();
-      
-      // restore the cursor position
-      inputElement = querySelector('#' + target.id);
-      inputElement.value = valueBefore;
-      inputElement.focus();
-      inputElement.setSelectionRange(position, position);
-    } else {
-      // update everything
-      Editor.update();
+    Editor.updateAndRetainValue(e);
+  }
+  
+  static void setMapBattlerDeleteButtonListeners() {
+    for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {
+      Editor.setListDeleteButtonListeners(
+        Main.world.maps[Main.world.curMap].battlerChances,
+        "map_battler"
+      );
     }
   }
   
