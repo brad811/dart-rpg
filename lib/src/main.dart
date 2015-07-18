@@ -12,6 +12,10 @@ import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
+// TODO: choice game event options box might be drawing too tall
+// TODO: clear gui when loading game json
+// TODO: if a text game event precedes a choice game event, link them together
+
 class Main {
   static final int
     canvasWidth = 640,
