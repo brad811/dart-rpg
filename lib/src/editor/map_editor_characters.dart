@@ -56,7 +56,7 @@ class MapEditorCharacters {
     String charactersHtml;
     charactersHtml = "<table class='editor_table'>"+
       "  <tr>"+
-      "    <td>Num</td><td>Type</td><td>X</td><td>Y</td><td>Layer</td><td>Direction</td><td>Solid</td>"+
+      "    <td>Num</td><td>Type</td><td>X</td><td>Y</td><td>Layer</td><td>Direction</td><td>Solid</td><td></td>"+
       "  </tr>";
     
     for(int i=0; i<characters[Main.world.curMap].length; i++) {
@@ -109,10 +109,14 @@ class MapEditorCharacters {
       }
       charactersHtml += "<td><input type='checkbox' id='map_character_${i}_solid' ${checkedHtml} /></td>";
       
+      charactersHtml += "<td><button id='delete_map_character_${i}'>Delete</button></td>";
+      
       charactersHtml += "</tr>";
     }
     charactersHtml += "</table>";
     querySelector("#map_characters_container").setInnerHtml(charactersHtml);
+    
+    setMapCharacterDeleteButtonListeners();
     
     for(int i=0; i<characters[Main.world.curMap].length; i++) {
       List<String> attrs = ["type", "map_x", "map_y", "layer", "direction", "solid"];
@@ -130,7 +134,6 @@ class MapEditorCharacters {
         characters[Main.world.curMap][i]["direction"] = Editor.getSelectInputIntValue("#map_character_${i}_direction", Character.DOWN);
         characters[Main.world.curMap][i]["solid"] = Editor.getCheckboxInputBoolValue("#map_character_${i}_solid");
         
-        // TODO: fix a bug involving this
         Character character = Main.world.maps[Main.world.curMap].characters[i];
         
         character.name = characters[Main.world.curMap][i]["type"];
@@ -148,6 +151,12 @@ class MapEditorCharacters {
     }
     
     Editor.updateAndRetainValue(e);
+  }
+  
+  static void setMapCharacterDeleteButtonListeners() {
+    for(int i=0; i<characters[Main.world.curMap].length; i++) {
+      Editor.setListDeleteButtonListeners(characters[Main.world.curMap], "map_character");
+    }
   }
   
   static void export(Map jsonMap, String key) {
