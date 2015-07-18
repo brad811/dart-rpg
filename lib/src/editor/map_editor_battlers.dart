@@ -1,6 +1,5 @@
 library dart_rpg.map_editor_battlers;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/battler.dart';
@@ -12,10 +11,8 @@ import 'package:dart_rpg/src/world.dart';
 import 'editor.dart';
 
 class MapEditorBattlers {
-  static Map<String, StreamSubscription> listeners = {};
-  
   static void setUp() {
-    querySelector("#add_battler_button").onClick.listen(addNewBattler);
+    Editor.attachButtonListener("#add_battler_button", addNewBattler);
   }
   
   static void addNewBattler(MouseEvent e) {
@@ -51,7 +48,7 @@ class MapEditorBattlers {
         "  <td>${i}</td>"+
         "  <td>";
       
-      battlersHtml += "<select id='map_battler_type_${i}'>";
+      battlersHtml += "<select id='map_battler_${i}_type'>";
       World.battlerTypes.forEach((String name, BattlerType battlerType) {
         battlersHtml += "<option value='${battlerType.name}'";
         if(Main.world.maps[Main.world.curMap].battlerChances[i].battler.name == name) {
@@ -64,8 +61,8 @@ class MapEditorBattlers {
       
       battlersHtml +=
         "  </td>"+
-        "  <td><input id='map_battler_level_${i}' type='text' value='${ Main.world.maps[Main.world.curMap].battlerChances[i].battler.level }' /></td>"+
-        "  <td><input id='map_battler_chance_${i}' type='text' value='${ Main.world.maps[Main.world.curMap].battlerChances[i].chance }' /> ${percentChance}%</td>"+
+        "  <td><input id='map_battler_${i}_level' type='text' value='${ Main.world.maps[Main.world.curMap].battlerChances[i].battler.level }' /></td>"+
+        "  <td><input id='map_battler_${i}_chance' type='text' value='${ Main.world.maps[Main.world.curMap].battlerChances[i].chance }' /> ${percentChance}%</td>"+
         "  <td><button id='delete_map_battler_${i}'>Delete</button></td>" +
         "</tr>";
     }
@@ -73,14 +70,7 @@ class MapEditorBattlers {
     querySelector("#battlers_container").setInnerHtml(battlersHtml);
     
     for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {
-      List<String> attrs = ["type", "level", "chance"];
-      for(String attr in attrs) {
-        if(listeners["#map_battler_${attr}_${i}"] != null)
-          listeners["#map_battler_${attr}_${i}"].cancel();
-        
-        listeners["#map_battler_${attr}_${i}"] = 
-            querySelector('#map_battler_${attr}_${i}').onInput.listen(onInputChange);
-      }
+      Editor.attachInputListeners("map_battler_${i}", ["type", "level", "chance"], onInputChange);
     }
   }
   
@@ -89,28 +79,28 @@ class MapEditorBattlers {
       InputElement target = e.target;
       
       // enforce number format
-      if(target.id.contains("map_battler_level_")) {
+      if(target.id.contains("_level")) {
         target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-      } else if(target.id.contains("map_battler_chance_")) {
+      } else if(target.id.contains("_chance")) {
         target.value = target.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
       }
     }
     
     Main.world.maps[Main.world.curMap].battlerChances = new List<BattlerChance>();
-    for(int i=0; querySelector('#map_battler_type_${i}') != null; i++) {
+    for(int i=0; querySelector('#map_battler_${i}_type') != null; i++) {
       try {
-        String battlerTypeName = (querySelector('#map_battler_type_${i}') as SelectElement).value;
+        String battlerTypeName = (querySelector('#map_battler_${i}_type') as SelectElement).value;
         
         int battlerTypeLevel;
         try {
-          battlerTypeLevel = int.parse((querySelector('#map_battler_level_${i}') as InputElement).value);
+          battlerTypeLevel = int.parse((querySelector('#map_battler_${i}_level') as InputElement).value);
         } catch(e) {
           battlerTypeLevel = 1;
         }
         
         double battlerTypeChance;
         try {
-          battlerTypeChance = double.parse((querySelector('#map_battler_chance_${i}') as InputElement).value);
+          battlerTypeChance = double.parse((querySelector('#map_battler_${i}_chance') as InputElement).value);
         } catch(e) {
           battlerTypeChance = 1.0;
         }

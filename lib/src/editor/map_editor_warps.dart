@@ -1,6 +1,5 @@
 library dart_rpg.map_editor_warps;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/main.dart';
@@ -14,10 +13,9 @@ import 'map_editor.dart';
 
 class MapEditorWarps {
   static Map<String, List<WarpTile>> warps = {};
-  static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
-    querySelector("#add_warp_button").onClick.listen(addNewWarp);
+    Editor.attachButtonListener("#add_warp_button", addNewWarp);
     
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
@@ -71,10 +69,10 @@ class MapEditorWarps {
       warpsHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input id='warps_posx_${i}' type='text' value='${ warps[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
-        "  <td><input id='warps_posy_${i}' type='text' value='${ warps[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
+        "  <td><input id='warp_${i}_posx' type='text' value='${ warps[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
+        "  <td><input id='warp_${i}_posy' type='text' value='${ warps[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
         "  <td>"+
-        "    <select id='warps_destMap_${i}'>";
+        "    <select id='warp_${i}_dest_map'>";
         
       for(String key in Main.world.maps.keys) {
         if(warps[Main.world.curMap][i].destMap == key)
@@ -86,8 +84,8 @@ class MapEditorWarps {
       warpsHtml +=
         "    </select>"+
         "  </td>"+
-        "  <td><input id='warps_destx_${i}' type='text' value='${ warps[Main.world.curMap][i].destX }' /></td>"+
-        "  <td><input id='warps_desty_${i}' type='text' value='${ warps[Main.world.curMap][i].destY }' /></td>"+
+        "  <td><input id='warp_${i}_dest_x' type='text' value='${ warps[Main.world.curMap][i].destX }' /></td>"+
+        "  <td><input id='warp_${i}_dest_y' type='text' value='${ warps[Main.world.curMap][i].destY }' /></td>"+
         "  <td><button id='delete_warp_${i}'>Delete</button></td>" +
         "</tr>";
     }
@@ -97,25 +95,18 @@ class MapEditorWarps {
     setWarpDeleteButtonListeners();
     
     for(int i=0; i<warps[Main.world.curMap].length; i++) {
-      List<String> attrs = ["posx", "posy", "destMap", "destx", "desty"];
-      for(String attr in attrs) {
-        if(listeners["#warps_${attr}_${i}"] != null)
-          listeners["#warps_${attr}_${i}"].cancel();
-        
-        listeners["#warps_${attr}_${i}"] = 
-            querySelector('#warps_${attr}_${i}').onInput.listen(onInputChange);
-      }
+      Editor.attachInputListeners("warp_${i}", ["posx", "posy", "dest_map", "dest_x", "dest_y"], onInputChange);
     }
   }
   
   static void onInputChange(Event e) {
     for(int i=0; i<warps[Main.world.curMap].length; i++) {
       try {
-        warps[Main.world.curMap][i].sprite.posX = double.parse((querySelector('#warps_posx_${i}') as InputElement).value);
-        warps[Main.world.curMap][i].sprite.posY = double.parse((querySelector('#warps_posy_${i}') as InputElement).value);
-        warps[Main.world.curMap][i].destMap = (querySelector('#warps_destMap_${i}') as SelectElement).value;
-        warps[Main.world.curMap][i].destX = int.parse((querySelector('#warps_destx_${i}') as InputElement).value);
-        warps[Main.world.curMap][i].destY = int.parse((querySelector('#warps_desty_${i}') as InputElement).value);
+        warps[Main.world.curMap][i].sprite.posX = double.parse((querySelector('#warp_${i}_posx') as InputElement).value);
+        warps[Main.world.curMap][i].sprite.posY = double.parse((querySelector('#warp_${i}_posy') as InputElement).value);
+        warps[Main.world.curMap][i].destMap = (querySelector('#warp_${i}_dest_map') as SelectElement).value;
+        warps[Main.world.curMap][i].destX = int.parse((querySelector('#warp_${i}_dest_x') as InputElement).value);
+        warps[Main.world.curMap][i].destY = int.parse((querySelector('#warp_${i}_dest_y') as InputElement).value);
       } catch(e) {
         // could not update this warp
       }
@@ -126,10 +117,7 @@ class MapEditorWarps {
   
   static void setWarpDeleteButtonListeners() {
     for(int i=0; i<warps[Main.world.curMap].length; i++) {
-      if(listeners["#delete_warp_${i}"] != null)
-        listeners["#delete_warp_${i}"].cancel();
-      
-      listeners["#delete_warp_${i}"] = querySelector("#delete_warp_${i}").onClick.listen((MouseEvent e) {
+      Editor.attachButtonListener("#delete_warp_${i}", (MouseEvent e) {
         bool confirm = window.confirm('Are you sure you would like to delete this warp?');
         if(confirm) {
           warps[Main.world.curMap].removeAt(i);

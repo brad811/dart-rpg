@@ -1,6 +1,5 @@
 library dart_rpg.map_editor_signs;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/main.dart';
@@ -14,10 +13,9 @@ import 'map_editor.dart';
 
 class MapEditorSigns {
   static Map<String, List<Sign>> signs = {};
-  static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
-    querySelector("#add_sign_button").onClick.listen(addNewSign);
+    Editor.attachButtonListener("#add_sign_button", addNewSign);
     
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
@@ -62,10 +60,10 @@ class MapEditorSigns {
       signsHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input id='signs_posx_${i}' type='text' value='${ signs[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
-        "  <td><input id='signs_posy_${i}' type='text' value='${ signs[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
-        "  <td><input id='signs_pic_${i}' type='text' value='${ signs[Main.world.curMap][i].textEvent.pictureSpriteId }' /></td>"+
-        "  <td><textarea id='signs_text_${i}' />${ signs[Main.world.curMap][i].textEvent.text }</textarea></td>"+
+        "  <td><input id='sign_${i}_posx' type='text' value='${ signs[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
+        "  <td><input id='sign_${i}_posy' type='text' value='${ signs[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
+        "  <td><input id='sign_${i}_pic' type='text' value='${ signs[Main.world.curMap][i].textEvent.pictureSpriteId }' /></td>"+
+        "  <td><textarea id='sign_${i}_text' />${ signs[Main.world.curMap][i].textEvent.text }</textarea></td>"+
         "  <td><button id='delete_sign_${i}'>Delete</button></td>" +
         "</tr>";
     }
@@ -75,14 +73,7 @@ class MapEditorSigns {
     setSignDeleteButtonListeners();
     
     for(int i=0; i<signs[Main.world.curMap].length; i++) {
-      List<String> attrs = ["posx", "posy", "pic", "text"];
-      for(String attr in attrs) {
-        if(listeners["#signs_${attr}_${i}"] != null)
-          listeners["#signs_${attr}_${i}"].cancel();
-        
-        listeners["#signs_${attr}_${i}"] = 
-            querySelector('#signs_${attr}_${i}').onInput.listen(onInputChange);
-      }
+      Editor.attachInputListeners("sign_${i}", ["posx", "posy", "pic", "text"], onInputChange);
     }
   }
   
@@ -93,11 +84,11 @@ class MapEditorSigns {
           false,
           new Sprite(
             0,
-            double.parse((querySelector('#signs_posx_${i}') as InputElement).value),
-            double.parse((querySelector('#signs_posy_${i}') as InputElement).value)
+            double.parse((querySelector('#sign_${i}_posx') as InputElement).value),
+            double.parse((querySelector('#sign_${i}_posy') as InputElement).value)
           ),
-          int.parse((querySelector('#signs_pic_${i}') as InputElement).value),
-          (querySelector('#signs_text_${i}') as TextAreaElement).value
+          int.parse((querySelector('#sign_${i}_pic') as InputElement).value),
+          (querySelector('#sign_${i}_text') as TextAreaElement).value
         );
       } catch(e) {
         // could not update this sign
@@ -109,10 +100,7 @@ class MapEditorSigns {
   
   static void setSignDeleteButtonListeners() {
     for(int i=0; i<signs[Main.world.curMap].length; i++) {
-      if(listeners["#delete_sign_${i}"] != null)
-        listeners["#delete_sign_${i}"].cancel();
-      
-      listeners["#delete_sign_${i}"] = querySelector("#delete_sign_${i}").onClick.listen((MouseEvent e) {
+      Editor.attachButtonListener("#delete_sign_${i}", (MouseEvent e) {
         bool confirm = window.confirm('Are you sure you would like to delete this sign?');
         if(confirm) {
           signs[Main.world.curMap].removeAt(i);

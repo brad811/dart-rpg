@@ -1,6 +1,5 @@
 library dart_rpg.map_editor_characters;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/character.dart';
@@ -13,10 +12,9 @@ import 'editor.dart';
 
 class MapEditorCharacters {
   static Map<String, List<Map<String, Object>>> characters = {};
-  static Map<String, StreamSubscription> listeners = {};
   
   static void setUp() {
-    querySelector("#add_map_character_button").onClick.listen(addNewCharacter);
+    Editor.attachButtonListener("#add_map_character_button", addNewCharacter);
     
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
@@ -118,7 +116,7 @@ class MapEditorCharacters {
     
     for(int i=0; i<characters[Main.world.curMap].length; i++) {
       List<String> attrs = ["type", "map_x", "map_y", "layer", "direction", "solid"];
-      Editor.attachListeners(listeners, "map_character_${i}", attrs, onInputChange);
+      Editor.attachInputListeners("map_character_${i}", attrs, onInputChange);
     }
   }
   

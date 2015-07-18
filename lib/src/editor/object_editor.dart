@@ -26,6 +26,11 @@ class ObjectEditor {
       objectEditorTabHeaderDivs[tab] = querySelector("#object_editor_${tab}_tab_header");
       
       objectEditorTabHeaderDivs[tab].onClick.listen((MouseEvent e) {
+        // make sure advanced tabs stay hidden
+        ObjectEditorCharacters.selected = -1;
+        ObjectEditorPlayer.selected = false;
+        ObjectEditorGameEvents.selected = -1;
+        
         for(String tabb in objectEditorTabs) {
           objectEditorTabDivs[tabb].classes.add("hidden");
           objectEditorTabHeaderDivs[tabb].style.backgroundColor = "";

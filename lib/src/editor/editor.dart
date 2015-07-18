@@ -25,6 +25,8 @@ class Editor {
   static List<String> editorTabs = ["map_editor", "object_editor"];
   static bool highlightSpecialTiles = true;
   
+  static Map<String, StreamSubscription> listeners = new Map<String, StreamSubscription>();
+  
   static void init() {
     ObjectEditor.init();
     MapEditor.init(start);
@@ -97,8 +99,7 @@ class Editor {
     tabHeaderDivs[tabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
   }
   
-  static void setMapDeleteButtonListeners(
-      Map<Object, Object> target, String targetName, Map<String, StreamSubscription> listeners) {
+  static void setMapDeleteButtonListeners(Map<Object, Object> target, String targetName) {
     for(int i=0; i<target.keys.length; i++) {
       if(listeners["#delete_${targetName}_${i}"] != null)
         listeners["#delete_${targetName}_${i}"].cancel();
@@ -114,8 +115,7 @@ class Editor {
     }
   }
   
-  static void setListDeleteButtonListeners(
-      List<Object> target, String targetName, Map<String, StreamSubscription> listeners) {
+  static void setListDeleteButtonListeners(List<Object> target, String targetName) {
     for(int i=0; i<target.length; i++) {
       if(listeners["#delete_${targetName}_${i}"] != null)
         listeners["#delete_${targetName}_${i}"].cancel();
@@ -174,10 +174,7 @@ class Editor {
     }
   }
   
-  // TODO: make more classes use this function
-  // TODO: maybe have listeners in base editor instead of each class since ids will be unique
-  static void attachListeners(
-      Map<String, StreamSubscription> listeners, String prefix, List<String> attrs, Function onInputChange) {
+  static void attachInputListeners(String prefix, List<String> attrs, Function onInputChange) {
     for(String attr in attrs) {
       String selector = "#${prefix}_${attr}";
       
@@ -195,6 +192,13 @@ class Editor {
         print("Error: unknown input type while attaching listener!");
       }
     }
+  }
+  
+  static void attachButtonListener(String selector, Function onClick) {
+    if(listeners[selector] != null)
+      listeners[selector].cancel();
+    
+    listeners[selector] = querySelector(selector).onClick.listen(onClick);
   }
   
   static String getSelectInputStringValue(String divId) {

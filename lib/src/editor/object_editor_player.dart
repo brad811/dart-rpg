@@ -1,6 +1,5 @@
 library dart_rpg.object_editor_player;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/battler.dart';
@@ -12,14 +11,15 @@ import 'package:dart_rpg/src/world.dart';
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/object_editor.dart';
 
+// TODO: inventory window doesn't hide properly
+
 class ObjectEditorPlayer {
   static List<String> advancedTabs = ["player_inventory"];
-  static Map<String, StreamSubscription> listeners = {};
   static bool selected = false;
   
   static void setUp() {
     Editor.setUpTabs(advancedTabs);
-    querySelector("#add_player_inventory_item_button").onClick.listen(addInventoryItem);
+    Editor.attachButtonListener("#add_player_inventory_item_button", addInventoryItem);
   }
   
   static void addInventoryItem(MouseEvent e) {
@@ -43,7 +43,7 @@ class ObjectEditorPlayer {
       querySelector("#player_advanced").classes.remove("hidden");
     }
     
-    Editor.setMapDeleteButtonListeners(Main.player.inventory.itemStacks, "player_item", listeners);
+    Editor.setMapDeleteButtonListeners(Main.player.inventory.itemStacks, "player_inventory_item");
     
     List<String> attrs = [
       // main
@@ -55,14 +55,10 @@ class ObjectEditorPlayer {
       "money"
     ];
     
-    List<String> inventory_attrs = [
-      "inventory_item", "inventory_quantity"
-    ];
-    
-    Editor.attachListeners(listeners, "player", attrs, onInputChange);
+    Editor.attachInputListeners("player", attrs, onInputChange);
     
     // when a row is clicked, set it as selected and highlight it
-    querySelector("#player_row").onClick.listen((Event e) {
+    Editor.attachButtonListener("#player_row", (Event e) {
       selected = true;
       
       // hightlight the selected character row
@@ -75,21 +71,8 @@ class ObjectEditorPlayer {
       querySelector("#player_inventory_table").classes.remove("hidden");
     });
     
-    List<String> inputIds = [];
-    
     for(int j=0; j<Main.player.inventory.itemNames().length; j++) {
-      for(String inventory_attr in inventory_attrs) {
-        String elementSelector = "#player_${inventory_attr}_${j}";
-        inputIds.add(elementSelector);
-      }
-    }
-    
-    for(String inputId in inputIds) {
-      if(listeners[inputId] != null) {
-        listeners[inputId].cancel();
-      }
-      
-      listeners[inputId] = querySelector(inputId).onInput.listen(onInputChange);
+      Editor.attachInputListeners("player_inventory_item_${j}", ["name", "quantity"], onInputChange);
     }
   }
   
@@ -131,7 +114,7 @@ class ObjectEditorPlayer {
       String curItemName = Main.player.inventory.itemNames().elementAt(j);
       inventoryHtml += "<tr>";
       inventoryHtml += "  <td>${j}</td>";
-      inventoryHtml += "  <td><select id='player_inventory_item_${j}'>";
+      inventoryHtml += "  <td><select id='player_inventory_item_${j}_name'>";
       World.items.keys.forEach((String itemOptionName) {
         String selectedString = "";
         
@@ -146,8 +129,8 @@ class ObjectEditorPlayer {
         inventoryHtml += "<option ${selectedString}>${itemOptionName}</option>";
       });
       inventoryHtml += "  </select></td>";
-      inventoryHtml += "  <td><input id='player_inventory_quantity_${j}' type='text' class='number' value='${Main.player.inventory.getQuantity(curItemName)}' /></td>";
-      inventoryHtml += "  <td><button id='delete_player_item_${j}'>Delete</button></td>";
+      inventoryHtml += "  <td><input id='player_inventory_item_${j}_quantity' type='text' class='number' value='${Main.player.inventory.getQuantity(curItemName)}' /></td>";
+      inventoryHtml += "  <td><button id='delete_player_inventory_item_${j}'>Delete</button></td>";
       inventoryHtml += "</tr>";
     }
     
@@ -178,9 +161,9 @@ class ObjectEditorPlayer {
     
     Main.player.inventory = new Inventory([]);
     
-    for(int j=0; querySelector('#player_inventory_item_${j}') != null; j++) {
-      String itemName = Editor.getSelectInputStringValue("#player_inventory_item_${j}");
-      int itemQuantity = Editor.getTextInputIntValue("#player_inventory_quantity_${j}", 1);
+    for(int j=0; querySelector('#player_inventory_item_${j}_name') != null; j++) {
+      String itemName = Editor.getSelectInputStringValue("#player_inventory_item_${j}_name");
+      int itemQuantity = Editor.getTextInputIntValue("#player_inventory_item_${j}_quantity", 1);
       Main.player.inventory.addItem(World.items[itemName], itemQuantity);
     }
     

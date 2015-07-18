@@ -1,6 +1,5 @@
 library dart_rpg.object_editor_attacks;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/attack.dart';
@@ -9,11 +8,12 @@ import 'package:dart_rpg/src/world.dart';
 import 'editor.dart';
 import 'object_editor.dart';
 
+// TODO: handle renaming attacks by updating everywhere
+// (otherwise they just disappear)
+
 class ObjectEditorAttacks {
-  static Map<String, StreamSubscription> listeners = {};
-  
   static void setUp() {
-    querySelector("#add_attack_button").onClick.listen(addNewAttack);
+    Editor.attachButtonListener("#add_attack_button", addNewAttack);
   }
   
   static void addNewAttack(MouseEvent e) {
@@ -33,9 +33,9 @@ class ObjectEditorAttacks {
       attacksHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input id='attacks_name_${i}' type='text' value='${ World.attacks[key].name }' /></td>"+
+        "  <td><input id='attack_${i}_name' type='text' value='${ World.attacks[key].name }' /></td>"+
         "  <td>"+
-        "    <select id='attacks_category_${i}'>";
+        "    <select id='attack_${i}_category'>";
       
       String physical_selected = "", magical_selected = "";
       if(World.attacks[key].category == Attack.CATEGORY_PHYSICAL) {
@@ -49,24 +49,18 @@ class ObjectEditorAttacks {
       attacksHtml +=
         "    </select>"+
         "  </td>"+
-        "  <td><input class='number' id='attacks_power_${i}' type='text' value='${ World.attacks[key].power }' /></td>"+
+        "  <td><input class='number' id='attack_${i}_power' type='text' value='${ World.attacks[key].power }' /></td>"+
         "  <td><button id='delete_attack_${i}'>Delete</button></td>"+
         "</tr>";
     }
     attacksHtml += "</table>";
     querySelector("#attacks_container").setInnerHtml(attacksHtml);
     
-    Editor.setMapDeleteButtonListeners(World.attacks, "attack", listeners);
+    Editor.setMapDeleteButtonListeners(World.attacks, "attack");
     
     List<String> attrs = ["name", "category", "power"];
     for(int i=0; i<World.attacks.keys.length; i++) {
-      for(String attr in attrs) {
-        if(listeners["#attacks_${attr}_${i}"] != null)
-          listeners["#attacks_${attr}_${i}"].cancel();
-        
-        listeners["#attacks_${attr}_${i}"] = 
-            querySelector('#attacks_${attr}_${i}').onInput.listen(onInputChange);
-      }
+      Editor.attachInputListeners("attack_${i}", attrs, onInputChange);
     }
   }
   
@@ -74,25 +68,25 @@ class ObjectEditorAttacks {
     if(e.target is InputElement) {
       InputElement target = e.target;
       
-      if(target.id.contains("attacks_name_") && World.attacks.keys.contains(target.value)) {
+      if(target.id.contains("_name") && World.attacks.keys.contains(target.value)) {
         // avoid name collisions
         int i = 0;
         for(; World.attacks.keys.contains(target.value + "_${i}"); i++) {}
         target.value += "_${i}";
-      } else if(target.id.contains("attacks_power_")) {
+      } else if(target.id.contains("_power")) {
         // enforce number format
         target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
       }
     }
     
     World.attacks = new Map<String, Attack>();
-    for(int i=0; querySelector('#attacks_name_${i}') != null; i++) {
+    for(int i=0; querySelector('#attack_${i}_name') != null; i++) {
       try {
-        String name = (querySelector('#attacks_name_${i}') as InputElement).value;
+        String name = Editor.getTextInputStringValue('#attack_${i}_name');
         World.attacks[name] = new Attack(
           name,
-          int.parse((querySelector('#attacks_category_${i}') as SelectElement).value),
-          int.parse((querySelector('#attacks_power_${i}') as InputElement).value)
+          Editor.getSelectInputIntValue('#attack_${i}_category', 0),
+          Editor.getTextInputIntValue('#attack_${i}_power', 1)
         );
       } catch(e) {
         // could not update this attack

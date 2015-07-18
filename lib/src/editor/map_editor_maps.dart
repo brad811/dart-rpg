@@ -1,6 +1,5 @@
 library dart_rpg.map_editor_maps;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/encounter_tile.dart';
@@ -18,10 +17,8 @@ import 'map_editor_signs.dart';
 import 'map_editor_warps.dart';
 
 class MapEditorMaps {
-  static Map<String, StreamSubscription> listeners = {};
-  
   static void setUp() {
-    querySelector("#add_map_button").onClick.listen(addNewMap);
+    Editor.attachButtonListener("#add_map_button", addNewMap);
   }
   
   static void addNewMap(MouseEvent e) {
@@ -60,8 +57,8 @@ class MapEditorMaps {
       mapsHtml += ">${mapName}</option>";
     }
     mapsHtml += "</select>&nbsp;&nbsp;&nbsp;&nbsp;";
-    mapsHtml += "X: <input id='player_start_x' type='text' class='number' value='${Main.world.startX}' />&nbsp;&nbsp;&nbsp;&nbsp;";
-    mapsHtml += "Y: <input id='player_start_y' type='text' class='number' value='${Main.world.startY}' />";
+    mapsHtml += "X: <input id='start_player_x' type='text' class='number' value='${Main.world.startX}' />&nbsp;&nbsp;&nbsp;&nbsp;";
+    mapsHtml += "Y: <input id='start_player_y' type='text' class='number' value='${Main.world.startY}' />";
     mapsHtml += "<hr />";
     
     mapsHtml += "<table class='editor_table'>"+
@@ -77,7 +74,7 @@ class MapEditorMaps {
         mapsHtml += "  <td>${i}</td>";
         
       mapsHtml +=
-        "  <td><input id='map_name_${i}' type='text' value='${ Main.world.maps[key].name }' /></td>"+
+        "  <td><input id='map_${i}_name' type='text' value='${ Main.world.maps[key].name }' /></td>"+
         "  <td>${ Main.world.maps[key].tiles[0].length }</td>"+
         "  <td>${ Main.world.maps[key].tiles.length }</td>"+
         "  <td>${ Main.world.maps[key].characters.length }</td>"+
@@ -91,19 +88,10 @@ class MapEditorMaps {
     setMapDeleteButtonListeners();
     
     for(int i=0; i<Main.world.maps.length; i++) {
-      if(listeners["#map_name_${i}"] != null)
-        listeners["#map_name_${i}"].cancel();
-      
-      listeners["#map_name_${i}"] = querySelector('#map_name_${i}').onInput.listen(onInputChange);
+      Editor.attachInputListeners("map_${i}", ["name"], onInputChange);
     }
     
-    List<String> ids = ["start_map", "player_start_x", "player_start_y"];
-    ids.forEach((String id) {
-      if(listeners["#${id}"] != null)
-        listeners["#${id}"].cancel();
-      
-      listeners["#${id}"] = querySelector('#${id}').onInput.listen(changeStartMap);
-    });
+    Editor.attachInputListeners("start", ["map", "player_x", "player_y"], onInputChange);
     
     setUpLayerVisibilityToggles();
     setUpMapSizeButtons();
@@ -114,14 +102,14 @@ class MapEditorMaps {
     
     if(e.target is TextInputElement) {
       TextInputElement target = e.target as TextInputElement;
-      if(target.id.contains("player_start_")) {
+      if(target.id.contains("start_player_")) {
         // enforce number format
         target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
       }
     }
     
-    Main.world.startX = int.parse((querySelector('#player_start_x') as TextInputElement).value);
-    Main.world.startY = int.parse((querySelector('#player_start_y') as TextInputElement).value);
+    Main.world.startX = int.parse((querySelector('#start_player_x') as TextInputElement).value);
+    Main.world.startY = int.parse((querySelector('#start_player_y') as TextInputElement).value);
     MapEditor.updateMap(shouldExport: true);
   }
   
@@ -137,7 +125,7 @@ class MapEditorMaps {
       changedByUser = false;
       String key = Main.world.maps.keys.elementAt(i);
       try {
-        String newName = (querySelector('#map_name_${i}') as TextInputElement).value;
+        String newName = (querySelector('#map_${i}_name') as TextInputElement).value;
         
         if(key != newName)
           changedByUser = true;
@@ -149,7 +137,7 @@ class MapEditorMaps {
           }
           
           newName = "${newName}_${j}";
-          (querySelector('#map_name_${i}') as TextInputElement).value = newName;
+          (querySelector('#map_${i}_name') as TextInputElement).value = newName;
         }
         
         newMaps[newName] = Main.world.maps[key];
@@ -190,10 +178,7 @@ class MapEditorMaps {
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
       if(Main.world.curMap != key) {
-        if(listeners["#map_select_${i}"] != null)
-          listeners["#map_select_${i}"].cancel();
-        
-        listeners["#map_select_${i}"] = querySelector("#map_select_${i}").onClick.listen((MouseEvent e) {
+        Editor.attachButtonListener("#map_select_${i}", (MouseEvent e) {
           Main.world.curMap = key;
           Editor.update();
         });
@@ -203,10 +188,7 @@ class MapEditorMaps {
   
   static void setMapDeleteButtonListeners() {
     for(int i=0; i<Main.world.maps.length; i++) {
-      if(listeners["#delete_map_${i}"] != null)
-        listeners["#delete_map_${i}"].cancel();
-      
-      listeners["#delete_map_${i}"] = querySelector("#delete_map_${i}").onClick.listen((MouseEvent e) {
+      Editor.attachButtonListener("#delete_map_${i}", (MouseEvent e) {
         bool confirm = window.confirm('Are you sure you would like to delete this map?');
         if(confirm) {
           // TODO: make this cleaner
@@ -224,120 +206,39 @@ class MapEditorMaps {
   }
   
   static void setUpLayerVisibilityToggles() {
-    if(listeners["#layer_above_visible"] != null)
-      listeners["#layer_above_visible"].cancel();
-    
-    listeners["#layer_above_visible"] = querySelector('#layer_above_visible').onChange.listen((Event e) {
-      CheckboxInputElement checkbox = querySelector('#layer_above_visible');
-      MapEditor.layerVisible[World.LAYER_ABOVE] = checkbox.checked;
-      Editor.update();
-    });
-    
-    if(listeners["#layer_player_visible"] != null)
-      listeners["#layer_player_visible"].cancel();
-    
-    listeners["#layer_player_visible"] = querySelector('#layer_player_visible').onChange.listen((Event e) {
-      CheckboxInputElement checkbox = querySelector('#layer_player_visible');
-      MapEditor.layerVisible[World.LAYER_PLAYER] = checkbox.checked;
-      Editor.update();
-    });
-    
-    if(listeners["#layer_below_visible"] != null)
-      listeners["#layer_below_visible"].cancel();
-    
-    listeners["#layer_below_visible"] = querySelector('#layer_below_visible').onChange.listen((Event e) {
-      CheckboxInputElement checkbox = querySelector('#layer_below_visible');
-      MapEditor.layerVisible[World.LAYER_BELOW] = checkbox.checked;
-      Editor.update();
-    });
-    
-    if(listeners["#layer_ground_visible"] != null)
-      listeners["#layer_ground_visible"].cancel();
-    
-    listeners["#layer_ground_visible"] = querySelector('#layer_ground_visible').onChange.listen((Event e) {
-      CheckboxInputElement checkbox = querySelector('#layer_ground_visible');
-      MapEditor.layerVisible[World.LAYER_GROUND] = checkbox.checked;
-      Editor.update();
-    });
-    
-    if(listeners["#layer_special_visible"] != null)
-      listeners["#layer_special_visible"].cancel();
-    
-    listeners["#layer_special_visible"] = querySelector('#layer_special_visible').onChange.listen((Event e) {
-      CheckboxInputElement checkbox = querySelector('#layer_special_visible');
-      Editor.highlightSpecialTiles = checkbox.checked;
-      Editor.update();
-    });
+    Editor.attachInputListeners("layer_visible",
+      ["above", "player", "below", "ground", "special"],
+      (_) {
+        MapEditor.layerVisible[World.LAYER_ABOVE] =
+            (querySelector('#layer_visible_above') as CheckboxInputElement).checked;
+        
+        MapEditor.layerVisible[World.LAYER_PLAYER] =
+            (querySelector('#layer_visible_player') as CheckboxInputElement).checked;
+        
+        MapEditor.layerVisible[World.LAYER_BELOW] =
+            (querySelector('#layer_visible_below') as CheckboxInputElement).checked;
+        
+        MapEditor.layerVisible[World.LAYER_GROUND] =
+            (querySelector('#layer_visible_ground') as CheckboxInputElement).checked;
+        
+        Editor.highlightSpecialTiles = 
+            (querySelector('#layer_visible_special') as CheckboxInputElement).checked;
+        
+        Editor.update();
+      }
+    );
   }
   
   static void setUpMapSizeButtons() {
-    // size x down button
-    if(listeners["#size_x_down_button"] != null)
-      listeners["#size_x_down_button"].cancel();
-      
-    listeners["#size_x_down_button"] = querySelector('#size_x_down_button').onClick.listen((MouseEvent e) {
-      sizeDownRight();
-    });
-     
-    // size x up button
-    if(listeners["#size_x_up_button"] != null)
-      listeners["#size_x_up_button"].cancel();
-      
-    listeners["#size_x_up_button"] = querySelector('#size_x_up_button').onClick.listen((MouseEvent e) {
-      sizeUpRight();
-    });
+    Editor.attachButtonListener("#size_x_down_button", (_) { sizeDownRight(); });
+    Editor.attachButtonListener("#size_x_up_button", (_) { sizeUpRight(); });
+    Editor.attachButtonListener("#size_y_down_button", (_) { sizeDownBottom(); });
+    Editor.attachButtonListener("#size_y_up_button", (_) { sizeUpBottom(); });
     
-    // size y down button
-    if(listeners["#size_y_down_button"] != null)
-      listeners["#size_y_down_button"].cancel();
-      
-    listeners["#size_y_down_button"] = querySelector('#size_y_down_button').onClick.listen((MouseEvent e) {
-      sizeDownBottom();
-    });
-    
-    // size y up button
-    if(listeners["#size_y_up_button"] != null)
-      listeners["#size_y_up_button"].cancel();
-      
-    listeners["#size_y_up_button"] = querySelector('#size_y_up_button').onClick.listen((MouseEvent e) {
-      sizeUpBottom();
-    });
-    
-    // ////////////////////////////////////////
-    // Pre buttons
-    // ////////////////////////////////////////
-    
-    // size x down button pre
-    if(listeners["#size_x_down_button_pre"] != null)
-      listeners["#size_x_down_button_pre"].cancel();
-      
-    listeners["#size_x_down_button_pre"] = querySelector('#size_x_down_button_pre').onClick.listen((MouseEvent e) {
-      sizeDownLeft();
-    });
-     
-    // size x up button pre
-    if(listeners["#size_x_up_button_pre"] != null)
-      listeners["#size_x_up_button_pre"].cancel();
-      
-    listeners["#size_x_up_button_pre"] = querySelector('#size_x_up_button_pre').onClick.listen((MouseEvent e) {
-      sizeUpLeft();
-    });
-    
-    // size y down button pre
-    if(listeners["#size_y_down_button_pre"] != null)
-      listeners["#size_y_down_button_pre"].cancel();
-      
-    listeners["#size_y_down_button_pre"] = querySelector('#size_y_down_button_pre').onClick.listen((MouseEvent e) {
-      sizeDownTop();
-    });
-     
-    // size y up button pre
-    if(listeners["#size_y_up_button_pre"] != null)
-      listeners["#size_y_up_button_pre"].cancel();
-      
-    listeners["#size_y_up_button_pre"] = querySelector('#size_y_up_button_pre').onClick.listen((MouseEvent e) {
-      sizeUpTop();
-    });
+    Editor.attachButtonListener("#size_x_down_button_pre", (_) { sizeDownLeft(); });
+    Editor.attachButtonListener("#size_x_up_button_pre", (_) { sizeUpLeft(); });
+    Editor.attachButtonListener("#size_y_down_button_pre", (_) { sizeDownTop(); });
+    Editor.attachButtonListener("#size_y_up_button_pre", (_) { sizeUpTop(); });
   }
   
   static void sizeDownRight() {

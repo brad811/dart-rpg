@@ -1,6 +1,5 @@
 library dart_rpg.object_editor_characters;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/battler.dart';
@@ -14,18 +13,18 @@ import 'object_editor.dart';
 import 'object_editor_game_events.dart';
 
 // TODO: make all inputs with class number take out any non 0-9 characters
+// TODO: error when adding a second attack to the same level
 
 class ObjectEditorCharacters {
   static List<String> advancedTabs = ["character_inventory", "character_game_event", "character_battle"];
-  static Map<String, StreamSubscription> listeners = {};
   static int selected;
   
   // TODO: update when adding new things
   
   static void setUp() {
     Editor.setUpTabs(advancedTabs);
-    querySelector("#add_character_button").onClick.listen(addNewCharacter);
-    querySelector("#add_inventory_item_button").onClick.listen(addInventoryItem);
+    Editor.attachButtonListener("#add_character_button", addNewCharacter);
+    Editor.attachButtonListener("#add_inventory_item_button", addInventoryItem);
   }
   
   static void addNewCharacter(MouseEvent e) {
@@ -72,10 +71,10 @@ class ObjectEditorCharacters {
       querySelector("#characters_advanced").classes.remove("hidden");
     }
     
-    Editor.setMapDeleteButtonListeners(World.characters, "character", listeners);
+    Editor.setMapDeleteButtonListeners(World.characters, "character");
     
     for(int i=0; i<World.characters.keys.length; i++) {
-      Editor.setMapDeleteButtonListeners(World.characters.values.elementAt(i).inventory.itemStacks, "character_${i}_item", listeners);
+      Editor.setMapDeleteButtonListeners(World.characters.values.elementAt(i).inventory.itemStacks, "character_${i}_item");
     }
     
     List<String> attrs = [
@@ -89,15 +88,11 @@ class ObjectEditorCharacters {
       "game_event_chain"
     ];
     
-    List<String> inventory_attrs = [
-      "inventory_item", "inventory_quantity"
-    ];
-    
     for(int i=0; i<World.characters.keys.length; i++) {
-      Editor.attachListeners(listeners, "character_${i}", attrs, onInputChange);
+      Editor.attachInputListeners("character_${i}", attrs, onInputChange);
       
       // when a row is clicked, set it as selected and highlight it
-      querySelector("#character_row_${i}").onClick.listen((Event e) {
+      Editor.attachButtonListener("#character_row_${i}", (Event e) {
         selected = i;
         
         for(int j=0; j<World.characters.keys.length; j++) {
@@ -124,21 +119,8 @@ class ObjectEditorCharacters {
       
       Character character = World.characters.values.elementAt(i);
       
-      List<String> inputIds = [];
-      
       for(int j=0; j<character.inventory.itemNames().length; j++) {
-        for(String inventory_attr in inventory_attrs) {
-          String elementSelector = "#character_${i}_${inventory_attr}_${j}";
-          inputIds.add(elementSelector);
-        }
-      }
-      
-      for(String inputId in inputIds) {
-        if(listeners[inputId] != null) {
-          listeners[inputId].cancel();
-        }
-        
-        listeners[inputId] = querySelector(inputId).onInput.listen(onInputChange);
+        Editor.attachInputListeners("character_${i}_inventory_${j}", ["item", "quantity"], onInputChange);
       }
     }
   }
@@ -193,7 +175,7 @@ class ObjectEditorCharacters {
         String curItemName = character.inventory.itemNames().elementAt(j);
         inventoryHtml += "<tr>";
         inventoryHtml += "  <td>${j}</td>";
-        inventoryHtml += "  <td><select id='character_${i}_inventory_item_${j}'>";
+        inventoryHtml += "  <td><select id='character_${i}_inventory_${j}_item'>";
         World.items.keys.forEach((String itemOptionName) {
           String selectedString = "";
           
@@ -208,7 +190,7 @@ class ObjectEditorCharacters {
           inventoryHtml += "<option ${selectedString}>${itemOptionName}</option>";
         });
         inventoryHtml += "  </select></td>";
-        inventoryHtml += "  <td><input id='character_${i}_inventory_quantity_${j}' type='text' class='number' value='${character.inventory.getQuantity(curItemName)}' /></td>";
+        inventoryHtml += "  <td><input id='character_${i}_inventory_${j}_quantity' type='text' class='number' value='${character.inventory.getQuantity(curItemName)}' /></td>";
         inventoryHtml += "  <td><button id='delete_character_${i}_item_${j}'>Delete</button></td>";
         inventoryHtml += "</tr>";
       }
@@ -372,9 +354,9 @@ class ObjectEditorCharacters {
       Character character = World.characters.values.elementAt(i);
       character.inventory = new Inventory([]);
       
-      for(int j=0; querySelector('#character_${i}_inventory_item_${j}') != null; j++) {
-        String itemName = (querySelector('#character_${i}_inventory_item_${j}') as SelectElement).value;
-        int itemQuantity = int.parse((querySelector('#character_${i}_inventory_quantity_${j}') as TextInputElement).value);
+      for(int j=0; querySelector('#character_${i}_inventory_${j}_item') != null; j++) {
+        String itemName = Editor.getSelectInputStringValue('#character_${i}_inventory_${j}_item');
+        int itemQuantity = Editor.getTextInputIntValue('#character_${i}_inventory_${j}_quantity', 1);
         character.inventory.addItem(World.items[itemName], itemQuantity);
       }
       

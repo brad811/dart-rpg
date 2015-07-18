@@ -1,6 +1,5 @@
 library dart_rpg.object_editor_game_events;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/character.dart';
@@ -25,13 +24,12 @@ import 'object_editor.dart';
 
 class ObjectEditorGameEvents {
   static List<String> advancedTabs = ["game_event_chain_game_events"];
-  static Map<String, StreamSubscription> listeners = {};
   static int selected;
   
   static void setUp() {
     Editor.setUpTabs(advancedTabs);
-    querySelector("#add_game_event_chain_button").onClick.listen(addGameEventChain);
-    querySelector("#add_game_event_button").onClick.listen(addGameEvent);
+    Editor.attachButtonListener("#add_game_event_chain_button", addGameEventChain);
+    Editor.attachButtonListener("#add_game_event_button", addGameEvent);
   }
   
   static void addGameEventChain(MouseEvent e) {
@@ -63,23 +61,22 @@ class ObjectEditorGameEvents {
       querySelector("#game_event_chains_advanced").classes.remove("hidden");
     }
     
-    Editor.setMapDeleteButtonListeners(World.gameEventChains, "game_event_chain", listeners);
+    Editor.setMapDeleteButtonListeners(World.gameEventChains, "game_event_chain");
     
     for(int i=0; i<World.gameEventChains.keys.length; i++) {
       Editor.setListDeleteButtonListeners(
           World.gameEventChains.values.elementAt(i),
-          "game_event_chain_${i}_game_event",
-          listeners
+          "game_event_chain_${i}_game_event"
         );
     }
     
     List<String> attrs = ["label"];
     
     for(int i=0; i<World.gameEventChains.keys.length; i++) {
-      Editor.attachListeners(listeners, "game_event_chain_${i}", attrs, onInputChange);
+      Editor.attachInputListeners("game_event_chain_${i}", attrs, onInputChange);
       
       // when a row is clicked, set it as selected and highlight it
-      querySelector("#game_event_chain_row_${i}").onClick.listen((Event e) {
+      Editor.attachButtonListener("#game_event_chain_row_${i}", (Event e) {
         selected = i;
         
         for(int j=0; j<World.gameEventChains.keys.length; j++) {
@@ -108,10 +105,10 @@ class ObjectEditorGameEvents {
         
         gameEventAttrs.addAll(ObjectEditorGameEvents.getAttributes(gameEventChain[j]));
         
-        Editor.attachListeners(listeners, "game_event_chain_${i}_game_event_${j}", gameEventAttrs, onInputChange);
+        Editor.attachInputListeners("game_event_chain_${i}_game_event_${j}", gameEventAttrs, onInputChange);
         
         if(gameEventChain.elementAt(j) is ChoiceGameEvent) {
-          querySelector("#game_event_chain_${i}_game_event_${j}_add_choice").onClick.listen((MouseEvent e) {
+          Editor.attachButtonListener("#game_event_chain_${i}_game_event_${j}_add_choice", (MouseEvent e) {
             if(World.gameEventChains.keys.length > 0) {
               ChoiceGameEvent choiceGameEvent = gameEventChain.elementAt(j) as ChoiceGameEvent;
               if(choiceGameEvent.choiceGameEventChains["New choice"] == null) {

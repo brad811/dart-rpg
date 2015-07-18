@@ -1,6 +1,5 @@
 library dart_rpg.object_editor_battler_types;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/attack.dart';
@@ -11,14 +10,12 @@ import 'editor.dart';
 import 'object_editor.dart';
 
 class ObjectEditorBattlerTypes {
-  static Map<String, StreamSubscription> listeners = {};
-  
   // TODO: give battler types a display name and a unique name
   //   so people can name them stuff like "end_boss_1"
   //   but still have a pretty display name like "Bob"
   
   static void setUp() {
-    querySelector("#add_battler_type_button").onClick.listen(addNewBattlerType);
+    Editor.attachButtonListener("#add_battler_type_button", addNewBattlerType);
   }
   
   static void addNewBattlerType(MouseEvent e) {
@@ -99,7 +96,7 @@ class ObjectEditorBattlerTypes {
     querySelector("#battler_types_container").setInnerHtml(battlerTypesHtml);
     
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
-      querySelector("#add_battler_type_${i}_attack").onClick.listen((MouseEvent e) {
+      Editor.attachButtonListener("#add_battler_type_${i}_attack", (MouseEvent e) {
         BattlerType battlerType = World.battlerTypes.values.elementAt(i);
         int nextLevel = 1;
         for(;  battlerType.levelAttacks[nextLevel] != null; nextLevel++);
@@ -108,11 +105,11 @@ class ObjectEditorBattlerTypes {
       });
     }
     
-    Editor.setMapDeleteButtonListeners(World.battlerTypes, "battler_type", listeners);
+    Editor.setMapDeleteButtonListeners(World.battlerTypes, "battler_type");
     
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
       BattlerType battlerType = World.battlerTypes.values.elementAt(i);
-      Editor.setMapDeleteButtonListeners(battlerType.levelAttacks, "battler_type_${i}_attack", listeners);
+      Editor.setMapDeleteButtonListeners(battlerType.levelAttacks, "battler_type_${i}_attack");
     }
     
     List<String> attrs = [
@@ -127,10 +124,10 @@ class ObjectEditorBattlerTypes {
     ];
     
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
-      Editor.attachListeners(listeners, "battler_type_${i}", attrs, onInputChange);
+      Editor.attachInputListeners("battler_type_${i}", attrs, onInputChange);
       
       for(int j=0; j<World.battlerTypes.values.elementAt(i).levelAttacks.values.length; j++) {
-        Editor.attachListeners(listeners, "battler_type_${i}_attack_${j}", attackAttrs, onInputChange);
+        Editor.attachInputListeners("battler_type_${i}_attack_${j}", attackAttrs, onInputChange);
       }
     }
   }

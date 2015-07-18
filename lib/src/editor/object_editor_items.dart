@@ -1,6 +1,5 @@
 library dart_rpg.object_editor_items;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/item.dart';
@@ -15,10 +14,8 @@ import 'object_editor.dart';
 // TODO: max length of things
 
 class ObjectEditorItems {
-  static Map<String, StreamSubscription> listeners = {};
-  
   static void setUp() {
-    querySelector("#add_item_button").onClick.listen(addNewItem);
+    Editor.attachButtonListener("#add_item_button", addNewItem);
   }
   
   static void addNewItem(MouseEvent e) {
@@ -38,27 +35,21 @@ class ObjectEditorItems {
       itemsHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input class='number' id='item_picture_id_${i}' type='text' value='${item.pictureId}' /></td>"+
-        "  <td><input id='item_name_${i}' type='text' value='${item.name}' /></td>"+
-        "  <td><input class='number' id='item_base_price_${i}' type='text' value='${item.basePrice}' /></td>"+
-        "  <td><textarea id='item_description_${i}' />${item.description}</textarea></td>"+
+        "  <td><input class='number' id='item_${i}_picture_id' type='text' value='${item.pictureId}' /></td>"+
+        "  <td><input id='item_${i}_name' type='text' value='${item.name}' /></td>"+
+        "  <td><input class='number' id='item_${i}_base_price' type='text' value='${item.basePrice}' /></td>"+
+        "  <td><textarea id='item_${i}_description' />${item.description}</textarea></td>"+
         "  <td><button id='delete_item_${i}'>Delete</button></td>"+
         "</tr>";
     }
     itemsHtml += "</table>";
     querySelector("#items_container").setInnerHtml(itemsHtml);
     
-    Editor.setMapDeleteButtonListeners(World.items, "item", listeners);
+    Editor.setMapDeleteButtonListeners(World.items, "item");
     
     List<String> attrs = ["picture_id", "name", "base_price", "description"];
     for(int i=0; i<World.items.keys.length; i++) {
-      for(String attr in attrs) {
-        if(listeners["#item_${attr}_${i}"] != null)
-          listeners["#item_${attr}_${i}"].cancel();
-        
-        listeners["#item_${attr}_${i}"] = 
-            querySelector('#item_${attr}_${i}').onInput.listen(onInputChange);
-      }
+      Editor.attachInputListeners("item_${i}", attrs, onInputChange);
     }
   }
   
@@ -66,26 +57,26 @@ class ObjectEditorItems {
     if(e.target is InputElement) {
       InputElement target = e.target;
       
-      if(target.id.contains("item_name_") && World.items.keys.contains(target.value)) {
+      if(target.id.contains("_name") && World.items.keys.contains(target.value)) {
         // avoid name collisions
         int i = 0;
         for(; World.items.keys.contains(target.value + "_${i}"); i++) {}
         target.value += "_${i}";
-      } else if(target.id.contains("item_picture_id_") || target.id.contains("item_base_price_")) {
+      } else if(target.id.contains("_picture_id") || target.id.contains("_base_price")) {
         // enforce number format
         target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
       }
     }
     
     World.items = new Map<String, Item>();
-    for(int i=0; querySelector('#item_name_${i}') != null; i++) {
+    for(int i=0; querySelector('#item_${i}_name') != null; i++) {
       try {
-        String name = (querySelector('#item_name_${i}') as TextInputElement).value;
+        String name = (querySelector('#item_${i}_name') as TextInputElement).value;
         World.items[name] = new Item(
-          Editor.getTextInputIntValue('#item_picture_id_${i}', 1),
+          Editor.getTextInputIntValue('#item_${i}_picture_id', 1),
           name,
-          Editor.getTextInputIntValue('#item_base_price_${i}', 1),
-          (querySelector('#item_description_${i}') as TextAreaElement).value
+          Editor.getTextInputIntValue('#item_${i}_base_price', 1),
+          (querySelector('#item_${i}_description') as TextAreaElement).value
         );
       } catch(e) {
         // could not update this item
