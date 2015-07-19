@@ -64,10 +64,23 @@ class ObjectEditorGameEvents {
     Editor.setMapDeleteButtonListeners(World.gameEventChains, "game_event_chain");
     
     for(int i=0; i<World.gameEventChains.keys.length; i++) {
+      String prefix = "game_event_chain_${i}_game_event";
+      
       Editor.setListDeleteButtonListeners(
           World.gameEventChains.values.elementAt(i),
-          "game_event_chain_${i}_game_event"
+          prefix
         );
+      
+      List<GameEvent> chain = World.gameEventChains.values.elementAt(i);
+      for(int j=0; j<chain.length; j++) {
+        GameEvent event = chain.elementAt(j);
+        if(event is ChoiceGameEvent) {
+          Editor.setMapDeleteButtonListeners(
+              event.choiceGameEventChains,
+              "${prefix}_${j}_choice"
+            );
+        }
+      }
     }
     
     List<String> attrs = ["label"];
@@ -616,7 +629,7 @@ class ObjectEditorGameEvents {
     }
     
     html += "<table>";
-    html += "  <tr><td>Choice Name</td><td>Game Event Chain</td></tr>";
+    html += "  <tr><td>Choice Name</td><td>Game Event Chain</td><td></td></tr>";
     
     int i = 0;
     choiceGameEvent.choiceGameEventChains.forEach((String choiceName, String chainName) {
@@ -637,7 +650,7 @@ class ObjectEditorGameEvents {
         html += ">${key}</option>";
       });
       
-      html += "</select></td></tr>";
+      html += "</select></td><td><button id='delete_${prefix}_choice_${i}'>Delete</button></td></tr>";
       
       i += 1;
     });
