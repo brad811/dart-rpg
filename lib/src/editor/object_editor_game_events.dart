@@ -16,6 +16,7 @@ import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/store_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
+import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 
 import 'editor.dart';
 import 'object_editor.dart';
@@ -269,6 +270,8 @@ class ObjectEditorGameEvents {
       }
       
       return attrs;
+    } else if(gameEvent is WarpGameEvent) {
+      return ["old_map", "character", "new_map", "x", "y", "layer", "direction"];
     } else {
       return [];
     }
@@ -335,6 +338,21 @@ class ObjectEditorGameEvents {
       ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(choices);
       
       return choiceGameEvent;
+    } else if(gameEventType == "warp") {
+      String oldMap = Editor.getSelectInputStringValue("#${prefix}_old_map");
+      
+      // TODO: enable for other characters
+      WarpGameEvent warpGameEvent = new WarpGameEvent(
+          oldMap,
+          Main.player,
+          Editor.getSelectInputStringValue("#${prefix}_new_map"),
+          Editor.getTextInputIntValue("#${prefix}_x", 0),
+          Editor.getTextInputIntValue("#${prefix}_y", 0),
+          Editor.getSelectInputIntValue("#${prefix}_layer", World.LAYER_BELOW),
+          Editor.getSelectInputIntValue("#${prefix}_direction", Character.DOWN)
+        );
+      
+      return warpGameEvent;
     } else {
       return null;
     }
@@ -356,7 +374,7 @@ class ObjectEditorGameEvents {
       gameEventJson["milliseconds"] = gameEvent.milliseconds;
     } else if(gameEvent is FadeGameEvent) {
       gameEventJson["type"] = "fade";
-      gameEventJson["fade_type"] = gameEvent.fadeType;
+      gameEventJson["fadeType"] = gameEvent.fadeType;
     } else if(gameEvent is HealGameEvent) {
       gameEventJson["type"] = "heal";
       gameEventJson["character"] = gameEvent.character.name;
@@ -367,11 +385,20 @@ class ObjectEditorGameEvents {
       gameEventJson["type"] = "battle";
     } else if(gameEvent is ChainGameEvent) {
       gameEventJson["type"] = "chain";
-      gameEventJson["game_event_chain"] = gameEvent.gameEventChain;
+      gameEventJson["gameEventChain"] = gameEvent.gameEventChain;
     } else if(gameEvent is ChoiceGameEvent) {
       gameEventJson["type"] = "choice";
       gameEventJson["choices"] = gameEvent.choiceGameEventChains;
-      gameEventJson["cancel_event"] = gameEvent.cancelEvent;
+      gameEventJson["cancelEvent"] = gameEvent.cancelEvent;
+    } else if(gameEvent is WarpGameEvent) {
+      gameEventJson["type"] = "warp";
+      gameEventJson["oldMap"] = gameEvent.oldMap;
+      gameEventJson["character"] = gameEvent.character;
+      gameEventJson["newMap"] = gameEvent.newMap;
+      gameEventJson["x"] = gameEvent.x;
+      gameEventJson["y"] = gameEvent.y;
+      gameEventJson["layer"] = gameEvent.layer;
+      gameEventJson["direction"] = gameEvent.direction;
     }
     
     return gameEventJson;
@@ -421,6 +448,9 @@ class ObjectEditorGameEvents {
       } else if(gameEventTypes[k] == "choice" && gameEvent is ChoiceGameEvent) {
         selectedText = "selected='selected'";
         paramsHtml = ObjectEditorGameEvents.buildChoiceGameEventParamsHtml(gameEvent, prefix, readOnly);
+      } else if(gameEventTypes[k] == "warp" && gameEvent is WarpGameEvent) {
+        selectedText = "selected='selected'";
+        paramsHtml = ObjectEditorGameEvents.buildWarpGameEventParamsHtml(gameEvent, prefix, readOnly);
       }
       
       gameEventHtml += "    <option ${selectedText}>${gameEventTypes[k]}</option>";
@@ -658,6 +688,70 @@ class ObjectEditorGameEvents {
     html += "</table>";
     
     html += "<br /><button id='${prefix}_add_choice'>Add choice</button>";
+    
+    return html;
+  }
+  
+  // TODO: make this fit better, perhaps on two lines
+  static String buildWarpGameEventParamsHtml(WarpGameEvent warpGameEvent, String prefix, bool readOnly) {
+    String html = "";
+    
+    String disabledString = "";
+    String readOnlyString = "";
+    if(readOnly) {
+      disabledString = "disabled='disabled' ";
+      readOnlyString = "readonly";
+    }
+    
+    html += "<table>";
+    html += "  <tr><td>Old Map</td><td>Character</td><td>New Map</td><td>X</td><td>Y</td><td>Layer</td><td>Direction</td></tr>";
+    html += "  <tr>";
+    
+    // TODO: old map selector
+    html += "<td>TODO</td>";
+    
+    // character
+    html += "<td><select id='${prefix}_character' ${disabledString}>";
+    html += "  <option value='Player'>Player</option>";
+    html += "</select></td>";
+    
+    // TODO: new map selector
+    html += "<td>TODO</td>";
+    
+    // x
+    html += "<td><input type='text' class='number' id='${prefix}_x' value='${warpGameEvent.x}' ${readOnlyString} /></td>";
+    
+    // y
+    html += "<td><input type='text' class='number' id='${prefix}_y' value='${warpGameEvent.y}' ${readOnlyString} /></td>";
+    
+    // layer
+    html += "<td><select id='${prefix}_layer' ${disabledString}>";
+    List<String> layers = ["Ground", "Below", "Player", "Above"];
+    for(int layer=0; layer<layers.length; layer++) {
+      html += "<option value='${layer}'";
+      if(warpGameEvent.layer == layer) {
+        html += " selected";
+      }
+      
+      html += ">${layers[layer]}</option>";
+    }
+    html += "</select></td>";
+    
+    // direction
+    html += "<td><select id='${prefix}_direction' ${disabledString}>";
+    List<String> directions = ["Down", "Right", "Up", "Left"];
+    for(int direction=0; direction<directions.length; direction++) {
+      html += "<option value='${direction}'";
+      if(warpGameEvent.direction == direction) {
+        html += " selected";
+      }
+      
+      html += ">${directions[direction]}</option>";
+    }
+    html += "</select></td>";
+    
+    html += "  </tr>";
+    html += "</table>";
     
     return html;
   }

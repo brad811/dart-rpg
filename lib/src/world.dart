@@ -30,6 +30,7 @@ import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/store_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
+import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 
 // TODO: maybe make player just another character so player can control multiple different people?
 
@@ -370,7 +371,7 @@ class World {
           gameEventChain.add(delayGameEvent);
         } else if(gameEvents[i]["type"] == "fade") {
           FadeGameEvent fadeGameEvent = new FadeGameEvent(
-              gameEvents[i]["fade_type"] as int
+              gameEvents[i]["fadeType"] as int
             );
           
           gameEventChain.add(fadeGameEvent);
@@ -391,7 +392,7 @@ class World {
           gameEventChain.add(battleGameEvent);
         } else if(gameEvents[i]["type"] == "chain") {
           ChainGameEvent chainGameEvent = new ChainGameEvent(
-              gameEvents[i]["game_event_chain"]
+              gameEvents[i]["gameEventChain"]
             );
           
           gameEventChain.add(chainGameEvent);
@@ -401,6 +402,18 @@ class World {
             );
           
           gameEventChain.add(choiceGameEvent);
+        } else if(gameEvents[i]["type"] == "warp") {
+          WarpGameEvent warpGameEvent = new WarpGameEvent(
+              gameEvents[i]["oldMap"],
+              Main.player,
+              gameEvents[i]["newMap"],
+              gameEvents[i]["x"] as int,
+              gameEvents[i]["y"] as int,
+              gameEvents[i]["layer"] as int,
+              gameEvents[i]["direction"] as int
+            );
+          
+          gameEventChain.add(warpGameEvent);
         }
         
         World.gameEventChains[key] = gameEventChain;
