@@ -393,7 +393,7 @@ class ObjectEditorGameEvents {
     } else if(gameEvent is WarpGameEvent) {
       gameEventJson["type"] = "warp";
       gameEventJson["oldMap"] = gameEvent.oldMap;
-      gameEventJson["character"] = gameEvent.character;
+      gameEventJson["character"] = Main.player.name;
       gameEventJson["newMap"] = gameEvent.newMap;
       gameEventJson["x"] = gameEvent.x;
       gameEventJson["y"] = gameEvent.y;
@@ -692,7 +692,6 @@ class ObjectEditorGameEvents {
     return html;
   }
   
-  // TODO: make this fit better, perhaps on two lines
   static String buildWarpGameEventParamsHtml(WarpGameEvent warpGameEvent, String prefix, bool readOnly) {
     String html = "";
     
@@ -704,19 +703,38 @@ class ObjectEditorGameEvents {
     }
     
     html += "<table>";
-    html += "  <tr><td>Old Map</td><td>Character</td><td>New Map</td><td>X</td><td>Y</td><td>Layer</td><td>Direction</td></tr>";
+    html += "  <tr><td>Old Map</td><td>Character</td><td>New Map</td></tr>";
     html += "  <tr>";
     
-    // TODO: old map selector
-    html += "<td>TODO</td>";
+    // TODO: perhaps add generators for these in base editor
+    // old map selector
+    html += "<td><select id='${prefix}_old_map' ${disabledString}>";
+    Main.world.maps.keys.forEach((String key) {
+      html += "<option value='${key}'";
+      if(warpGameEvent.oldMap == key) {
+        html += " selected";
+      }
+      
+      html += ">${key}</option>";
+    });
     
     // character
     html += "<td><select id='${prefix}_character' ${disabledString}>";
     html += "  <option value='Player'>Player</option>";
     html += "</select></td>";
     
-    // TODO: new map selector
-    html += "<td>TODO</td>";
+    // new map selector
+    html += "<td><select id='${prefix}_new_map' ${disabledString}>";
+    Main.world.maps.keys.forEach((String key) {
+      html += "<option value='${key}'";
+      if(warpGameEvent.oldMap == key) {
+        html += " selected";
+      }
+      
+      html += ">${key}</option>";
+    });
+    
+    html += "</tr></table> <br /> <table><tr><td>X</td><td>Y</td><td>Layer</td><td>Direction</td></tr><tr>";
     
     // x
     html += "<td><input type='text' class='number' id='${prefix}_x' value='${warpGameEvent.x}' ${readOnlyString} /></td>";
