@@ -2,7 +2,6 @@ library dart_rpg.warp_game_event;
 
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/interactable_interface.dart';
-import 'package:dart_rpg/src/main.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
@@ -16,10 +15,8 @@ class WarpGameEvent extends GameEvent {
     [Function callback]) : super(null, callback);
   
   void trigger(InteractableInterface interactable) {
-    // remove the character from the old map
-    Main.world.maps[oldMap].characters.remove(character);
-    
     // change the character's location
+    character.map = newMap;
     character.mapX = x;
     character.mapY = y;
     character.layer = layer;
@@ -28,9 +25,6 @@ class WarpGameEvent extends GameEvent {
     // fix since x and y are only calculated in constructor
     character.x = character.mapX * character.motionAmount;
     character.y = character.mapY * character.motionAmount;
-    
-    // add the character to the new map
-    Main.world.maps[newMap].characters.add(character);
     
     callback();
   }

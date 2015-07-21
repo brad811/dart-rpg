@@ -157,7 +157,6 @@ class World {
       GameMap gameMap = new GameMap(mapName);
       maps[mapName] = gameMap;
       maps[mapName].tiles = [];
-      maps[mapName].characters = [];
       
       // set the map the game will start on
       if(mapsObject[mapName]["startMap"] == true) {
@@ -240,8 +239,6 @@ class World {
       maps[mapName].battlerChances.forEach((BattlerChance battlerChance) {
         battlerChance.chance /= totalChance;
       });
-      
-      parseMapCharacters(maps[mapName], mapsObject[mapName]['characters'], charactersObject);
     }
   }
   
@@ -257,25 +254,6 @@ class World {
     }
   }
   
-  void parseMapCharacters(GameMap gameMap, List<Map<String, Object>> characters, Map<String, Map> charactersObject) {
-    for(Map<String, Object> characterMap in characters) {
-      Character character = parseCharacter(charactersObject, characterMap["type"]);
-      character.mapX = characterMap["mapX"];
-      character.mapY = characterMap["mapY"];
-      character.layer = characterMap["layer"];
-      character.direction = characterMap["direction"];
-      character.solid = characterMap["solid"];
-      
-      character.type = characterMap["type"];
-      
-      // fix since x and y are only calculated in constructor
-      character.x = character.mapX * character.motionAmount;
-      character.y = character.mapY * character.motionAmount;
-      
-      gameMap.characters.add(character);
-    }
-  }
-  
   void parseCharacters(Map<String, Map> charactersObject) {
     // for character editor
     characters = {};
@@ -287,16 +265,26 @@ class World {
   
   Character parseCharacter(Map<String, Map> charactersObject, String characterLabel) {
     Character character = new Character(
-      int.parse(charactersObject[characterLabel]["spriteId"]),
-      int.parse(charactersObject[characterLabel]["pictureId"]),
+      charactersObject[characterLabel]["spriteId"] as int,
+      charactersObject[characterLabel]["pictureId"] as int,
       1, 1,
       layer: World.LAYER_PLAYER,
-      sizeX: int.parse(charactersObject[characterLabel]["sizeX"]),
-      sizeY: int.parse(charactersObject[characterLabel]["sizeY"]),
+      sizeX: charactersObject[characterLabel]["sizeX"] as int,
+      sizeY: charactersObject[characterLabel]["sizeY"] as int,
       solid: true
     );
     
     character.name = charactersObject[characterLabel]["name"];
+    
+    character.map = charactersObject[characterLabel]["map"];
+    character.mapX = charactersObject[characterLabel]["mapX"];
+    character.mapY = charactersObject[characterLabel]["mapY"];
+    character.layer = charactersObject[characterLabel]["layer"];
+    character.direction = charactersObject[characterLabel]["direction"];
+    character.solid = charactersObject[characterLabel]["solid"];
+    
+    character.x = character.mapX * character.motionAmount;
+    character.y = character.mapY * character.motionAmount;
     
     // TODO: get battler info from advanced character battler tab
     String battlerTypeName = charactersObject[characterLabel]["battlerType"];
@@ -433,11 +421,6 @@ class World {
     }
   }
   
-  Character addCharacter(String map, Character character) {
-    maps[map].characters.add(character);
-    return character;
-  }
-  
   void addInteractableObject(
       int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
       void handler(List<int> keyCodes)) {
@@ -462,8 +445,8 @@ class World {
       }
     }
     
-    for(Character character in maps[curMap].characters) {
-      if(character.mapX == x && character.mapY == y) {
+    for(Character character in World.characters.values) {
+      if(character.map == Main.world.curMap && character.mapX == x && character.mapY == y) {
         return true;
       }
     }
@@ -481,8 +464,8 @@ class World {
       }
     }
     
-    for(Character character in maps[curMap].characters) {
-      if(character.mapX == x && character.mapY == y) {
+    for(Character character in World.characters.values) {
+      if(character.map == Main.world.curMap && character.mapX == x && character.mapY == y) {
         return true;
       }
     }
@@ -499,8 +482,8 @@ class World {
       }
     }
     
-    for(Character character in maps[curMap].characters) {
-      if(character.mapX == x && character.mapY == y) {
+    for(Character character in World.characters.values) {
+      if(character.map == Main.world.curMap && character.mapX == x && character.mapY == y) {
         character.interact();
         return;
       }

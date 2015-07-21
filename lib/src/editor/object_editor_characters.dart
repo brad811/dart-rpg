@@ -6,6 +6,7 @@ import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/inventory.dart';
+import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'editor.dart';
@@ -79,7 +80,7 @@ class ObjectEditorCharacters {
     
     List<String> attrs = [
       // main
-      "label", "name", "sprite_id", "picture_id", "size_x", "size_y",
+      "label", "name", "sprite_id", "picture_id", "size_x", "size_y", "map",
       
       // battle
       "battler_type", "battler_level", "sight_distance",
@@ -141,6 +142,7 @@ class ObjectEditorCharacters {
       "    <td>Picture Id</td>"+
       "    <td>Size X</td>"+
       "    <td>Size Y</td>"+
+      "    <td>Map</td>"+
       "    <td></td>"+
       "  </tr>";
     
@@ -155,8 +157,20 @@ class ObjectEditorCharacters {
         "  <td><input id='character_${i}_sprite_id' type='text' class='number' value='${ World.characters[key].spriteId }' /></td>"+
         "  <td><input id='character_${i}_picture_id' type='text' class='number' value='${ World.characters[key].pictureId }' /></td>"+
         "  <td><input id='character_${i}_size_x' type='text' class='number' value='${ World.characters[key].sizeX }' /></td>"+
-        "  <td><input id='character_${i}_size_y' type='text' class='number' value='${ World.characters[key].sizeY }' /></td>"+
-        "  <td><button id='delete_character_${i}'>Delete</button></td>"+
+        "  <td><input id='character_${i}_size_y' type='text' class='number' value='${ World.characters[key].sizeY }' /></td>";
+        
+        // map selector
+        charactersHtml += "<td><select id='character_${i}_map'>";
+        Main.world.maps.keys.forEach((String mapName) {
+          charactersHtml += "<option value='${mapName}'";
+          if(World.characters[key].map == mapName) {
+            charactersHtml += " selected";
+          }
+          
+          charactersHtml += ">${mapName}</option>";
+        });
+        
+        charactersHtml += "  <td><button id='delete_character_${i}'>Delete</button></td>"+
         "</tr>";
     }
     
@@ -308,7 +322,7 @@ class ObjectEditorCharacters {
       } else {
         List<String> numberFields = [
           "sprite_id", "picture_id", "battler_level",
-          "size_x", "size_y",
+          "size_x", "size_y", "map",
           "sight_distance", "character_power_"
         ];
         
@@ -335,6 +349,8 @@ class ObjectEditorCharacters {
         );
         
         character.name = Editor.getTextInputStringValue('#character_${i}_name');
+        
+        character.map = Editor.getSelectInputStringValue("#character_${i}_map");
         
         String battlerTypeName = Editor.getSelectInputStringValue('#character_${i}_battler_type');
         
@@ -377,11 +393,19 @@ class ObjectEditorCharacters {
     Map<String, Map<String, String>> charactersJson = {};
     World.characters.forEach((String key, Character character) {
       Map<String, Object> characterJson = {};
-      characterJson["spriteId"] = character.spriteId.toString();
-      characterJson["pictureId"] = character.pictureId.toString();
-      characterJson["sizeX"] = character.sizeX.toString();
-      characterJson["sizeY"] = character.sizeY.toString();
+      characterJson["spriteId"] = character.spriteId;
+      characterJson["pictureId"] = character.pictureId;
+      characterJson["sizeX"] = character.sizeX;
+      characterJson["sizeY"] = character.sizeY;
+      characterJson["map"] = character.map;
       characterJson["name"] = character.name;
+      
+      // map information
+      characterJson["mapX"] = character.mapX;
+      characterJson["mapY"] = character.mapY;
+      characterJson["layer"] = character.layer;
+      characterJson["direction"] = character.direction;
+      characterJson["solid"] = character.solid;
       
       // inventory
       List<Map<String, String>> inventoryJson = [];

@@ -2,6 +2,7 @@ library dart_rpg.map_editor_maps;
 
 import 'dart:html';
 
+import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -32,11 +33,9 @@ class MapEditorMaps {
     
     Main.world.maps["new map"] = new GameMap(
       "new map",
-      [ [ nulls ] ],
-      []
+      [ [ nulls ] ]
     );
     
-    MapEditorCharacters.characters["new map"] = [];
     MapEditorWarps.warps["new map"] = [];
     MapEditorSigns.signs["new map"] = [];
     Main.world.maps["new map"].battlerChances = [];
@@ -63,7 +62,7 @@ class MapEditorMaps {
     
     mapsHtml += "<table class='editor_table'>"+
       "  <tr>"+
-      "    <td>Num</td><td>Name</td><td>X Size</td><td>Y Size</td><td>Chars</td><td></td>"+
+      "    <td>Num</td><td>Name</td><td>X Size</td><td>Y Size</td><td></td>"+
       "  </tr>";
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
@@ -77,7 +76,6 @@ class MapEditorMaps {
         "  <td><input id='map_${i}_name' type='text' value='${ Main.world.maps[key].name }' /></td>"+
         "  <td>${ Main.world.maps[key].tiles[0].length }</td>"+
         "  <td>${ Main.world.maps[key].tiles.length }</td>"+
-        "  <td>${ Main.world.maps[key].characters.length }</td>"+
         "  <td><button id='delete_map_${i}'>Delete</button></td>"+
         "</tr>";
     }
@@ -115,7 +113,6 @@ class MapEditorMaps {
   
   static void onInputChange(Event e) {
     Map<String, GameMap> newMaps = {};
-    Map<String, List<Map<String, Object>>> newCharacters = {};
     Map<String, List<WarpTile>> newWarps = {};
     Map<String, List<Sign>> newSigns = {};
     Map<String, List<BattlerChance>> newBattlers = {};
@@ -143,16 +140,22 @@ class MapEditorMaps {
         newMaps[newName] = Main.world.maps[key];
         newMaps[newName].name = newName;
         
-        newCharacters[newName] = MapEditorCharacters.characters[key];
         newWarps[newName] = MapEditorWarps.warps[key];
         newSigns[newName] = MapEditorSigns.signs[key];
         newBattlers[newName] = Main.world.maps[key].battlerChances;
         
-        if(newName != key && Main.world.curMap == key && changedByUser)
+        if(newName != key && Main.world.curMap == key && changedByUser) {
           Main.world.curMap = newName;
+        }
         
         if(newName != key) {
           // TODO: update all warp destinations that include this one
+          
+          World.characters.values.forEach((Character character) {
+            if(character.map == key) {
+              character.map = newName;
+            }
+          });
         }
       } catch(e) {
         // could not update this map
@@ -161,7 +164,6 @@ class MapEditorMaps {
     }
     
     Main.world.maps = newMaps;
-    MapEditorCharacters.characters = newCharacters;
     MapEditorWarps.warps = newWarps;
     MapEditorSigns.signs = newSigns;
     Main.world.maps.forEach((String mapName, GameMap map) {

@@ -242,7 +242,12 @@ class MapEditor {
   
   static void updateMap({bool shouldExport: false}) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-    List<Character> characters = Main.world.maps[Main.world.curMap].characters;
+    
+    List<Character> characters = [];
+    for(Character character in World.characters.values) {
+      if(character.map == Main.world.curMap)
+        characters.add(character);
+    }
     
     if(querySelector("#size_x") != null)
       querySelector("#size_x").text = mapTiles[0].length.toString();
@@ -302,7 +307,10 @@ class MapEditor {
     
     // draw blue boxes around characters
     List<Tile> characterTiles = [];
-    Main.world.maps[Main.world.curMap].characters.forEach((Character character) {
+    World.characters.values.forEach((Character character) {
+      if(character.map != Main.world.curMap)
+        return;
+      
       for(int w=0; w<character.sizeX; w++) {
         for(int h=0; h<character.sizeY; h++) {
           characterTiles.add(
@@ -440,8 +448,6 @@ class MapEditor {
       
       MapEditorWarps.export(jsonMap, key);
       MapEditorSigns.export(jsonMap, key);
-      
-      MapEditorCharacters.export(exportJson["maps"][key], key);
 
       MapEditorBattlers.export(exportJson["maps"][key], key);
       

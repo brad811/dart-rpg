@@ -55,7 +55,10 @@ class Player extends Character implements InputHandler {
   @override
   void checkForBattle() {
     // check for line-of-sight battles
-    for(Character character in Main.world.maps[Main.world.curMap].characters) {
+    for(Character character in World.characters.values) {
+      if(character.map != Main.world.curMap)
+        continue;
+      
       for(int i=1; i<=character.sightDistance; i++) {
         // check that character is facing the proper direction
         if(

@@ -123,11 +123,13 @@ class Main {
       player.render(renderList);
       world.render(renderList);
       
-      for(Character character in world.maps[world.curMap].characters) {
-        character.render(renderList);
-        
-        if(curTimeScale > 0.0) {
-          character.tick();
+      for(Character character in World.characters.values) {
+        if(character.map == world.curMap) {
+          character.render(renderList);
+          
+          if(curTimeScale > 0.0) {
+            character.tick();
+          }
         }
       }
       
