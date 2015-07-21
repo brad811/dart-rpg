@@ -24,10 +24,13 @@ class Attack {
   Attack(this.name, this.category, this.power);
   
   void use(Battler attacker, Battler defender, bool enemy, Function callback) {
-    String text = "${attacker.battlerType.name} attacked ${defender.battlerType.name} with ${this.name}!";
+    String text;
     if(enemy) {
-      text = "Enemy ${text}";
+      text = "Enemy ${attacker.battlerType.name} attacked ${defender.battlerType.name} with ${this.name}!";
+    } else {
+      text = "${attacker.battlerType.name} attacked enemy ${defender.battlerType.name} with ${this.name}!";
     }
+    
     textGameEvent = new TextGameEvent(240, text, () {
       defender.curHealth -= calculateDamage(attacker, defender);
       callback();
