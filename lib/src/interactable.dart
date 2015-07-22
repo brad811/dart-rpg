@@ -4,6 +4,8 @@ import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/choice_game_event.dart';
+import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class Interactable {
   static GameEvent chainGameEvents(InteractableInterface interactable, List<GameEvent> gameEvents) {
@@ -13,10 +15,14 @@ class Interactable {
     // Set each event to call the next event and update the character's
      // attached game event so they can handle input
      for(int i=1; i<gameEvents.length; i++) {
-       gameEvents[i-1].callback = () {
-         //interactable.gameEvent = gameEvents[i];
-         gameEvents[i].trigger(interactable);
-       };
+       if(gameEvents[i-1] is TextGameEvent && gameEvents[i] is ChoiceGameEvent) {
+         (gameEvents[i-1] as TextGameEvent).choiceGameEvent = (gameEvents[i] as ChoiceGameEvent);
+       } else {
+         gameEvents[i-1].callback = () {
+           //interactable.gameEvent = gameEvents[i];
+           gameEvents[i].trigger(interactable);
+         };
+       }
      }
      
      // The last event should return focus to the player
