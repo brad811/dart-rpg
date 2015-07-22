@@ -10,6 +10,7 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'editor.dart';
+import 'map_editor_characters.dart';
 import 'object_editor.dart';
 import 'object_editor_game_events.dart';
 
@@ -335,13 +336,24 @@ class ObjectEditorCharacters {
       }
     }
     
+    Map<String, Character> charactersBefore = new Map<String, Character>();
+    charactersBefore.addAll(World.characters);
+    
     World.characters = new Map<String, Character>();
     for(int i=0; querySelector('#character_${i}_label') != null; i++) {
       try {
+        String label = Editor.getTextInputStringValue('#character_${i}_label');
+        
+        int mapX = 0, mapY = 0;
+        if(charactersBefore[label] != null) {
+          mapX = charactersBefore[label].mapX;
+          mapY = charactersBefore[label].mapY;
+        }
+        
         Character character = new Character(
           Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
           Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
-          0, 0,
+          mapX, mapY,
           layer: World.LAYER_BELOW,
           sizeX: Editor.getTextInputIntValue('#character_${i}_size_x', 1),
           sizeY: Editor.getTextInputIntValue('#character_${i}_size_y', 2),
@@ -365,7 +377,6 @@ class ObjectEditorCharacters {
         character.battler = battler;
         character.sightDistance = Editor.getTextInputIntValue('#character_${i}_sight_distance', 0);
         
-        String label = Editor.getTextInputStringValue('#character_${i}_label');
         World.characters[label] = character;
       } catch(e) {
         // could not update this character
