@@ -15,7 +15,14 @@ import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 class Player extends Character implements InputHandler {
   bool inputEnabled = true;
   
-  Player(int posX, int posY) : super(Tile.PLAYER, 238, posX, posY, layer: World.LAYER_PLAYER);
+  int startX, startY;
+  String startMap;
+  
+  Player(int posX, int posY, String startMap) : super(Tile.PLAYER, 238, posX, posY, layer: World.LAYER_PLAYER) {
+    startX = posX;
+    startY = posY;
+    this.startMap = startMap;
+  }
   
   @override
   void handleKeys(List<int> keyCodes) {

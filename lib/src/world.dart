@@ -314,7 +314,7 @@ class World {
   }
   
   void parsePlayer(Map<String, Object> playerObject) {
-    Main.player = new Player(startX, startY);
+    Main.player = new Player(startX, startY, startMap);
     Main.player.battler = new Battler(
       playerObject["name"],
       battlerTypes[playerObject["battlerType"]], playerObject["level"] as int,

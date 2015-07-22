@@ -16,6 +16,8 @@ class BattleGameEvent extends GameEvent {
         // start the battle!
         character.battler.reset();
         
+        // TODO: reset enemy position if player loses
+        // TODO: set enemy as defeated so they don't attack again
         Main.battle = new Battle(
             Main.player.battler,
             character.battler,

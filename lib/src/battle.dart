@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/battler.dart';
+import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
@@ -12,10 +13,12 @@ import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
+import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
+import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class Battle implements InteractableInterface {
@@ -199,8 +202,15 @@ class Battle implements InteractableInterface {
   }
   
   void friendlyDie() {
-    // TODO: handle player death
-    fadeOutExit();
+    Gui.fadeDarkAction(() {
+      new HealGameEvent(Main.player, 9999, () {
+        Gui.clear();
+        Main.inBattle = false;
+        Main.world.curMap = Main.player.startMap;
+        Main.player.warp(Main.player.startMap, Main.player.startX, Main.player.startY, World.LAYER_PLAYER, Character.DOWN);
+        Main.focusObject = Main.player;
+      }).trigger(Main.player);
+    });
   }
   
   void enemyDie() {

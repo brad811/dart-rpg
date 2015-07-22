@@ -15,17 +15,7 @@ class WarpGameEvent extends GameEvent {
     [Function callback]) : super(null, callback);
   
   void trigger(InteractableInterface interactable) {
-    // change the character's location
-    character.map = newMap;
-    character.mapX = x;
-    character.mapY = y;
-    character.layer = layer;
-    character.direction = direction;
-    
-    // fix since x and y are only calculated in constructor
-    character.x = character.mapX * character.motionAmount;
-    character.y = character.mapY * character.motionAmount;
-    
+    character.warp(newMap, x, y, layer, direction);
     callback();
   }
 }

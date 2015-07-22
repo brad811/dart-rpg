@@ -232,6 +232,19 @@ class Character implements InteractableInterface {
     // Override in Player class
   }
   
+  void warp(String map, int mapX, int mapY, int layer, int direction) {
+    // change the character's location
+    this.map = map;
+    this.mapX = mapX;
+    this.mapY = mapY;
+    this.layer = layer;
+    this.direction = direction;
+    
+    // fix since x and y are only calculated in constructor
+    x = mapX * motionAmount;
+    y = mapY * motionAmount;
+  }
+  
   void render(List<List<Tile>> renderList) {
     int higherLayer = layer+1;
     if(higherLayer >= World.layers.last) {
