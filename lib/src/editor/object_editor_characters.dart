@@ -10,7 +10,6 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'editor.dart';
-import 'map_editor_characters.dart';
 import 'object_editor.dart';
 import 'object_editor_game_events.dart';
 

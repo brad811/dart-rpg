@@ -242,14 +242,15 @@ class World {
     }
   }
   
-  void parseItems(Map<String, Map> attacksObject) {
+  void parseItems(Map<String, Map> itemsObject) {
     items = {};
-    for(String itemName in attacksObject.keys) {
+    for(String itemName in itemsObject.keys) {
       items[itemName] = new Item(
-          int.parse(attacksObject[itemName]["pictureId"]),
+          int.parse(itemsObject[itemName]["pictureId"]),
           itemName,
-          int.parse(attacksObject[itemName]["basePrice"]),
-          attacksObject[itemName]["description"]
+          int.parse(itemsObject[itemName]["basePrice"]),
+          itemsObject[itemName]["description"],
+          itemsObject[itemName]["gameEventChain"]
       );
     }
   }

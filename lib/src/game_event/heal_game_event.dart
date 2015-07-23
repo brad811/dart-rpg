@@ -20,7 +20,9 @@ class HealGameEvent extends GameEvent {
     if(character.battler.curHealth > character.battler.startingHealth)
       character.battler.curHealth = character.battler.startingHealth;
     
-    character.battler.displayHealth = character.battler.curHealth;
+    // don't update the display health if in a battle, so it can be animated
+    if(!Main.inBattle)
+      character.battler.displayHealth = character.battler.curHealth;
     
     callback();
   }

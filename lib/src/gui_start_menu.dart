@@ -31,19 +31,18 @@ class GuiStartMenu {
       GameEvent confirmItemUse = new GameEvent((_) {
         item = Main.player.inventory.removeItem(item.name);
         
-        TextGameEvent text = item.use(Main.player.battler);
-        text.callback = () {
+        GameEvent gameEvent = item.use(Main.player.battler, new GameEvent((_) {
           Main.focusObject = Main.player;
           items.trigger(Main.player);
-        };
-        text.trigger(Main.player);
+        }));
+        
+        gameEvent.trigger(Main.player);
       });
       
       GameEvent cancelItemUse = new GameEvent((_) {
         Gui.clear();
         items.trigger(Main.player);
       });
-      
       
       Gui.clear();
       if(item == null) {
