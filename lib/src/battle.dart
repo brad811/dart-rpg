@@ -199,9 +199,9 @@ class Battle implements InteractableInterface {
   
   void friendlyDie() {
     Gui.fadeDarkAction(() {
+      Main.inBattle = false;
       new HealGameEvent(Main.player, 9999, () {
         Gui.clear();
-        Main.inBattle = false;
         Main.world.curMap = Main.player.startMap;
         Main.player.warp(Main.player.startMap, Main.player.startX, Main.player.startY, World.LAYER_PLAYER, Character.DOWN);
         Main.focusObject = Main.player;
