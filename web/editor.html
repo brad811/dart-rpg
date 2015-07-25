@@ -177,6 +177,26 @@
                 <table>
                   <tr>
                     <td>
+                    
+                      <table id="battler_types_advanced" class="hidden">
+                        <tr>
+                          <td class="tab_headers">
+                            <div class="tab_header" id="battler_type_stats_tab_header">Stats</div>
+                            <div class="tab_header" id="battler_type_attacks_tab_header">Attacks</div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="object_editor_tabs_container">
+                            <div class="tab" id="battler_type_stats_tab">
+                              <div id="battler_type_stats_container"></div>
+                            </div>
+                            <div class="tab" id="battler_type_attacks_tab">
+                              <button id="add_battler_type_attack_button">Add attack</button><hr />
+                              <div id="battler_type_attacks_container"></div>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
                       
                       <table id="characters_advanced" class="hidden">
                         <tr>
@@ -202,17 +222,16 @@
                         </tr>
                       </table>
                       
-                      <table id="game_event_chains_advanced" class="hidden">
+                      <table id="items_advanced" class="hidden">
                         <tr>
                           <td class="tab_headers">
-                            <div class="tab_header" id="game_event_chain_game_events_tab_header">Game Events</div>
+                            <div class="tab_header" id="item_game_event_tab_header">Game Event</div>
                           </td>
                         </tr>
                         <tr>
                           <td class="object_editor_tabs_container">
-                            <div class="tab" id="game_event_chain_game_events_tab">
-                              <button id="add_game_event_button">Add new game event</button><hr />
-                              <div id="game_event_chain_game_events_container"></div>
+                            <div class="tab" id="item_game_event_tab">
+                              <div id="item_game_event_container"></div>
                             </div>
                           </td>
                         </tr>
@@ -234,16 +253,17 @@
                         </tr>
                       </table>
                       
-                      <table id="items_advanced" class="hidden">
+                      <table id="game_event_chains_advanced" class="hidden">
                         <tr>
                           <td class="tab_headers">
-                            <div class="tab_header" id="item_game_event_tab_header">Game Event</div>
+                            <div class="tab_header" id="game_event_chain_game_events_tab_header">Game Events</div>
                           </td>
                         </tr>
                         <tr>
                           <td class="object_editor_tabs_container">
-                            <div class="tab" id="item_game_event_tab">
-                              <div id="item_game_event_container"></div>
+                            <div class="tab" id="game_event_chain_game_events_tab">
+                              <button id="add_game_event_button">Add new game event</button><hr />
+                              <div id="game_event_chain_game_events_container"></div>
                             </div>
                           </td>
                         </tr>

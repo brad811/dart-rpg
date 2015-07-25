@@ -281,6 +281,10 @@ textarea {
   padding: 5px !important;
 }
 
+#battler_type_stats_container td {
+	text-align: right;
+}
+
 .hidden {
   display: none;
 }
