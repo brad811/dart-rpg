@@ -124,7 +124,7 @@ class MapEditorBattlers {
   
   static void export(Map jsonMap, String key) {
     jsonMap["battlers"] = [];
-    for(BattlerChance battlerChance in Main.world.maps[Main.world.curMap].battlerChances) {
+    for(BattlerChance battlerChance in Main.world.maps[key].battlerChances) {
       jsonMap["battlers"].add({
         "name": battlerChance.battler.name,
         "type": battlerChance.battler.name,
