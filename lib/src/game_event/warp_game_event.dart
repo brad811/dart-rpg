@@ -7,10 +7,10 @@ import 'package:dart_rpg/src/game_event/game_event.dart';
 
 class WarpGameEvent extends GameEvent {
   Character character;
-  String oldMap, newMap;
+  String newMap;
   int x, y, layer, direction;
   
-  WarpGameEvent(this.oldMap, this.character,
+  WarpGameEvent(this.character,
     this.newMap, this.x, this.y, this.layer, this.direction,
     [Function callback]) : super(null, callback);
   

@@ -108,9 +108,9 @@ class World {
     parseAttacks(obj["attacks"]);
     parseBattlerTypes(obj["battlerTypes"]);
     parseItems(obj["items"]);
-    parseGameEventChains(obj["gameEventChains"]);
     parseMaps(obj["maps"], obj["characters"]);
     parsePlayer(obj["player"]);
+    parseGameEventChains(obj["gameEventChains"]);
     
     parseCharacters(obj["characters"]);
   }
@@ -332,6 +332,8 @@ class World {
     }
     
     Main.player.inventory.money = playerObject["money"] as int;
+    
+    Main.player.name = playerObject["name"];
   }
   
   void parseGameEventChains(Map<String, List<Map<String, String>>> gameEventChainsObject) {
@@ -393,7 +395,6 @@ class World {
           gameEventChain.add(choiceGameEvent);
         } else if(gameEvents[i]["type"] == "warp") {
           WarpGameEvent warpGameEvent = new WarpGameEvent(
-              gameEvents[i]["oldMap"],
               Main.player,
               gameEvents[i]["newMap"],
               gameEvents[i]["x"] as int,

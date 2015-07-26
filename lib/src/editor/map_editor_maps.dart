@@ -182,10 +182,6 @@ class MapEditorMaps {
           World.gameEventChains.values.forEach((List<GameEvent> gameEvents) {
             gameEvents.forEach((GameEvent gameEvent) {
               if(gameEvent is WarpGameEvent) {
-                if(gameEvent.oldMap == key) {
-                  gameEvent.oldMap = newName;
-                }
-                
                 if(gameEvent.newMap == key) {
                   gameEvent.newMap = newName;
                 }

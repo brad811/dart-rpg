@@ -269,7 +269,7 @@ class ObjectEditorGameEvents {
       
       return attrs;
     } else if(gameEvent is WarpGameEvent) {
-      return ["old_map", "character", "new_map", "x", "y", "layer", "direction"];
+      return ["character", "new_map", "x", "y", "layer", "direction"];
     } else {
       return [];
     }
@@ -337,11 +337,8 @@ class ObjectEditorGameEvents {
       
       return choiceGameEvent;
     } else if(gameEventType == "warp") {
-      String oldMap = Editor.getSelectInputStringValue("#${prefix}_old_map");
-      
       // TODO: enable for other characters
       WarpGameEvent warpGameEvent = new WarpGameEvent(
-          oldMap,
           Main.player,
           Editor.getSelectInputStringValue("#${prefix}_new_map"),
           Editor.getTextInputIntValue("#${prefix}_x", 0),
@@ -390,7 +387,6 @@ class ObjectEditorGameEvents {
       gameEventJson["cancelEvent"] = gameEvent.cancelEvent;
     } else if(gameEvent is WarpGameEvent) {
       gameEventJson["type"] = "warp";
-      gameEventJson["oldMap"] = gameEvent.oldMap;
       gameEventJson["character"] = Main.player.name;
       gameEventJson["newMap"] = gameEvent.newMap;
       gameEventJson["x"] = gameEvent.x;
@@ -701,20 +697,10 @@ class ObjectEditorGameEvents {
     }
     
     html += "<table>";
-    html += "  <tr><td>Old Map</td><td>Character</td><td>New Map</td></tr>";
+    html += "  <tr><td>Character</td><td>New Map</td></tr>";
     html += "  <tr>";
     
     // TODO: perhaps add generators for these in base editor
-    // old map selector
-    html += "<td><select id='${prefix}_old_map' ${disabledString}>";
-    Main.world.maps.keys.forEach((String key) {
-      html += "<option value='${key}'";
-      if(warpGameEvent.oldMap == key) {
-        html += " selected";
-      }
-      
-      html += ">${key}</option>";
-    });
     
     // character
     html += "<td><select id='${prefix}_character' ${disabledString}>";
@@ -725,7 +711,7 @@ class ObjectEditorGameEvents {
     html += "<td><select id='${prefix}_new_map' ${disabledString}>";
     Main.world.maps.keys.forEach((String key) {
       html += "<option value='${key}'";
-      if(warpGameEvent.oldMap == key) {
+      if(warpGameEvent.newMap == key) {
         html += " selected";
       }
       

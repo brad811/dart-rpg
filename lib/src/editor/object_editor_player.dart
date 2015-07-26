@@ -82,7 +82,7 @@ class ObjectEditorPlayer {
       "    <td>Name</td><td>Battler Type</td><td>Level</td><td>Money</td>"+
       "  </tr>"+
       "  <tr id='player_row'>"+
-      "    <td><input id='player_name' type='text' value='${Main.player.battler.name}' /></td>"+
+      "    <td><input id='player_name' type='text' value='${Main.player.name}' /></td>"+
       "    <td>";
       
     playerHtml += "<select id='player_battler_type'>";
@@ -176,7 +176,7 @@ class ObjectEditorPlayer {
   
   static void export(Map<String, Object> exportJson) {
     Map<String, Object> playerJson = {};
-    playerJson["name"] = Main.player.battler.name;
+    playerJson["name"] = Main.player.name;
     playerJson["battlerType"] = Main.player.battler.battlerType.name;
     playerJson["level"] = Main.player.battler.level;
     playerJson["money"] = Main.player.inventory.money;
