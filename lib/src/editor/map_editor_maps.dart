@@ -11,6 +11,9 @@ import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
+import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/warp_game_event.dart';
+
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'map_editor.dart';
 import 'map_editor_signs.dart';
@@ -148,13 +151,52 @@ class MapEditorMaps {
         }
         
         if(newName != key) {
-          // TODO: update all warp destinations that include this one
+          // update all warp destinations that include this map name
+          MapEditorWarps.warps.forEach((String map, List<WarpTile> warpTiles) {
+            warpTiles.forEach((WarpTile warpTile) {
+              if(warpTile.destMap == key)
+                warpTile.destMap = newName;
+            });
+          });
           
+          // update warps list to have this new map name
+          if(MapEditorWarps.warps.containsKey(key)) {
+            MapEditorWarps.warps[newName] = MapEditorWarps.warps[key];
+            MapEditorWarps.warps.remove(key);
+          }
+          
+          // update signs list to have this new map name
+          if(MapEditorSigns.signs.containsKey(key)) {
+             MapEditorSigns.signs[newName] = MapEditorSigns.signs[key];
+             MapEditorSigns.signs.remove(key);
+          }
+          
+          // update characters to have this new map name
           World.characters.values.forEach((Character character) {
             if(character.map == key) {
               character.map = newName;
             }
           });
+          
+          // update warp game events to have this new map name
+          World.gameEventChains.values.forEach((List<GameEvent> gameEvents) {
+            gameEvents.forEach((GameEvent gameEvent) {
+              if(gameEvent is WarpGameEvent) {
+                if(gameEvent.oldMap == key) {
+                  gameEvent.oldMap = newName;
+                }
+                
+                if(gameEvent.newMap == key) {
+                  gameEvent.newMap = newName;
+                }
+              }
+            });
+          });
+          
+          // update the start map to have this new map name
+          if(Main.world.startMap == key) {
+            Main.world.startMap = newName;
+          }
         }
       } catch(e) {
         // could not update this map
@@ -192,7 +234,6 @@ class MapEditorMaps {
       Editor.attachButtonListener("#delete_map_${i}", (MouseEvent e) {
         bool confirm = window.confirm('Are you sure you would like to delete this map?');
         if(confirm) {
-          // TODO: make this cleaner
           String mapName = Main.world.maps.keys.elementAt(i);
           Main.world.maps.remove(mapName);
           if(Main.world.maps.length == 0) {

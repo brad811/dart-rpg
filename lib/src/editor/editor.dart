@@ -19,9 +19,6 @@ import 'object_editor.dart';
 //       - probably delete
 //       - but maybe point to self map
 
-// TODO: add delete button for choice game event options
-// TODO: move battler type stats and attacks into advanced area
-
 class Editor {
   static List<String> editorTabs = ["map_editor", "object_editor"];
   static bool highlightSpecialTiles = true;
