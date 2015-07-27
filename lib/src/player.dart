@@ -18,7 +18,7 @@ class Player extends Character implements InputHandler {
   int startX, startY;
   String startMap;
   
-  Player(int posX, int posY, String startMap) : super(Tile.PLAYER, 238, posX, posY, layer: World.LAYER_PLAYER) {
+  Player(int posX, int posY, String startMap) : super("____player", Tile.PLAYER, 238, posX, posY, layer: World.LAYER_PLAYER) {
     startX = posX;
     startY = posY;
     this.startMap = startMap;

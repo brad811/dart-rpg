@@ -258,6 +258,7 @@ class World {
   void parseCharacters(Map<String, Map> charactersObject) {
     // for character editor
     characters = {};
+    
     for(String characterLabel in charactersObject.keys) {
       Character character = parseCharacter(charactersObject, characterLabel);
       characters[characterLabel] = character;
@@ -266,6 +267,7 @@ class World {
   
   Character parseCharacter(Map<String, Map> charactersObject, String characterLabel) {
     Character character = new Character(
+      characterLabel,
       charactersObject[characterLabel]["spriteId"] as int,
       charactersObject[characterLabel]["pictureId"] as int,
       1, 1,
@@ -367,8 +369,12 @@ class World {
           
           gameEventChain.add(fadeGameEvent);
         } else if(gameEvents[i]["type"] == "heal") {
+          Character character = World.characters[gameEvents[i]["character"]];
+          if(character == null)
+            character = Main.player;
+          
           HealGameEvent healGameEvent = new HealGameEvent(
-              Main.player,
+              character,
               gameEvents[i]["amount"] as int
             );
           
@@ -395,7 +401,7 @@ class World {
           gameEventChain.add(choiceGameEvent);
         } else if(gameEvents[i]["type"] == "warp") {
           WarpGameEvent warpGameEvent = new WarpGameEvent(
-              Main.player,
+              gameEvents[i]["character"],
               gameEvents[i]["newMap"],
               gameEvents[i]["x"] as int,
               gameEvents[i]["y"] as int,

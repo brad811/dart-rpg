@@ -30,6 +30,7 @@ class ObjectEditorCharacters {
   
   static void addNewCharacter(MouseEvent e) {
     Character newCharacter = new Character(
+      "New Character",
       0, 0, 0, 0,
       layer: World.LAYER_BELOW,
       sizeX: 1, sizeY: 2,
@@ -350,6 +351,7 @@ class ObjectEditorCharacters {
         }
         
         Character character = new Character(
+          label,
           Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
           Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
           mapX, mapY,

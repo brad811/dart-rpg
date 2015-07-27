@@ -337,9 +337,8 @@ class ObjectEditorGameEvents {
       
       return choiceGameEvent;
     } else if(gameEventType == "warp") {
-      // TODO: enable for other characters
       WarpGameEvent warpGameEvent = new WarpGameEvent(
-          Main.player,
+          Editor.getSelectInputStringValue("#${prefix}_character"),
           Editor.getSelectInputStringValue("#${prefix}_new_map"),
           Editor.getTextInputIntValue("#${prefix}_x", 0),
           Editor.getTextInputIntValue("#${prefix}_y", 0),
@@ -387,7 +386,7 @@ class ObjectEditorGameEvents {
       gameEventJson["cancelEvent"] = gameEvent.cancelEvent;
     } else if(gameEvent is WarpGameEvent) {
       gameEventJson["type"] = "warp";
-      gameEventJson["character"] = Main.player.name;
+      gameEventJson["character"] = gameEvent.characterLabel;
       gameEventJson["newMap"] = gameEvent.newMap;
       gameEventJson["x"] = gameEvent.x;
       gameEventJson["y"] = gameEvent.y;
@@ -587,7 +586,21 @@ class ObjectEditorGameEvents {
     
     // character
     html += "<td><select id='${prefix}_character' ${disabledString}>";
-    html += "  <option value='Player'>Player</option>";
+    
+    html += "  <option value='____player'";
+    if(healGameEvent.character.label == "____player") {
+      html += " selected";
+    }
+    html += ">Player</option>";
+    
+    World.characters.forEach((String charactrLabel, Character character) {
+      html += "  <option value='${charactrLabel}'";
+      if(healGameEvent.character.label == charactrLabel) {
+        html += " selected";
+      }
+      html += ">${charactrLabel}</option>";
+    });
+    
     html += "</select></td>";
     
     // amount
@@ -704,7 +717,21 @@ class ObjectEditorGameEvents {
     
     // character
     html += "<td><select id='${prefix}_character' ${disabledString}>";
-    html += "  <option value='Player'>Player</option>";
+    
+    html += "  <option value='____player'";
+    if(warpGameEvent.characterLabel == "____player") {
+      html += " selected";
+    }
+    html += ">Player</option>";
+    
+    World.characters.forEach((String charactrLabel, Character character) {
+      html += "  <option value='${charactrLabel}'";
+      if(warpGameEvent.characterLabel == charactrLabel) {
+        html += " selected";
+      }
+      html += ">${charactrLabel}</option>";
+    });
+    
     html += "</select></td>";
     
     // new map selector

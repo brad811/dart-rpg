@@ -55,12 +55,12 @@ class Character implements InteractableInterface {
   
   Inventory inventory = new Inventory([]);
   
-  String name, type, map;
+  String name, type, map, label;
   
   // TODO: perhaps add name field
   // TODO: add wander behavior
   
-  Character(this.spriteId, this.pictureId,
+  Character(this.label, this.spriteId, this.pictureId,
       this.mapX, this.mapY,
       {this.layer: World.LAYER_PLAYER, this.sizeX: 1, this.sizeY: 2, this.solid: true}) {
     curSpeed = walkSpeed;
