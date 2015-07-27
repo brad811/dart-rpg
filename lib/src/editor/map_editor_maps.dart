@@ -118,7 +118,7 @@ class MapEditorMaps {
     Map<String, List<WarpTile>> newWarps = {};
     Map<String, List<Sign>> newSigns = {};
     Map<String, List<BattlerChance>> newBattlers = {};
-    bool changedByUser;
+    bool changedByUser, nameChange = false;
     
     for(int i=0; i<Main.world.maps.length; i++) {
       changedByUser = false;
@@ -126,8 +126,10 @@ class MapEditorMaps {
       try {
         String newName = (querySelector('#map_${i}_name') as TextInputElement).value;
         
-        if(key != newName)
+        if(key != newName) {
           changedByUser = true;
+          nameChange = true;
+        }
         
         if(newMaps.keys.contains(newName)) {
           int j=0;
@@ -210,7 +212,12 @@ class MapEditorMaps {
     setMapSelectorButtonListeners();
     setMapDeleteButtonListeners();
     
-    MapEditor.updateMap(shouldExport: true);
+    // TODO: tab scrolls when changing map name
+    if(nameChange) {
+      Editor.update();
+    } else {
+      MapEditor.updateMap(shouldExport: true);
+    }
   }
   
   static void setMapSelectorButtonListeners() {
