@@ -87,8 +87,8 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
         );
       } else {
         Gui.renderWindow(
-          posX - (addWidth*0.75).round(), posY - myChoices.length + 1,
-          sizeX + (addWidth*0.75).round(), sizeY + myChoices.length - 1
+          posX - (addWidth*0.75).round(), posY + 1 - myChoices.length + (0.15 * myChoices.length).floor(),
+          sizeX + (addWidth*0.75).round(), myChoices.length + 1 - (0.15 * myChoices.length).floor()
         );
         
         for(int i=myChoices.length-1; i>=0; i--) {
