@@ -57,7 +57,6 @@ class Character implements InteractableInterface {
   
   String name, type, map, label;
   
-  // TODO: perhaps add name field
   // TODO: add wander behavior
   
   Character(this.label, this.spriteId, this.pictureId,

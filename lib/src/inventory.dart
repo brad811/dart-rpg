@@ -40,7 +40,6 @@ class Inventory {
       return item;
     }
     
-    // TODO: handle no more items left differently?
     return null;
   }
   

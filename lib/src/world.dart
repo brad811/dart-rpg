@@ -289,7 +289,6 @@ class World {
     character.x = character.mapX * character.motionAmount;
     character.y = character.mapY * character.motionAmount;
     
-    // TODO: get battler info from advanced character battler tab
     String battlerTypeName = charactersObject[characterLabel]["battlerType"];
     BattlerType battlerType = World.battlerTypes[battlerTypeName];
     character.battler = new Battler(
