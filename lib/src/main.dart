@@ -13,7 +13,6 @@ import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 // TODO: choice game event options box might be drawing too tall
-// TODO: clear gui when loading game json
 
 class Main {
   static final int
@@ -96,6 +95,7 @@ class Main {
     
     ButtonElement loadGameButton = querySelector("#load_game_button");
     loadGameButton.onClick.listen((MouseEvent e) {
+      Gui.clear();
       createWorld();
     });
     
