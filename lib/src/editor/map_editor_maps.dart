@@ -106,6 +106,7 @@ class MapEditorMaps {
     
     Editor.enforceValueFormat(e);
     // TODO: avoid name collision?
+    // TODO: figure out how to update names of things in other places when avoiding collisions
     
     for(int i=0; i<Main.world.maps.length; i++) {
       changedByUser = false;

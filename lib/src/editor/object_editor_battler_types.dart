@@ -99,7 +99,6 @@ class ObjectEditorBattlerTypes {
       // un-highlight other battler type rows
       querySelector("#battler_type_row_${j}").classes.remove("selected");
       
-      // TODO: make sure this is right
       // hide the advanced areas for other battler types
       querySelector("#battler_type_${j}_stats_table").classes.add("hidden");
       querySelector("#battler_type_${j}_attacks_table").classes.add("hidden");

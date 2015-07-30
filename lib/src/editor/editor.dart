@@ -19,8 +19,6 @@ import 'object_editor.dart';
 //       - probably delete
 //       - but maybe point to self map
 
-// TODO: apostraphes break everything
-
 class Editor {
   static List<String> editorTabs = ["map_editor", "object_editor"];
   static bool highlightSpecialTiles = true;

@@ -13,7 +13,6 @@ import 'editor.dart';
 import 'object_editor.dart';
 import 'object_editor_game_events.dart';
 
-// TODO: make all inputs with class number take out any non 0-9 characters
 // TODO: error when adding a second attack to the same level
 
 class ObjectEditorCharacters {
