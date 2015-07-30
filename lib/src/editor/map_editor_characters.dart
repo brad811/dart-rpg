@@ -83,7 +83,9 @@ class MapEditorCharacters {
     }
   }
   
-  static void onInputChange(Event event) {
+  static void onInputChange(Event e) {
+    Editor.enforceValueFormat(e);
+    
     int i = -1;
     World.characters.forEach((String key, Character character) {
       i += 1;
@@ -106,8 +108,7 @@ class MapEditorCharacters {
       }
     });
     
-    if(event != null)
-      Editor.updateAndRetainValue(event);
+    Editor.updateAndRetainValue(e);
   }
   
   // exporting is done in object editor character class

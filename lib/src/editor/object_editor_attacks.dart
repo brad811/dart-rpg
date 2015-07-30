@@ -65,19 +65,8 @@ class ObjectEditorAttacks {
   }
   
   static void onInputChange(Event e) {
-    if(e.target is InputElement) {
-      InputElement target = e.target;
-      
-      if(target.id.contains("_name") && World.attacks.keys.contains(target.value)) {
-        // avoid name collisions
-        int i = 0;
-        for(; World.attacks.keys.contains(target.value + "_${i}"); i++) {}
-        target.value += "_${i}";
-      } else if(target.id.contains("_power")) {
-        // enforce number format
-        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-      }
-    }
+    Editor.enforceValueFormat(e);
+    Editor.avoidNameCollision(e, "_name", World.attacks);
     
     World.attacks = new Map<String, Attack>();
     for(int i=0; querySelector('#attack_${i}_name') != null; i++) {

@@ -60,9 +60,9 @@ class MapEditorSigns {
       signsHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input id='sign_${i}_posx' type='text' value='${ signs[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
-        "  <td><input id='sign_${i}_posy' type='text' value='${ signs[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
-        "  <td><input id='sign_${i}_pic' type='text' value='${ signs[Main.world.curMap][i].textEvent.pictureSpriteId }' /></td>"+
+        "  <td><input id='sign_${i}_posx' type='text' class='number' value='${ signs[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
+        "  <td><input id='sign_${i}_posy' type='text' class='number' value='${ signs[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
+        "  <td><input id='sign_${i}_pic' type='text' class='number' value='${ signs[Main.world.curMap][i].textEvent.pictureSpriteId }' /></td>"+
         "  <td><textarea id='sign_${i}_text' />${ signs[Main.world.curMap][i].textEvent.text }</textarea></td>"+
         "  <td><button id='delete_sign_${i}'>Delete</button></td>" +
         "</tr>";
@@ -78,6 +78,8 @@ class MapEditorSigns {
   }
   
   static void onInputChange(Event e) {
+    Editor.enforceValueFormat(e);
+    
     for(int i=0; i<signs[Main.world.curMap].length; i++) {
       try {
         signs[Main.world.curMap][i] = new Sign(

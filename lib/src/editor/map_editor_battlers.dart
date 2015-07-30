@@ -61,8 +61,8 @@ class MapEditorBattlers {
       
       battlersHtml +=
         "  </td>"+
-        "  <td><input id='map_battler_${i}_level' type='text' value='${ Main.world.maps[Main.world.curMap].battlerChances[i].battler.level }' /></td>"+
-        "  <td><input id='map_battler_${i}_chance' type='text' value='${ Main.world.maps[Main.world.curMap].battlerChances[i].chance }' /> ${percentChance}%</td>"+
+        "  <td><input id='map_battler_${i}_level' type='text' class='number' value='${ Main.world.maps[Main.world.curMap].battlerChances[i].battler.level }' /></td>"+
+        "  <td><input id='map_battler_${i}_chance' type='text' class='number decimal' value='${ Main.world.maps[Main.world.curMap].battlerChances[i].chance }' /> ${percentChance}%</td>"+
         "  <td><button id='delete_map_battler_${i}'>Delete</button></td>" +
         "</tr>";
     }
@@ -77,16 +77,7 @@ class MapEditorBattlers {
   }
   
   static void onInputChange(Event e) {
-    if(e.target is InputElement) {
-      InputElement target = e.target;
-      
-      // enforce number format
-      if(target.id.contains("_level")) {
-        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-      } else if(target.id.contains("_chance")) {
-        target.value = target.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
-      }
-    }
+    Editor.enforceValueFormat(e);
     
     Main.world.maps[Main.world.curMap].battlerChances = new List<BattlerChance>();
     for(int i=0; querySelector('#map_battler_${i}_type') != null; i++) {

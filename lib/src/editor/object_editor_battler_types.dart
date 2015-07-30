@@ -130,9 +130,9 @@ class ObjectEditorBattlerTypes {
       battlerTypesHtml +=
         "<tr id='battler_type_row_${i}'>"+
         "  <td>${i}</td>"+
-        "  <td><input class='number' id='battler_type_${i}_sprite_id' type='text' value='${ World.battlerTypes[key].spriteId }' /></td>"+
+        "  <td><input id='battler_type_${i}_sprite_id' type='text' class='number' value='${ World.battlerTypes[key].spriteId }' /></td>"+
         "  <td><input id='battler_type_${i}_name' type='text' value='${ World.battlerTypes[key].name }' /></td>"+
-        "  <td><input class='number' id='battler_type_${i}_rarity' type='text' value='${ World.battlerTypes[key].rarity }' /></td>"+
+        "  <td><input id='battler_type_${i}_rarity' type='text' class='number decimal' value='${ World.battlerTypes[key].rarity }' /></td>"+
         "  <td><button id='delete_battler_type_${i}'>Delete battler</button></td>" +
         "</tr>";
     }
@@ -230,23 +230,8 @@ class ObjectEditorBattlerTypes {
   }
   
   static void onInputChange(Event e) {
-    if(e.target is InputElement) {
-      InputElement target = e.target;
-      
-      if(target.id.contains("_name") && World.battlerTypes.keys.contains(target.value)) {
-        // avoid name collisions
-        int i = 0;
-        for(; World.battlerTypes.keys.contains(target.value + "_${i}"); i++) {}
-        target.value += "_${i}";
-      } else if(target.id.contains("_magical_") || target.id.contains("_physical_")
-          || target.id.contains("_health") || target.id.contains("_sprite")
-          || target.id.contains("_speed") || target.id.contains("_level")) {
-        // enforce number format
-        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-      } else if(target.id.contains("_rarity")) {
-        target.value = target.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
-      }
-    }
+    Editor.enforceValueFormat(e);
+    Editor.avoidNameCollision(e, "_name", World.battlerTypes);
     
     World.battlerTypes = new Map<String, BattlerType>();
     for(int i=0; querySelector('#battler_type_${i}_name') != null; i++) {

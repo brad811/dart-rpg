@@ -97,28 +97,15 @@ class MapEditorMaps {
     setUpMapSizeButtons();
   }
   
-  static void changeStartMap(Event e) {
-    Main.world.startMap = (querySelector('#start_map') as SelectElement).value;
-    
-    if(e.target is TextInputElement) {
-      TextInputElement target = e.target as TextInputElement;
-      if(target.id.contains("start_player_")) {
-        // enforce number format
-        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-      }
-    }
-    
-    Main.world.startX = int.parse((querySelector('#start_player_x') as TextInputElement).value);
-    Main.world.startY = int.parse((querySelector('#start_player_y') as TextInputElement).value);
-    MapEditor.updateMap(shouldExport: true);
-  }
-  
   static void onInputChange(Event e) {
     Map<String, GameMap> newMaps = {};
     Map<String, List<WarpTile>> newWarps = {};
     Map<String, List<Sign>> newSigns = {};
     Map<String, List<BattlerChance>> newBattlers = {};
     bool changedByUser, nameChange = false;
+    
+    Editor.enforceValueFormat(e);
+    // TODO: avoid name collision?
     
     for(int i=0; i<Main.world.maps.length; i++) {
       changedByUser = false;
@@ -211,6 +198,10 @@ class MapEditorMaps {
     
     setMapSelectorButtonListeners();
     setMapDeleteButtonListeners();
+    
+    Main.world.startMap = (querySelector('#start_map') as SelectElement).value;
+    Main.world.startX = int.parse((querySelector('#start_player_x') as TextInputElement).value);
+    Main.world.startY = int.parse((querySelector('#start_player_y') as TextInputElement).value);
     
     // TODO: tab scrolls when changing map name
     if(nameChange) {

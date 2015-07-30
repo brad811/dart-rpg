@@ -69,8 +69,8 @@ class MapEditorWarps {
       warpsHtml +=
         "<tr>"+
         "  <td>${i}</td>"+
-        "  <td><input id='warp_${i}_posx' type='text' value='${ warps[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
-        "  <td><input id='warp_${i}_posy' type='text' value='${ warps[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
+        "  <td><input id='warp_${i}_posx' type='text' class='number' value='${ warps[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
+        "  <td><input id='warp_${i}_posy' type='text' class='number' value='${ warps[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
         "  <td>"+
         "    <select id='warp_${i}_dest_map'>";
         
@@ -84,8 +84,8 @@ class MapEditorWarps {
       warpsHtml +=
         "    </select>"+
         "  </td>"+
-        "  <td><input id='warp_${i}_dest_x' type='text' value='${ warps[Main.world.curMap][i].destX }' /></td>"+
-        "  <td><input id='warp_${i}_dest_y' type='text' value='${ warps[Main.world.curMap][i].destY }' /></td>"+
+        "  <td><input id='warp_${i}_dest_x' type='text' class='number' value='${ warps[Main.world.curMap][i].destX }' /></td>"+
+        "  <td><input id='warp_${i}_dest_y' type='text' class='number' value='${ warps[Main.world.curMap][i].destY }' /></td>"+
         "  <td><button id='delete_warp_${i}'>Delete</button></td>" +
         "</tr>";
     }
@@ -100,6 +100,8 @@ class MapEditorWarps {
   }
   
   static void onInputChange(Event e) {
+    Editor.enforceValueFormat(e);
+    
     for(int i=0; i<warps[Main.world.curMap].length; i++) {
       try {
         warps[Main.world.curMap][i].sprite.posX = double.parse((querySelector('#warp_${i}_posx') as InputElement).value);

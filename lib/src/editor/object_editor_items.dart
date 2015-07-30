@@ -154,19 +154,8 @@ class ObjectEditorItems {
   }
   
   static void onInputChange(Event e) {
-    if(e.target is InputElement) {
-      InputElement target = e.target;
-      
-      if(target.id.contains("_name") && World.items.keys.contains(target.value)) {
-        // avoid name collisions
-        int i = 0;
-        for(; World.items.keys.contains(target.value + "_${i}"); i++) {}
-        target.value += "_${i}";
-      } else if(target.id.contains("_picture_id") || target.id.contains("_base_price")) {
-        // enforce number format
-        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-      }
-    }
+    Editor.enforceValueFormat(e);
+    Editor.avoidNameCollision(e, "_name", World.items);
     
     World.items = new Map<String, Item>();
     for(int i=0; querySelector('#item_${i}_name') != null; i++) {

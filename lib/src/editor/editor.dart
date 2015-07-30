@@ -19,6 +19,8 @@ import 'object_editor.dart';
 //       - probably delete
 //       - but maybe point to self map
 
+// TODO: apostraphes break everything
+
 class Editor {
   static List<String> editorTabs = ["map_editor", "object_editor"];
   static bool highlightSpecialTiles = true;
@@ -126,6 +128,31 @@ class Editor {
           Editor.update();
         }
       });
+    }
+  }
+  
+  static void avoidNameCollision(Event e, String match, Map<String, Object> objects) {
+    if(e.target is InputElement) {
+      InputElement target = e.target;
+      
+      if(target.id.contains(match) && objects.keys.contains(target.value)) {
+        // avoid name collisions
+        int i = 0;
+        for(; objects.keys.contains(target.value + "_${i}"); i++) {}
+        target.value += "_${i}";
+      }
+    }
+  }
+  
+  static void enforceValueFormat(Event e) {
+    if(e.target is TextInputElement) {
+      TextInputElement inputElement = e.target;
+      
+      if(inputElement.classes.contains("decimal")) {
+        inputElement.value = inputElement.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
+      } else if(inputElement.classes.contains("number")) {
+        inputElement.value = inputElement.value.replaceAll(new RegExp(r'[^0-9]'), "");
+      }
     }
   }
   

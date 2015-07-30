@@ -190,16 +190,8 @@ class ObjectEditorGameEvents {
   }
   
   static void onInputChange(Event e) {
-    if(e.target is InputElement) {
-      InputElement target = e.target;
-      
-      if(target.id.contains("_label") && World.gameEventChains.keys.contains(target.value)) {
-        // avoid name collisions
-        int i = 0;
-        for(; World.gameEventChains.keys.contains(target.value + "_${i}"); i++) {}
-        target.value += "_${i}";
-      }
-    }
+    Editor.enforceValueFormat(e);
+    Editor.avoidNameCollision(e, "_label", World.gameEventChains);
     
     World.gameEventChains = new Map<String, List<GameEvent>>();
     for(int i=0; querySelector('#game_event_chain_${i}_label') != null; i++) {

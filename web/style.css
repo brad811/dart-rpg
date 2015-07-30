@@ -204,11 +204,6 @@ h4 {
   clear: left;
 }
 
-#map_characters_container input, #warps_container input,
-#signs_container input, #battlers_container input {
-  width: 30px;
-}
-
 textarea {
   width: 160px;
   height: 60px;

@@ -142,15 +142,7 @@ class ObjectEditorPlayer {
   static void onInputChange(Event e) {
     String battlerType = (querySelector('#player_battler_type') as SelectElement).value;
     
-    if(e.target is TextInputElement) {
-      TextInputElement target = e.target as TextInputElement;
-      if(target.id.contains("player_battler_level") || target.id.contains("player_money")) {
-        // enforce number format
-        int selectionStart = (e.target as TextInputElement).selectionStart;
-        target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-        (e.target as TextInputElement).selectionStart = selectionStart;
-      }
-    }
+    Editor.enforceValueFormat(e);
     
     Main.player.battler = new Battler(
       Editor.getTextInputStringValue('#player_name'),

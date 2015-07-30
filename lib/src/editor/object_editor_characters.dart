@@ -312,29 +312,8 @@ class ObjectEditorCharacters {
   }
   
   static void onInputChange(Event e) {
-    if(e.target is InputElement) {
-      InputElement target = e.target;
-      
-      if(target.id.contains("_label") && World.characters.keys.contains(target.value)) {
-        // avoid name collisions
-        int i = 0;
-        for(; World.characters.keys.contains(target.value + "_${i}"); i++) {}
-        target.value += "_${i}";
-      } else {
-        List<String> numberFields = [
-          "sprite_id", "picture_id", "battler_level",
-          "size_x", "size_y", "map",
-          "sight_distance", "character_power_"
-        ];
-        
-        numberFields.forEach((String field) {
-          if(target.id.contains(field)) {
-            // enforce number format
-            target.value = target.value.replaceAll(new RegExp(r'[^0-9]'), "");
-          }
-        });
-      }
-    }
+    Editor.enforceValueFormat(e);
+    Editor.avoidNameCollision(e, "_label", World.characters);
     
     Map<String, Character> charactersBefore = new Map<String, Character>();
     charactersBefore.addAll(World.characters);
