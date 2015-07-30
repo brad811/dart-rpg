@@ -7,8 +7,10 @@ import 'dart:js';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
+import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'editor.dart';
@@ -278,78 +280,205 @@ class MapEditor {
       character.render(renderList);
     }
     
-    List<Tile> solids = [];
-    List<Tile> layereds = [];
-    List<Tile> encounters = [];
-    
     for(List<Tile> layer in renderList) {
       for(Tile tile in layer) {
         renderStaticSprite(
           mapEditorCanvasContext, tile.sprite.id,
           tile.sprite.posX.round(), tile.sprite.posY.round()
         );
-        
-        // add solid tiles, layered tiles, and encounter tiles
-        // to a list to have boxes drawn around them
-        if(tile.solid)
-          solids.add(tile);
-        
-        if(tile.layered == true)
-          layereds.add(tile);
-        
-        if(tile is EncounterTile)
-          encounters.add(tile);
       }
     }
     
-    // draw red boxes around solid tiles
-    outlineTiles(solids, 255, 0, 0);
-    
-    // draw blue boxes around characters
-    List<Tile> characterTiles = [];
-    World.characters.values.forEach((Character character) {
-      if(character.map != Main.world.curMap)
-        return;
-      
-      for(int w=0; w<character.sizeX; w++) {
-        for(int h=0; h<character.sizeY; h++) {
-          characterTiles.add(
-            new Tile(
-              false,
-              new Sprite(0, (character.mapX + w).toDouble(), (character.mapY - h).toDouble())
-            )
-          );
-        }
-      }
-    });
-    outlineTiles(characterTiles, 0, 0, 255);
-    
-    // draw cyan boxes around layered tiles
-    outlineTiles(layereds, 0, 150, 255);
-    
-    // draw magenta boxes around encounter tiles
-    outlineTiles(encounters, 200, 0, 255);
-    
-    // draw green boxes around warp tiles
-    outlineTiles(MapEditorWarps.warps[Main.world.curMap], 0, 255, 0);
-    
-    // draw yellow boxes around sign tiles
-    outlineTiles(MapEditorSigns.signs[Main.world.curMap], 255, 255, 0);
+    renderColoredTiles();
     
     if(shouldExport) {
       Editor.export();
     }
   }
   
-  static void outlineTiles(List<Tile> tiles, int r, int g, int b) {
+  static void renderColoredTiles() {
+    Map<String, Map<String, int>> colorTrackers = {};
+    double alpha = 0.15;
+    
+    for(List<Tile> layer in renderList) {
+      for(Tile tile in layer) {
+        int x = tile.sprite.posX.round();
+        int y = tile.sprite.posY.round();
+        String key = "${x},${y}";
+        
+        if(colorTrackers[key] == null) {
+          colorTrackers[key] = {
+            "colorCount": 0,
+            "numberDone": 0,
+            "solid": 0,
+            "layered": 0,
+            "encounter": 0,
+            "character": 0,
+            "warp": 0,
+            "sign": 0,
+            "x": x,
+            "y": y
+          };
+        }
+        
+        Map<String, int> colorTracker = colorTrackers[key];
+        
+        if(tile.solid == true && colorTracker["solid"] == 0) {
+          colorTracker["colorCount"] += 1;
+          colorTracker["solid"] = 1;
+        }
+        
+        if(tile.layered == true && colorTracker["layered"] == 0) {
+          colorTracker["colorCount"] += 1;
+          colorTracker["layered"] = 1;
+        }
+        
+        if(tile is EncounterTile && colorTracker["encounter"] == 0) {
+          colorTracker["colorCount"] += 1;
+          colorTracker["encounter"] = 1;
+        }
+        
+        if(tile is WarpTile && colorTracker["warp"] == 0) {
+          colorTracker["colorCount"] += 1;
+          colorTracker["warp"] = 1;
+        }
+        
+        if(tile is Sign && colorTracker["sign"] == 0) {
+          colorTracker["colorCount"] += 1;
+          colorTracker["sign"] = 1;
+        }
+      }
+    }
+    
+    World.characters.forEach((String key, Character character) {
+      if(character.map != Main.world.curMap)
+        return;
+      
+      int x = character.mapX;
+      int y = character.mapY;
+      String key = "${x},${y}";
+      
+      if(colorTrackers[key] == null) {
+        colorTrackers[key] = {
+          "colorCount": 0,
+          "numberDone": 0,
+          "solid": 0,
+          "layered": 0,
+          "encounter": 0,
+          "character": 0,
+          "warp": 0,
+          "sign": 0,
+          "x": x,
+          "y": y
+        };
+      }
+      
+      Map<String, int> colorTracker = colorTrackers[key];
+      
+      colorTracker["colorCount"] += 1;
+      colorTracker["character"] = 1;
+    });
+    
+    for(int y=0; y<Main.world.maps[Main.world.curMap].tiles.length; y++) {
+      for(int x=0; x<Main.world.maps[Main.world.curMap].tiles.first.length; x++) {
+        String key = "${x},${y}";
+                
+        Map<String, int> colorTracker = colorTrackers[key];
+        
+        if(colorTracker == null)
+          continue;
+        
+        // solid
+        colorTracker["numberDone"] = outlineTilePart(
+            x, y,
+            colorTracker["solid"] == 1,
+            colorTracker["colorCount"], colorTracker["numberDone"],
+            255, 0, 0, alpha
+          );
+        
+        // character
+        colorTracker["numberDone"] = outlineTilePart(
+            x, y,
+            colorTracker["character"] == 1,
+            colorTracker["colorCount"], colorTracker["numberDone"],
+            0, 0, 255, alpha
+          );
+        
+        // layered
+        colorTracker["numberDone"] = outlineTilePart(
+            x, y,
+            colorTracker["layered"] == 1,
+            colorTracker["colorCount"], colorTracker["numberDone"],
+            0, 150, 255, alpha
+          );
+        
+        // encounter
+        colorTracker["numberDone"] = outlineTilePart(
+            x, y,
+            colorTracker["encounter"] == 1,
+            colorTracker["colorCount"], colorTracker["numberDone"],
+            200, 0, 255, alpha
+          );
+        
+        // warp
+        colorTracker["numberDone"] = outlineTilePart(
+            x, y,
+            colorTracker["warp"] == 1,
+            colorTracker["colorCount"], colorTracker["numberDone"],
+            0, 255, 0, alpha
+          );
+        
+        // sign
+        colorTracker["numberDone"] = outlineTilePart(
+            x, y,
+            colorTracker["sign"] == 1,
+            colorTracker["colorCount"], colorTracker["numberDone"],
+            255, 255, 0, alpha
+          );
+      }
+    }
+  }
+  
+  static int outlineTilePart(int x, int y, bool should, int colorCount, int numberDone, int r, int g, int b, double a) {
+    if(should) {
+      if(colorCount == 1) {
+        outlineTile(x, y, r, g, b, a);
+      } else if(colorCount == 2) {
+        if(numberDone == 0) {
+          outlineTile(x, y, r, g, b, a, 1);
+          outlineTile(x, y, r, g, b, a, 3);
+        } else {
+          outlineTile(x, y, r, g, b, a, 2);
+          outlineTile(x, y, r, g, b, a, 4);
+        }
+      } else {
+        if(numberDone == 0) {
+          outlineTile(x, y, r, g, b, a, 1);
+        } else if(numberDone == 1) {
+          outlineTile(x, y, r, g, b, a, 2);
+        } else if(numberDone == 2) {
+          outlineTile(x, y, r, g, b, a, 3);
+        } else if(numberDone == 3) {
+          outlineTile(x, y, r, g, b, a, 4);
+        }
+      }
+      
+      numberDone += 1;
+    }
+    
+    return numberDone;
+  }
+  
+  static void outlineTile(int posX, int posY, int r, int g, int b, double a, [int quadrant = 0]) {
     if(!Editor.highlightSpecialTiles)
       return;
     
     mapEditorCanvasContext.beginPath();
-    for(Tile tile in tiles) {
+    if(quadrant == 0) {
+      // the whole tile
       int
-        x = (tile.sprite.posX * Sprite.scaledSpriteSize).round(),
-        y = (tile.sprite.posY * Sprite.scaledSpriteSize).round();
+        x = (posX * Sprite.scaledSpriteSize).round(),
+        y = (posY * Sprite.scaledSpriteSize).round();
       
       mapEditorCanvasContext.moveTo(x, y);
       mapEditorCanvasContext.lineTo(x + Sprite.scaledSpriteSize, y);
@@ -357,8 +486,64 @@ class MapEditor {
       mapEditorCanvasContext.lineTo(x, y + Sprite.scaledSpriteSize);
       mapEditorCanvasContext.lineTo(x, y);
       
-      mapEditorCanvasContext.setFillColorRgb(r, g, b, 0.1);
+      mapEditorCanvasContext.setFillColorRgb(r, g, b, a);
       mapEditorCanvasContext.fillRect(x, y, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
+    } else if(quadrant == 1) {
+      // top left
+      int
+        x = (posX * Sprite.scaledSpriteSize).round(),
+        y = (posY * Sprite.scaledSpriteSize).round();
+      
+      mapEditorCanvasContext.moveTo(x, y);
+      mapEditorCanvasContext.lineTo(x + Sprite.scaledSpriteSize / 2, y);
+      
+      mapEditorCanvasContext.moveTo(x, y);
+      mapEditorCanvasContext.lineTo(x, y + Sprite.scaledSpriteSize / 2);
+      
+      mapEditorCanvasContext.setFillColorRgb(r, g, b, a);
+      mapEditorCanvasContext.fillRect(x, y, Sprite.scaledSpriteSize / 2, Sprite.scaledSpriteSize / 2);
+    } else if(quadrant == 2) {
+      // bottom left
+      int
+        x = (posX * Sprite.scaledSpriteSize).round(),
+        y = (posY * Sprite.scaledSpriteSize).round();
+      
+      mapEditorCanvasContext.moveTo(x + Sprite.scaledSpriteSize, y);
+      mapEditorCanvasContext.lineTo(x + Sprite.scaledSpriteSize, y + Sprite.scaledSpriteSize / 2);
+      
+      mapEditorCanvasContext.moveTo(x + Sprite.scaledSpriteSize, y);
+      mapEditorCanvasContext.lineTo(x + Sprite.scaledSpriteSize / 2, y);
+      
+      mapEditorCanvasContext.setFillColorRgb(r, g, b, a);
+      mapEditorCanvasContext.fillRect(x + Sprite.scaledSpriteSize / 2, y, Sprite.scaledSpriteSize / 2, Sprite.scaledSpriteSize / 2);
+    } else if(quadrant == 3) {
+      // top right
+      int
+        x = (posX * Sprite.scaledSpriteSize).round(),
+        y = (posY * Sprite.scaledSpriteSize).round();
+      
+      mapEditorCanvasContext.moveTo(x, y + Sprite.scaledSpriteSize);
+      mapEditorCanvasContext.lineTo(x + Sprite.scaledSpriteSize / 2, y + Sprite.scaledSpriteSize);
+      
+      mapEditorCanvasContext.moveTo(x, y + Sprite.scaledSpriteSize);
+      mapEditorCanvasContext.lineTo(x, y + Sprite.scaledSpriteSize / 2);
+      
+      mapEditorCanvasContext.setFillColorRgb(r, g, b, a);
+      mapEditorCanvasContext.fillRect(x, y + Sprite.scaledSpriteSize / 2, Sprite.scaledSpriteSize / 2, Sprite.scaledSpriteSize / 2);
+    } else if(quadrant == 4) {
+      // bottom right
+      int
+        x = (posX * Sprite.scaledSpriteSize).round(),
+        y = (posY * Sprite.scaledSpriteSize).round();
+      
+      mapEditorCanvasContext.moveTo(x + Sprite.scaledSpriteSize, y + Sprite.scaledSpriteSize);
+      mapEditorCanvasContext.lineTo(x + Sprite.scaledSpriteSize / 2, y + Sprite.scaledSpriteSize);
+      
+      mapEditorCanvasContext.moveTo(x + Sprite.scaledSpriteSize, y + Sprite.scaledSpriteSize);
+      mapEditorCanvasContext.lineTo(x + Sprite.scaledSpriteSize, y + Sprite.scaledSpriteSize / 2);
+      
+      mapEditorCanvasContext.setFillColorRgb(r, g, b, a);
+      mapEditorCanvasContext.fillRect(x + Sprite.scaledSpriteSize / 2, y + Sprite.scaledSpriteSize / 2, Sprite.scaledSpriteSize / 2, Sprite.scaledSpriteSize / 2);
     }
     
     // draw the strokes around the tiles

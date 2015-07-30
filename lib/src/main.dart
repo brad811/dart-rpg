@@ -12,8 +12,6 @@ import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
-// TODO: choice game event options box might be drawing too tall
-
 class Main {
   static final int
     canvasWidth = 640,
