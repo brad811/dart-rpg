@@ -157,37 +157,6 @@ class MapEditor {
     
     selectSprite(Tile.GROUND);
     
-    Function tileChange = (MouseEvent e) {
-      List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-      int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
-      int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-      
-      if(y >= mapTiles.length || x >= mapTiles[0].length)
-        return;
-      
-      int layer = int.parse((querySelector("[name='layer']:checked") as RadioButtonInputElement).value);
-      bool solid = (querySelector("#solid") as CheckboxInputElement).checked;
-      bool layered = (querySelector("#layered") as CheckboxInputElement).checked;
-      bool encounter = (querySelector("#encounter") as CheckboxInputElement).checked;
-      
-      if(selectedTile == 98) {
-        mapTiles[y][x][layer] = null;
-      } else if(encounter) {
-        mapTiles[y][x][layer] = new EncounterTile(
-          new Sprite.int(selectedTile, x, y),
-          layered
-        );
-      } else {
-        mapTiles[y][x][layer] = new Tile(
-          solid,
-          new Sprite.int(selectedTile, x, y),
-          layered
-        );
-      }
-      
-      Editor.update();
-    };
-    
     mapEditorCanvas.onClick.listen(tileChange);
     
     var tooltip = querySelector('#tooltip');
@@ -208,11 +177,22 @@ class MapEditor {
     
     mapEditorCanvas.onMouseDown.listen((MouseEvent e) {
       StreamSubscription mouseMoveStream = mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
+        e.preventDefault();
         tileChange(e);
       });
+      
+      e.preventDefault();
 
-      mapEditorCanvas.onMouseUp.listen((onData) => mouseMoveStream.cancel());
-      mapEditorCanvas.onMouseLeave.listen((onData) => mouseMoveStream.cancel());
+      mapEditorCanvas.onMouseUp.listen((MouseEvent e) => mouseMoveStream.cancel());
+      mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
+        EventTarget eventTarget = e.relatedTarget;
+        if(eventTarget is DivElement && eventTarget.id == "tooltip") {
+          // don't stop changing tiles, we just collided with the tooltip
+          return;
+        } else {
+          mouseMoveStream.cancel();
+        }
+      });
     });
     
     mapEditorSpriteSelectorCanvas.onClick.listen((MouseEvent e) {
@@ -220,6 +200,37 @@ class MapEditor {
       int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
       selectSprite(y*Sprite.spriteSheetSize + x);
     });
+  }
+  
+  static void tileChange(MouseEvent e) {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+    int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+    
+    if(y >= mapTiles.length || x >= mapTiles[0].length)
+      return;
+    
+    int layer = int.parse((querySelector("[name='layer']:checked") as RadioButtonInputElement).value);
+    bool solid = (querySelector("#solid") as CheckboxInputElement).checked;
+    bool layered = (querySelector("#layered") as CheckboxInputElement).checked;
+    bool encounter = (querySelector("#encounter") as CheckboxInputElement).checked;
+    
+    if(selectedTile == 98) {
+      mapTiles[y][x][layer] = null;
+    } else if(encounter) {
+      mapTiles[y][x][layer] = new EncounterTile(
+        new Sprite.int(selectedTile, x, y),
+        layered
+      );
+    } else {
+      mapTiles[y][x][layer] = new Tile(
+        solid,
+        new Sprite.int(selectedTile, x, y),
+        layered
+      );
+    }
+    
+    Editor.update();
   }
   
   static void updateMapCanvasSize() {
