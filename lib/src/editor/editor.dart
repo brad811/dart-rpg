@@ -152,6 +152,8 @@ class Editor {
         inputElement.value = inputElement.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
       } else if(inputElement.classes.contains("number")) {
         inputElement.value = inputElement.value.replaceAll(new RegExp(r'[^0-9]'), "");
+      } else {
+        inputElement.value = inputElement.value.replaceAll(new RegExp(r'[^a-zA-Z0-9\._\ ,~!@#$%^&*()_+`\-=\[\]\\{}\|;:,./<>?]'), "_");
       }
     }
   }
