@@ -388,7 +388,8 @@ class World {
           gameEventChain.add(battleGameEvent);
         } else if(gameEvents[i]["type"] == "chain") {
           ChainGameEvent chainGameEvent = new ChainGameEvent(
-              gameEvents[i]["gameEventChain"]
+              gameEvents[i]["gameEventChain"],
+              gameEvents[i]["makeDefault"] as bool == true
             );
           
           gameEventChain.add(chainGameEvent);

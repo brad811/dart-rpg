@@ -21,6 +21,8 @@ import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 import 'editor.dart';
 import 'object_editor.dart';
 
+// TODO: selecting a character in heal event breaks something
+
 class ObjectEditorGameEvents {
   static List<String> advancedTabs = ["game_event_chain_game_events"];
   static int selected;
@@ -249,7 +251,7 @@ class ObjectEditorGameEvents {
     } else if(gameEvent is BattleGameEvent) {
       return [];
     } else if(gameEvent is ChainGameEvent) {
-      return ["game_event_chain"];
+      return ["game_event_chain", "make_default"];
     } else if(gameEvent is ChoiceGameEvent) {
       //TODO: List<String> attrs = ["cancel_event"];
       List<String> attrs = [];
@@ -312,7 +314,8 @@ class ObjectEditorGameEvents {
       return battleGameEvent;
     } else if(gameEventType == "chain") {
       ChainGameEvent chainGameEvent = new ChainGameEvent(
-          Editor.getSelectInputStringValue("#${prefix}_game_event_chain")
+          Editor.getSelectInputStringValue("#${prefix}_game_event_chain"),
+          Editor.getCheckboxInputBoolValue("#${prefix}_make_default")
         );
       
       return chainGameEvent;
@@ -372,6 +375,7 @@ class ObjectEditorGameEvents {
     } else if(gameEvent is ChainGameEvent) {
       gameEventJson["type"] = "chain";
       gameEventJson["gameEventChain"] = gameEvent.gameEventChain;
+      gameEventJson["makeDefault"] = gameEvent.makeDefault;
     } else if(gameEvent is ChoiceGameEvent) {
       gameEventJson["type"] = "choice";
       gameEventJson["choices"] = gameEvent.choiceGameEventChains;
@@ -625,7 +629,7 @@ class ObjectEditorGameEvents {
     }
     
     html += "<table>";
-    html += "  <tr><td>Game Event Chain</td></tr>";
+    html += "  <tr><td>Game Event Chain</td><td>Make Default</td></tr>";
     html += "  <tr>";
     
     // game event chain
@@ -640,6 +644,12 @@ class ObjectEditorGameEvents {
     });
     
     html += "</select></td>";
+    
+    html += "<td><input id='${prefix}_make_default' type='checkbox' ";
+    if(chainGameEvent.makeDefault) {
+      html += "checked='checked' ";
+    }
+    html += "/></td>";
     
     html += "  </tr>";
     html += "</table>";

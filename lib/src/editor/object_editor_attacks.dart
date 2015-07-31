@@ -11,6 +11,8 @@ import 'object_editor.dart';
 // TODO: handle renaming attacks by updating everywhere
 // (otherwise they just disappear)
 
+// TODO: make sure all these update: attack, battler type, game event, character
+
 class ObjectEditorAttacks {
   static void setUp() {
     Editor.attachButtonListener("#add_attack_button", addNewAttack);
