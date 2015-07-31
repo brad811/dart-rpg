@@ -454,13 +454,14 @@ class World {
     }
     
     for(Character character in World.characters.values) {
-      if(character.map == Main.world.curMap && character.mapX == x && character.mapY == y) {
+      if(character.map == Main.world.curMap && character.mapX == x && character.mapY == y && character.solid) {
         return true;
       }
     }
     
-    if(Main.player.mapX == x && Main.player.mapY == y)
+    if(Main.player.mapX == x && Main.player.mapY == y) {
       return true;
+    }
     
     return false;
   }

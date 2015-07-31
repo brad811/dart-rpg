@@ -255,25 +255,25 @@ class Character implements InteractableInterface {
       higherLayer = layer;
     }
     
-    renderList[higherLayer].add(
-      new Tile(
-        true,
-        new Sprite(
-          spriteId + direction + motionSpriteOffset,
-          x/motionAmount, (y/motionAmount)-1
-        )
-      )
-    );
+    int curLayer = higherLayer;
     
-    renderList[layer].add(
-      new Tile(
-        true,
-        new Sprite(
-          spriteId + direction + motionSpriteOffset + Sprite.spriteSheetSize,
-          x/motionAmount, y/motionAmount
-        )
-      )
-    );
+    for(int j=0; j<sizeY; j++) {
+      
+      if(j >= sizeY/2)
+        curLayer = layer;
+      
+      for(int i=0; i<sizeX; i++) {
+        renderList[curLayer].add(
+          new Tile(
+            solid,
+            new Sprite(
+              spriteId + i + (direction * sizeX) + motionSpriteOffset + (Sprite.spriteSheetSize * j),
+              (x/motionAmount) + i, (y/motionAmount) - (sizeY - j - 1)
+            )
+          )
+        );
+      }
+    }
   }
   
   void interact() {
