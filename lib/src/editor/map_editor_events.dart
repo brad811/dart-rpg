@@ -8,6 +8,8 @@ import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
+import 'package:dart_rpg/src/editor/map_editor.dart';
+
 import 'editor.dart';
 
 class MapEditorEvents {
@@ -43,7 +45,7 @@ class MapEditorEvents {
   }
   
   static void addNewEvent(MouseEvent e) {
-    // TODO: no game events yet
+    // TODO: account for when there are no game events yet
     events[Main.world.curMap].add( new EventTile(World.gameEventChains.keys.first, new Sprite.int(0, 0, 0), false) );
     Editor.update();
   }
@@ -62,7 +64,6 @@ class MapEditorEvents {
         "  <td><input id='map_event_${i}_posy' type='text' class='number' value='${ events[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
         "  <td>";
         
-        // TODO
         "  <td><input id='map_event_${i}_game_event_chain' type='text' class='number' value='${ events[Main.world.curMap][i].gameEventChain }' /></td>";
         html += "<select id='map_event_${i}_game_event_chain'>";
         World.gameEventChains.keys.forEach((String gameEventChain) {
@@ -108,8 +109,8 @@ class MapEditorEvents {
     }
     
     // TODO: catch out of bounds values
-    Editor.updateAndRetainValue(e);
-    //MapEditor.updateMap(shouldExport: true);
+    //Editor.updateAndRetainValue(e);
+    MapEditor.updateMap(shouldExport: true);
   }
   
   static void setEventDeleteButtonListeners() {
@@ -166,7 +167,6 @@ class MapEditorEvents {
       }
       
       if(jsonMap[y][x][0] != null) {
-        print("blerp");
         jsonMap[y][x][0]["event"] = {
           "posX": x,
           "posY": y,

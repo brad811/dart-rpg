@@ -4,6 +4,7 @@ import 'dart:html';
 
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
+import 'package:dart_rpg/src/event_tile.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sign.dart';
@@ -16,6 +17,7 @@ import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'map_editor.dart';
+import 'map_editor_events.dart';
 import 'map_editor_signs.dart';
 import 'map_editor_warps.dart';
 
@@ -40,6 +42,7 @@ class MapEditorMaps {
     
     MapEditorWarps.warps["new map"] = [];
     MapEditorSigns.signs["new map"] = [];
+    MapEditorEvents.events["new map"] = [];
     Main.world.maps["new map"].battlerChances = [];
     
     update();
@@ -102,6 +105,7 @@ class MapEditorMaps {
     Map<String, List<WarpTile>> newWarps = {};
     Map<String, List<Sign>> newSigns = {};
     Map<String, List<BattlerChance>> newBattlers = {};
+    Map<String, List<EventTile>> newEvents = {};
     bool changedByUser, nameChange = false;
     
     Editor.enforceValueFormat(e);
@@ -135,6 +139,7 @@ class MapEditorMaps {
         newWarps[newName] = MapEditorWarps.warps[key];
         newSigns[newName] = MapEditorSigns.signs[key];
         newBattlers[newName] = Main.world.maps[key].battlerChances;
+        newEvents[newName] = MapEditorEvents.events[key];
         
         if(newName != key && Main.world.curMap == key && changedByUser) {
           Main.world.curMap = newName;
@@ -179,6 +184,12 @@ class MapEditorMaps {
             });
           });
           
+          // update events list to have this new map name
+          if(MapEditorEvents.events.containsKey(key)) {
+            MapEditorEvents.events[newName] = MapEditorEvents.events[key];
+            MapEditorEvents.events.remove(key);
+          }
+          
           // update the start map to have this new map name
           if(Main.world.startMap == key) {
             Main.world.startMap = newName;
@@ -193,6 +204,7 @@ class MapEditorMaps {
     Main.world.maps = newMaps;
     MapEditorWarps.warps = newWarps;
     MapEditorSigns.signs = newSigns;
+    MapEditorEvents.events = newEvents;
     Main.world.maps.forEach((String mapName, GameMap map) {
       map.battlerChances = newBattlers[mapName];
     });
@@ -298,6 +310,7 @@ class MapEditorMaps {
     // this will delete any that are now off the map
     MapEditorWarps.shift(0, 0);
     MapEditorSigns.shift(0, 0);
+    MapEditorEvents.shift(0, 0);
     
     Editor.update();
   }
@@ -328,6 +341,7 @@ class MapEditorMaps {
     // this will delete any that are now off the map
     MapEditorWarps.shift(0, 0);
     MapEditorSigns.shift(0, 0);
+    MapEditorEvents.shift(0, 0);
     
     Editor.update();
   }
@@ -369,6 +383,7 @@ class MapEditorMaps {
     // this will shift and delete any that are now off the map
     MapEditorWarps.shift(-1, 0);
     MapEditorSigns.shift(-1, 0);
+    MapEditorEvents.shift(-1, 0);
     
     Editor.update();
   }
@@ -401,6 +416,7 @@ class MapEditorMaps {
     // this will shift and delete any that are now off the map
     MapEditorWarps.shift(1, 0);
     MapEditorSigns.shift(1, 0);
+    MapEditorEvents.shift(1, 0);
     
     Editor.update();
   }
@@ -425,6 +441,7 @@ class MapEditorMaps {
     // this will shift and delete any that are now off the map
     MapEditorWarps.shift(0, -1);
     MapEditorSigns.shift(0, -1);
+    MapEditorEvents.shift(0, -1);
     
     Editor.update();
   }
@@ -456,6 +473,7 @@ class MapEditorMaps {
     // this will shift and delete any that are now off the map
     MapEditorWarps.shift(0, 1);
     MapEditorSigns.shift(0, 1);
+    MapEditorEvents.shift(0, 1);
     
     Editor.update();
   }
