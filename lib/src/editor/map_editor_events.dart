@@ -12,6 +12,8 @@ import 'package:dart_rpg/src/editor/map_editor.dart';
 
 import 'editor.dart';
 
+// TODO: allow disabling after completion
+
 class MapEditorEvents {
   static Map<String, List<EventTile>> events = {};
   

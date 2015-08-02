@@ -23,6 +23,10 @@ import 'object_editor.dart';
 
 // TODO: selecting a character in heal event breaks something
 
+// TODO: map editing events (place/remove/change warps, signs, tiles, events)
+// TODO: logic gate events IF this THEN gameEventChainA ELSE gameEventChainB
+// TODO: text input game event
+
 class ObjectEditorGameEvents {
   static List<String> advancedTabs = ["game_event_chain_game_events"];
   static int selected;
