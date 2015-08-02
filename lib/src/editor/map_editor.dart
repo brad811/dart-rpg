@@ -311,6 +311,22 @@ class MapEditor {
     }
   }
   
+  static Map<String, int> newColorTracker(int x, int y) {
+    return {
+      "colorCount": 0,
+      "numberDone": 0,
+      "solid": 0,
+      "layered": 0,
+      "encounter": 0,
+      "character": 0,
+      "warp": 0,
+      "sign": 0,
+      "event": 0,
+      "x": x,
+      "y": y
+    };
+  }
+  
   static void renderColoredTiles() {
     Map<String, Map<String, int>> colorTrackers = {};
     double alpha = 0.15;
@@ -322,19 +338,7 @@ class MapEditor {
         String key = "${x},${y}";
         
         if(colorTrackers[key] == null) {
-          colorTrackers[key] = {
-            "colorCount": 0,
-            "numberDone": 0,
-            "solid": 0,
-            "layered": 0,
-            "encounter": 0,
-            "character": 0,
-            "warp": 0,
-            "sign": 0,
-            "event": 0,
-            "x": x,
-            "y": y
-          };
+          colorTrackers[key] = newColorTracker(x, y);
         }
         
         Map<String, int> colorTracker = colorTrackers[key];
@@ -353,23 +357,59 @@ class MapEditor {
           colorTracker["colorCount"] += 1;
           colorTracker["encounter"] = 1;
         }
-        
-        if(tile is WarpTile && colorTracker["warp"] == 0) {
-          colorTracker["colorCount"] += 1;
-          colorTracker["warp"] = 1;
-        }
-        
-        if(tile is Sign && colorTracker["sign"] == 0) {
-          colorTracker["colorCount"] += 1;
-          colorTracker["sign"] = 1;
-        }
-        
-        if(tile is EventTile && colorTracker["event"] == 0) {
-          colorTracker["colorCount"] += 1;
-          colorTracker["event"] = 1;
-        }
       }
     }
+    
+    MapEditorWarps.warps[Main.world.curMap].forEach((WarpTile warpTile) {
+      int x = warpTile.sprite.posX.round();
+      int y = warpTile.sprite.posY.round();
+      String key = "${x},${y}";
+      
+      if(colorTrackers[key] == null) {
+        colorTrackers[key] = newColorTracker(x, y);
+      }
+      
+      Map<String, int> colorTracker = colorTrackers[key];
+      
+      if(colorTracker["warp"] == 0) {
+        colorTracker["colorCount"] += 1;
+        colorTracker["warp"] = 1;
+      }
+    });
+    
+    MapEditorSigns.signs[Main.world.curMap].forEach((Sign sign) {
+      int x = sign.sprite.posX.round();
+      int y = sign.sprite.posY.round();
+      String key = "${x},${y}";
+      
+      if(colorTrackers[key] == null) {
+        colorTrackers[key] = newColorTracker(x, y);
+      }
+      
+      Map<String, int> colorTracker = colorTrackers[key];
+      
+      if(colorTracker["sign"] == 0) {
+        colorTracker["colorCount"] += 1;
+        colorTracker["sign"] = 1;
+      }
+    });
+    
+    MapEditorEvents.events[Main.world.curMap].forEach((EventTile eventTile) {
+      int x = eventTile.sprite.posX.round();
+      int y = eventTile.sprite.posY.round();
+      String key = "${x},${y}";
+      
+      if(colorTrackers[key] == null) {
+        colorTrackers[key] = newColorTracker(x, y);
+      }
+      
+      Map<String, int> colorTracker = colorTrackers[key];
+      
+      if(colorTracker["event"] == 0) {
+        colorTracker["colorCount"] += 1;
+        colorTracker["event"] = 1;
+      }
+    });
     
     World.characters.forEach((String key, Character character) {
       if(character.map != Main.world.curMap)
@@ -380,19 +420,7 @@ class MapEditor {
       String key = "${x},${y}";
       
       if(colorTrackers[key] == null) {
-        colorTrackers[key] = {
-          "colorCount": 0,
-          "numberDone": 0,
-          "solid": 0,
-          "layered": 0,
-          "encounter": 0,
-          "character": 0,
-          "warp": 0,
-          "sign": 0,
-          "event": 0,
-          "x": x,
-          "y": y
-        };
+        colorTrackers[key] = newColorTracker(x, y);
       }
       
       Map<String, int> colorTracker = colorTrackers[key];
