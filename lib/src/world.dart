@@ -9,6 +9,7 @@ import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
+import 'package:dart_rpg/src/event_tile.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/inventory.dart';
@@ -198,6 +199,12 @@ class World {
                 mapTiles[y][x][k] = new EncounterTile(
                   new Sprite.int(curTile['id'], x, y),
                   curTile['layered'] == true
+                );
+              } else if(curTile['event'] != null) {
+                mapTiles[y][x][k] = new EventTile(
+                  curTile['event']['gameEventChain'],
+                  new Sprite.int(curTile['id'], x, y)
+                  // TODO: layered
                 );
               } else {
                 mapTiles[y][x][k] = new Tile(

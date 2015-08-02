@@ -6,6 +6,7 @@ import 'dart:js';
 
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
+import 'package:dart_rpg/src/event_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
@@ -15,6 +16,7 @@ import 'package:dart_rpg/src/world.dart';
 
 import 'editor.dart';
 import 'map_editor_characters.dart';
+import 'map_editor_events.dart';
 import 'map_editor_maps.dart';
 import 'map_editor_signs.dart';
 import 'map_editor_warps.dart';
@@ -33,7 +35,7 @@ class MapEditor {
     mapEditorSpriteSelectorCanvasContext,
     mapEditorSelectedSpriteCanvasContext;
   
-  static List<String> mapEditorTabs = ["maps", "tiles", "map_characters", "warps", "signs", "battlers"];
+  static List<String> mapEditorTabs = ["maps", "tiles", "map_characters", "warps", "signs", "battlers", "events"];
   static Map<String, DivElement> mapEditorTabDivs = {};
   static Map<String, DivElement> mapEditorTabHeaderDivs = {};
   
@@ -117,6 +119,7 @@ class MapEditor {
     MapEditorWarps.setUp();
     MapEditorSigns.setUp();
     MapEditorBattlers.setUp();
+    MapEditorEvents.setUp();
     
     setUpSpritePicker();
   }
@@ -127,6 +130,7 @@ class MapEditor {
     MapEditorWarps.update();
     MapEditorSigns.update();
     MapEditorBattlers.update();
+    MapEditorEvents.update();
     
     MapEditor.updateMap();
   }
@@ -327,6 +331,7 @@ class MapEditor {
             "character": 0,
             "warp": 0,
             "sign": 0,
+            "event": 0,
             "x": x,
             "y": y
           };
@@ -358,6 +363,11 @@ class MapEditor {
           colorTracker["colorCount"] += 1;
           colorTracker["sign"] = 1;
         }
+        
+        if(tile is EventTile && colorTracker["event"] == 0) {
+          colorTracker["colorCount"] += 1;
+          colorTracker["event"] = 1;
+        }
       }
     }
     
@@ -379,6 +389,7 @@ class MapEditor {
           "character": 0,
           "warp": 0,
           "sign": 0,
+          "event": 0,
           "x": x,
           "y": y
         };
@@ -445,6 +456,14 @@ class MapEditor {
             colorTracker["sign"] == 1,
             colorTracker["colorCount"], colorTracker["numberDone"],
             255, 255, 0, alpha
+          );
+        
+        // event
+        colorTracker["numberDone"] = outlineTilePart(
+            x, y,
+            colorTracker["event"] == 1,
+            colorTracker["colorCount"], colorTracker["numberDone"],
+            255, 128, 0, alpha
           );
       }
     }
@@ -644,6 +663,7 @@ class MapEditor {
       
       MapEditorWarps.export(jsonMap, key);
       MapEditorSigns.export(jsonMap, key);
+      MapEditorEvents.export(jsonMap, key);
 
       MapEditorBattlers.export(exportJson["maps"][key], key);
       
