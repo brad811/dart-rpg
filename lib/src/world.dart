@@ -454,6 +454,7 @@ class World {
     }
     
     for(Character character in World.characters.values) {
+      // TODO: account for character size
       if(character.map == Main.world.curMap && character.mapX == x && character.mapY == y && character.solid) {
         return true;
       }
