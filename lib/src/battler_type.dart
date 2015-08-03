@@ -18,7 +18,7 @@ class BattlerType {
   final double
     rarity;
   
-  final Map<int, Attack> levelAttacks;
+  final Map<int, List<Attack>> levelAttacks;
   
   BattlerType(
       this.spriteId, this.name,
@@ -35,5 +35,20 @@ class BattlerType {
       basePhysicalDefense +
       baseMagicalDefense +
       baseSpeed;
+  }
+  
+  List<Attack> getAttacksForLevel(int level) {
+    List<Attack> attacks = [];
+    
+    for(int i=0; i<levelAttacks.keys.length; i++) {
+      int curLevel = levelAttacks.keys.elementAt(i);
+      
+      if(curLevel > level)
+        break;
+      
+      attacks.addAll(levelAttacks[curLevel]);
+    }
+    
+    return attacks;
   }
 }

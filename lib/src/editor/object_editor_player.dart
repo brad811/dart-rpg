@@ -144,11 +144,13 @@ class ObjectEditorPlayer {
     
     Editor.enforceValueFormat(e);
     
+    int level = Editor.getTextInputIntValue('#player_battler_level', 2);
+    
     Main.player.battler = new Battler(
       Editor.getTextInputStringValue('#player_name'),
       World.battlerTypes[battlerType],
-      Editor.getTextInputIntValue('#player_battler_level', 2),
-      World.battlerTypes[battlerType].levelAttacks.values.toList()
+      level,
+      World.battlerTypes[battlerType].getAttacksForLevel(level)
     );
     
     Main.player.inventory = new Inventory([]);

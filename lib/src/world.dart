@@ -143,9 +143,15 @@ class World {
           double.parse(battlerTypesObject[battlerTypeName]["rarity"])
       );
       
-      Map<String, String> levelAttacks = battlerTypesObject[battlerTypeName]["levelAttacks"];
-      levelAttacks.forEach((String level, String attackName) {
-        battlerTypes[battlerTypeName].levelAttacks[int.parse(level)] = World.attacks[attackName];
+      Map<String, List<String>> levelAttacks = battlerTypesObject[battlerTypeName]["levelAttacks"];
+      levelAttacks.forEach((String level, List<String> attackNames) {
+        attackNames.forEach((String attackName) {
+          if(battlerTypes[battlerTypeName].levelAttacks[int.parse(level)] == null) {
+            battlerTypes[battlerTypeName].levelAttacks[int.parse(level)] = [];
+          }
+          
+          battlerTypes[battlerTypeName].levelAttacks[int.parse(level)].add(World.attacks[attackName]);
+        });
       });
     }
   }
@@ -222,14 +228,13 @@ class World {
       
       double totalChance = 0.0;
       for(int i=0; i<mapsObject[mapName]["battlers"].length; i++) {
-        //String mapBattlerName = mapsObject[mapName]["battlers"][i]["name"];
         String mapBattlerType = mapsObject[mapName]["battlers"][i]["type"];
         int mapBattlerLevel = mapsObject[mapName]["battlers"][i]["level"];
         double mapBattlerChance = mapsObject[mapName]["battlers"][i]["chance"];
         
         Battler battler = new Battler(
           mapBattlerType, World.battlerTypes[mapBattlerType],
-          mapBattlerLevel, World.battlerTypes[mapBattlerType].levelAttacks.values.toList()
+          mapBattlerLevel, World.battlerTypes[mapBattlerType].getAttacksForLevel(mapBattlerLevel)
         );
         
         BattlerChance battlerChance = new BattlerChance(
@@ -298,11 +303,14 @@ class World {
     
     String battlerTypeName = charactersObject[characterLabel]["battlerType"];
     BattlerType battlerType = World.battlerTypes[battlerTypeName];
+    
+    int level = int.parse(charactersObject[characterLabel]["battlerLevel"]);
+    
     character.battler = new Battler(
         battlerType.name,
         battlerType,
-        int.parse(charactersObject[characterLabel]["battlerLevel"]),
-        battlerType.levelAttacks.values.toList()
+        level,
+        battlerType.getAttacksForLevel(level)
       );
     
     character.sightDistance = int.parse(charactersObject[characterLabel]["sightDistance"]);
@@ -324,10 +332,14 @@ class World {
   
   void parsePlayer(Map<String, Object> playerObject) {
     Main.player = new Player(startX, startY, startMap);
+    
+    int level = playerObject["level"] as int;
+    
     Main.player.battler = new Battler(
       playerObject["name"],
-      battlerTypes[playerObject["battlerType"]], playerObject["level"] as int,
-      battlerTypes[playerObject["battlerType"]].levelAttacks.values.toList()
+      battlerTypes[playerObject["battlerType"]],
+      level,
+      battlerTypes[playerObject["battlerType"]].getAttacksForLevel(level)
     );
     
     // inventory

@@ -9,6 +9,8 @@ import 'package:dart_rpg/src/world.dart';
 import 'editor.dart';
 import 'object_editor.dart';
 
+// TODO: this will have to be redone most likely, where you add levels, and then attacks to those levels
+
 class ObjectEditorBattlerTypes {
   // TODO: give battler types a display name and a unique name
   //   so people can name them stuff like "end_boss_1"
@@ -19,7 +21,6 @@ class ObjectEditorBattlerTypes {
   static void setUp() {
     Editor.setUpTabs(advancedTabs);
     Editor.attachButtonListener("#add_battler_type_button", addNewBattlerType);
-    Editor.attachButtonListener("#add_battler_type_attack_button", addAttack);
   }
   
   static void addNewBattlerType(MouseEvent e) {
@@ -32,17 +33,33 @@ class ObjectEditorBattlerTypes {
     ObjectEditor.update();
   }
   
-  static void addAttack(MouseEvent e) {
+  static void addLevel(MouseEvent e) {
     BattlerType selectedBattlerType = World.battlerTypes.values.elementAt(selected);
-    for(int i=0; i<100; i++) {
-      if(selectedBattlerType.levelAttacks[i] == null) {
-        selectedBattlerType.levelAttacks[i] = World.attacks.values.first;
-        break;
-      }
+    int level = Editor.getTextInputIntValue("#battler_type_level", 1);
+    if(selectedBattlerType.levelAttacks[level] != null) {
+      return;
     }
+    
+    selectedBattlerType.levelAttacks[level] = [];
     
     update();
     ObjectEditor.update();
+  }
+  
+  static void addAttack(int battler, int level) {
+    BattlerType battlerType = World.battlerTypes.values.elementAt(battler);
+    List<Attack> attacks = battlerType.levelAttacks[level];
+    
+    for(int i=0; i<World.attacks.values.length; i++) {
+      Attack attack = World.attacks.values.elementAt(i);
+      if(!attacks.contains(attack)) {
+        attacks.add(attack);
+        
+        update();
+        ObjectEditor.update();
+        return;
+      }
+    }
   }
   
   static void update() {
@@ -50,19 +67,28 @@ class ObjectEditorBattlerTypes {
     buildStatsHtml();
     buildAttacksHtml();
     
-    Editor.attachButtonListener("#add_battler_type_attack_button", (MouseEvent e) {
-      BattlerType battlerType = World.battlerTypes.values.elementAt(selected);
-      int nextLevel = 1;
-      for(;  battlerType.levelAttacks[nextLevel] != null; nextLevel++);
-      battlerType.levelAttacks[nextLevel] = World.attacks.values.first;
-      Editor.update();
-    });
+    Editor.attachButtonListener("#add_battler_type_level_button", addLevel);
     
     Editor.setMapDeleteButtonListeners(World.battlerTypes, "battler_type");
     
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
       BattlerType battlerType = World.battlerTypes.values.elementAt(i);
-      Editor.setMapDeleteButtonListeners(battlerType.levelAttacks, "battler_type_${i}_attack");
+      
+      // delete the level
+      Editor.setMapDeleteButtonListeners(battlerType.levelAttacks, "battler_type_${i}_level");
+      
+      for(int j=0; j<battlerType.levelAttacks.keys.length; j++) {
+        int level = battlerType.levelAttacks.keys.elementAt(j);
+        List<Attack> attacks = battlerType.levelAttacks[level];
+        
+        Editor.setListDeleteButtonListeners(attacks, "battler_type_${i}_level_${level}_attack");
+        
+        for(int k=0; k<attacks.length; k++) {
+          Editor.attachInputListeners("battler_type_${i}_level_${level}_attack_${k}", ["name"], onInputChange);
+        }
+        
+        Editor.attachButtonListener("#add_battler_type_${i}_level_${level}_attack", (_) { addAttack(i, level); });
+      }
     }
     
     List<String> attrs = [
@@ -70,10 +96,6 @@ class ObjectEditorBattlerTypes {
       "health", "physical_attack", "magical_attack",
       "physical_defense", "magical_defense", "speed",
       "rarity"
-    ];
-    
-    List<String> attackAttrs = [
-      "level", "name"
     ];
     
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
@@ -85,10 +107,6 @@ class ObjectEditorBattlerTypes {
           selectRow(i);
         }
       });
-      
-      for(int j=0; j<World.battlerTypes.values.elementAt(i).levelAttacks.values.length; j++) {
-        Editor.attachInputListeners("battler_type_${i}_attack_${j}", attackAttrs, onInputChange);
-      }
     }
   }
   
@@ -191,6 +209,9 @@ class ObjectEditorBattlerTypes {
   static void buildAttacksHtml() {
     String html = "";
     
+    html += "<input id='battler_type_level' type='text' class='number' />";
+    html += "<button id='add_battler_type_level_button'>Add level</button><hr />";
+    
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
       String visibleString = "class='hidden'";
       if(selected == i) {
@@ -198,28 +219,42 @@ class ObjectEditorBattlerTypes {
       }
       
       html += "<table id='battler_type_${i}_attacks_table' ${visibleString}>";
-      html += "<tr><td>Level</td><td>Attack</td><td></td></tr>";
+      html += "<tr><td>Level</td><td>Attacks</td><td></td></tr>";
       BattlerType battlerType = World.battlerTypes.values.elementAt(i);
       
-      int j=0;
-      battlerType.levelAttacks.forEach((int level, Attack attack) {
-        html += "<tr><td>";
-        html += "<input class='number' id='battler_type_${i}_attack_${j}_level' type='text' value='${level}' />";
-        html += "</td><td>";
-        html += "<select id='battler_type_${i}_attack_${j}_name'>";
-        World.attacks.keys.forEach((String name) {
-          html += "<option ";
-          if(name == attack.name) {
-            html += "selected";
-          }
-          html += ">${name}</option>";
-        });
-        html += "</select>";
-        html += "</td><td>";
-        html += "<button id='delete_battler_type_${i}_attack_${j}'>Delete</button><br />";
-        html += "</td></tr>";
+      int levelNum = 0;
+      
+      // TODO: make it so levels are sorted but delete still works
+      battlerType.levelAttacks.forEach((int level, List<Attack> attacks) {
+        int j=0;
         
-        j += 1;
+        html += "<tr><td id='battler_type_${i}_level_num_${levelNum}'>${level}</td><td>";
+        
+        attacks.forEach((Attack attack) {
+          html += "<select id='battler_type_${i}_level_${level}_attack_${j}_name'>";
+          World.attacks.keys.forEach((String name) {
+            // skip attacks that already exist for this level
+            if(attacks.contains(World.attacks[name]) && name != attack.name) {
+              return;
+            }
+            
+            html += "<option ";
+            if(name == attack.name) {
+              html += "selected";
+            }
+            html += ">${name}</option>";
+          });
+          html += "</select> ";
+          html += "<button id='delete_battler_type_${i}_level_${level}_attack_${j}'>Delete</button><br />";
+          
+          j += 1;
+        });
+        
+        html += "<button id='add_battler_type_${i}_level_${level}_attack'>Add level ${level} attack</button>";
+        
+        html += "</td><td><button id='delete_battler_type_${i}_level_${levelNum}'>Delete level</button></td></tr>";
+        
+        levelNum += 1;
       });
       
       html += "</table>";
@@ -228,6 +263,7 @@ class ObjectEditorBattlerTypes {
     querySelector("#battler_type_attacks_container").setInnerHtml(html);
   }
   
+  // TODO: not always working when editing level attacks
   static void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     Editor.avoidNameCollision(e, "_name", World.battlerTypes);
@@ -237,13 +273,19 @@ class ObjectEditorBattlerTypes {
       try {
         String name = Editor.getTextInputStringValue('#battler_type_${i}_name');
         
-        Map<int, Attack> levelAttacks = new Map<int, Attack>();
-        for(int j=0; querySelector("#battler_type_${i}_attack_${j}_level") != null; j++) {
-          int level = Editor.getTextInputIntValue("#battler_type_${i}_attack_${j}_level", 1);
-          String attackName = Editor.getSelectInputStringValue("#battler_type_${i}_attack_${j}_name");
-          Attack attack = World.attacks[attackName];
-          
-          levelAttacks[level] = attack;
+        Map<int, List<Attack>> levelAttacks = new Map<int, List<Attack>>();
+        for(int j=0; querySelector("#battler_type_${i}_level_num_${j}") != null; j++) {
+          int level = int.parse(querySelector("#battler_type_${i}_level_num_${j}").innerHtml);
+          for(int k=0; querySelector("#battler_type_${i}_level_${level}_attack_${k}_name") != null; k++) {
+            String attackName = Editor.getSelectInputStringValue("#battler_type_${i}_level_${level}_attack_${k}_name");
+            Attack attack = World.attacks[attackName];
+            
+            if(levelAttacks[level] == null) {
+              levelAttacks[level] = [];
+            }
+            
+            levelAttacks[level].add(attack);
+          }
         }
         
         World.battlerTypes[name] = new BattlerType(
@@ -282,8 +324,12 @@ class ObjectEditorBattlerTypes {
       battlerTypeJson["speed"] = battlerType.baseSpeed.toString();
       
       Map<String, String> levelAttacks = {};
-      battlerType.levelAttacks.forEach((int level, Attack attack) {
-        levelAttacks[level.toString()] = attack.name;
+      battlerType.levelAttacks.forEach((int level, List<Attack> attacks) {
+        List<String> attackNames = [];
+        attacks.forEach((Attack attack) {
+          attackNames.add(attack.name);
+        });
+        levelAttacks[level.toString()] = "";
       });
       battlerTypeJson["levelAttacks"] = levelAttacks;
       

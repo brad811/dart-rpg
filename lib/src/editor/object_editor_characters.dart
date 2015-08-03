@@ -14,6 +14,7 @@ import 'object_editor.dart';
 import 'object_editor_game_events.dart';
 
 // TODO: error when adding a second attack to the same level
+// TODO: dimensions, where character is solid and interactable
 
 class ObjectEditorCharacters {
   static List<String> advancedTabs = ["character_inventory", "character_game_event", "character_battle"];
@@ -38,7 +39,7 @@ class ObjectEditorCharacters {
     
     BattlerType battlerType = World.battlerTypes.values.first;
     
-    newCharacter.battler = new Battler(battlerType.name, battlerType, 2, battlerType.levelAttacks.values.toList());
+    newCharacter.battler = new Battler(battlerType.name, battlerType, 2, battlerType.getAttacksForLevel(2));
     
     World.characters["New Character"] = newCharacter;
     
@@ -345,12 +346,14 @@ class ObjectEditorCharacters {
         
         String battlerTypeName = Editor.getSelectInputStringValue('#character_${i}_battler_type');
         
+        int level = Editor.getTextInputIntValue('#character_${i}_battler_level', 2);
+        
         // TODO: add battler name field
         Battler battler = new Battler(
           "name",
           World.battlerTypes[battlerTypeName],
-          Editor.getTextInputIntValue('#character_${i}_battler_level', 2),
-          World.battlerTypes[battlerTypeName].levelAttacks.values.toList()
+          level,
+          World.battlerTypes[battlerTypeName].getAttacksForLevel(level)
         );
         
         character.battler = battler;

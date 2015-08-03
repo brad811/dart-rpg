@@ -90,7 +90,7 @@ class MapEditorBattlers {
           null,
           World.battlerTypes[battlerTypeName],
           battlerTypeLevel,
-          World.battlerTypes[battlerTypeName].levelAttacks.values.toList()
+          World.battlerTypes[battlerTypeName].getAttacksForLevel(battlerTypeLevel)
         );
         
         BattlerChance battlerChance = new BattlerChance(battler, battlerTypeChance);
