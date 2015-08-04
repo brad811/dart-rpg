@@ -10,6 +10,7 @@ import 'package:dart_rpg/src/world.dart';
 
 import 'map_editor.dart';
 import 'object_editor.dart';
+import 'settings.dart';
 
 // TODO:
 // - maybe make maps use numbers instead of names
@@ -20,7 +21,7 @@ import 'object_editor.dart';
 //       - but maybe point to self map
 
 class Editor {
-  static List<String> editorTabs = ["map_editor", "object_editor"];
+  static List<String> editorTabs = ["map_editor", "object_editor", "settings"];
   static bool highlightSpecialTiles = true;
   
   static Map<String, StreamSubscription> listeners = new Map<String, StreamSubscription>();
@@ -28,6 +29,7 @@ class Editor {
   static void init() {
     ObjectEditor.init();
     MapEditor.init(start);
+    Settings.init();
   }
   
   static void start() {
@@ -37,6 +39,8 @@ class Editor {
       Main.world.loadGame(() {
         MapEditor.setUp();
         ObjectEditor.setUp();
+        Settings.setUp();
+        
         Editor.setUpTabs(editorTabs);
         
         Editor.update();
@@ -56,6 +60,7 @@ class Editor {
   static void update() {
     MapEditor.update();
     ObjectEditor.update();
+    Settings.update();
     
     Editor.export();
   }
@@ -64,6 +69,7 @@ class Editor {
     Map<String, Map<String, Map<String, Object>>> exportJson = {};
     MapEditor.export(exportJson);
     ObjectEditor.export(exportJson);
+    Settings.export(exportJson);
     
     TextAreaElement textarea = querySelector("#export_json");
     textarea.value = JSON.encode(exportJson);
