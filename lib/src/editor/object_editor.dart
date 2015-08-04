@@ -27,8 +27,10 @@ class ObjectEditor {
       
       objectEditorTabHeaderDivs[tab].onClick.listen((MouseEvent e) {
         // make sure advanced tabs stay hidden
+        ObjectEditorBattlerTypes.selected = -1;
         ObjectEditorCharacters.selected = -1;
         ObjectEditorPlayer.selected = false;
+        ObjectEditorItems.selected = -1;
         ObjectEditorGameEvents.selected = -1;
         
         for(String tabb in objectEditorTabs) {

@@ -11,8 +11,6 @@ import 'package:dart_rpg/src/world.dart';
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/object_editor.dart';
 
-// TODO: inventory window doesn't hide properly
-
 class ObjectEditorPlayer {
   static List<String> advancedTabs = ["player_inventory"];
   static bool selected = false;
