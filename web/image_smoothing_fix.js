@@ -10,7 +10,3 @@ function fixImageSmoothing() {
     ctx.imageSmoothingEnabled = false;
   }
 }
-
-window.onload = function() {
-  fixImageSmoothing();
-}

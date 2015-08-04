@@ -1,7 +1,6 @@
 library dart_rpg.object_editor_battler_types;
 
 import 'dart:html';
-import 'dart:js';
 
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler_type.dart';
