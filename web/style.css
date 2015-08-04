@@ -6,7 +6,7 @@ body {
 }
 
 .container {
-	position: absolute;
+  position: absolute;
   left: 50%;
   margin-left: -320px;
   margin-top: 10px;
@@ -14,7 +14,7 @@ body {
 }
 
 #main_canvas {
-	border: 1px solid black;
+  border: 1px solid black;
 }
 
 #controls {
@@ -231,7 +231,7 @@ textarea {
  * Object Editor
  */
  
-#object_editor_right {
+#object_editor_right, #settings_container_right {
   padding: 0 0 0 26px !important;
   margin: 10px;
   width: 532px;
@@ -254,12 +254,12 @@ textarea {
   height: 100%;
 }
 
-#object_editor_inner_main_area {
+#object_editor_inner_main_area, #settings_tab {
   height: 100%;
   padding-right: 20px;
 }
 
-#object_editor_inner_main_area .tab {
+#object_editor_inner_main_area .tab, #settings_tab .tab {
   background-color: #eee;
   height: 100%;
   width: 100%;
@@ -267,7 +267,7 @@ textarea {
   margin: 0;
 }
 
-#object_editor_inner_main_area .tab td {
+#object_editor_inner_main_area .tab td, #settings_tab .tab td {
   text-align: center;
 }
 
