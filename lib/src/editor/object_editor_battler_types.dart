@@ -1,12 +1,14 @@
 library dart_rpg.object_editor_battler_types;
 
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'editor.dart';
+import 'map_editor.dart';
 import 'object_editor.dart';
 
 class ObjectEditorBattlerTypes {
@@ -65,6 +67,8 @@ class ObjectEditorBattlerTypes {
     buildStatsHtml();
     buildAttacksHtml();
     
+    selectSprite();
+    
     Editor.attachButtonListener("#add_battler_type_level_button", addLevel);
     
     Editor.setMapDeleteButtonListeners(World.battlerTypes, "battler_type");
@@ -108,6 +112,28 @@ class ObjectEditorBattlerTypes {
     }
   }
   
+  static void selectSprite() {
+    if(selected == null)
+      return;
+    
+    String key = World.battlerTypes.keys.elementAt(selected);
+    
+    if(key == null)
+      return;
+    
+    CanvasElement canvas = querySelector("#battler_type_picture_canvas");
+    CanvasRenderingContext2D ctx = canvas.context2D;
+    
+    ctx.fillStyle = "#ff00ff";
+    ctx.fillRect(0, 0, 96, 96);
+    
+    for(int i=0; i<3; i++) {
+      for(int j=0; j<3; j++) {
+        MapEditor.renderStaticSprite(ctx, World.battlerTypes[key].spriteId + (i) + (j*32), i, j);
+      }
+    }
+  }
+  
   static void selectRow(int i) {
     selected = i;
     
@@ -129,6 +155,8 @@ class ObjectEditorBattlerTypes {
     // show the advanced tables for the selected battler type
     querySelector("#battler_type_${i}_stats_table").classes.remove("hidden");
     querySelector("#battler_type_${i}_attacks_table").classes.remove("hidden");
+    
+    selectSprite();
   }
   
   static void buildMainHtml() {
@@ -305,6 +333,7 @@ class ObjectEditorBattlerTypes {
       }
     }
     
+    // TODO: sprite not retaining cursor position
     Editor.updateAndRetainValue(e);
   }
   

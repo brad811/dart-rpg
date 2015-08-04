@@ -59,27 +59,10 @@ class MapEditor {
     mapEditorSelectedSpriteCanvasContext = mapEditorSelectedSpriteCanvas.getContext("2d");
     
     if(window.devicePixelRatio != 1.0) {
-      List<CanvasElement> canvasElements = [
-        mapEditorCanvas,
-        mapEditorSpriteSelectorCanvas,
-        mapEditorSelectedSpriteCanvas
-      ];
-      
-      List<CanvasRenderingContext2D> contexts = [
-        mapEditorCanvasContext,
-        mapEditorSpriteSelectorCanvasContext,
-        mapEditorSelectedSpriteCanvasContext
-      ];
-      
-      double scale = window.devicePixelRatio;
+      ElementList<Element> canvasElements = querySelectorAll("canvas");
       
       for(int i=0; i<canvasElements.length; i++) {
-        canvasElements[i].style.width = canvasElements[i].width.toString() + 'px';
-        canvasElements[i].style.height = canvasElements[i].height.toString() + 'px';
-        canvasElements[i].width = (canvasElements[i].width * scale).round();
-        canvasElements[i].height = (canvasElements[i].height * scale).round();
-        contexts[i].scale(scale, scale);
-        contexts[i].imageSmoothingEnabled = false;
+        fixImageSmoothing(canvasElements[i], (canvasElements[i] as CanvasElement).width, (canvasElements[i] as CanvasElement).height);
       }
     }
     
@@ -91,6 +74,27 @@ class MapEditor {
     spritesImage.onLoad.listen((e) {
       callback();
     });
+  }
+  
+  static void fixImageSmoothing(CanvasElement canvas, int width, int height) {
+    CanvasRenderingContext2D ctx = canvas.context2D;
+    
+    if(window.devicePixelRatio != 1.0) {
+      double scale = window.devicePixelRatio;
+      
+      canvas.style.width = '${width}px';
+      canvas.style.height = '${height}px';
+      canvas.width = (width * scale).round();
+      canvas.height = (height * scale).round();
+      ctx.scale(scale, scale);
+    }
+    
+    ctx.imageSmoothingEnabled = false;
+    
+    ctx.fillStyle = "#ff00ff";
+    ctx.fillRect(0, 0, width, height);
+    
+    context.callMethod("fixImageSmoothing");
   }
   
   static void setUp() {
@@ -239,21 +243,7 @@ class MapEditor {
   
   static void updateMapCanvasSize() {
     if(mapEditorCanvas.width != mapEditorCanvasWidth || mapEditorCanvas.height != mapEditorCanvasHeight) {
-      mapEditorCanvas.width = mapEditorCanvasWidth;
-      mapEditorCanvas.height = mapEditorCanvasHeight;
-      
-      if(window.devicePixelRatio != 1.0) {
-        double scale = window.devicePixelRatio;
-        
-        mapEditorCanvas.style.width = mapEditorCanvas.width.toString() + 'px';
-        mapEditorCanvas.style.height = mapEditorCanvas.height.toString() + 'px';
-        mapEditorCanvas.width = (mapEditorCanvas.width * scale).round();
-        mapEditorCanvas.height = (mapEditorCanvas.height * scale).round();
-        mapEditorCanvasContext.scale(scale, scale);
-      }
-      
-      mapEditorCanvasContext.imageSmoothingEnabled = false;
-      context.callMethod("fixImageSmoothing");
+      fixImageSmoothing(mapEditorCanvas, mapEditorCanvasWidth, mapEditorCanvasHeight);
     }
   }
   
