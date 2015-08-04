@@ -49,10 +49,7 @@ class Main {
     
     ctx.imageSmoothingEnabled = false;
     
-    spritesImage = new ImageElement(src: "sprite_sheet.png");
-    spritesImage.onLoad.listen((e) {
-      start();
-    });
+    start();
   }
   
   static void start() {

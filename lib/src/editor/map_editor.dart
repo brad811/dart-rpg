@@ -23,8 +23,6 @@ import 'map_editor_warps.dart';
 import 'map_editor_battlers.dart';
 
 class MapEditor {
-  static ImageElement spritesImage;
-  
   static CanvasElement
     mapEditorCanvas,
     mapEditorSpriteSelectorCanvas,
@@ -70,10 +68,7 @@ class MapEditor {
       layerVisible.add(true);
     }
     
-    spritesImage = new ImageElement(src: "sprite_sheet.png");
-    spritesImage.onLoad.listen((e) {
-      callback();
-    });
+    callback();
   }
   
   static void fixImageSmoothing(CanvasElement canvas, int width, int height) {
@@ -609,7 +604,7 @@ class MapEditor {
   
   static void renderStaticSprite(CanvasRenderingContext2D ctx, int id, int posX, int posY) {
     ctx.drawImageScaledFromSource(
-      spritesImage,
+      Main.spritesImage,
       
       Sprite.pixelsPerSprite * (id%Sprite.spriteSheetSize), // sx
       Sprite.pixelsPerSprite * (id/Sprite.spriteSheetSize).floor(), // sy

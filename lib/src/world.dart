@@ -49,6 +49,8 @@ class World {
     LAYER_ABOVE
   ];
   
+  String spriteSheetLocation = "";
+  
   Map<String, GameMap> maps = {};
   String curMap = "";
   
@@ -106,14 +108,17 @@ class World {
       }
     }
     
-    parseAttacks(obj["attacks"]);
-    parseBattlerTypes(obj["battlerTypes"]);
-    parseItems(obj["items"]);
-    parseMaps(obj["maps"], obj["characters"]);
-    parsePlayer(obj["player"]);
-    parseGameEventChains(obj["gameEventChains"]);
-    
-    parseCharacters(obj["characters"]);
+    Main.spritesImage = new ImageElement(src: obj["spriteSheet"] as String);
+    Main.spritesImage.onLoad.listen((e) {
+      parseAttacks(obj["attacks"]);
+      parseBattlerTypes(obj["battlerTypes"]);
+      parseItems(obj["items"]);
+      parseMaps(obj["maps"], obj["characters"]);
+      parsePlayer(obj["player"]);
+      parseGameEventChains(obj["gameEventChains"]);
+      
+      parseCharacters(obj["characters"]);
+    });
   }
   
   void parseAttacks(Map<String, Map> attacksObject) {
