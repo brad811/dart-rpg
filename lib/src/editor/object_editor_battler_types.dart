@@ -9,8 +9,6 @@ import 'package:dart_rpg/src/world.dart';
 import 'editor.dart';
 import 'object_editor.dart';
 
-// TODO: this will have to be redone most likely, where you add levels, and then attacks to those levels
-
 class ObjectEditorBattlerTypes {
   // TODO: give battler types a display name and a unique name
   //   so people can name them stuff like "end_boss_1"
@@ -323,13 +321,13 @@ class ObjectEditorBattlerTypes {
       battlerTypeJson["magicalDefense"] = battlerType.baseMagicalDefense.toString();
       battlerTypeJson["speed"] = battlerType.baseSpeed.toString();
       
-      Map<String, String> levelAttacks = {};
+      Map<String, List<String>> levelAttacks = {};
       battlerType.levelAttacks.forEach((int level, List<Attack> attacks) {
         List<String> attackNames = [];
         attacks.forEach((Attack attack) {
           attackNames.add(attack.name);
         });
-        levelAttacks[level.toString()] = "";
+        levelAttacks[level.toString()] = attackNames;
       });
       battlerTypeJson["levelAttacks"] = levelAttacks;
       
