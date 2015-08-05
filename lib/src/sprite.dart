@@ -3,9 +3,10 @@ library dart_rpg.sprite;
 import 'package:dart_rpg/src/main.dart';
 
 class Sprite {
-  static final int
+  static int
     pixelsPerSprite = 16,
-    spriteSheetSize = 32,
+    spriteSheetWidth = 32,
+    spriteSheetHeight = 32,
     spriteScale = 2,
     scaledSpriteSize = pixelsPerSprite*spriteScale;
   
@@ -23,8 +24,8 @@ class Sprite {
     Main.ctx.drawImageScaledFromSource(
       Main.spritesImage,
       
-      pixelsPerSprite * (id%spriteSheetSize), // sx
-      pixelsPerSprite * (id/spriteSheetSize).floor(), // sy
+      pixelsPerSprite * (id%spriteSheetWidth), // sx
+      pixelsPerSprite * (id/spriteSheetWidth).floor(), // sy
       
       pixelsPerSprite, pixelsPerSprite, // swidth, sheight
       
@@ -39,8 +40,8 @@ class Sprite {
     Main.ctx.drawImageScaledFromSource(
       Main.spritesImage,
       
-      pixelsPerSprite * (id%spriteSheetSize), // sx
-      pixelsPerSprite * (id/spriteSheetSize).floor(), // sy
+      pixelsPerSprite * (id%spriteSheetWidth), // sx
+      pixelsPerSprite * (id/spriteSheetWidth).floor(), // sy
       
       pixelsPerSprite, pixelsPerSprite, // swidth, sheight
       
@@ -59,7 +60,7 @@ class Sprite {
     for(int j=0; j<sizeY; j++) {
       posX = originalPosX;
       for(int i=0; i<sizeX; i++) {
-        id = originalId + (j*spriteSheetSize) + i;
+        id = originalId + (j*spriteSheetWidth) + i;
         renderStatic();
         posX++;
       }

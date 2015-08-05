@@ -138,18 +138,18 @@ class MapEditor {
     mapEditorSpriteSelectorCanvasContext.fillStyle = "#ff00ff";
     mapEditorSpriteSelectorCanvasContext.fillRect(
       0, 0,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetSize,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetSize
+      Sprite.scaledSpriteSize*Sprite.spriteSheetWidth,
+      Sprite.scaledSpriteSize*Sprite.spriteSheetHeight
     );
     
     // render sprite picker
     int
-      maxCol = Sprite.spriteSheetSize,
+      maxCol = Sprite.spriteSheetWidth,
       col = 0,
       row = 0;
-    for(int y=0; y<Sprite.spriteSheetSize; y++) {
-      for(int x=0; x<Sprite.spriteSheetSize; x++) {
-        renderStaticSprite(mapEditorSpriteSelectorCanvasContext, y*Sprite.spriteSheetSize + x, col, row);
+    for(int y=0; y<Sprite.spriteSheetHeight; y++) {
+      for(int x=0; x<Sprite.spriteSheetWidth; x++) {
+        renderStaticSprite(mapEditorSpriteSelectorCanvasContext, y*Sprite.spriteSheetWidth + x, col, row);
         col++;
         if(col >= maxCol) {
           row++;
@@ -201,7 +201,7 @@ class MapEditor {
     mapEditorSpriteSelectorCanvas.onClick.listen((MouseEvent e) {
       int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
       int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-      selectSprite(y*Sprite.spriteSheetSize + x);
+      selectSprite(y*Sprite.spriteSheetWidth + x);
     });
   }
   
@@ -598,7 +598,7 @@ class MapEditor {
   static void selectSprite(int id) {
     selectedTile = id;
     mapEditorSelectedSpriteCanvasContext.fillStyle = "#ff00ff";
-    mapEditorSelectedSpriteCanvasContext.fillRect(0, 0, Sprite.spriteSheetSize, Sprite.spriteSheetSize);
+    mapEditorSelectedSpriteCanvasContext.fillRect(0, 0, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
     renderStaticSprite(mapEditorSelectedSpriteCanvasContext, id, 0, 0);
   }
   
@@ -606,8 +606,8 @@ class MapEditor {
     ctx.drawImageScaledFromSource(
       Main.spritesImage,
       
-      Sprite.pixelsPerSprite * (id%Sprite.spriteSheetSize), // sx
-      Sprite.pixelsPerSprite * (id/Sprite.spriteSheetSize).floor(), // sy
+      Sprite.pixelsPerSprite * (id%Sprite.spriteSheetWidth), // sx
+      Sprite.pixelsPerSprite * (id/Sprite.spriteSheetWidth).floor(), // sy
       
       Sprite.pixelsPerSprite, Sprite.pixelsPerSprite, // swidth, sheight
       

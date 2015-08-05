@@ -113,7 +113,7 @@ class ObjectEditorBattlerTypes {
   }
   
   static void selectSprite() {
-    if(selected == null)
+    if(selected == null || selected == -1)
       return;
     
     String key = World.battlerTypes.keys.elementAt(selected);
@@ -125,11 +125,11 @@ class ObjectEditorBattlerTypes {
     CanvasRenderingContext2D ctx = canvas.context2D;
     
     ctx.fillStyle = "#ff00ff";
-    ctx.fillRect(0, 0, 96, 96);
+    ctx.fillRect(0, 0, Sprite.scaledSpriteSize * 3, Sprite.scaledSpriteSize * 3);
     
     for(int i=0; i<3; i++) {
       for(int j=0; j<3; j++) {
-        MapEditor.renderStaticSprite(ctx, World.battlerTypes[key].spriteId + (i) + (j*Sprite.spriteSheetSize), i, j);
+        MapEditor.renderStaticSprite(ctx, World.battlerTypes[key].spriteId + (i) + (j*Sprite.spriteSheetWidth), i, j);
       }
     }
   }

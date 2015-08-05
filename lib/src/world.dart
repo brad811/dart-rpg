@@ -113,9 +113,7 @@ class World {
       }
     }
     
-    Main.spritesImageLocation = obj["spriteSheet"] as String;
-    Main.spritesImage = new ImageElement(src:Main.spritesImageLocation);
-    Main.spritesImage.onLoad.listen((e) {
+    parseSettings(obj["settings"], () {
       parseAttacks(obj["attacks"]);
       parseBattlerTypes(obj["battlerTypes"]);
       parseItems(obj["items"]);
@@ -127,6 +125,25 @@ class World {
       
       callback();
     });
+  }
+  
+  void parseSettings(Map<String, String> settingsObject, Function callback) {
+    Main.spritesImageLocation = settingsObject["spriteSheetLocation"];
+    Main.spritesImage = new ImageElement();
+    
+    Main.spritesImage.onLoad.listen((e) {
+      Sprite.pixelsPerSprite = settingsObject["pixelsPerSprite"] as int;
+      Sprite.spriteScale = settingsObject["spriteScale"] as int;
+      
+      Sprite.scaledSpriteSize = Sprite.pixelsPerSprite * Sprite.spriteScale;
+      Sprite.spriteSheetWidth = (Main.spritesImage.width / Sprite.pixelsPerSprite).round();
+      Sprite.spriteSheetHeight = (Main.spritesImage.height / Sprite.pixelsPerSprite).round();
+      
+      callback();
+    });
+    
+    Main.spritesImage.crossOrigin = "anonymous";
+    Main.spritesImage.src = Main.spritesImageLocation;
   }
   
   void parseAttacks(Map<String, Map> attacksObject) {
@@ -469,7 +486,7 @@ class World {
         maps[curMap].tiles[posY+y][posX+x][layer] = new InteractableTile(
           solid,
           new Sprite.int(
-            spriteId + x + (y*Sprite.spriteSheetSize),
+            spriteId + x + (y*Sprite.spriteSheetWidth),
             posX+x, posY+y
           ),
           handler

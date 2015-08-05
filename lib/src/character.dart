@@ -267,7 +267,7 @@ class Character implements InteractableInterface {
           new Tile(
             solid,
             new Sprite(
-              spriteId + i + (direction * sizeX) + motionSpriteOffset + (Sprite.spriteSheetSize * j),
+              spriteId + i + (direction * sizeX) + motionSpriteOffset + (Sprite.spriteSheetWidth * j),
               (x/motionAmount) + i, (y/motionAmount) - (sizeY - j - 1)
             )
           )

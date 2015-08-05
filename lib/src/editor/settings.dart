@@ -5,7 +5,9 @@ import 'dart:html';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 
+import 'editor.dart';
 import 'map_editor.dart';
+import 'object_editor.dart';
 
 class Settings {
   static CanvasElement canvas;
@@ -27,12 +29,17 @@ class Settings {
   
   static void update() {
     buildMainHtml();
+    
+    querySelector("#settings_save_button").onClick.listen((MouseEvent e) {
+      save();
+    });
   }
   
   static void buildMainHtml() {
     String html = "";
     
     html += "NOTE: You must click save for your changes on this tab to take effect!<hr />";
+    html += "<button id='settings_save_button'>Save</button><hr />";
     
     html += "<table>";
     
@@ -42,18 +49,13 @@ class Settings {
     html += "</tr>";
     
     html += "<tr>";
-    html += "<td>Sprite sheet size:&nbsp;</td>";
-    html += "<td>&nbsp;<input id='sprite_sheet_size' type='text' class='number' value='${ Sprite.spriteSheetSize }' /></td>";
-    html += "</tr>";
-    
-    html += "<tr>";
     html += "<td>Pixels per sprite:&nbsp;</td>";
-    html += "<td>&nbsp;<input id='sprite_sheet_size' type='text' class='number' value='${ Sprite.pixelsPerSprite }' /></td>";
+    html += "<td>&nbsp;<input id='sprite_sheet_pixels_per_sprite' type='text' class='number' value='${ Sprite.pixelsPerSprite }' /></td>";
     html += "</tr>";
     
     html += "<tr>";
     html += "<td>Sprite scale:&nbsp;</td>";
-    html += "<td>&nbsp;<input id='sprite_sheet_size' type='text' class='number' value='${ Sprite.spriteScale }' /></td>";
+    html += "<td>&nbsp;<input id='sprite_sheet_scale' type='text' class='number' value='${ Sprite.spriteScale }' /></td>";
     html += "</tr>";
     
     html += "</table>";
@@ -71,19 +73,19 @@ class Settings {
     ctx.fillStyle = "#ff00ff";
     ctx.fillRect(
       0, 0,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetSize,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetSize
+      Sprite.scaledSpriteSize*Sprite.spriteSheetWidth,
+      Sprite.scaledSpriteSize*Sprite.spriteSheetHeight
     );
     
     // render sprite picker
     int
-      maxCol = Sprite.spriteSheetSize,
+      maxCol = Sprite.spriteSheetWidth,
       col = 0,
       row = 0;
     
-    for(int y=0; y<Sprite.spriteSheetSize; y++) {
-      for(int x=0; x<Sprite.spriteSheetSize; x++) {
-        MapEditor.renderStaticSprite(ctx, y*Sprite.spriteSheetSize + x, col, row);
+    for(int y=0; y<Sprite.spriteSheetHeight; y++) {
+      for(int x=0; x<Sprite.spriteSheetWidth; x++) {
+        MapEditor.renderStaticSprite(ctx, y*Sprite.spriteSheetWidth + x, col, row);
         col++;
         if(col >= maxCol) {
           row++;
@@ -102,18 +104,18 @@ class Settings {
     ctx.fillStyle = "#ff00ff";
     ctx.fillRect(
       0, 0,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetSize,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetSize
+      Sprite.scaledSpriteSize*Sprite.spriteSheetWidth,
+      Sprite.scaledSpriteSize*Sprite.spriteSheetHeight
     );
     
     int
-      maxCol = Sprite.spriteSheetSize,
+      maxCol = Sprite.spriteSheetWidth,
       col = 0,
       row = 0;
     
-    for(int y=0; y<Sprite.spriteSheetSize; y++) {
-      for(int x=0; x<Sprite.spriteSheetSize; x++) {
-        MapEditor.renderStaticSprite(ctx, y*Sprite.spriteSheetSize + x, col, row);
+    for(int y=0; y<Sprite.spriteSheetHeight; y++) {
+      for(int x=0; x<Sprite.spriteSheetWidth; x++) {
+        MapEditor.renderStaticSprite(ctx, y*Sprite.spriteSheetWidth + x, col, row);
         col++;
         if(col >= maxCol) {
           row++;
@@ -132,9 +134,80 @@ class Settings {
   }
   
   static void save() {
-    // TODO: onInputChange
+    // TODO
+    Main.spritesImageLocation = Editor.getTextAreaStringValue("#sprite_sheet_location");
+    
+    Sprite.pixelsPerSprite = Editor.getTextInputIntValue("#sprite_sheet_pixels_per_sprite", 16);
+    Sprite.spriteScale = Editor.getTextInputIntValue("#sprite_sheet_scale", 2);
+    
+    Sprite.scaledSpriteSize = Sprite.pixelsPerSprite * Sprite.spriteScale;
+    
+    Main.spritesImage = new ImageElement(src:Main.spritesImageLocation);
+    Main.spritesImage.onLoad.listen((e) {
+      Sprite.spriteSheetWidth = (Main.spritesImage.width / Sprite.pixelsPerSprite).round();
+      Sprite.spriteSheetHeight = (Main.spritesImage.height / Sprite.pixelsPerSprite).round();
+      
+      MapEditor.setUp();
+      ObjectEditor.setUp();
+      Settings.setUp();
+      
+      Editor.update();
+      
+      MapEditor.fixImageSmoothing(
+        MapEditor.mapEditorSpriteSelectorCanvas,
+        Sprite.spriteSheetWidth * Sprite.scaledSpriteSize,
+        Sprite.spriteSheetHeight * Sprite.scaledSpriteSize
+      );
+      
+      MapEditor.fixImageSmoothing(
+        MapEditor.mapEditorSelectedSpriteCanvas,
+        Sprite.scaledSpriteSize,
+        Sprite.scaledSpriteSize
+      );
+      
+      MapEditor.fixImageSmoothing(
+        querySelector("#battler_type_picture_canvas"),
+        Sprite.scaledSpriteSize * 3,
+        Sprite.scaledSpriteSize * 3
+      );
+      
+      MapEditor.fixImageSmoothing(
+        canvas,
+        Sprite.spriteSheetWidth * Sprite.scaledSpriteSize,
+        Sprite.spriteSheetHeight * Sprite.scaledSpriteSize
+      );
+      
+      MapEditor.mapEditorSpriteSelectorCanvasContext.fillStyle = "#ff00ff";
+      MapEditor.mapEditorSpriteSelectorCanvasContext.fillRect(
+        0, 0,
+        Sprite.scaledSpriteSize*Sprite.spriteSheetWidth,
+        Sprite.scaledSpriteSize*Sprite.spriteSheetHeight
+      );
+      
+      // render sprite picker
+      int
+        maxCol = Sprite.spriteSheetWidth,
+        col = 0,
+        row = 0;
+      for(int y=0; y<Sprite.spriteSheetHeight; y++) {
+        for(int x=0; x<Sprite.spriteSheetWidth; x++) {
+          MapEditor.renderStaticSprite(MapEditor.mapEditorSpriteSelectorCanvasContext, y*Sprite.spriteSheetWidth + x, col, row);
+          col++;
+          if(col >= maxCol) {
+            row++;
+            col = 0;
+          }
+        }
+      }
+    });
   }
   
-  static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {
+  static void export(Map<String, Object> exportJson) {
+    Map<String, Object> json = {};
+    json["spriteSheetLocation"] = Main.spritesImageLocation;
+    json["pixelsPerSprite"] = Sprite.pixelsPerSprite;
+    json["spriteScale"] = Sprite.spriteScale;
+    
+    exportJson["settings"] = json;
   }
 }

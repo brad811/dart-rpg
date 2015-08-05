@@ -77,7 +77,7 @@ class TextGameEvent extends GameEvent {
     // Picture
     for(int row=0; row<3; row++) {
       for(int col=0; col<3; col++) {
-        new Sprite.int(Gui.pictureSpriteId + Sprite.spriteSheetSize*row + col, 1 + col, 11 + row).renderStatic();
+        new Sprite.int(Gui.pictureSpriteId + Sprite.spriteSheetWidth*row + col, 1 + col, 11 + row).renderStatic();
       }
     }
     

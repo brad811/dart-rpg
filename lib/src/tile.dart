@@ -51,7 +51,7 @@ class Tile {
   // TODO: maybe take sprite id as argument instead of sprite
   Tile(this.solid, this.sprite, [this.layered]) {
     if(layered == true) {
-      topSprite = new Sprite(sprite.id + Sprite.spriteSheetSize, sprite.posX, sprite.posY);
+      topSprite = new Sprite(sprite.id + Sprite.spriteSheetWidth, sprite.posX, sprite.posY);
       topTile = new Tile(solid, topSprite);
     }
   }
