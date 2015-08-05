@@ -17,6 +17,7 @@ class Main {
     canvasWidth = 640,
     canvasHeight = 512;
 
+  static String spritesImageLocation;
   static ImageElement spritesImage;
   static CanvasElement c;
   static CanvasRenderingContext2D ctx;

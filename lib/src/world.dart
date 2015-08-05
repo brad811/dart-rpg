@@ -79,8 +79,13 @@ class World {
   void loadGame(Function callback) {
     HttpRequest
       .getString("game.json")
-      .then(parseGame)
-      .then((dynamic f) { if(callback != null) { callback(); } })
+      .then((String jsonString) {
+        parseGame(jsonString, () {
+          if(callback != null) {
+            callback();
+          }
+        });
+      })
       .catchError((Error err) {
         print("Error loading maps! (${err})");
         print(err.stackTrace);
@@ -89,7 +94,7 @@ class World {
       });
   }
   
-  void parseGame(String jsonString) {
+  void parseGame(String jsonString, Function callback) {
     Map<String, Map> obj;
     TextAreaElement gameJson = querySelector("#game_json");
     
@@ -108,7 +113,8 @@ class World {
       }
     }
     
-    Main.spritesImage = new ImageElement(src: obj["spriteSheet"] as String);
+    Main.spritesImageLocation = obj["spriteSheet"] as String;
+    Main.spritesImage = new ImageElement(src:Main.spritesImageLocation);
     Main.spritesImage.onLoad.listen((e) {
       parseAttacks(obj["attacks"]);
       parseBattlerTypes(obj["battlerTypes"]);
@@ -118,6 +124,8 @@ class World {
       parseGameEventChains(obj["gameEventChains"]);
       
       parseCharacters(obj["characters"]);
+      
+      callback();
     });
   }
   
