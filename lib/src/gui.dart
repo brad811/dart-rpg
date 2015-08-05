@@ -64,6 +64,7 @@ class Gui {
       scaledWidth = (Main.canvasWidth * window.devicePixelRatio).round(),
       scaledHeight = (Main.canvasHeight * window.devicePixelRatio).round();
     
+    // TODO: this causes a security error when loading an external image file as the sprite sheet
     ImageData imageData = Main.ctx.getImageData(0, 0, scaledWidth, scaledHeight);
     
     for(int y=0; y<scaledHeight; y++) {
