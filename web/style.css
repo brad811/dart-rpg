@@ -277,7 +277,11 @@ textarea {
   margin: 0;
 }
 
-#object_editor_inner_main_area .tab td, #settings_tab .tab td {
+#settings_tab .tab td {
+  padding: 5px;
+}
+
+#object_editor_inner_main_area .tab td {
   text-align: center;
 }
 

@@ -4,6 +4,7 @@ import 'dart:html';
 
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler_type.dart';
+import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'editor.dart';
@@ -128,7 +129,7 @@ class ObjectEditorBattlerTypes {
     
     for(int i=0; i<3; i++) {
       for(int j=0; j<3; j++) {
-        MapEditor.renderStaticSprite(ctx, World.battlerTypes[key].spriteId + (i) + (j*32), i, j);
+        MapEditor.renderStaticSprite(ctx, World.battlerTypes[key].spriteId + (i) + (j*Sprite.spriteSheetSize), i, j);
       }
     }
   }

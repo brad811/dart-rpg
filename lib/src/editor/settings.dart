@@ -32,12 +32,31 @@ class Settings {
   static void buildMainHtml() {
     String html = "";
     
-    html += "NOTE: You must click save on this tab for your changes to take effect!<hr />";
+    html += "NOTE: You must click save for your changes on this tab to take effect!<hr />";
     
-    html += "<table><tr>";
+    html += "<table>";
+    
+    html += "<tr>";
     html += "<td>Sprite sheet location:&nbsp;</td>";
     html += "<td>&nbsp;<textarea id='sprite_sheet_location'>${ Main.spritesImageLocation }</textarea></td>";
-    html += "</tr></table>";
+    html += "</tr>";
+    
+    html += "<tr>";
+    html += "<td>Sprite sheet size:&nbsp;</td>";
+    html += "<td>&nbsp;<input id='sprite_sheet_size' type='text' class='number' value='${ Sprite.spriteSheetSize }' /></td>";
+    html += "</tr>";
+    
+    html += "<tr>";
+    html += "<td>Pixels per sprite:&nbsp;</td>";
+    html += "<td>&nbsp;<input id='sprite_sheet_size' type='text' class='number' value='${ Sprite.pixelsPerSprite }' /></td>";
+    html += "</tr>";
+    
+    html += "<tr>";
+    html += "<td>Sprite scale:&nbsp;</td>";
+    html += "<td>&nbsp;<input id='sprite_sheet_size' type='text' class='number' value='${ Sprite.spriteScale }' /></td>";
+    html += "</tr>";
+    
+    html += "</table>";
     
     querySelector("#settings_main_tab").setInnerHtml(html);
   }
@@ -58,7 +77,7 @@ class Settings {
     
     // render sprite picker
     int
-      maxCol = 32,
+      maxCol = Sprite.spriteSheetSize,
       col = 0,
       row = 0;
     
@@ -88,7 +107,7 @@ class Settings {
     );
     
     int
-      maxCol = 32,
+      maxCol = Sprite.spriteSheetSize,
       col = 0,
       row = 0;
     

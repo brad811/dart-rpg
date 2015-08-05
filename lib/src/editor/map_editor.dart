@@ -144,7 +144,7 @@ class MapEditor {
     
     // render sprite picker
     int
-      maxCol = 32,
+      maxCol = Sprite.spriteSheetSize,
       col = 0,
       row = 0;
     for(int y=0; y<Sprite.spriteSheetSize; y++) {
@@ -598,7 +598,7 @@ class MapEditor {
   static void selectSprite(int id) {
     selectedTile = id;
     mapEditorSelectedSpriteCanvasContext.fillStyle = "#ff00ff";
-    mapEditorSelectedSpriteCanvasContext.fillRect(0, 0, 32, 32);
+    mapEditorSelectedSpriteCanvasContext.fillRect(0, 0, Sprite.spriteSheetSize, Sprite.spriteSheetSize);
     renderStaticSprite(mapEditorSelectedSpriteCanvasContext, id, 0, 0);
   }
   
