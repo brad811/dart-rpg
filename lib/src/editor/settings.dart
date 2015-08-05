@@ -12,6 +12,7 @@ import 'object_editor.dart';
 class Settings {
   static CanvasElement canvas;
   static CanvasRenderingContext2D ctx;
+  static DivElement tooltip;
   
   static List<String> tabs = [];
   static Map<String, DivElement> tabDivs = {};
@@ -24,7 +25,7 @@ class Settings {
   }
   
   static void setUp() {
-    setUpSpritePicker();
+    setUpSpriteCanvas();
   }
   
   static void update() {
@@ -63,7 +64,7 @@ class Settings {
     querySelector("#settings_main_tab").setInnerHtml(html);
   }
   
-  static void setUpSpritePicker() {
+  static void setUpSpriteCanvas() {
     MapEditor.fixImageSmoothing(
       canvas,
       (Main.spritesImage.width * window.devicePixelRatio).round(),
@@ -95,6 +96,8 @@ class Settings {
     }
     
     canvas.onMouseMove.listen(outlineTile);
+    
+    tooltip = querySelector('#tooltip');
   }
   
   static void outlineTile(MouseEvent e) {
@@ -131,6 +134,11 @@ class Settings {
     ctx.lineWidth = 1;
     ctx.setStrokeColorRgb(0, 0, 0, 1.0);
     ctx.strokeRect(Sprite.scaledSpriteSize * x, Sprite.scaledSpriteSize * y, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
+    
+    tooltip.style.display = "block";
+    tooltip.style.left = "${e.page.x + 30}px";
+    tooltip.style.top = "${e.page.y - 10}px";
+    tooltip.text = "x: ${x}, y: ${y}, id: ${ (y*Sprite.spriteSheetWidth) + x }";
   }
   
   static void save() {
