@@ -37,6 +37,13 @@ class Editor {
     
     Main.world = new World(() {
       Main.world.loadGame(() {
+        // resize the sprite picker to match the loaded sprite sheet image
+        MapEditor.fixImageSmoothing(
+          MapEditor.mapEditorSpriteSelectorCanvas,
+          (Main.spritesImage.width * window.devicePixelRatio).round(),
+          (Main.spritesImage.height * window.devicePixelRatio).round()
+        );
+        
         MapEditor.setUp();
         ObjectEditor.setUp();
         Settings.setUp();
