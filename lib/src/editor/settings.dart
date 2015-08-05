@@ -95,9 +95,13 @@ class Settings {
       }
     }
     
+    tooltip = querySelector('#tooltip');
+    
     canvas.onMouseMove.listen(outlineTile);
     
-    tooltip = querySelector('#tooltip');
+    canvas.onMouseLeave.listen((MouseEvent e) {
+      tooltip.style.display = "none";
+    });
   }
   
   static void outlineTile(MouseEvent e) {

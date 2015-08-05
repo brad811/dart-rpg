@@ -174,7 +174,7 @@ class MapEditor {
       tooltip.text = "x: ${x}, y: ${y}";
     });
     
-    mapEditorCanvas.onMouseLeave.listen((onData) {
+    mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
       tooltip.style.display = "none";
     });
     
