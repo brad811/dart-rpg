@@ -74,15 +74,13 @@ class MapEditor {
   static void fixImageSmoothing(CanvasElement canvas, int width, int height) {
     CanvasRenderingContext2D ctx = canvas.context2D;
     
-    if(window.devicePixelRatio != 1.0) {
-      double scale = window.devicePixelRatio;
-      
-      canvas.style.width = '${width}px';
-      canvas.style.height = '${height}px';
-      canvas.width = (width * scale).round();
-      canvas.height = (height * scale).round();
-      ctx.scale(scale, scale);
-    }
+    double scale = window.devicePixelRatio;
+    
+    canvas.style.width = '${width}px';
+    canvas.style.height = '${height}px';
+    canvas.width = (width * scale).round();
+    canvas.height = (height * scale).round();
+    ctx.scale(scale, scale);
     
     ctx.imageSmoothingEnabled = false;
     
