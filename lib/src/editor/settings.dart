@@ -146,7 +146,6 @@ class Settings {
   }
   
   static void save() {
-    // TODO
     Main.spritesImageLocation = Editor.getTextAreaStringValue("#sprite_sheet_location");
     
     Sprite.pixelsPerSprite = Editor.getTextInputIntValue("#sprite_sheet_pixels_per_sprite", 16);

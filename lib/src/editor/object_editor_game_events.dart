@@ -21,8 +21,6 @@ import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 import 'editor.dart';
 import 'object_editor.dart';
 
-// TODO: selecting a character in heal event breaks something
-
 // TODO: map editing events (place/remove/change warps, signs, tiles, events)
 // TODO: logic gate events IF this THEN gameEventChainA ELSE gameEventChainB
 // TODO: text input game event
@@ -205,7 +203,7 @@ class ObjectEditorGameEvents {
         List<GameEvent> gameEventChain = new List<GameEvent>();
         for(int j=0; querySelector('#game_event_chain_${i}_game_event_${j}_type') != null; j++) {
           gameEventChain.add(
-              ObjectEditorGameEvents.buildGameEvent("game_event_chain_${i}_game_event_${j}", Main.player)
+              ObjectEditorGameEvents.buildGameEvent("game_event_chain_${i}_game_event_${j}")
             );
         }
         
@@ -273,7 +271,7 @@ class ObjectEditorGameEvents {
     }
   }
   
-  static GameEvent buildGameEvent(String prefix, Character character) {
+  static GameEvent buildGameEvent(String prefix) {
     String gameEventType = Editor.getSelectInputStringValue("#${prefix}_type");
     
     if(gameEventType == "text") {
@@ -303,8 +301,17 @@ class ObjectEditorGameEvents {
       
       return fadeGameEvent;
     } else if(gameEventType == "heal") {
+      Character character;
+      String characterLabel = Editor.getSelectInputStringValue("#${prefix}_character");
+      
+      if(characterLabel == "____player") {
+        character = Main.player;
+      } else {
+        character = World.characters[characterLabel];
+      }
+      
       HealGameEvent healGameEvent = new HealGameEvent(
-          Main.player, Editor.getTextInputIntValue("#${prefix}_amount", 0)
+          character, Editor.getTextInputIntValue("#${prefix}_amount", 0)
         );
       
       return healGameEvent;
@@ -370,7 +377,7 @@ class ObjectEditorGameEvents {
       gameEventJson["fadeType"] = gameEvent.fadeType;
     } else if(gameEvent is HealGameEvent) {
       gameEventJson["type"] = "heal";
-      gameEventJson["character"] = gameEvent.character.name;
+      gameEventJson["character"] = gameEvent.character.label;
       gameEventJson["amount"] = gameEvent.amount;
     } else if(gameEvent is StoreGameEvent) {
       gameEventJson["type"] = "store";

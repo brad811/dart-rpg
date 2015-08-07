@@ -13,8 +13,6 @@ class HealGameEvent extends GameEvent {
   HealGameEvent(this.character, this.amount, [Function callback]) : super(null, callback);
   
   void trigger(InteractableInterface interactable) {
-    this.character = Main.player;
-    
     character.battler.curHealth += amount;
     
     if(character.battler.curHealth > character.battler.startingHealth)
