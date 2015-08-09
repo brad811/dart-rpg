@@ -30,8 +30,8 @@ class ObjectEditorBattlerTypes {
     
     MapEditor.fixImageSmoothing(
       canvas,
-      (Sprite.scaledSpriteSize * 3 * window.devicePixelRatio).round(),
-      (Sprite.scaledSpriteSize * 3 * window.devicePixelRatio).round()
+      (Sprite.scaledSpriteSize * 3).round(),
+      (Sprite.scaledSpriteSize * 3).round()
     );
   }
   
