@@ -87,7 +87,7 @@ class MapEditor {
     ctx.fillStyle = "#ff00ff";
     ctx.fillRect(0, 0, width, height);
     
-    context.callMethod("fixImageSmoothing");
+    context.callMethod("fixImageSmoothing", [canvas.id]);
   }
   
   static void setUp() {
@@ -110,6 +110,20 @@ class MapEditor {
     
     mapEditorTabDivs[mapEditorTabDivs.keys.first].style.display = "block";
     mapEditorTabHeaderDivs[mapEditorTabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
+    
+    // resize the sprite picker to match the loaded sprite sheet image
+    MapEditor.fixImageSmoothing(
+      MapEditor.mapEditorSpriteSelectorCanvas,
+      (Main.spritesImage.width * Sprite.spriteScale * window.devicePixelRatio).round(),
+      (Main.spritesImage.height * Sprite.spriteScale * window.devicePixelRatio).round()
+    );
+    
+    // picked sprite canvas
+    MapEditor.fixImageSmoothing(
+      MapEditor.mapEditorSelectedSpriteCanvas,
+      (Sprite.scaledSpriteSize * window.devicePixelRatio).round(),
+      (Sprite.scaledSpriteSize * window.devicePixelRatio).round()
+    );
     
     MapEditorMaps.setUp();
     MapEditorCharacters.setUp();

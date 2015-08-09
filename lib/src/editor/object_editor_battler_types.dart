@@ -18,9 +18,21 @@ class ObjectEditorBattlerTypes {
   static List<String> advancedTabs = ["battler_type_stats", "battler_type_attacks"];
   static int selected;
   
+  static CanvasElement canvas;
+  static CanvasRenderingContext2D ctx;
+  
   static void setUp() {
     Editor.setUpTabs(advancedTabs);
     Editor.attachButtonListener("#add_battler_type_button", addNewBattlerType);
+    
+    canvas = querySelector("#battler_type_picture_canvas");
+    ctx = canvas.context2D;
+    
+    MapEditor.fixImageSmoothing(
+      canvas,
+      (Sprite.scaledSpriteSize * 3 * window.devicePixelRatio).round(),
+      (Sprite.scaledSpriteSize * 3 * window.devicePixelRatio).round()
+    );
   }
   
   static void addNewBattlerType(MouseEvent e) {
@@ -120,9 +132,6 @@ class ObjectEditorBattlerTypes {
     
     if(key == null)
       return;
-    
-    CanvasElement canvas = querySelector("#battler_type_picture_canvas");
-    CanvasRenderingContext2D ctx = canvas.context2D;
     
     ctx.fillStyle = "#ff00ff";
     ctx.fillRect(0, 0, Sprite.scaledSpriteSize * 3, Sprite.scaledSpriteSize * 3);
