@@ -121,8 +121,8 @@ class MapEditor {
     // picked sprite canvas
     MapEditor.fixImageSmoothing(
       MapEditor.mapEditorSelectedSpriteCanvas,
-      (Sprite.scaledSpriteSize * window.devicePixelRatio).round(),
-      (Sprite.scaledSpriteSize * window.devicePixelRatio).round()
+      (Sprite.scaledSpriteSize).round(),
+      (Sprite.scaledSpriteSize).round()
     );
     
     MapEditorMaps.setUp();
