@@ -13,7 +13,6 @@ import 'editor.dart';
 import 'object_editor.dart';
 import 'object_editor_game_events.dart';
 
-// TODO: error when adding a second attack to the same level
 // TODO: dimensions, where character is solid and interactable
 
 class ObjectEditorCharacters {

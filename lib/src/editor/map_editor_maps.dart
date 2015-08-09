@@ -116,7 +116,7 @@ class MapEditorMaps {
       changedByUser = false;
       String key = Main.world.maps.keys.elementAt(i);
       try {
-        String newName = (querySelector('#map_${i}_name') as TextInputElement).value;
+        String newName = Editor.getTextInputStringValue("#map_${i}_name");
         
         if(key != newName) {
           changedByUser = true;
@@ -212,9 +212,9 @@ class MapEditorMaps {
     setMapSelectorButtonListeners();
     setMapDeleteButtonListeners();
     
-    Main.world.startMap = (querySelector('#start_map') as SelectElement).value;
-    Main.world.startX = int.parse((querySelector('#start_player_x') as TextInputElement).value);
-    Main.world.startY = int.parse((querySelector('#start_player_y') as TextInputElement).value);
+    Main.world.startMap = Editor.getSelectInputStringValue("#start_map");
+    Main.world.startX = Editor.getTextInputIntValue("#start_player_x", 0);
+    Main.world.startY = Editor.getTextInputIntValue("#start_player_y", 0);
     
     // TODO: tab scrolls when changing map name
     if(nameChange) {
@@ -258,20 +258,12 @@ class MapEditorMaps {
     Editor.attachInputListeners("layer_visible",
       ["above", "player", "below", "ground", "special"],
       (_) {
-        MapEditor.layerVisible[World.LAYER_ABOVE] =
-            (querySelector('#layer_visible_above') as CheckboxInputElement).checked;
+        MapEditor.layerVisible[World.LAYER_ABOVE] = Editor.getCheckboxInputBoolValue("#layer_visible_above");
+        MapEditor.layerVisible[World.LAYER_PLAYER] = Editor.getCheckboxInputBoolValue("#layer_visible_player");
+        MapEditor.layerVisible[World.LAYER_BELOW] = Editor.getCheckboxInputBoolValue("#layer_visible_below");
+        MapEditor.layerVisible[World.LAYER_GROUND] = Editor.getCheckboxInputBoolValue("#layer_visible_ground");
         
-        MapEditor.layerVisible[World.LAYER_PLAYER] =
-            (querySelector('#layer_visible_player') as CheckboxInputElement).checked;
-        
-        MapEditor.layerVisible[World.LAYER_BELOW] =
-            (querySelector('#layer_visible_below') as CheckboxInputElement).checked;
-        
-        MapEditor.layerVisible[World.LAYER_GROUND] =
-            (querySelector('#layer_visible_ground') as CheckboxInputElement).checked;
-        
-        Editor.highlightSpecialTiles = 
-            (querySelector('#layer_visible_special') as CheckboxInputElement).checked;
+        Editor.highlightSpecialTiles = Editor.getCheckboxInputBoolValue("#layer_visible_special");
         
         Editor.update();
       }

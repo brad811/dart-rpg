@@ -47,9 +47,10 @@ class MapEditorEvents {
   }
   
   static void addNewEvent(MouseEvent e) {
-    // TODO: account for when there are no game events yet
-    events[Main.world.curMap].add( new EventTile(World.gameEventChains.keys.first, new Sprite.int(0, 0, 0), false) );
-    Editor.update();
+    if(World.gameEventChains.keys.length > 0) {
+      events[Main.world.curMap].add( new EventTile(World.gameEventChains.keys.first, new Sprite.int(0, 0, 0), false) );
+      Editor.update();
+    }
   }
   
   static void update() {

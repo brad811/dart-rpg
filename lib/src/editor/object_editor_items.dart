@@ -9,7 +9,6 @@ import 'editor.dart';
 import 'object_editor.dart';
 import 'object_editor_game_events.dart';
 
-// TODO: item effects
 // TODO: when you can use items
 // TODO: item targets
 // TODO: max length of things
@@ -160,12 +159,12 @@ class ObjectEditorItems {
     World.items = new Map<String, Item>();
     for(int i=0; querySelector('#item_${i}_name') != null; i++) {
       try {
-        String name = (querySelector('#item_${i}_name') as TextInputElement).value;
+        String name = Editor.getTextInputStringValue("#item_${i}_name");
         World.items[name] = new Item(
           Editor.getTextInputIntValue('#item_${i}_picture_id', 1),
           name,
           Editor.getTextInputIntValue('#item_${i}_base_price', 1),
-          (querySelector('#item_${i}_description') as TextAreaElement).value,
+          Editor.getTextAreaStringValue("#item_${i}_description"),
           Editor.getSelectInputStringValue("#item_${i}_game_event_chain")
         );
       } catch(e) {
