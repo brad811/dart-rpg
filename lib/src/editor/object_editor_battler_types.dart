@@ -333,7 +333,6 @@ class ObjectEditorBattlerTypes {
       }
     }
     
-    // TODO: sprite not retaining cursor position
     Editor.updateAndRetainValue(e);
   }
   

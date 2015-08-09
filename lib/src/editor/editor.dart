@@ -159,6 +159,8 @@ class Editor {
     if(e.target is TextInputElement) {
       TextInputElement inputElement = e.target;
       
+      int position = inputElement.selectionStart;
+      
       if(inputElement.classes.contains("decimal")) {
         inputElement.value = inputElement.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
       } else if(inputElement.classes.contains("number")) {
@@ -166,6 +168,8 @@ class Editor {
       } else {
         inputElement.value = inputElement.value.replaceAll(new RegExp(r'[^a-zA-Z0-9\._\ ,~!@#$%^&*()_+`\-=\[\]\\{}\|;:,./<>?]'), "_");
       }
+      
+      inputElement.setSelectionRange(position, position);
     }
   }
   
