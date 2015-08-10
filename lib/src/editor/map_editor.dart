@@ -114,8 +114,8 @@ class MapEditor {
     // resize the sprite picker to match the loaded sprite sheet image
     MapEditor.fixImageSmoothing(
       MapEditor.mapEditorSpriteSelectorCanvas,
-      (Main.spritesImage.width * Sprite.spriteScale * window.devicePixelRatio).round(),
-      (Main.spritesImage.height * Sprite.spriteScale * window.devicePixelRatio).round()
+      (Main.spritesImage.width * Sprite.spriteScale).round(),
+      (Main.spritesImage.height * Sprite.spriteScale).round()
     );
     
     // picked sprite canvas
