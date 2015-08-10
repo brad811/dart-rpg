@@ -54,6 +54,17 @@ class ObjectEditorBattlerTypes {
     
     selectedBattlerType.levelAttacks[level] = [];
     
+    Map<int, List<Attack>> levelAttacks = {};
+    levelAttacks.addAll(selectedBattlerType.levelAttacks);
+    
+    List<int> sortedLevels = levelAttacks.keys.toList();
+    sortedLevels.sort();
+    
+    selectedBattlerType.levelAttacks.clear();
+    sortedLevels.forEach((int level) {
+      selectedBattlerType.levelAttacks[level] = levelAttacks[level];
+    });
+    
     update();
     ObjectEditor.update();
   }
@@ -259,7 +270,6 @@ class ObjectEditorBattlerTypes {
       
       int levelNum = 0;
       
-      // TODO: make it so levels are sorted but delete still works
       battlerType.levelAttacks.forEach((int level, List<Attack> attacks) {
         int j=0;
         
