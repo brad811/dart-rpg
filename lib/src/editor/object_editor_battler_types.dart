@@ -298,7 +298,6 @@ class ObjectEditorBattlerTypes {
     querySelector("#battler_type_attacks_container").setInnerHtml(html);
   }
   
-  // TODO: not always working when editing level attacks
   static void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     Editor.avoidNameCollision(e, "_name", World.battlerTypes);

@@ -67,8 +67,8 @@ class Settings {
   static void setUpSpriteCanvas() {
     MapEditor.fixImageSmoothing(
       canvas,
-      (Main.spritesImage.width * Sprite.spriteScale * window.devicePixelRatio).round(),
-      (Main.spritesImage.height * Sprite.spriteScale * window.devicePixelRatio).round()
+      (Main.spritesImage.width * Sprite.spriteScale).round(),
+      (Main.spritesImage.height * Sprite.spriteScale).round()
     );
     
     ctx.fillStyle = "#ff00ff";
