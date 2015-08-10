@@ -133,6 +133,10 @@ class ObjectEditorBattlerTypes {
         }
       });
     }
+    
+    Editor.attachInputListeners("battler_type", ["level"], (Event e) {
+      Editor.enforceValueFormat(e);
+    });
   }
   
   static void selectSprite() {
