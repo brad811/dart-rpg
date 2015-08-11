@@ -103,18 +103,22 @@ class Character implements InteractableInterface {
         return;
       
       Tile tile;
-      if(motionDirection == Character.LEFT) {
-        motionX = -motionAmount;
-        tile = Main.world.maps[Main.world.curMap].tiles[mapY][mapX-1][World.LAYER_GROUND];
-      } else if(motionDirection == Character.RIGHT) {
-        motionX = motionAmount;
-        tile = Main.world.maps[Main.world.curMap].tiles[mapY][mapX+1][World.LAYER_GROUND];
-      } else if(motionDirection == Character.UP) {
-        motionY = -motionAmount;
-        tile = Main.world.maps[Main.world.curMap].tiles[mapY-1][mapX][World.LAYER_GROUND];
-      } else if(motionDirection == Character.DOWN) {
-        motionY = motionAmount;
-        tile = Main.world.maps[Main.world.curMap].tiles[mapY+1][mapX][World.LAYER_GROUND];
+      try {
+        if(motionDirection == Character.LEFT) {
+          motionX = -motionAmount;
+          tile = Main.world.maps[Main.world.curMap].tiles[mapY][mapX-1][World.LAYER_GROUND];
+        } else if(motionDirection == Character.RIGHT) {
+          motionX = motionAmount;
+          tile = Main.world.maps[Main.world.curMap].tiles[mapY][mapX+1][World.LAYER_GROUND];
+        } else if(motionDirection == Character.UP) {
+          motionY = -motionAmount;
+          tile = Main.world.maps[Main.world.curMap].tiles[mapY-1][mapX][World.LAYER_GROUND];
+        } else if(motionDirection == Character.DOWN) {
+          motionY = motionAmount;
+          tile = Main.world.maps[Main.world.curMap].tiles[mapY+1][mapX][World.LAYER_GROUND];
+        }
+      } catch(e) {
+        
       }
       
       // handle entering null tiles

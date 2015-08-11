@@ -496,6 +496,12 @@ class World {
   }
   
   bool isSolid(int x, int y) {
+    if(
+        x < 0 || x >= Main.world.maps[Main.world.curMap].tiles[0].length ||
+        y < 0 || y >= Main.world.maps[Main.world.curMap].tiles.length) {
+      return true;
+    }
+    
     for(int layer in layers) {
       if(maps[curMap].tiles[y][x][layer] is Tile && maps[curMap].tiles[y][x][layer].solid) {
         return true;
