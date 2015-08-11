@@ -218,7 +218,7 @@ class MapEditorMaps {
     
     // TODO: tab scrolls when changing map name
     if(nameChange) {
-      Editor.update();
+      Editor.updateAndRetainValue(e);
     } else {
       MapEditor.updateMap(shouldExport: true);
     }
