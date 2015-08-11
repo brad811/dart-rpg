@@ -37,22 +37,33 @@ class Editor {
     
     Main.world = new World(() {
       Main.world.loadGame(() {
-        MapEditor.setUp();
-        ObjectEditor.setUp();
-        Settings.setUp();
-        
-        Editor.setUpTabs(editorTabs);
-        
-        Editor.update();
-        
-        Function resizeFunction = (Event e) {
-          querySelector('#left_half').style.width = "${window.innerWidth - 562}px";
-          querySelector('#left_half').style.height = "${window.innerHeight - 60}px";
-          querySelector('#container').style.height = "${window.innerHeight - 10}px";
-        };
-        
-        window.onResize.listen(resizeFunction);
-        resizeFunction(null);
+        Editor.setUp();
+      });
+    });
+  }
+  
+  static void setUp() {
+    MapEditor.setUp();
+    ObjectEditor.setUp();
+    Settings.setUp();
+    
+    Editor.setUpTabs(editorTabs);
+    
+    Editor.update();
+    
+    Function resizeFunction = (Event e) {
+      querySelector('#left_half').style.width = "${window.innerWidth - 562}px";
+      querySelector('#left_half').style.height = "${window.innerHeight - 60}px";
+      querySelector('#container').style.height = "${window.innerHeight - 10}px";
+    };
+    
+    window.onResize.listen(resizeFunction);
+    resizeFunction(null);
+    
+    ButtonElement loadGameButton = querySelector("#load_game_button");
+    loadGameButton.onClick.listen((MouseEvent e) {
+      Main.world.parseGame(Editor.getTextAreaStringValue("#export_json"), () {
+        Editor.setUp();
       });
     });
   }
