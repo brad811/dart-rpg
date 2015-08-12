@@ -224,7 +224,7 @@ textarea {
 }
 
 #maps_container td, #map_characters_container td,
-#warps_container td, #signs_container td, #battlers_container td {
+#warps_container td, #signs_container td, #battlers_container td, #events_container td {
   text-align: center;
 }
 

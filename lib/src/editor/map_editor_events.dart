@@ -12,8 +12,6 @@ import 'package:dart_rpg/src/editor/map_editor.dart';
 
 import 'editor.dart';
 
-// TODO: allow disabling after completion
-
 class MapEditorEvents {
   static Map<String, List<EventTile>> events = {};
   
@@ -32,6 +30,7 @@ class MapEditorEvents {
               EventTile mapEventTile = mapTiles[y][x][layer];
               EventTile eventTile = new EventTile(
                   mapEventTile.gameEventChain,
+                  mapEventTile.runOnce,
                   new Sprite(
                     mapEventTile.sprite.id,
                     mapEventTile.sprite.posX,
@@ -48,7 +47,7 @@ class MapEditorEvents {
   
   static void addNewEvent(MouseEvent e) {
     if(World.gameEventChains.keys.length > 0) {
-      events[Main.world.curMap].add( new EventTile(World.gameEventChains.keys.first, new Sprite.int(0, 0, 0), false) );
+      events[Main.world.curMap].add( new EventTile(World.gameEventChains.keys.first, false, new Sprite.int(0, 0, 0), false) );
       Editor.update();
     }
   }
@@ -57,7 +56,7 @@ class MapEditorEvents {
     String html;
     html = "<table class='editor_table'>"+
       "  <tr>"+
-      "    <td>Num</td><td>X</td><td>Y</td><td>Game Event Chain</td><td></td>"+
+      "    <td>Num</td><td>X</td><td>Y</td><td>Game Event Chain</td><td>Run Once</td><td></td>"+
       "  </tr>";
     for(int i=0; i<events[Main.world.curMap].length; i++) {
       html +=
@@ -78,8 +77,14 @@ class MapEditorEvents {
           html += ">${gameEventChain}</option>";
         });
         html += "</select>";
-        
         html += "  </td>";
+        
+        html += "<td><input id='map_event_${i}_run_once' type='checkbox' ";
+        if(events[Main.world.curMap][i].runOnce) {
+          html += "checked='checked' ";
+        }
+        html += "/></td>";
+        
         html += "  <td><button id='delete_event_${i}'>Delete</button></td>" +
         "</tr>";
     }
@@ -89,7 +94,7 @@ class MapEditorEvents {
     setEventDeleteButtonListeners();
     
     for(int i=0; i<events[Main.world.curMap].length; i++) {
-      Editor.attachInputListeners("map_event_${i}", ["posx", "posy", "game_event_chain"], onInputChange);
+      Editor.attachInputListeners("map_event_${i}", ["posx", "posy", "game_event_chain", "run_once"], onInputChange);
     }
   }
   
@@ -100,6 +105,7 @@ class MapEditorEvents {
       try {
         events[Main.world.curMap][i] = new EventTile(
           Editor.getSelectInputStringValue("#map_event_${i}_game_event_chain"),
+          Editor.getCheckboxInputBoolValue("#map_event_${i}_run_once"),
           new Sprite(
             0,
             Editor.getTextInputDoubleValue('#map_event_${i}_posx', 0.0),
@@ -171,9 +177,8 @@ class MapEditorEvents {
       
       if(jsonMap[y][x][0] != null) {
         jsonMap[y][x][0]["event"] = {
-          "posX": x,
-          "posY": y,
-          "gameEventChain": event.gameEventChain
+          "gameEventChain": event.gameEventChain,
+          "runOnce": event.runOnce
         };
       }
     }

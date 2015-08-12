@@ -163,6 +163,10 @@ class Editor {
     if(e.target is TextInputElement) {
       TextInputElement inputElement = e.target;
       
+      if(inputElement.getAttribute("type") == "checkbox") {
+        return;
+      }
+      
       int position = inputElement.selectionStart;
       
       if(inputElement.classes.contains("decimal")) {

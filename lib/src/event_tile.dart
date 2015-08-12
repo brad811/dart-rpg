@@ -10,12 +10,17 @@ import 'package:dart_rpg/src/game_event/game_event.dart';
 
 class EventTile extends Tile {
   String gameEventChain;
+  bool runOnce = false, hasRun = false;
   
-  EventTile(this.gameEventChain, Sprite sprite, [bool layered]) : super(false, sprite, layered);
+  EventTile(this.gameEventChain, this.runOnce, Sprite sprite, [bool layered]) : super(false, sprite, layered);
   
   void enter() {
-    List<GameEvent> gameEvents = World.gameEventChains[gameEventChain];
-    
-    Interactable.chainGameEvents(Main.player, gameEvents).trigger(Main.player);
+    if((runOnce && !hasRun) || !runOnce) {
+      List<GameEvent> gameEvents = World.gameEventChains[gameEventChain];
+      
+      Interactable.chainGameEvents(Main.player, gameEvents).trigger(Main.player);
+      
+      hasRun = true;
+    }
   }
 }

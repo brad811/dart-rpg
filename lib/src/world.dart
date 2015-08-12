@@ -239,6 +239,7 @@ class World {
               } else if(curTile['event'] != null) {
                 mapTiles[y][x][k] = new EventTile(
                   curTile['event']['gameEventChain'],
+                  curTile['event']['runOnce'],
                   new Sprite.int(curTile['id'], x, y)
                   // TODO: layered
                 );
