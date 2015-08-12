@@ -86,14 +86,15 @@ class MapEditorSigns {
           false,
           new Sprite(
             0,
-            double.parse((querySelector('#sign_${i}_posx') as InputElement).value),
-            double.parse((querySelector('#sign_${i}_posy') as InputElement).value)
+            Editor.getTextInputIntValue("#sign_${i}_posx", 0) * 1.0,
+            Editor.getTextInputIntValue("#sign_${i}_posy", 0) * 1.0
           ),
-          int.parse((querySelector('#sign_${i}_pic') as InputElement).value),
-          (querySelector('#sign_${i}_text') as TextAreaElement).value
+          Editor.getTextInputIntValue("#sign_${i}_pic", 0),
+          Editor.getTextAreaStringValue("#sign_${i}_text")
         );
       } catch(e) {
         // could not update this sign
+        print("Error updating sign: ${ e }");
       }
     }
     
@@ -141,15 +142,13 @@ class MapEditorSigns {
   }
   
   static void export(List<List<List<Map>>> jsonMap, String key) {
-    List<Sign> signsToRemove = [];
     for(Sign sign in signs[key]) {
       int
         x = sign.sprite.posX.round(),
         y = sign.sprite.posY.round();
       
-      // handle the map shrinking until a sign is out of bounds
+      // do not export signs that are outside of the bounds of the map
       if(jsonMap.length - 1 < y || jsonMap[0].length - 1 < x) {
-        signsToRemove.add(sign);
         continue;
       }
       
@@ -161,10 +160,6 @@ class MapEditorSigns {
           "text": sign.textEvent.text
         };
       }
-    }
-    
-    for(Sign sign in signsToRemove) {
-      signs[key].remove(sign);
     }
   }
 }

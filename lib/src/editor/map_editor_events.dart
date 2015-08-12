@@ -163,15 +163,13 @@ class MapEditorEvents {
   }
   
   static void export(List<List<List<Map>>> jsonMap, String key) {
-    List<EventTile> eventsToRemove = [];
     for(EventTile event in events[key]) {
       int
         x = event.sprite.posX.round(),
         y = event.sprite.posY.round();
       
-      // handle the map shrinking until an event is out of bounds
+      // do not export events that are outside of the bounds of the map
       if(jsonMap.length - 1 < y || jsonMap[0].length - 1 < x) {
-        eventsToRemove.add(event);
         continue;
       }
       
@@ -181,10 +179,6 @@ class MapEditorEvents {
           "runOnce": event.runOnce
         };
       }
-    }
-    
-    for(EventTile event in eventsToRemove) {
-      events[key].remove(event);
     }
   }
 }
