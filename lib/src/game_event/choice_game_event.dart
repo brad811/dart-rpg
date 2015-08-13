@@ -1,5 +1,7 @@
 library dart_rpg.choice_game_event;
 
+import 'dart:html';
+
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
@@ -10,7 +12,13 @@ import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
-class ChoiceGameEvent extends GameEvent implements InputHandler {
+import 'package:dart_rpg/src/editor/editor.dart';
+
+class ChoiceGameEvent implements GameEvent, InputHandler {
+  static final String type = "choice";
+  final String name = "Choice";
+  Function function, callback;
+  
   InteractableInterface interactable;
   final Map<String, String> choiceGameEventChains;
   GameEvent cancelEvent;
@@ -58,7 +66,7 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     return choiceGameEvent;
   }
   
-  void trigger(InteractableInterface interactable) {
+  void trigger(InteractableInterface interactable, [Function function]) {
     this.interactable = interactable;
     Main.focusObject = this;
     
@@ -106,6 +114,7 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     Gui.addWindow(window);
   }
   
+  @override
   void handleKeys(List<int> keyCodes) {
     if(keyCodes.contains(Input.UP)) {
       curChoice--;
@@ -153,5 +162,93 @@ class ChoiceGameEvent extends GameEvent implements InputHandler {
     });
     
     return generatedChoiceMap;
+  }
+  
+  // Editor functions
+  
+  @override
+  List<String> getAttributes() {
+    //TODO: List<String> attrs = ["cancel_event"];
+    List<String> attrs = [];
+    
+    for(int i=0; i<choiceGameEventChains.keys.length; i++) {
+      attrs.add("choice_name_${i}");
+      attrs.add("chain_name_${i}");
+    }
+    
+    return attrs;
+  }
+  
+  @override
+  String getType() => type;
+  
+  @override
+  String buildHtml(String prefix, bool readOnly) {
+    String html = "";
+    
+    String disabledString = "";
+    String readOnlyString = "";
+    if(readOnly) {
+      disabledString = "disabled='disabled' ";
+      readOnlyString = "readonly";
+    }
+    
+    html += "<table>";
+    html += "  <tr><td>Choice Name</td><td>Game Event Chain</td><td></td></tr>";
+    
+    int i = 0;
+    choiceGameEventChains.forEach((String choiceName, String chainName) {
+      // choice name
+      html += "<tr><td>";
+      html += "<input type='text' id='${prefix}_choice_name_${i}' value='${choiceName}' ${readOnlyString} />";
+      html += "</td>";
+      
+      // game event chain
+      html += "<td><select id='${prefix}_chain_name_${i}' ${disabledString}>";
+      
+      World.gameEventChains.keys.forEach((String key) {
+        html += "<option value='${key}'";
+        if(chainName == key) {
+          html += " selected";
+        }
+        
+        html += ">${key}</option>";
+      });
+      
+      html += "</select></td><td><button id='delete_${prefix}_choice_${i}'>Delete</button></td></tr>";
+      
+      i += 1;
+    });
+    
+    html += "</table>";
+    
+    html += "<br /><button id='${prefix}_add_choice'>Add choice</button>";
+    
+    return html;
+  }
+  
+  static GameEvent buildGameEvent(String prefix) {
+    Map<String, String> choices = new Map<String, String>();
+    for(int i=0; querySelector("#${prefix}_choice_name_${i}") != null; i++) {
+      String choiceName = Editor.getTextInputStringValue("#${prefix}_choice_name_${i}");
+      String chainName = Editor.getSelectInputStringValue("#${prefix}_chain_name_${i}");
+      
+      choices[choiceName] = chainName;
+    }
+    
+    ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(choices);
+    
+    return choiceGameEvent;
+  }
+  
+  @override
+  Map<String, Object> buildJson() {
+    Map<String, Object> gameEventJson = {};
+    
+    gameEventJson["type"] = type;
+    gameEventJson["choices"] = choiceGameEventChains;
+    gameEventJson["cancelEvent"] = cancelEvent;
+    
+    return gameEventJson;
   }
 }

@@ -5,7 +5,12 @@ import 'package:dart_rpg/src/interactable_interface.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
-class StatChangeGameEvent extends GameEvent {
+// TODO: implement
+
+class StatChangeGameEvent implements GameEvent {
+  static final String type = "stat";
+  Function function, callback;
+  
   Battler battler;
   int physicalAttachChange, physicalDefenseChange,
     magicalAttackChange, magicalDefenseChange,
@@ -17,10 +22,11 @@ class StatChangeGameEvent extends GameEvent {
       this.magicalAttackChange, this.magicalDefenseChange,
       this.speedChange, this.healthChange,
       this.permanent,
-      [Function callback]
-    ) : super(null, callback);
+      [this.callback]
+    );
   
-  void trigger(InteractableInterface interactable) {
+  @override
+  void trigger(InteractableInterface interactable, [Function function]) {
     battler.curPhysicalAttack += physicalAttachChange;
     battler.curPhysicalDefense += physicalDefenseChange;
     battler.curMagicalAttack += magicalAttackChange;
@@ -41,4 +47,26 @@ class StatChangeGameEvent extends GameEvent {
     
     callback();
   }
+  
+  @override
+  void handleKeys(List<int> keyCodes) { /* TODO */ }
+  
+  // Editor functions
+  
+  @override
+  List<String> getAttributes() {
+    // TODO
+    return [];
+  }
+  
+  @override
+  String getType() => type;
+  
+  @override
+  String buildHtml(String prefix, bool readOnly) { /* TODO */ return ""; }
+  
+  GameEvent buildGameEvent(String prefix) { /* TODO */ return null; }
+  
+  @override
+  Map<String, Object> buildJson() { /* TODO */ return null; }
 }

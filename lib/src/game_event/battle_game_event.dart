@@ -7,8 +7,11 @@ import 'package:dart_rpg/src/main.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
-class BattleGameEvent extends GameEvent {
-  BattleGameEvent([Function callback]) : super(null, callback);
+class BattleGameEvent implements GameEvent {
+  static final String type = "battle";
+  Function function, callback;
+  
+  BattleGameEvent([this.callback]);
   
   void trigger(Character character) {
     Gui.fadeLightAction((){},(){
@@ -28,5 +31,38 @@ class BattleGameEvent extends GameEvent {
         Main.player.inputEnabled = true;
       });
     });
+  }
+  
+  @override
+  void handleKeys(List<int> keyCodes) { /* TODO */ }
+  
+  // Editor functions
+  
+  @override
+  List<String> getAttributes() {
+    return [];
+  }
+  
+  @override
+  String getType() => type;
+  
+  @override
+  String buildHtml(String prefix, bool readOnly) {
+    return "";
+  }
+  
+  static GameEvent buildGameEvent(String prefix) {
+    BattleGameEvent battleGameEvent = new BattleGameEvent();
+    
+    return battleGameEvent;
+  }
+  
+  @override
+  Map<String, Object> buildJson() {
+    Map<String, Object> gameEventJson = {};
+    
+    gameEventJson["type"] = type;
+    
+    return gameEventJson;
   }
 }

@@ -10,7 +10,12 @@ import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 
-class TextGameEvent extends GameEvent {
+import 'package:dart_rpg/src/editor/editor.dart';
+
+class TextGameEvent implements GameEvent {
+  static final String type = "text";
+  Function function, callback;
+  
   int pictureSpriteId;
   String text;
   ChoiceGameEvent choiceGameEvent;
@@ -28,7 +33,7 @@ class TextGameEvent extends GameEvent {
     textX = 9.0,
     textY = 23.5;
   
-  TextGameEvent(this.pictureSpriteId, this.text, [Function callback]) : super(null, callback);
+  TextGameEvent(this.pictureSpriteId, this.text, [this.callback]);
   
   factory TextGameEvent.choice(int pictureSpriteId, String text, ChoiceGameEvent choice) {
     TextGameEvent textGameEvent = new TextGameEvent(pictureSpriteId, text);
@@ -36,7 +41,8 @@ class TextGameEvent extends GameEvent {
     return textGameEvent;
   }
   
-  void trigger(InteractableInterface interactable) {
+  @override
+  void trigger(InteractableInterface interactable, [Function function]) {
     this.interactable = interactable;
     textLines = Gui.splitText(text, conversationWindowWidth);
     
@@ -57,8 +63,6 @@ class TextGameEvent extends GameEvent {
       textLines.removeRange(0, Gui.maxLines);
       
       if(textLines.length <= Gui.maxLines && choiceGameEvent != null) {
-        // TODO: is this line still needed?
-        //choiceGameEvent.callbacks = [callback];
         choiceGameEvent.trigger(interactable);
       }
     } else {
@@ -92,6 +96,7 @@ class TextGameEvent extends GameEvent {
     }
   }
   
+  @override
   void handleKeys(List<int> keyCodes) {
     if(keyCodes.contains(Input.CONFIRM) || keyCodes.contains(Input.BACK)) {
       continueText();
@@ -105,5 +110,55 @@ class TextGameEvent extends GameEvent {
     if(callback != null) {
       callback();
     }
+  }
+  
+  // Editor functions
+  
+  @override
+  List<String> getAttributes() {
+    return ["picture_id", "text"];
+  }
+  
+  @override
+  String getType() => type;
+  
+  @override
+  String buildHtml(String prefix, bool readOnly) {
+    String html = "";
+    
+    String readOnlyString = "";
+    if(readOnly) {
+      readOnlyString = "readonly";
+    }
+    
+    html += "<table>";
+    html += "  <tr><td>Picture Id</td><td>Text</td></tr>";
+    html += "  <tr>";
+    html += "    <td><input type='text' class='number' id='${prefix}_picture_id' value='${pictureSpriteId}' ${readOnlyString} /></td>";
+    html += "    <td><textarea id='${prefix}_text' ${readOnlyString}>${text}</textarea>";
+    html += "  </tr>";
+    html += "</table>";
+    
+    return html;
+  }
+  
+  static GameEvent buildGameEvent(String prefix) {
+    TextGameEvent textGameEvent = new TextGameEvent(
+        Editor.getTextInputIntValue("#${prefix}_picture_id", 1),
+        Editor.getTextAreaStringValue("#${prefix}_text")
+      );
+    
+    return textGameEvent;
+  }
+  
+  @override
+  Map<String, Object> buildJson() {
+    Map<String, Object> gameEventJson = {};
+    
+    gameEventJson["type"] = type;
+    gameEventJson["pictureId"] = pictureSpriteId;
+    gameEventJson["text"] = text;
+    
+    return gameEventJson;
   }
 }

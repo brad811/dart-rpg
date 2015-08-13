@@ -31,7 +31,8 @@ class QuantityChoiceGameEvent extends ChoiceGameEvent implements InputHandler {
     this.curChoice = this.choiceGameEventChains.keys.length - 1;
   }
   
-  void trigger(InteractableInterface interactable) {
+  @override
+  void trigger(InteractableInterface interactable, [Function function]) {
     Main.focusObject = this;
     
     window = () {
