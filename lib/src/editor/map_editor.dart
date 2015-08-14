@@ -182,6 +182,7 @@ class MapEditor {
     
     mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
       tooltip.style.display = "none";
+      MapEditor.updateMap();
     });
     
     mapEditorCanvas.onMouseDown.listen((MouseEvent e) {
@@ -225,7 +226,7 @@ class MapEditor {
     tooltip.style.top = "${e.page.y - 10}px";
     tooltip.text = "x: ${x}, y: ${y}";
     
-    MapEditor.update();
+    MapEditor.updateMap();
     
     // render the tile as it would appear with the selected tile applied to the selected layer
     mapEditorCanvasContext.fillStyle = "#ff00ff";
@@ -289,7 +290,9 @@ class MapEditor {
   }
   
   static void updateMapCanvasSize() {
-    if(mapEditorCanvas.width != mapEditorCanvasWidth || mapEditorCanvas.height != mapEditorCanvasHeight) {
+    if(
+        mapEditorCanvas.width != mapEditorCanvasWidth * Sprite.spriteScale ||
+        mapEditorCanvas.height != mapEditorCanvasHeight * Sprite.spriteScale) {
       fixImageSmoothing(mapEditorCanvas, mapEditorCanvasWidth, mapEditorCanvasHeight);
     }
   }
@@ -326,6 +329,7 @@ class MapEditor {
       renderList.add([]);
     }
     
+    // build list of tiles to be rendered
     renderWorld(renderList);
     
     for(Character character in characters) {
