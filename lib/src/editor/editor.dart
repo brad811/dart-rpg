@@ -26,6 +26,9 @@ class Editor {
   
   static Map<String, StreamSubscription> listeners = new Map<String, StreamSubscription>();
   
+  static Timer debounceTimer;
+  static Duration debounceDelay = new Duration(milliseconds: 250);
+  
   static void init() {
     ObjectEditor.init();
     MapEditor.init(start);
@@ -65,6 +68,19 @@ class Editor {
       Main.world.parseGame(Editor.getTextAreaStringValue("#export_json"), () {
         Editor.setUp();
       });
+    });
+  }
+  
+  static void debounceUpdate([Function callback]) {
+    if(debounceTimer != null) {
+      debounceTimer.cancel();
+    }
+    
+    debounceTimer = new Timer(debounceDelay, () {
+      Editor.update();
+      if(callback != null) {
+        callback();
+      }
     });
   }
   
@@ -187,7 +203,7 @@ class Editor {
       TextInputElement target = e.target;
       
       if(target.getAttribute("type") == "checkbox") {
-        Editor.update();
+        Editor.debounceUpdate();
         return;
       }
       
@@ -196,13 +212,13 @@ class Editor {
       String valueBefore = inputElement.value;
       
       // update everything
-      Editor.update();
-      
-      // restore the cursor position
-      inputElement = querySelector('#' + target.id);
-      inputElement.value = valueBefore;
-      inputElement.focus();
-      inputElement.setSelectionRange(position, position);
+      Editor.debounceUpdate(() {
+        // restore the cursor position
+        inputElement = querySelector('#' + target.id);
+        inputElement.value = valueBefore;
+        inputElement.focus();
+        inputElement.setSelectionRange(position, position);
+      });
     } else if(e.target is TextAreaElement) {
       // save the cursor location
       TextAreaElement target = e.target;
@@ -211,13 +227,13 @@ class Editor {
       String valueBefore = inputElement.value;
       
       // update everything
-      Editor.update();
-      
-      // restore the cursor position
-      inputElement = querySelector('#' + target.id);
-      inputElement.value = valueBefore;
-      inputElement.focus();
-      inputElement.setSelectionRange(position, position);
+      Editor.debounceUpdate(() {
+        // restore the cursor position
+        inputElement = querySelector('#' + target.id);
+        inputElement.value = valueBefore;
+        inputElement.focus();
+        inputElement.setSelectionRange(position, position);
+      });
     } else {
       // update everything
       Editor.update();
