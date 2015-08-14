@@ -131,13 +131,13 @@ class Settings {
       }
     }
     
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 4;
     ctx.setStrokeColorRgb(255, 255, 255, 1.0);
-    ctx.strokeRect(Sprite.scaledSpriteSize * x, Sprite.scaledSpriteSize * y, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
+    ctx.strokeRect(Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2, Sprite.scaledSpriteSize + 4, Sprite.scaledSpriteSize + 4);
     
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.setStrokeColorRgb(0, 0, 0, 1.0);
-    ctx.strokeRect(Sprite.scaledSpriteSize * x, Sprite.scaledSpriteSize * y, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
+    ctx.strokeRect(Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2, Sprite.scaledSpriteSize + 4, Sprite.scaledSpriteSize + 4);
     
     tooltip.style.display = "block";
     tooltip.style.left = "${e.page.x + 30}px";

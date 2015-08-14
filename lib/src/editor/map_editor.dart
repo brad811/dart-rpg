@@ -46,6 +46,8 @@ class MapEditor {
   static List<List<Tile>> renderList;
   static int selectedTile;
   
+  static DivElement tooltip;
+  
   static void init(Function callback) {
     mapEditorCanvas = querySelector('#editor_main_canvas');
     mapEditorCanvasContext = mapEditorCanvas.getContext("2d");
@@ -174,17 +176,9 @@ class MapEditor {
     
     mapEditorCanvas.onClick.listen(tileChange);
     
-    var tooltip = querySelector('#tooltip');
+    tooltip = querySelector('#tooltip');
     /*StreamSubscription mouseMoveStream = */
-    mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
-      int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
-      int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-      
-      tooltip.style.display = "block";
-      tooltip.style.left = "${e.page.x + 30}px";
-      tooltip.style.top = "${e.page.y - 10}px";
-      tooltip.text = "x: ${x}, y: ${y}";
-    });
+    mapEditorCanvas.onMouseMove.listen(hoverTile);
     
     mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
       tooltip.style.display = "none";
@@ -217,6 +211,47 @@ class MapEditor {
     });
   }
   
+  static void hoverTile(MouseEvent e) {
+    int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+    int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+    
+    // update the tooltip
+    tooltip.style.display = "block";
+    tooltip.style.left = "${e.page.x + 30}px";
+    tooltip.style.top = "${e.page.y - 10}px";
+    tooltip.text = "x: ${x}, y: ${y}";
+    
+    MapEditor.update();
+    
+    // render the tile as it would appear with the selected tile applied to the selected layer
+    mapEditorCanvasContext.fillStyle = "#ff00ff";
+    mapEditorCanvasContext.fillRect(Sprite.scaledSpriteSize * x, Sprite.scaledSpriteSize * y, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
+    
+    int selectedLayer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
+    
+    for(int layer=0; layer<World.layers.length; layer++) {
+      if(selectedLayer == layer) {
+        renderStaticSprite(mapEditorCanvasContext, selectedTile, x, y);
+      } else {
+        Tile tile = Main.world.maps[Main.world.curMap].tiles[y][x][layer];
+        
+        if(tile != null) {
+          int id = Main.world.maps[Main.world.curMap].tiles[y][x][layer].sprite.id;
+          renderStaticSprite(mapEditorCanvasContext, id, x, y);
+        }
+      }
+    }
+    
+    // outline the tile
+    mapEditorCanvasContext.lineWidth = 4;
+    mapEditorCanvasContext.setStrokeColorRgb(255, 255, 255, 1.0);
+    mapEditorCanvasContext.strokeRect(Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2, Sprite.scaledSpriteSize + 4, Sprite.scaledSpriteSize + 4);
+    
+    mapEditorCanvasContext.lineWidth = 2;
+    mapEditorCanvasContext.setStrokeColorRgb(0, 0, 0, 1.0);
+    mapEditorCanvasContext.strokeRect(Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2, Sprite.scaledSpriteSize + 4, Sprite.scaledSpriteSize + 4);
+  }
+  
   static void tileChange(MouseEvent e) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
@@ -225,11 +260,12 @@ class MapEditor {
     if(y >= mapTiles.length || x >= mapTiles[0].length)
       return;
     
-    int layer = int.parse((querySelector("[name='layer']:checked") as RadioButtonInputElement).value);
-    bool solid = (querySelector("#solid") as CheckboxInputElement).checked;
-    bool layered = (querySelector("#layered") as CheckboxInputElement).checked;
-    bool encounter = (querySelector("#encounter") as CheckboxInputElement).checked;
+    int layer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
+    bool solid = Editor.getCheckboxInputBoolValue("#solid");
+    bool layered = Editor.getCheckboxInputBoolValue("#layered");
+    bool encounter = Editor.getCheckboxInputBoolValue("#encounter");
     
+    // TODO: change or get rid of this hard coded tile id
     if(selectedTile == 98) {
       mapTiles[y][x][layer] = null;
     } else if(encounter) {
@@ -604,6 +640,7 @@ class MapEditor {
     // draw the strokes around the tiles
     mapEditorCanvasContext.closePath();
     mapEditorCanvasContext.setStrokeColorRgb(r, g, b, 0.9);
+    mapEditorCanvasContext.lineWidth = 1;
     mapEditorCanvasContext.stroke();
   }
   

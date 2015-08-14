@@ -251,55 +251,63 @@ class Editor {
     listeners[selector] = querySelector(selector).onClick.listen(onClick);
   }
   
-  static String getSelectInputStringValue(String divId) {
+  static String getSelectInputStringValue(String selector) {
     try {
-      return (querySelector(divId) as SelectElement).value;
+      return (querySelector(selector) as SelectElement).value;
     } catch(e) {
       return "";
     }
   }
   
-  static int getSelectInputIntValue(String divId, int defaultValue) {
+  static int getSelectInputIntValue(String selector, int defaultValue) {
     try {
-      return int.parse((querySelector(divId) as SelectElement).value);
+      return int.parse((querySelector(selector) as SelectElement).value);
     } catch(e) {
       return defaultValue;
     }
   }
   
-  static String getTextAreaStringValue(String divId) {
+  static String getTextAreaStringValue(String selector) {
     try {
-      return (querySelector(divId) as TextAreaElement).value;
+      return (querySelector(selector) as TextAreaElement).value;
     } catch(e) {
       return "";
     }
   }
   
-  static String getTextInputStringValue(String divId) {
-    return (querySelector(divId) as TextInputElement).value;
+  static String getTextInputStringValue(String selector) {
+    return (querySelector(selector) as TextInputElement).value;
   }
   
-  static int getTextInputIntValue(String divId, int defaultValue) {
+  static int getTextInputIntValue(String selector, int defaultValue) {
     try {
-      return int.parse((querySelector(divId) as TextInputElement).value);
+      return int.parse((querySelector(selector) as TextInputElement).value);
     } catch(e) {
       return defaultValue;
     }
   }
   
-  static double getTextInputDoubleValue(String divId, double defaultValue) {
+  static double getTextInputDoubleValue(String selector, double defaultValue) {
     try {
-      return double.parse((querySelector(divId) as TextInputElement).value);
+      return double.parse((querySelector(selector) as TextInputElement).value);
     } catch(e) {
       return defaultValue;
     }
   }
   
-  static bool getCheckboxInputBoolValue(String divId) {
+  static bool getCheckboxInputBoolValue(String selector) {
     try {
-      return (querySelector(divId) as CheckboxInputElement).checked;
+      return (querySelector(selector) as CheckboxInputElement).checked;
     } catch(e) {
       return false;
+    }
+  }
+  
+  static int getRadioInputIntValue(String selector, int defaultValue) {
+    try {
+      return int.parse((querySelector(selector) as RadioButtonInputElement).value);
+    } catch(e) {
+      return defaultValue;
     }
   }
 }
