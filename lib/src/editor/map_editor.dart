@@ -215,6 +215,10 @@ class MapEditor {
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
     
+    if(y >= Main.world.maps[Main.world.curMap].tiles.length || x >= Main.world.maps[Main.world.curMap].tiles[0].length) {
+      return;
+    }
+    
     // update the tooltip
     tooltip.style.display = "block";
     tooltip.style.left = "${e.page.x + 30}px";
