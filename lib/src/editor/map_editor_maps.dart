@@ -17,6 +17,7 @@ import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'map_editor.dart';
+import 'map_editor_characters.dart';
 import 'map_editor_events.dart';
 import 'map_editor_signs.dart';
 import 'map_editor_warps.dart';
@@ -286,8 +287,9 @@ class MapEditorMaps {
     MapEditorWarps.shift(xAmount, yAmount);
     MapEditorSigns.shift(xAmount, yAmount);
     MapEditorEvents.shift(xAmount, yAmount);
-    // TODO: shift characters
-    // TODO: shift warp game events
+    MapEditorCharacters.shift(xAmount, yAmount);
+    
+    // TODO: shift warp game event destinations
   }
   
   static void sizeDownRight() {

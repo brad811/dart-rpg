@@ -111,5 +111,18 @@ class MapEditorCharacters {
     Editor.updateAndRetainValue(e);
   }
   
+  static void shift(int xAmount, int yAmount) {
+    World.characters.forEach((String characterLabel, Character character) {
+      if(character.map != Main.world.curMap)
+        return;
+      
+      character.mapX += xAmount;
+      character.mapY += yAmount;
+      
+      character.x = character.mapX * character.motionAmount;
+      character.y = character.mapY * character.motionAmount;
+    });
+  }
+  
   // exporting is done in object editor character class
 }
