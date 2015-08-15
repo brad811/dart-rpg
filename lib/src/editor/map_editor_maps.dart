@@ -282,6 +282,14 @@ class MapEditorMaps {
     Editor.attachButtonListener("#size_y_up_button_pre", (_) { sizeUpTop(); });
   }
   
+  static void shiftObjects(int xAmount, int yAmount) {
+    MapEditorWarps.shift(xAmount, yAmount);
+    MapEditorSigns.shift(xAmount, yAmount);
+    MapEditorEvents.shift(xAmount, yAmount);
+    // TODO: shift characters
+    // TODO: shift warp game events
+  }
+  
   static void sizeDownRight() {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     if(mapTiles[0].length == 1)
@@ -299,10 +307,7 @@ class MapEditorMaps {
       }
     }
     
-    // this will delete any that are now off the map
-    MapEditorWarps.shift(0, 0);
-    MapEditorSigns.shift(0, 0);
-    MapEditorEvents.shift(0, 0);
+    MapEditorMaps.shiftObjects(0, 0);
     
     Editor.update();
   }
@@ -330,10 +335,7 @@ class MapEditorMaps {
     
     mapTiles.removeLast();
     
-    // this will delete any that are now off the map
-    MapEditorWarps.shift(0, 0);
-    MapEditorSigns.shift(0, 0);
-    MapEditorEvents.shift(0, 0);
+    MapEditorMaps.shiftObjects(0, 0);
     
     Editor.update();
   }
@@ -372,10 +374,7 @@ class MapEditorMaps {
       }
     }
     
-    // this will shift and delete any that are now off the map
-    MapEditorWarps.shift(-1, 0);
-    MapEditorSigns.shift(-1, 0);
-    MapEditorEvents.shift(-1, 0);
+    MapEditorMaps.shiftObjects(-1, 0);
     
     Editor.update();
   }
@@ -405,10 +404,7 @@ class MapEditorMaps {
       }
     }
     
-    // this will shift and delete any that are now off the map
-    MapEditorWarps.shift(1, 0);
-    MapEditorSigns.shift(1, 0);
-    MapEditorEvents.shift(1, 0);
+    MapEditorMaps.shiftObjects(1, 0);
     
     Editor.update();
   }
@@ -430,10 +426,7 @@ class MapEditorMaps {
       }
     }
     
-    // this will shift and delete any that are now off the map
-    MapEditorWarps.shift(0, -1);
-    MapEditorSigns.shift(0, -1);
-    MapEditorEvents.shift(0, -1);
+    MapEditorMaps.shiftObjects(0, -1);
     
     Editor.update();
   }
@@ -462,10 +455,7 @@ class MapEditorMaps {
       }
     }
     
-    // this will shift and delete any that are now off the map
-    MapEditorWarps.shift(0, 1);
-    MapEditorSigns.shift(0, 1);
-    MapEditorEvents.shift(0, 1);
+    MapEditorMaps.shiftObjects(0, 1);
     
     Editor.update();
   }
