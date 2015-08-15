@@ -291,8 +291,8 @@ class MapEditor {
   
   static void updateMapCanvasSize() {
     if(
-        mapEditorCanvas.width != mapEditorCanvasWidth * Sprite.spriteScale ||
-        mapEditorCanvas.height != mapEditorCanvasHeight * Sprite.spriteScale) {
+        mapEditorCanvas.width != mapEditorCanvasWidth * window.devicePixelRatio ||
+        mapEditorCanvas.height != mapEditorCanvasHeight * window.devicePixelRatio) {
       fixImageSmoothing(mapEditorCanvas, mapEditorCanvasWidth, mapEditorCanvasHeight);
     }
   }
