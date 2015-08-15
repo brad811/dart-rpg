@@ -46,6 +46,9 @@ class WarpGameEvent extends GameEvent {
   }
   
   @override
+  String getType() => type;
+  
+  @override
   String buildHtml(String prefix, bool readOnly) {
     String html = "";
     
