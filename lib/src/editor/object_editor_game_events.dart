@@ -23,6 +23,10 @@ class ObjectEditorGameEvents {
     Editor.setUpTabs(advancedTabs);
     Editor.attachButtonListener("#add_game_event_chain_button", addGameEventChain);
     Editor.attachButtonListener("#add_game_event_button", addGameEvent);
+    
+    querySelector("#object_editor_game_event_chains_tab_header").onClick.listen((MouseEvent e) {
+      ObjectEditorGameEvents.selectRow(0);
+    });
   }
   
   static void addGameEventChain(MouseEvent e) {
@@ -122,6 +126,10 @@ class ObjectEditorGameEvents {
       
       // hide the advanced tab tables for other game event chains
       querySelector("#game_event_chain_${j}_game_event_table").classes.add("hidden");
+    }
+    
+    if(querySelector("#game_event_chain_row_${i}") == null) {
+      return;
     }
     
     // hightlight the selected game event chain row

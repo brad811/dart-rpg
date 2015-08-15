@@ -33,6 +33,10 @@ class ObjectEditorBattlerTypes {
       (Sprite.scaledSpriteSize * 3).round(),
       (Sprite.scaledSpriteSize * 3).round()
     );
+    
+    querySelector("#object_editor_battler_types_tab_header").onClick.listen((MouseEvent e) {
+      ObjectEditorBattlerTypes.selectRow(0);
+    });
   }
   
   static void addNewBattlerType(MouseEvent e) {
@@ -168,6 +172,10 @@ class ObjectEditorBattlerTypes {
       // hide the advanced areas for other battler types
       querySelector("#battler_type_${j}_stats_table").classes.add("hidden");
       querySelector("#battler_type_${j}_attacks_table").classes.add("hidden");
+    }
+    
+    if(querySelector("#battler_type_row_${i}") == null) {
+      return;
     }
     
     // hightlight the selected battler type row

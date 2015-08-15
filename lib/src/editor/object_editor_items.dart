@@ -20,6 +20,10 @@ class ObjectEditorItems {
   static void setUp() {
     Editor.setUpTabs(advancedTabs);
     Editor.attachButtonListener("#add_item_button", addNewItem);
+    
+    querySelector("#object_editor_items_tab_header").onClick.listen((MouseEvent e) {
+      ObjectEditorItems.selectRow(0);
+    });
   }
   
   static void addNewItem(MouseEvent e) {
@@ -67,6 +71,10 @@ class ObjectEditorItems {
       
       // hide the advanced containers for other rows
       querySelector("#item_${j}_game_event_chain_container").classes.add("hidden");
+    }
+    
+    if(querySelector("#item_row_${i}") == null) {
+      return;
     }
     
     // hightlight the selected row

@@ -25,6 +25,10 @@ class ObjectEditorCharacters {
     Editor.setUpTabs(advancedTabs);
     Editor.attachButtonListener("#add_character_button", addNewCharacter);
     Editor.attachButtonListener("#add_inventory_item_button", addInventoryItem);
+    
+    querySelector("#object_editor_characters_tab_header").onClick.listen((MouseEvent e) {
+      ObjectEditorCharacters.selectRow(0);
+    });
   }
   
   static void addNewCharacter(MouseEvent e) {
@@ -118,6 +122,10 @@ class ObjectEditorCharacters {
       querySelector("#character_${j}_inventory_table").classes.add("hidden");
       querySelector("#character_${j}_game_event_chain_container").classes.add("hidden");
       querySelector("#character_${j}_battle_container").classes.add("hidden");
+    }
+    
+    if(querySelector("#character_row_${i}") == null) {
+      return;
     }
     
     // hightlight the selected character row

@@ -45,10 +45,6 @@ class ObjectEditor {
         
         objectEditorTabDivs[tab].classes.remove("hidden");
         objectEditorTabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
-        
-        // un-select any character rows and redraw the character tab
-        ObjectEditorCharacters.selected = null;
-        ObjectEditorCharacters.update();
       });
     }
     

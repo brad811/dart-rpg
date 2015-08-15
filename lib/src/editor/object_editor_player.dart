@@ -18,6 +18,11 @@ class ObjectEditorPlayer {
   static void setUp() {
     Editor.setUpTabs(advancedTabs);
     Editor.attachButtonListener("#add_player_inventory_item_button", addInventoryItem);
+    
+    querySelector("#object_editor_player_tab_header").onClick.listen((MouseEvent e) {
+      ObjectEditorPlayer.selected = true;
+      ObjectEditorPlayer.update();
+    });
   }
   
   static void addInventoryItem(MouseEvent e) {
