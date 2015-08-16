@@ -21,6 +21,7 @@ import 'map_editor_characters.dart';
 import 'map_editor_events.dart';
 import 'map_editor_signs.dart';
 import 'map_editor_warps.dart';
+import 'object_editor_game_events.dart';
 
 class MapEditorMaps {
   static void setUp() {
@@ -284,12 +285,24 @@ class MapEditorMaps {
   }
   
   static void shiftObjects(int xAmount, int yAmount) {
+    if(xAmount == 0 && yAmount == 0) {
+      return;
+    }
+    
     MapEditorWarps.shift(xAmount, yAmount);
     MapEditorSigns.shift(xAmount, yAmount);
     MapEditorEvents.shift(xAmount, yAmount);
     MapEditorCharacters.shift(xAmount, yAmount);
     
-    // TODO: shift warp game event destinations
+    // shift warp game event destinations
+    World.gameEventChains.values.forEach((List<GameEvent> gameEventChain) {
+      gameEventChain.forEach((GameEvent gameEvent) {
+        if(gameEvent is WarpGameEvent) {
+          gameEvent.x += xAmount;
+          gameEvent.y += yAmount;
+        }
+      });
+    });
   }
   
   static void sizeDownRight() {
