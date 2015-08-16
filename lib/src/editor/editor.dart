@@ -88,7 +88,6 @@ class Editor {
     MapEditor.update();
     ObjectEditor.update();
     Settings.update();
-    
     Editor.export();
   }
   
@@ -98,11 +97,13 @@ class Editor {
     ObjectEditor.export(exportJson);
     Settings.export(exportJson);
     
+    String exportJsonString = JSON.encode(exportJson);
+    
     TextAreaElement textarea = querySelector("#export_json");
-    textarea.value = JSON.encode(exportJson);
+    textarea.value = exportJsonString;
     
     TextAreaElement textarea2 = querySelector("#export_json_object_editor");
-    textarea2.value = JSON.encode(exportJson);
+    textarea2.value = exportJsonString;
   }
   
   static void setUpTabs(List<String> tabs) {
