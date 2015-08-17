@@ -216,7 +216,7 @@ class Battle implements InteractableInterface {
       new TextGameEvent(240, "${friendly.name} gained ${enemy.experiencePayout} experience points!");
     
     victory.callback = () {
-      showExperienceGain(() {
+      showExperienceGain(friendly.displayExperience, () {
         fadeOutExit();
       });
     };
@@ -234,18 +234,24 @@ class Battle implements InteractableInterface {
     
   }
   
-  void showExperienceGain(callback) {
+  void showExperienceGain(int originalExperience, callback) {
     if(friendly.displayExperience < friendly.experience) {
-      friendly.displayExperience++;
+      friendly.displayExperience += math.max(1, ((friendly.experience - originalExperience) / (1000 / Main.timeDelay)).round());
+      
+      // don't go over
+      if(friendly.displayExperience > friendly.experience) {
+        friendly.displayExperience = friendly.experience;
+      }
+      
       if(friendly.displayExperience >= friendly.nextLevelExperience()) {
         // TODO: show stat gains
         new TextGameEvent(240, "${friendly.battlerType.name} grew to level ${ friendly.level + 1 }!", () {
           friendly.levelUp(() {
-            new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(callback));
+            new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(originalExperience, callback));
           });
         }).trigger(this);
       } else {
-        new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(callback));
+        new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(originalExperience, callback));
       }
     } else {
       new Timer(new Duration(seconds: 1), () => callback());

@@ -69,7 +69,7 @@ class Battler {
     experience = curLevelExperience();
     
     experiencePayout = (
-      level * battlerType.rarity * battlerType.baseStatsSum() / 5 * 5
+      level * battlerType.rarity * battlerType.baseStatsSum() / 5
     ).round();
     
     reset();
