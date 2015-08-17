@@ -4,6 +4,13 @@ import 'dart:math' as math;
 
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler_type.dart';
+import 'package:dart_rpg/src/interactable.dart';
+import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/world.dart';
+
+import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/choice_game_event.dart';
+import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class Battler {
   final BattlerType battlerType;
@@ -39,14 +46,9 @@ class Battler {
     displayHealth = 0,
     displayExperience = 0;
   
-  List<Attack> attacks;
-  List<String> attackNames = [];
+  Map<String, Attack> attacks = {};
   
-  // TODO: perhaps make it so that if attacks are not specified in the
-  //   constructor, they are automatically the last 4 attacks learned
-  //   at the current level
-  
-  Battler(this.name, this.battlerType, int level, this.attacks) {
+  Battler(this.name, this.battlerType, int level, List<Attack> attacks) {
     if(this.name == null)
       this.name = this.battlerType.name;
     
@@ -57,20 +59,20 @@ class Battler {
     startingMagicalDefense = battlerType.baseMagicalDefense;
     startingSpeed = battlerType.baseSpeed;
     
+    for(Attack attack in attacks) {
+      this.attacks[attack.name] = attack;
+    }
+    
     while(this.level < level)
       levelUp();
     
     experience = curLevelExperience();
     
     experiencePayout = (
-      level * battlerType.rarity * battlerType.baseStatsSum() / 5
+      level * battlerType.rarity * battlerType.baseStatsSum() / 5 * 5
     ).round();
     
     reset();
-    
-    for(Attack attack in attacks) {
-      attackNames.add(attack.name);
-    }
   }
   
   void reset() {
@@ -97,7 +99,7 @@ class Battler {
     return levelExperience(level + 1);
   }
   
-  void levelUp() {
+  void levelUp([Function callback]) {
     level += 1;
 
     int healthChange = (battlerType.baseHealth + (math.min(healthProficiency, 25))/5).round();
@@ -125,8 +127,139 @@ class Battler {
     startingSpeed += speedChange;
     curSpeed += speedChange;
     
-    // TODO: update available attacks
-    // If player and attacks are full, prompt for which move to keep
-    // If not player, delete least recent move
+    learnNewAttacks(this.battlerType.levelAttacks[level], callback);
+  }
+  
+  void learnNewAttacks(List<Attack> newAttacks, Function callback) {
+    bool showText = callback != null;
+    
+    // there is at least 1 new attack available at this level
+    if(newAttacks != null && newAttacks.length > 0) {
+      // battler already knows this attack
+      if(this.attacks.containsKey(newAttacks[0].name)) {
+        if(newAttacks.length > 1) {
+          learnNewAttacks(newAttacks.sublist(1), callback);
+        } else if(callback != null) {
+          callback();
+        }
+        
+        return;
+      }
+      
+      // check if battler has room to learn attack
+      if(this.attacks.keys.length < 4) {
+        this.attacks[ newAttacks[0].name ] = newAttacks[0];
+        
+        if(showText) {
+          new TextGameEvent(240, "${ this.name } learned ${ newAttacks[0].name }!", () {
+            if(newAttacks.length > 1) {
+              learnNewAttacks(newAttacks.sublist(1), callback);
+            } else {
+              callback();
+            }
+          }).trigger(Main.player);
+        } else {
+          if(newAttacks.length > 1) {
+            learnNewAttacks(newAttacks.sublist(1), callback);
+          } else {
+            return;
+          }
+        }
+      } else {
+        if(showText) {
+          World.gameEventChains["____tmp_forget_move"] = [
+            new TextGameEvent(240, "${ this.name } is trying to learn ${ newAttacks[0].name },"),
+            new TextGameEvent(240, "but ${ this.name } already knows 4 moves."),
+            new TextGameEvent.choice(240, "Forget a move to learn ${ newAttacks[0].name }?",
+              new ChoiceGameEvent({
+                "Yes": "____tmp_forget_move_yes",
+                "No": "____tmp_forget_move_no"
+              },
+                cancelEvent: Interactable.chainGameEvents(Main.player, World.gameEventChains["____tmp_forget_move_no"])
+              )
+            )
+          ];
+          
+          // build list of attacks and their delete actions
+          Map<String, String> moveOptions = {};
+          for(int i=0; i<attacks.keys.length; i++) {
+            World.gameEventChains["____tmp_forget_move_${i}"] = [
+              new TextGameEvent(240, "${ this.name } forgot ${ attacks.keys.elementAt(i) }, and..."),
+              new GameEvent((callback) {
+                // forget the old attack
+                attacks.remove(attacks.keys.elementAt(i));
+                
+                // learn the new attack
+                attacks[newAttacks[0].name] = newAttacks[0];
+                
+                callback();
+              }),
+              new TextGameEvent(240, "${ this.name } learned ${ newAttacks[0].name }!"),
+              new GameEvent((_) {
+                if(newAttacks.length > 1) {
+                  learnNewAttacks(newAttacks.sublist(1), callback);
+                } else {
+                  callback();
+                }
+              })
+            ];
+            
+            moveOptions[attacks.keys.elementAt(i)] = "____tmp_forget_move_${i}";
+          }
+          
+          World.gameEventChains["____tmp_forget_move_yes"] = [
+            new TextGameEvent.choice(240, "Which move should be forgotten?",
+              new ChoiceGameEvent(
+                moveOptions,
+                cancelEvent: Interactable.chainGameEvents(Main.player, World.gameEventChains["____tmp_forget_move_no"])
+              )
+            )
+          ];
+          
+          World.gameEventChains["____tmp_forget_move_no"] = [
+            new TextGameEvent.choice(240, "Stop learning ${ newAttacks[0].name }?",
+              new ChoiceGameEvent({
+                "Yes": "____tmp_forget_move_cancel",
+                "No": "____tmp_forget_move"
+              })
+            )
+          ];
+          
+          World.gameEventChains["____tmp_forget_move_cancel"] = [
+            new TextGameEvent(240, "${ this.name } did not learn ${ newAttacks[0].name }."),
+            new GameEvent((_) {
+              if(newAttacks.length > 1) {
+                learnNewAttacks(newAttacks.sublist(1), callback);
+              } else {
+                callback();
+              }
+            })
+          ];
+          
+          Interactable.chainGameEvents(Main.player, World.gameEventChains["____tmp_forget_move"]).trigger(Main.player);
+        } else {
+          // find the lowest level attack this battler still knows and replace it
+          for(Attack attack in this.battlerType.levelAttacks.values) {
+            if(this.attacks.keys.contains(attack)) {
+              // forget the old attack
+              attacks.remove(attack.name);
+              
+              // learn the new attack
+              attacks[newAttacks[0].name] = newAttacks[0];
+              
+              if(newAttacks.length > 1) {
+                learnNewAttacks(newAttacks.sublist(1), callback);
+              }
+              
+              return;
+            }
+          }
+          
+          return;
+        }
+      }
+    } else if(callback != null) {
+      callback();
+    }
   }
 }

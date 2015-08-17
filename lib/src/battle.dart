@@ -57,13 +57,14 @@ class Battle implements InteractableInterface {
       }
     });
     
+    // TODO: rebuild after leveling up
     Map<String, List<GameEvent>> attackChoices = new Map<String, List<GameEvent>>();
     for(int i=0; i<friendly.attacks.length; i++) {
       // create a game event that uses the current attack
       List<GameEvent> attackGameEventChain = [new GameEvent((callback) { attack(friendly, i); })];
       
       // add the generated game event chain name to the options in the choice game event
-      attackChoices[friendly.attackNames.elementAt(i)] = attackGameEventChain;
+      attackChoices[friendly.attacks.keys.elementAt(i)] = attackGameEventChain;
     }
     
     fight = new ChoiceGameEvent.custom(
@@ -156,7 +157,7 @@ class Battle implements InteractableInterface {
   void doAttack(Battler attacker, Battler receiver, bool enemy, int attackNum, Function callback) {
     Gui.clear();
     
-    attacker.attacks[attackNum].use(attacker, receiver, enemy, () {
+    attacker.attacks.values.elementAt(attackNum).use(attacker, receiver, enemy, () {
       showHealthChange(receiver, callback);
     });
   }
@@ -238,9 +239,10 @@ class Battle implements InteractableInterface {
       friendly.displayExperience++;
       if(friendly.displayExperience >= friendly.nextLevelExperience()) {
         // TODO: show stat gains
-        new TextGameEvent(240, "${friendly.battlerType.name} leveled up!", () {
-          friendly.levelUp();
-          new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(callback));
+        new TextGameEvent(240, "${friendly.battlerType.name} grew to level ${ friendly.level + 1 }!", () {
+          friendly.levelUp(() {
+            new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(callback));
+          });
         }).trigger(this);
       } else {
         new Timer(new Duration(milliseconds: Main.timeDelay), () => showExperienceGain(callback));
