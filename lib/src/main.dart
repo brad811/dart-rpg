@@ -91,6 +91,8 @@ class Main {
     
     ButtonElement loadGameButton = querySelector("#load_game_button");
     loadGameButton.onClick.listen((MouseEvent e) {
+      // TODO: cancel any running game events
+      Main.inBattle = false;
       Gui.clear();
       createWorld();
     });
