@@ -21,7 +21,6 @@ import 'map_editor_characters.dart';
 import 'map_editor_events.dart';
 import 'map_editor_signs.dart';
 import 'map_editor_warps.dart';
-import 'object_editor_game_events.dart';
 
 class MapEditorMaps {
   static void setUp() {
@@ -100,6 +99,9 @@ class MapEditorMaps {
     
     setUpLayerVisibilityToggles();
     setUpMapSizeButtons();
+    
+    // handle the starting map disappearing
+    Main.world.startMap = Editor.getSelectInputStringValue("#start_map");
   }
   
   static void onInputChange(Event e) {
