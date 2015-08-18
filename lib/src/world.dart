@@ -362,7 +362,7 @@ class World {
   }
   
   void parsePlayer(Map<String, Object> playerObject) {
-    Main.player = new Player(startX, startY, startMap);
+    Main.player = new Player(startMap, startX, startY, playerObject["spriteId"]);
     
     int level = playerObject["level"] as int;
     

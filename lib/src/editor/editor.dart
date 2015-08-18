@@ -36,7 +36,7 @@ class Editor {
   }
   
   static void start() {
-    Main.player = new Player(0, 0, "");
+    Main.player = new Player("", 0, 0, 0);
     
     Main.world = new World(() {
       Main.world.loadGame(() {

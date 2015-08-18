@@ -186,8 +186,9 @@ class MapEditor {
       }
     }
     
-    selectSprite(Tile.GROUND);
-    previousSelectedTile = Tile.GROUND;
+    // TODO: make this a different value?
+    selectSprite(66);
+    previousSelectedTile = 66;
     
     mapEditorCanvas.onClick.listen(tileChange);
     

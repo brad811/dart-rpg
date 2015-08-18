@@ -42,7 +42,8 @@ class Battle implements InteractableInterface {
     for(int y=0; y<Main.world.viewYSize; y++) {
       tiles.add([]);
       for(int x=0; x<Main.world.viewXSize; x++) {
-        tiles[y].add(new Tile(false, new Sprite.int(Tile.GROUND, x, y)));
+        // TODO: move this to the editor
+        tiles[y].add(new Tile(false, new Sprite.int(66, x, y)));
       }
     }
     

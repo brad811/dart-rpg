@@ -50,7 +50,7 @@ class ObjectEditorPlayer {
     
     List<String> attrs = [
       // main
-      "name", //"sprite_id", "picture_id", "size_x", "size_y",
+      "name", "sprite_id", //"picture_id", "size_x", "size_y",
       
       // battle
       "battler_type", "battler_level",
@@ -82,10 +82,11 @@ class ObjectEditorPlayer {
   static void buildMainHtml() {
     String playerHtml = "<table class='editor_table'>"+
       "  <tr>"+
-      "    <td>Name</td><td>Battler Type</td><td>Level</td><td>Money</td>"+
+      "    <td>Name</td><td>Sprite Id</td><td>Battler Type</td><td>Level</td><td>Money</td>"+
       "  </tr>"+
       "  <tr id='player_row'>"+
       "    <td><input id='player_name' type='text' value='${Main.player.name}' /></td>"+
+      "    <td><input id='player_sprite_id' type='text' class='number' value='${Main.player.spriteId}' /></td>"+
       "    <td>";
       
     playerHtml += "<select id='player_battler_type'>";
@@ -143,9 +144,11 @@ class ObjectEditorPlayer {
   }
   
   static void onInputChange(Event e) {
-    String battlerType = (querySelector('#player_battler_type') as SelectElement).value;
-    
     Editor.enforceValueFormat(e);
+    
+    Main.player.spriteId = Editor.getTextInputIntValue("#player_sprite_id", 0);
+    
+    String battlerType = Editor.getSelectInputStringValue("#player_battler_type");
     
     int level = Editor.getTextInputIntValue('#player_battler_level', 2);
     
@@ -174,6 +177,7 @@ class ObjectEditorPlayer {
   static void export(Map<String, Object> exportJson) {
     Map<String, Object> playerJson = {};
     playerJson["name"] = Main.player.name;
+    playerJson["spriteId"] = Main.player.spriteId;
     playerJson["battlerType"] = Main.player.battler.battlerType.name;
     playerJson["level"] = Main.player.battler.level;
     playerJson["money"] = Main.player.inventory.money;
