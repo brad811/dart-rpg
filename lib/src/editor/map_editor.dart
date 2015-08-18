@@ -295,6 +295,11 @@ class MapEditor {
         mapEditorCanvas.height != mapEditorCanvasHeight * window.devicePixelRatio) {
       fixImageSmoothing(mapEditorCanvas, mapEditorCanvasWidth, mapEditorCanvasHeight);
     }
+    
+    int xSize = Main.world.maps[ Main.world.curMap ].tiles[0].length;
+    int ySize = Main.world.maps[ Main.world.curMap ].tiles.length;
+    
+    querySelector("#cur_map_size").text = "(${ xSize } x ${ ySize })";
   }
   
   static void updateMap({bool shouldExport: false}) {
