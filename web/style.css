@@ -304,7 +304,6 @@ textarea {
 	float: left;
 	margin-bottom: 10px;
 	background-color: #ffffff;
-	border: 2px solid #000;
 	text-align: center;
 	vertical-align: center;
 	margin-right: 10px;
@@ -313,7 +312,7 @@ textarea {
 }
 
 .tool_selector:hover {
-	border: 2px solid #aaa;
+	background-color: #fff !important;
 }
 
 .breaker {

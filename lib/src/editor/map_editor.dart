@@ -187,6 +187,7 @@ class MapEditor {
     }
     
     selectSprite(Tile.GROUND);
+    previousSelectedTile = Tile.GROUND;
     
     mapEditorCanvas.onClick.listen(tileChange);
     
@@ -678,10 +679,16 @@ class MapEditor {
     
     if(id == -1) {
       querySelector("#tool_selector_brush").style.borderColor = "#000";
+      querySelector("#tool_selector_brush").style.backgroundColor = "#ccc";
+      
       querySelector("#tool_selector_eraser").style.borderColor = "#ccc";
+      querySelector("#tool_selector_eraser").style.backgroundColor = "#fff";
     } else {
       querySelector("#tool_selector_brush").style.borderColor = "#ccc";
+      querySelector("#tool_selector_brush").style.backgroundColor = "#fff";
+      
       querySelector("#tool_selector_eraser").style.borderColor = "#000";
+      querySelector("#tool_selector_eraser").style.backgroundColor = "#ccc";
     }
   }
   
