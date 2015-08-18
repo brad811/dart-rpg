@@ -298,3 +298,25 @@ textarea {
   display: none;
 }
 
+.tool_selector {
+	width: 50px;
+	height: 50px;
+	float: left;
+	margin-bottom: 10px;
+	background-color: #ffffff;
+	border: 2px solid #000;
+	text-align: center;
+	vertical-align: center;
+	margin-right: 10px;
+	line-height: 50px;
+	cursor: pointer;
+}
+
+.tool_selector:hover {
+	border: 2px solid #aaa;
+}
+
+.breaker {
+	clear: left;
+}
+

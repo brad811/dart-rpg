@@ -44,7 +44,7 @@ class MapEditor {
   static List<bool> layerVisible = [];
   
   static List<List<Tile>> renderList;
-  static int selectedTile;
+  static int selectedTile, previousSelectedTile;
   
   static DivElement tooltip;
   
@@ -127,6 +127,8 @@ class MapEditor {
       (Sprite.scaledSpriteSize).round()
     );
     
+    setUpToolSelectors();
+    
     MapEditorMaps.setUp();
     MapEditorCharacters.setUp();
     MapEditorWarps.setUp();
@@ -146,6 +148,18 @@ class MapEditor {
     MapEditorEvents.update();
     
     MapEditor.updateMap();
+  }
+  
+  static void setUpToolSelectors() {
+    querySelector("#tool_selector_brush").onClick.listen((MouseEvent e) {
+      selectedTile = previousSelectedTile;
+      MapEditor.selectSprite(selectedTile);
+    });
+    
+    querySelector("#tool_selector_eraser").onClick.listen((MouseEvent e) {
+      previousSelectedTile = selectedTile;
+      MapEditor.selectSprite(-1);
+    });
   }
   
   static void setUpSpritePicker() {
@@ -270,8 +284,7 @@ class MapEditor {
     bool layered = Editor.getCheckboxInputBoolValue("#layered");
     bool encounter = Editor.getCheckboxInputBoolValue("#encounter");
     
-    // TODO: change or get rid of this hard coded tile id
-    if(selectedTile == 98) {
+    if(selectedTile == -1) {
       mapTiles[y][x][layer] = null;
     } else if(encounter) {
       mapTiles[y][x][layer] = new EncounterTile(
@@ -662,6 +675,14 @@ class MapEditor {
     mapEditorSelectedSpriteCanvasContext.fillStyle = "#ff00ff";
     mapEditorSelectedSpriteCanvasContext.fillRect(0, 0, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
     renderStaticSprite(mapEditorSelectedSpriteCanvasContext, id, 0, 0);
+    
+    if(id == -1) {
+      querySelector("#tool_selector_brush").style.borderColor = "#000";
+      querySelector("#tool_selector_eraser").style.borderColor = "#ccc";
+    } else {
+      querySelector("#tool_selector_brush").style.borderColor = "#ccc";
+      querySelector("#tool_selector_eraser").style.borderColor = "#000";
+    }
   }
   
   static void renderStaticSprite(CanvasRenderingContext2D ctx, int id, int posX, int posY) {
