@@ -21,10 +21,14 @@ class BattleGameEvent implements GameEvent {
         
         // TODO: reset enemy position if player loses
         // TODO: set enemy as defeated so they don't attack again
+        // TODO: allow custom actions for win and lose
         Main.battle = new Battle(
             Main.player.battler,
             character.battler,
-            new GameEvent((_) { callback(); })
+            new GameEvent((_) {
+              character.sightDistance = 0;
+              callback();
+            })
         );
         
         Main.battle.start();
@@ -34,7 +38,7 @@ class BattleGameEvent implements GameEvent {
   }
   
   @override
-  void handleKeys(List<int> keyCodes) { /* TODO */ }
+  void handleKeys(List<int> keyCodes) {}
   
   // Editor functions
   
