@@ -22,6 +22,18 @@ canvas {
   padding: 10px;
 }
 
+#game_storage_container {
+  float: right;
+  line-height: 30px;
+  padding: 0 10px 0 10px;
+}
+
+#game_storage_message {
+  font-weight: bold;
+  color: #080;
+  float: left;
+}
+
 #game_loader {
   padding: 10px;
   text-align: center;

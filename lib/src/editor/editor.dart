@@ -64,10 +64,12 @@ class Editor {
     resizeFunction(null);
     
     ButtonElement loadGameButton = querySelector("#load_game_button");
-    loadGameButton.onClick.listen((MouseEvent e) {
-      Main.world.parseGame(Editor.getTextAreaStringValue("#export_json"), () {
-        Editor.setUp();
-      });
+    loadGameButton.onClick.listen(loadGame);
+  }
+  
+  static void loadGame(MouseEvent e) {
+    Main.world.parseGame(Editor.getTextAreaStringValue("#export_json"), () {
+      Editor.setUp();
     });
   }
   
