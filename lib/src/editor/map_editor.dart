@@ -190,7 +190,7 @@ class MapEditor {
     selectSprite(66);
     previousSelectedTile = 66;
     
-    mapEditorCanvas.onClick.listen(tileChange);
+    mapEditorCanvas.onClick.listen(changeTile);
     
     tooltip = querySelector('#tooltip');
     /*StreamSubscription mouseMoveStream = */
@@ -204,7 +204,7 @@ class MapEditor {
     mapEditorCanvas.onMouseDown.listen((MouseEvent e) {
       StreamSubscription mouseMoveStream = mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
         e.preventDefault();
-        tileChange(e);
+        changeTile(e);
       });
       
       e.preventDefault();
@@ -273,7 +273,7 @@ class MapEditor {
     mapEditorCanvasContext.strokeRect(Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2, Sprite.scaledSpriteSize + 4, Sprite.scaledSpriteSize + 4);
   }
   
-  static void tileChange(MouseEvent e) {
+  static void changeTile(MouseEvent e) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
@@ -301,7 +301,7 @@ class MapEditor {
       );
     }
     
-    Editor.update();
+    MapEditor.updateMap(shouldExport: true);
   }
   
   static void updateMapCanvasSize() {
