@@ -8,17 +8,9 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'map_editor.dart';
-import 'object_editor.dart';
-import 'settings.dart';
-
-// TODO:
-// - maybe make maps use numbers instead of names
-//   - could simplify making references to them
-//   - wouldn't be able to change so wouldn't ever have to update warps on name changes
-//     - but what about warps that point to a map that no longer exists?
-//       - probably delete
-//       - but maybe point to self map
+import 'package:dart_rpg/src/editor/map_editor.dart';
+import 'package:dart_rpg/src/editor/object_editor.dart';
+import 'package:dart_rpg/src/editor/settings.dart';
 
 class Editor {
   static List<String> editorTabs = ["map_editor", "object_editor", "settings"];

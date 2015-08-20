@@ -9,9 +9,9 @@ import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'editor.dart';
-import 'object_editor.dart';
-import 'object_editor_game_events.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/object_editor.dart';
+import 'package:dart_rpg/src/editor/object_editor_game_events.dart';
 
 // TODO: dimensions, where character is solid and interactable
 

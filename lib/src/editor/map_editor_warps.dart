@@ -8,8 +8,8 @@ import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'editor.dart';
-import 'map_editor.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/map_editor.dart';
 
 class MapEditorWarps {
   static Map<String, List<WarpTile>> warps = {};

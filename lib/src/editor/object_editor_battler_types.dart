@@ -7,9 +7,9 @@ import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'editor.dart';
-import 'map_editor.dart';
-import 'object_editor.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/map_editor.dart';
+import 'package:dart_rpg/src/editor/object_editor.dart';
 
 class ObjectEditorBattlerTypes {
   // TODO: give battler types a display name and a unique name

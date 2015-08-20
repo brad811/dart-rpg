@@ -5,9 +5,9 @@ import 'dart:html';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'editor.dart';
-import 'object_editor.dart';
-import 'object_editor_game_events.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/object_editor.dart';
+import 'package:dart_rpg/src/editor/object_editor_game_events.dart';
 
 // TODO: when you can use items
 // TODO: item targets

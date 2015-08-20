@@ -16,11 +16,11 @@ import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'map_editor.dart';
-import 'map_editor_characters.dart';
-import 'map_editor_events.dart';
-import 'map_editor_signs.dart';
-import 'map_editor_warps.dart';
+import 'package:dart_rpg/src/editor/map_editor.dart';
+import 'package:dart_rpg/src/editor/map_editor_characters.dart';
+import 'package:dart_rpg/src/editor/map_editor_events.dart';
+import 'package:dart_rpg/src/editor/map_editor_signs.dart';
+import 'package:dart_rpg/src/editor/map_editor_warps.dart';
 
 class MapEditorMaps {
   static void setUp() {

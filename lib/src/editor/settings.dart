@@ -5,9 +5,9 @@ import 'dart:html';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 
-import 'editor.dart';
-import 'map_editor.dart';
-import 'object_editor.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/map_editor.dart';
+import 'package:dart_rpg/src/editor/object_editor.dart';
 
 class Settings {
   static CanvasElement canvas;

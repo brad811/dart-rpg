@@ -10,7 +10,7 @@ import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/map_editor.dart';
 
-import 'editor.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
 
 class MapEditorEvents {
   static Map<String, List<EventTile>> events = {};

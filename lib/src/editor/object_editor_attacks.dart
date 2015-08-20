@@ -5,8 +5,8 @@ import 'dart:html';
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'editor.dart';
-import 'object_editor.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/object_editor.dart';
 
 // TODO: handle renaming attacks by updating everywhere
 // (otherwise they just disappear)

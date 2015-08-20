@@ -8,7 +8,7 @@ import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'editor.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
 
 class MapEditorBattlers {
   static void setUp() {

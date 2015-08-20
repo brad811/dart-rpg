@@ -6,7 +6,7 @@ import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'editor.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
 
 class MapEditorCharacters {
   static void setUp() {

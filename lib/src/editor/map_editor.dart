@@ -14,13 +14,13 @@ import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'editor.dart';
-import 'map_editor_characters.dart';
-import 'map_editor_events.dart';
-import 'map_editor_maps.dart';
-import 'map_editor_signs.dart';
-import 'map_editor_warps.dart';
-import 'map_editor_battlers.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/map_editor_characters.dart';
+import 'package:dart_rpg/src/editor/map_editor_events.dart';
+import 'package:dart_rpg/src/editor/map_editor_maps.dart';
+import 'package:dart_rpg/src/editor/map_editor_signs.dart';
+import 'package:dart_rpg/src/editor/map_editor_warps.dart';
+import 'package:dart_rpg/src/editor/map_editor_battlers.dart';
 
 class MapEditor {
   static CanvasElement

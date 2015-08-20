@@ -8,8 +8,8 @@ import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
-import 'editor.dart';
-import 'object_editor.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/object_editor.dart';
 
 // TODO: map editing events (place/remove/change warps, signs, tiles, events)
 // TODO: logic gate events IF this THEN gameEventChainA ELSE gameEventChainB

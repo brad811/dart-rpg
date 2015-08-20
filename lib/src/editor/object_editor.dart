@@ -1,12 +1,12 @@
 library dart_rpg.object_editor;
 
-import 'editor.dart';
-import 'object_editor_attacks.dart';
-import 'object_editor_battler_types.dart';
-import 'object_editor_characters.dart';
-import 'object_editor_game_events.dart';
-import 'object_editor_items.dart';
-import 'object_editor_player.dart';
+import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/object_editor_attacks.dart';
+import 'package:dart_rpg/src/editor/object_editor_battler_types.dart';
+import 'package:dart_rpg/src/editor/object_editor_characters.dart';
+import 'package:dart_rpg/src/editor/object_editor_game_events.dart';
+import 'package:dart_rpg/src/editor/object_editor_items.dart';
+import 'package:dart_rpg/src/editor/object_editor_player.dart';
 
 class ObjectEditor {
   static List<String> objectEditorTabs = [
