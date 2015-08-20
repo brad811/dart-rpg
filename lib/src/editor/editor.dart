@@ -14,6 +14,7 @@ import 'package:dart_rpg/src/editor/settings.dart';
 
 class Editor {
   static List<String> editorTabs = ["map_editor", "object_editor", "settings"];
+  
   static bool highlightSpecialTiles = true;
   
   static Map<String, StreamSubscription> listeners = new Map<String, StreamSubscription>();
@@ -100,9 +101,10 @@ class Editor {
     textarea2.value = exportJsonString;
   }
   
-  static void setUpTabs(List<String> tabs) {
-    Map<String, DivElement> tabDivs = {};
-    Map<String, DivElement> tabHeaderDivs = {};
+  static void setUpTabs(List<String> tabs, [Function callback]) {
+    Map<String, DivElement>
+      tabDivs = {},
+      tabHeaderDivs = {};
     
     for(String tab in tabs) {
       tabDivs[tab] = querySelector("#${tab}_tab");
@@ -119,6 +121,10 @@ class Editor {
         
         tabDivs[tab].style.display = "";
         tabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
+        
+        if(callback != null) {
+          callback();
+        }
       });
     }
     

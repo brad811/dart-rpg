@@ -16,6 +16,7 @@ class ObjectEditorBattlerTypes {
   //   so people can name them stuff like "end_boss_1"
   //   but still have a pretty display name like "Bob"
   static List<String> advancedTabs = ["battler_type_stats", "battler_type_attacks"];
+  
   static int selected;
   
   static CanvasElement canvas;
@@ -182,7 +183,7 @@ class ObjectEditorBattlerTypes {
     querySelector("#battler_type_row_${i}").classes.add("selected");
     
     // show the battler types advanced area
-    querySelector("#battler_types_advanced").classes.remove("hidden");
+    querySelector("#object_editor_battler_types_advanced").classes.remove("hidden");
     
     // show the advanced tables for the selected battler type
     querySelector("#battler_type_${i}_stats_table").classes.remove("hidden");

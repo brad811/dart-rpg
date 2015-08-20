@@ -17,6 +17,7 @@ import 'package:dart_rpg/src/editor/object_editor.dart';
 
 class ObjectEditorGameEvents {
   static List<String> advancedTabs = ["game_event_chain_game_events"];
+  
   static int selected;
   
   static void setUp() {
@@ -55,7 +56,7 @@ class ObjectEditorGameEvents {
     // highlight the selected row
     if(querySelector("#game_event_chain_row_${selected}") != null) {
       querySelector("#game_event_chain_row_${selected}").classes.add("selected");
-      querySelector("#game_event_chains_advanced").classes.remove("hidden");
+      querySelector("#object_editor_game_event_chains_advanced").classes.remove("hidden");
     }
     
     Editor.setMapDeleteButtonListeners(World.gameEventChains, "game_event_chain");
@@ -136,7 +137,7 @@ class ObjectEditorGameEvents {
     querySelector("#game_event_chain_row_${i}").classes.add("selected");
     
     // show the game event chains advanced area
-    querySelector("#game_event_chains_advanced").classes.remove("hidden");
+    querySelector("#object_editor_game_event_chains_advanced").classes.remove("hidden");
     
     // show the advanced tables for the selected game event chain
     querySelector("#game_event_chain_${i}_game_event_table").classes.remove("hidden");

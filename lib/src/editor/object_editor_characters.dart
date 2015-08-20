@@ -17,6 +17,7 @@ import 'package:dart_rpg/src/editor/object_editor_game_events.dart';
 
 class ObjectEditorCharacters {
   static List<String> advancedTabs = ["character_inventory", "character_game_event", "character_battle"];
+  
   static int selected;
   
   // TODO: update when adding new things
@@ -73,7 +74,7 @@ class ObjectEditorCharacters {
     // highlight the selected row
     if(querySelector("#character_row_${selected}") != null) {
       querySelector("#character_row_${selected}").classes.add("selected");
-      querySelector("#characters_advanced").classes.remove("hidden");
+      querySelector("#object_editor_characters_advanced").classes.remove("hidden");
     }
     
     Editor.setMapDeleteButtonListeners(World.characters, "character");
@@ -132,7 +133,7 @@ class ObjectEditorCharacters {
     querySelector("#character_row_${i}").classes.add("selected");
     
     // show the characters advanced area
-    querySelector("#characters_advanced").classes.remove("hidden");
+    querySelector("#object_editor_characters_advanced").classes.remove("hidden");
     
     // show the advanced tables for the selected character
     querySelector("#character_${i}_inventory_table").classes.remove("hidden");

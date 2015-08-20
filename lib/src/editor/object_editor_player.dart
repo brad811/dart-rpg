@@ -13,6 +13,7 @@ import 'package:dart_rpg/src/editor/object_editor.dart';
 
 class ObjectEditorPlayer {
   static List<String> advancedTabs = ["player_inventory"];
+  
   static bool selected = false;
   
   static void setUp() {
@@ -43,7 +44,7 @@ class ObjectEditorPlayer {
     buildInventoryHtml();
     
     if(selected) {
-      querySelector("#player_advanced").classes.remove("hidden");
+      querySelector("#object_editor_player_advanced").classes.remove("hidden");
     }
     
     Editor.setMapDeleteButtonListeners(Main.player.inventory.itemStacks, "player_inventory_item");
@@ -68,7 +69,7 @@ class ObjectEditorPlayer {
       querySelector("#player_row").classes.add("selected");
       
       // show the characters advanced area
-      querySelector("#player_advanced").classes.remove("hidden");
+      querySelector("#object_editor_player_advanced").classes.remove("hidden");
       
       // show the advanced tables for the selected character
       querySelector("#player_inventory_table").classes.remove("hidden");

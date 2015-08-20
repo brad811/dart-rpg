@@ -1,5 +1,7 @@
 library dart_rpg.object_editor;
 
+import 'dart:html';
+
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/object_editor_attacks.dart';
 import 'package:dart_rpg/src/editor/object_editor_battler_types.dart';
@@ -23,7 +25,21 @@ class ObjectEditor {
   }
   
   static void setUp() {
-    Editor.setUpTabs(objectEditorTabs);
+    Editor.setUpTabs(objectEditorTabs, () {
+      // make sure advanced tabs stay hidden
+      ObjectEditorBattlerTypes.selected = -1;
+      ObjectEditorCharacters.selected = -1;
+      ObjectEditorPlayer.selected = false;
+      ObjectEditorItems.selected = -1;
+      ObjectEditorGameEvents.selected = -1;
+      
+      for(String tab in objectEditorTabs) {
+        // hide any advanced sections in the right half
+        if(querySelector("#${tab}_advanced") != null) {
+          querySelector("#${tab}_advanced").classes.add("hidden");
+        }
+      }
+    });
     
     ObjectEditorAttacks.setUp();
     ObjectEditorBattlerTypes.setUp();
