@@ -117,6 +117,7 @@ class Editor {
       tabDivs[tab].style.display = "none";
       
       tabHeaderDivs[tab] = querySelector("#${tab}_tab_header");
+      tabHeaderDivs[tab].style.backgroundColor = "";
       
       tabHeaderDivs[tab].onClick.listen((MouseEvent e) {
         for(String tabb in tabs) {

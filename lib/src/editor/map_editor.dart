@@ -34,8 +34,6 @@ class MapEditor {
     mapEditorSelectedSpriteCanvasContext;
   
   static List<String> mapEditorTabs = ["maps", "tiles", "map_characters", "warps", "signs", "battlers", "events"];
-  static Map<String, DivElement> mapEditorTabDivs = {};
-  static Map<String, DivElement> mapEditorTabHeaderDivs = {};
   
   static int
     mapEditorCanvasWidth = 100,
@@ -93,26 +91,7 @@ class MapEditor {
   }
   
   static void setUp() {
-    for(String tab in mapEditorTabs) {
-      mapEditorTabDivs[tab] = querySelector("#${tab}_tab");
-      mapEditorTabDivs[tab].style.display = "none";
-      
-      mapEditorTabHeaderDivs[tab] = querySelector("#${tab}_tab_header");
-      mapEditorTabHeaderDivs[tab].style.backgroundColor = "";
-      
-      mapEditorTabHeaderDivs[tab].onClick.listen((MouseEvent e) {
-        for(String tabb in mapEditorTabs) {
-          mapEditorTabDivs[tabb].style.display = "none";
-          mapEditorTabHeaderDivs[tabb].style.backgroundColor = "";
-        }
-        
-        mapEditorTabDivs[tab].style.display = "block";
-        mapEditorTabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
-      });
-    }
-    
-    mapEditorTabDivs[mapEditorTabDivs.keys.first].style.display = "block";
-    mapEditorTabHeaderDivs[mapEditorTabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
+    Editor.setUpTabs(mapEditorTabs);
     
     // resize the sprite picker to match the loaded sprite sheet image
     MapEditor.fixImageSmoothing(
