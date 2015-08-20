@@ -98,6 +98,7 @@ class MapEditor {
       mapEditorTabDivs[tab].style.display = "none";
       
       mapEditorTabHeaderDivs[tab] = querySelector("#${tab}_tab_header");
+      mapEditorTabHeaderDivs[tab].style.backgroundColor = "";
       
       mapEditorTabHeaderDivs[tab].onClick.listen((MouseEvent e) {
         for(String tabb in mapEditorTabs) {
