@@ -1,5 +1,4 @@
 function fixImageSmoothing(canvasId) {
-  console.log("Fixing image smoothing... [" + canvasId + "]");
   var canvasElement = document.getElementById(canvasId);
   
   if(canvasElement != null) {
