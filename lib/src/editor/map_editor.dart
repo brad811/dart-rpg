@@ -396,6 +396,9 @@ class MapEditor {
   }
   
   static void renderColoredTiles() {
+    if(!Editor.highlightSpecialTiles)
+      return;
+    
     Map<String, Map<String, int>> colorTrackers = {};
     double alpha = 0.15;
     
@@ -596,9 +599,6 @@ class MapEditor {
   }
   
   static void outlineTile(int posX, int posY, int r, int g, int b, double a, [int quadrant = 0]) {
-    if(!Editor.highlightSpecialTiles)
-      return;
-    
     mapEditorCanvasContext.beginPath();
     if(quadrant == 0) {
       // the whole tile
