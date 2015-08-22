@@ -37,7 +37,9 @@ class MapEditor {
   
   static int
     mapEditorCanvasWidth = 100,
-    mapEditorCanvasHeight = 100;
+    mapEditorCanvasHeight = 100,
+    lastHoverX = -1,
+    lastHoverY = -1;
   
   static List<bool> layerVisible = [];
   
@@ -177,6 +179,8 @@ class MapEditor {
     mapEditorCanvas.onMouseMove.listen(hoverTile);
     
     mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
+      lastHoverX = -1;
+      lastHoverY = -1;
       tooltip.style.display = "none";
       MapEditor.updateMap();
     });
@@ -221,6 +225,13 @@ class MapEditor {
     tooltip.style.left = "${e.page.x + 30}px";
     tooltip.style.top = "${e.page.y - 10}px";
     tooltip.text = "x: ${x}, y: ${y}";
+    
+    if(x == lastHoverX && y == lastHoverY) {
+      return;
+    }
+    
+    lastHoverX = x;
+    lastHoverY = y;
     
     MapEditor.updateMap();
     
