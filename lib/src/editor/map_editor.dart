@@ -39,7 +39,9 @@ class MapEditor {
     mapEditorCanvasWidth = 100,
     mapEditorCanvasHeight = 100,
     lastHoverX = -1,
-    lastHoverY = -1;
+    lastHoverY = -1,
+    lastChangeX = -1,
+    lastChangeY = -1;
   
   static List<bool> layerVisible = [];
   
@@ -193,7 +195,11 @@ class MapEditor {
       
       e.preventDefault();
 
-      mapEditorCanvas.onMouseUp.listen((MouseEvent e) => mouseMoveStream.cancel());
+      mapEditorCanvas.onMouseUp.listen((MouseEvent e) {
+        mouseMoveStream.cancel();
+        lastChangeX = -1;
+        lastChangeY = -1;
+      });
       mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
         EventTarget eventTarget = e.relatedTarget;
         if(eventTarget is DivElement && eventTarget.id == "tooltip") {
@@ -201,6 +207,8 @@ class MapEditor {
           return;
         } else {
           mouseMoveStream.cancel();
+          lastChangeX = -1;
+          lastChangeY = -1;
         }
       });
     });
@@ -272,6 +280,14 @@ class MapEditor {
     if(y >= mapTiles.length || x >= mapTiles[0].length)
       return;
     
+    if(x == lastChangeX && y == lastChangeY) {
+      return;
+    }
+    
+    lastChangeX = x;
+    lastChangeY = y;
+    
+    // TODO: maybe save these and change them onInputChange
     int layer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
     bool solid = Editor.getCheckboxInputBoolValue("#solid");
     bool layered = Editor.getCheckboxInputBoolValue("#layered");
