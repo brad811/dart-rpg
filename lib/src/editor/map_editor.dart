@@ -372,7 +372,7 @@ class MapEditor {
     }
     
     // east
-    if(x < mapTiles[y].length) {
+    if(x < mapTiles[y].length-1) {
       floodFill(mapTiles, x+1, y, layer, tileBefore, solid, layered);
     }
     
