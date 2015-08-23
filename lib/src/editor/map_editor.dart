@@ -47,6 +47,7 @@ class MapEditor {
   
   static List<List<Tile>> renderList;
   static int selectedTile, previousSelectedTile;
+  static bool fill = false;
   
   static DivElement tooltip;
   
@@ -138,11 +139,31 @@ class MapEditor {
     querySelector("#tool_selector_brush").onClick.listen((MouseEvent e) {
       selectedTile = previousSelectedTile;
       MapEditor.selectSprite(selectedTile);
+      fill = false;
+      
+      querySelector("#tool_selector_brush").classes.add("selected");
+      querySelector("#tool_selector_eraser").classes.remove("selected");
+      querySelector("#tool_selector_fill").classes.remove("selected");
     });
     
     querySelector("#tool_selector_eraser").onClick.listen((MouseEvent e) {
       previousSelectedTile = selectedTile;
       MapEditor.selectSprite(-1);
+      fill = false;
+      
+      querySelector("#tool_selector_brush").classes.remove("selected");
+      querySelector("#tool_selector_eraser").classes.add("selected");
+      querySelector("#tool_selector_fill").classes.remove("selected");
+    });
+    
+    querySelector("#tool_selector_fill").onClick.listen((MouseEvent e) {
+      selectedTile = previousSelectedTile;
+      MapEditor.selectSprite(selectedTile);
+      fill = true;
+      
+      querySelector("#tool_selector_brush").classes.remove("selected");
+      querySelector("#tool_selector_eraser").classes.remove("selected");
+      querySelector("#tool_selector_fill").classes.add("selected");
     });
   }
   
@@ -171,8 +192,9 @@ class MapEditor {
     }
     
     // TODO: make this a different value?
-    selectSprite(66);
+    selectedTile = 66;
     previousSelectedTile = 66;
+    MapEditor.selectSprite(66);
     
     mapEditorCanvas.onClick.listen(changeTile);
     
@@ -216,7 +238,8 @@ class MapEditor {
     mapEditorSpriteSelectorCanvas.onClick.listen((MouseEvent e) {
       int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
       int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-      selectSprite(y*Sprite.spriteSheetWidth + x);
+      MapEditor.selectSprite(y*Sprite.spriteSheetWidth + x);
+      previousSelectedTile = y*Sprite.spriteSheetWidth + x;
     });
   }
   
@@ -296,19 +319,67 @@ class MapEditor {
     if(selectedTile == -1) {
       mapTiles[y][x][layer] = null;
     } else if(encounter) {
+      // TODO: fill
       mapTiles[y][x][layer] = new EncounterTile(
         new Sprite.int(selectedTile, x, y),
         layered
       );
     } else {
-      mapTiles[y][x][layer] = new Tile(
-        solid,
-        new Sprite.int(selectedTile, x, y),
-        layered
-      );
+      if(fill == true) {
+        List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+        int tileBefore;
+        if(mapTiles[y][x][layer] != null) {
+          tileBefore = mapTiles[y][x][layer].sprite.id;
+        } else {
+          tileBefore = -1;
+        }
+        floodFill(mapTiles, x, y, layer, tileBefore, solid, layered);
+      } else {
+        mapTiles[y][x][layer] = new Tile(
+          solid,
+          new Sprite.int(selectedTile, x, y),
+          layered
+        );
+      }
     }
     
     MapEditor.updateMap(shouldExport: true);
+  }
+  
+  static void floodFill(List<List<List<Tile>>> mapTiles, int x, int y, int layer, int tileBefore, bool solid, bool layered) {
+    if(selectedTile == tileBefore) {
+      return;
+    } else if(mapTiles[y][x][layer] != null && mapTiles[y][x][layer].sprite.id != tileBefore) {
+      return;
+    } else if(mapTiles[y][x][layer] == null && tileBefore != -1) {
+      return;
+    }
+    
+    mapTiles[y][x][layer] = new Tile(
+      solid,
+      new Sprite.int(selectedTile, x, y),
+      layered
+    );
+    
+    // north
+    if(y > 0) {
+      floodFill(mapTiles, x, y-1, layer, tileBefore, solid, layered);
+    }
+    
+    // south
+    if(y < mapTiles.length-1) {
+      floodFill(mapTiles, x, y+1, layer, tileBefore, solid, layered);
+    }
+    
+    // east
+    if(x < mapTiles[y].length) {
+      floodFill(mapTiles, x+1, y, layer, tileBefore, solid, layered);
+    }
+    
+    // west
+    if(x > 0) {
+      floodFill(mapTiles, x-1, y, layer, tileBefore, solid, layered);
+    }
   }
   
   static void updateMapCanvasSize() {
@@ -684,20 +755,6 @@ class MapEditor {
     mapEditorSelectedSpriteCanvasContext.fillStyle = "#ff00ff";
     mapEditorSelectedSpriteCanvasContext.fillRect(0, 0, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
     renderStaticSprite(mapEditorSelectedSpriteCanvasContext, id, 0, 0);
-    
-    if(id == -1) {
-      querySelector("#tool_selector_brush").style.borderColor = "#000";
-      querySelector("#tool_selector_brush").style.backgroundColor = "#ccc";
-      
-      querySelector("#tool_selector_eraser").style.borderColor = "#ccc";
-      querySelector("#tool_selector_eraser").style.backgroundColor = "#fff";
-    } else {
-      querySelector("#tool_selector_brush").style.borderColor = "#ccc";
-      querySelector("#tool_selector_brush").style.backgroundColor = "#fff";
-      
-      querySelector("#tool_selector_eraser").style.borderColor = "#000";
-      querySelector("#tool_selector_eraser").style.backgroundColor = "#ccc";
-    }
   }
   
   static void renderStaticSprite(CanvasRenderingContext2D ctx, int id, int posX, int posY) {

@@ -315,16 +315,21 @@ textarea {
 	height: 50px;
 	float: left;
 	margin-bottom: 10px;
-	background-color: #ffffff;
 	text-align: center;
 	vertical-align: center;
 	margin-right: 10px;
 	line-height: 50px;
 	cursor: pointer;
+	
+	background-color: #ccc;
+}
+
+.tool_selector.selected {
+	background-color: #fff !important;
 }
 
 .tool_selector:hover {
-	background-color: #fff !important;
+	background-color: #fff;
 }
 
 .breaker {
