@@ -49,8 +49,6 @@ class World {
     LAYER_ABOVE
   ];
   
-  String spriteSheetLocation = "";
-  
   Map<String, GameMap> maps = {};
   String curMap = "";
   
@@ -131,7 +129,7 @@ class World {
     Main.spritesImageLocation = settingsObject["spriteSheetLocation"];
     Main.spritesImage = new ImageElement();
     
-    Main.spritesImage.onLoad.listen((e) {
+    Main.spritesImage.onLoad.listen((Event e) {
       Sprite.pixelsPerSprite = settingsObject["pixelsPerSprite"] as int;
       Sprite.spriteScale = settingsObject["spriteScale"] as int;
       
@@ -140,6 +138,10 @@ class World {
       Sprite.spriteSheetHeight = (Main.spritesImage.height / Sprite.pixelsPerSprite).round();
       
       callback();
+    });
+    
+    Main.spritesImage.onError.listen((Event e) {
+      window.alert("Unable to load sprite sheet:\n\n${ Main.spritesImageLocation }\n\nSee the javascript console for more information.");
     });
     
     Main.spritesImage.crossOrigin = "anonymous";
