@@ -817,8 +817,17 @@ class MapEditor {
                   jsonObject["solid"] = true;
                 if(mapTiles[y][x][k].layered == true)
                   jsonObject["layered"] = true;
-                if(mapTiles[y][x][k] is EncounterTile)
-                  jsonObject["encounter"] = true;
+                
+                // if we're on the ground layer
+                if(k == 0) {
+                  // check if any layer on this tile is an encounter tile
+                  for(int l=0; l<World.layers.length; l++) {
+                    if(mapTiles[y][x][l] is EncounterTile) {
+                      jsonObject["encounter"] = true;
+                      break;
+                    }
+                  }
+                }
                 
                 jsonMap[y][x].add(jsonObject);
               }
