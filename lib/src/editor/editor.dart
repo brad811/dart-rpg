@@ -166,6 +166,32 @@ class Editor {
     }
   }
   
+  static String generateSpritePickerHtml(String prefix, int value) {
+    String html =
+      "<canvas id='${prefix}_canvas'></canvas><br />"+
+      "<input id='${prefix}' type='text' class='number' value='${ value }' />"+
+      "<button id='${prefix}_edit_button'>Edit</button>";
+    
+    return html;
+  }
+  
+  static void initSpritePicker(String prefix, int value, int sizeX, int sizeY, Function onInputChange) {
+    Main.fixImageSmoothing(
+      querySelector("#${prefix}_canvas"),
+      Sprite.scaledSpriteSize * sizeX,
+      Sprite.scaledSpriteSize * sizeY
+    );
+    
+    Editor.renderSprite("#${prefix}_canvas", value);
+    
+    querySelector("#${prefix}_edit_button").onClick.listen((MouseEvent e) {
+      Editor.showPopupSpriteSelector(sizeX, sizeY, (int spriteId) {
+        (querySelector("#${prefix}") as TextInputElement).value = spriteId.toString();
+        onInputChange(null);
+      });
+    });
+  }
+  
   static void renderSprite(String id, int spriteId) {
     CanvasElement canvas = querySelector(id);
     CanvasRenderingContext2D ctx = canvas.context2D;

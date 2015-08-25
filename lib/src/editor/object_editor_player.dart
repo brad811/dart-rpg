@@ -87,7 +87,11 @@ class ObjectEditorPlayer {
       "  </tr>"+
       "  <tr id='player_row'>"+
       "    <td><input id='player_name' type='text' value='${Main.player.name}' /></td>"+
-      "    <td><input id='player_sprite_id' type='text' class='number' value='${Main.player.spriteId}' /></td>"+
+      
+      "  <td>"+
+      Editor.generateSpritePickerHtml("player_sprite_id", Main.player.spriteId)+
+      "  </td>"+
+      
       "    <td>";
       
     playerHtml += "<select id='player_battler_type'>";
@@ -108,6 +112,8 @@ class ObjectEditorPlayer {
       "  </tr>";
     playerHtml += "</table>";
     querySelector("#player_container").setInnerHtml(playerHtml);
+    
+    Editor.initSpritePicker("player_sprite_id", Main.player.spriteId, Main.player.sizeX, Main.player.sizeY, onInputChange);
   }
   
   static void buildInventoryHtml() {

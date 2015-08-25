@@ -163,8 +163,15 @@ class ObjectEditorCharacters {
         "  <td>${i}</td>"+
         "  <td><input id='character_${i}_label' type='text' value='${ key }' /></td>"+
         "  <td><input id='character_${i}_name' type='text' value='${ World.characters[key].name }' /></td>"+
-        "  <td><input id='character_${i}_sprite_id' type='text' class='number' value='${ World.characters[key].spriteId }' /></td>"+
-        "  <td><input id='character_${i}_picture_id' type='text' class='number' value='${ World.characters[key].pictureId }' /></td>"+
+        
+        "  <td>"+
+        Editor.generateSpritePickerHtml("character_${i}_sprite_id", World.characters[key].spriteId)+
+        "  </td>"+
+        
+        "  <td>"+
+        Editor.generateSpritePickerHtml("character_${i}_picture_id", World.characters[key].pictureId)+
+        "  </td>"+
+        
         "  <td><input id='character_${i}_size_x' type='text' class='number' value='${ World.characters[key].sizeX }' /></td>"+
         "  <td><input id='character_${i}_size_y' type='text' class='number' value='${ World.characters[key].sizeY }' /></td>";
         
@@ -186,6 +193,25 @@ class ObjectEditorCharacters {
     charactersHtml += "</table>";
     
     querySelector("#characters_container").setInnerHtml(charactersHtml);
+    
+    int i = 0;
+    for(String key in World.characters.keys) {
+      Editor.initSpritePicker(
+        "character_${i}_sprite_id",
+        World.characters[key].spriteId,
+        World.characters[key].sizeX, World.characters[key].sizeY,
+        onInputChange
+      );
+      
+      Editor.initSpritePicker(
+        "character_${i}_picture_id",
+        World.characters[key].pictureId,
+        3, 3,
+        onInputChange
+      );
+      
+      i += 1;
+    }
   }
   
   static void buildInventoryHtml() {

@@ -99,7 +99,11 @@ class ObjectEditorItems {
       itemsHtml +=
         "<tr id='item_row_${i}'>"+
         "  <td>${i}</td>"+
-        "  <td><input class='number' id='item_${i}_picture_id' type='text' value='${item.pictureId}' /></td>"+
+        
+        "  <td>"+
+        Editor.generateSpritePickerHtml("item_${i}_picture_id", item.pictureId)+
+        "  </td>"+
+        
         "  <td><input id='item_${i}_name' type='text' value='${item.name}' /></td>"+
         "  <td><input class='number' id='item_${i}_base_price' type='text' value='${item.basePrice}' /></td>"+
         "  <td><textarea id='item_${i}_description' />${item.description}</textarea></td>"+
@@ -108,6 +112,15 @@ class ObjectEditorItems {
     }
     itemsHtml += "</table>";
     querySelector("#items_container").setInnerHtml(itemsHtml);
+    
+    for(int i=0; i<World.items.keys.length; i++) {
+      Editor.initSpritePicker(
+        "item_${i}_picture_id",
+        World.items.values.elementAt(i).pictureId,
+        3, 3,
+        onInputChange
+      );
+    }
   }
   
   static void buildGameEventHtml() {
