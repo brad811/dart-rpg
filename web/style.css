@@ -140,6 +140,29 @@ canvas {
   padding: 8px;
 }
 
+#popup_shade {
+	position: absolute;
+	background-color: #000;
+	opacity: 0.5;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	display: none;
+}
+
+#popup_sprite_selector_container {
+	position: absolute;
+	width: 400px;
+	height: 400px;
+	top: 20px;
+	background-color: #fff;
+	left: 50%;
+	margin-left: -200px;
+	overflow: scroll;
+	display: none;
+}
+
 .sprite_picker_container {
   height: 256px;
   width: 532px;

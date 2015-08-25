@@ -3,9 +3,11 @@ library dart_rpg.editor;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
+import 'dart:math' as math;
 
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
+import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/map_editor.dart';
@@ -164,7 +166,117 @@ class Editor {
     }
   }
   
+  static void renderSprite(String id, int spriteId) {
+    CanvasElement canvas = querySelector(id);
+    CanvasRenderingContext2D ctx = canvas.context2D;
+    
+    ctx.fillStyle = "#ff00ff";
+    ctx.fillRect(0, 0, Sprite.scaledSpriteSize * 3, Sprite.scaledSpriteSize * 3);
+    
+    for(int i=0; i<3; i++) {
+      for(int j=0; j<3; j++) {
+        MapEditor.renderStaticSprite(ctx, spriteId + (i) + (j*Sprite.spriteSheetWidth), i, j);
+      }
+    }
+  }
+  
+  static void showPopupSpriteSelector(int sizeX, int sizeY, Function callback) {
+    DivElement shade = querySelector("#popup_shade");
+    DivElement container = querySelector("#popup_sprite_selector_container");
+    CanvasElement canvas = querySelector("#popup_sprite_selector_canvas");
+    
+    int height = math.min(window.innerHeight - 40, Main.spritesImage.height * Sprite.spriteScale + 20);
+    int width = math.min(window.innerWidth - 40, Main.spritesImage.width * Sprite.spriteScale + 20);
+    
+    container.style.height = "${ height }px";
+    container.style.width = "${ width }px";
+    container.style.marginLeft = "-${ (width/2).round() }px";
+    
+    MapEditor.fixImageSmoothing(canvas, Main.spritesImage.width * Sprite.spriteScale, Main.spritesImage.height * Sprite.spriteScale);
+    
+    // Draw pink background
+    canvas.context2D.fillStyle = "#ff00ff";
+    canvas.context2D.fillRect(0, 0, Main.spritesImage.width * Sprite.spriteScale, Main.spritesImage.height * Sprite.spriteScale);
+    
+    // render sprite picker
+    int
+      maxCol = Sprite.spriteSheetWidth,
+      col = 0,
+      row = 0;
+    for(int y=0; y<Sprite.spriteSheetHeight; y++) {
+      for(int x=0; x<Sprite.spriteSheetWidth; x++) {
+        MapEditor.renderStaticSprite(canvas.context2D, y*Sprite.spriteSheetWidth + x, col, row);
+        col++;
+        if(col >= maxCol) {
+          row++;
+          col = 0;
+        }
+      }
+    }
+    
+    canvas.onClick.listen((MouseEvent e) {
+      int x = (e.offset.x/Sprite.scaledSpriteSize).floor() - (sizeX/2).floor();
+      int y = (e.offset.y/Sprite.scaledSpriteSize).floor() - (sizeY/2).floor();
+      
+      if(y >= Main.world.maps[Main.world.curMap].tiles.length || x >= Main.world.maps[Main.world.curMap].tiles[0].length) {
+        callback(-1);
+      }
+      
+      container.style.display = "none";
+      shade.style.display = "none";
+      
+      callback(y*Sprite.spriteSheetWidth + x);
+    });
+    
+    canvas.onMouseMove.listen((MouseEvent e) {
+      // Draw pink background
+      canvas.context2D.fillStyle = "#ff00ff";
+      canvas.context2D.fillRect(0, 0, Main.spritesImage.width * Sprite.spriteScale, Main.spritesImage.height * Sprite.spriteScale);
+      
+      // render sprite picker
+      int
+        maxCol = Sprite.spriteSheetWidth,
+        col = 0,
+        row = 0;
+      for(int y=0; y<Sprite.spriteSheetHeight; y++) {
+        for(int x=0; x<Sprite.spriteSheetWidth; x++) {
+          MapEditor.renderStaticSprite(canvas.context2D, y*Sprite.spriteSheetWidth + x, col, row);
+          col++;
+          if(col >= maxCol) {
+            row++;
+            col = 0;
+          }
+        }
+      }
+      
+      int x = (e.offset.x/Sprite.scaledSpriteSize).floor() - (sizeX/2).floor();
+      int y = (e.offset.y/Sprite.scaledSpriteSize).floor() - (sizeY/2).floor();
+      
+      // outline the tiles
+      canvas.context2D.lineWidth = 4;
+      canvas.context2D.setStrokeColorRgb(255, 255, 255, 1.0);
+      canvas.context2D.strokeRect(
+        Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2,
+        (Sprite.scaledSpriteSize * sizeX) + 4, (Sprite.scaledSpriteSize * sizeY) + 4
+      );
+      
+      canvas.context2D.lineWidth = 2;
+      canvas.context2D.setStrokeColorRgb(0, 0, 0, 1.0);
+      canvas.context2D.strokeRect(
+        Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2,
+        (Sprite.scaledSpriteSize * sizeX) + 4, (Sprite.scaledSpriteSize * sizeY) + 4
+      );
+    });
+    
+    container.style.display = "block";
+    shade.style.display = "block";
+  }
+  
   static void avoidNameCollision(Event e, String match, Map<String, Object> objects) {
+    if(e == null) {
+      return;
+    }
+    
     if(e.target is InputElement) {
       InputElement target = e.target;
       
@@ -178,6 +290,10 @@ class Editor {
   }
   
   static void enforceValueFormat(Event e) {
+    if(e == null) {
+      return;
+    }
+    
     if(e.target is TextInputElement) {
       TextInputElement inputElement = e.target;
       
@@ -200,6 +316,11 @@ class Editor {
   }
   
   static void updateAndRetainValue(Event e) {
+    if(e == null) {
+      Editor.update();
+      return;
+    }
+    
     if(e.target is TextInputElement) {
       // save the cursor location
       TextInputElement target = e.target;

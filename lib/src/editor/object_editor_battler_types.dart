@@ -206,7 +206,13 @@ class ObjectEditorBattlerTypes {
       battlerTypesHtml +=
         "<tr id='battler_type_row_${i}'>"+
         "  <td>${i}</td>"+
-        "  <td><input id='battler_type_${i}_sprite_id' type='text' class='number' value='${ World.battlerTypes[key].spriteId }' /></td>"+
+        
+        "  <td>"+
+        "    <canvas id='battler_type_${i}_sprite_canvas'></canvas><br />"+
+        "    <input id='battler_type_${i}_sprite_id' type='text' class='number' value='${ World.battlerTypes[key].spriteId }' />"+
+        "    <button id='battler_type_${i}_sprite_edit_button'>Edit</button>"
+        "  </td>"+
+        
         "  <td><input id='battler_type_${i}_name' type='text' value='${ World.battlerTypes[key].name }' /></td>"+
         "  <td><input id='battler_type_${i}_rarity' type='text' class='number decimal' value='${ World.battlerTypes[key].rarity }' /></td>"+
         "  <td><button id='delete_battler_type_${i}'>Delete battler</button></td>" +
@@ -214,6 +220,23 @@ class ObjectEditorBattlerTypes {
     }
     battlerTypesHtml += "</table>";
     querySelector("#battler_types_container").setInnerHtml(battlerTypesHtml);
+    
+    for(int i=0; i<World.battlerTypes.keys.length; i++) {
+      MapEditor.fixImageSmoothing(
+        querySelector("#battler_type_${i}_sprite_canvas"),
+        Sprite.scaledSpriteSize * 3,
+        Sprite.scaledSpriteSize * 3
+      );
+      
+      Editor.renderSprite("#battler_type_${i}_sprite_canvas", World.battlerTypes.values.elementAt(i).spriteId);
+      
+      querySelector("#battler_type_${i}_sprite_edit_button").onClick.listen((MouseEvent e) {
+        Editor.showPopupSpriteSelector(3, 3, (int spriteId) {
+          (querySelector("#battler_type_${i}_sprite_id") as TextInputElement).value = spriteId.toString();
+          onInputChange(null);
+        });
+      });
+    }
   }
   
   static void buildStatsHtml() {
