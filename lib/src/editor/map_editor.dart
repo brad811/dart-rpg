@@ -2,7 +2,6 @@ library dart_rpg.map_editor;
 
 import 'dart:async';
 import 'dart:html';
-import 'dart:js';
 
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
@@ -65,7 +64,7 @@ class MapEditor {
       ElementList<Element> canvasElements = querySelectorAll("canvas");
       
       for(int i=0; i<canvasElements.length; i++) {
-        fixImageSmoothing(canvasElements[i], (canvasElements[i] as CanvasElement).width, (canvasElements[i] as CanvasElement).height);
+        Main.fixImageSmoothing(canvasElements[i], (canvasElements[i] as CanvasElement).width, (canvasElements[i] as CanvasElement).height);
       }
     }
     
@@ -76,37 +75,18 @@ class MapEditor {
     callback();
   }
   
-  static void fixImageSmoothing(CanvasElement canvas, int width, int height) {
-    CanvasRenderingContext2D ctx = canvas.context2D;
-    
-    double scale = window.devicePixelRatio;
-    
-    canvas.style.width = '${width}px';
-    canvas.style.height = '${height}px';
-    canvas.width = (width * scale).round();
-    canvas.height = (height * scale).round();
-    ctx.scale(scale, scale);
-    
-    ctx.imageSmoothingEnabled = false;
-    
-    ctx.fillStyle = "#ff00ff";
-    ctx.fillRect(0, 0, width, height);
-    
-    context.callMethod("fixImageSmoothing", [canvas.id]);
-  }
-  
   static void setUp() {
     Editor.setUpTabs(mapEditorTabs);
     
     // resize the sprite picker to match the loaded sprite sheet image
-    MapEditor.fixImageSmoothing(
+    Main.fixImageSmoothing(
       MapEditor.mapEditorSpriteSelectorCanvas,
       (Main.spritesImage.width * Sprite.spriteScale).round(),
       (Main.spritesImage.height * Sprite.spriteScale).round()
     );
     
     // picked sprite canvas
-    MapEditor.fixImageSmoothing(
+    Main.fixImageSmoothing(
       MapEditor.mapEditorSelectedSpriteCanvas,
       (Sprite.scaledSpriteSize).round(),
       (Sprite.scaledSpriteSize).round()
@@ -386,7 +366,7 @@ class MapEditor {
     if(
         mapEditorCanvas.width != mapEditorCanvasWidth * window.devicePixelRatio ||
         mapEditorCanvas.height != mapEditorCanvasHeight * window.devicePixelRatio) {
-      fixImageSmoothing(mapEditorCanvas, mapEditorCanvasWidth, mapEditorCanvasHeight);
+      Main.fixImageSmoothing(mapEditorCanvas, mapEditorCanvasWidth, mapEditorCanvasHeight);
     }
     
     int xSize = Main.world.maps[ Main.world.curMap ].tiles[0].length;

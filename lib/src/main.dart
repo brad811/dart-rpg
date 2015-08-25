@@ -2,6 +2,7 @@ library dart_rpg.main;
 
 import 'dart:async';
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/character.dart';
@@ -83,6 +84,7 @@ class Main {
     Function createWorld = () {
       timeScale = 0.0;
       world = new World(() {
+        Main.fixImageSmoothing(c, (c.width / window.devicePixelRatio).round(), (c.height / window.devicePixelRatio).round());
         focusObject = player;
         timeScale = 1.0;
         tick();
@@ -98,6 +100,25 @@ class Main {
     });
     
     createWorld();
+  }
+  
+  static void fixImageSmoothing(CanvasElement canvas, int width, int height) {
+    CanvasRenderingContext2D ctx = canvas.context2D;
+    
+    double scale = window.devicePixelRatio;
+    
+    canvas.style.width = '${width}px';
+    canvas.style.height = '${height}px';
+    canvas.width = (width * scale).round();
+    canvas.height = (height * scale).round();
+    ctx.scale(scale, scale);
+    
+    ctx.imageSmoothingEnabled = false;
+    
+    ctx.fillStyle = "#ff00ff";
+    ctx.fillRect(0, 0, width, height);
+    
+    context.callMethod("fixImageSmoothing", [canvas.id]);
   }
   
   static void tick() {

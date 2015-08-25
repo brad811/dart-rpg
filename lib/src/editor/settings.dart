@@ -65,7 +65,7 @@ class Settings {
   }
   
   static void setUpSpriteCanvas() {
-    MapEditor.fixImageSmoothing(
+    Main.fixImageSmoothing(
       canvas,
       (Main.spritesImage.width * Sprite.spriteScale).round(),
       (Main.spritesImage.height * Sprite.spriteScale).round()
@@ -164,19 +164,19 @@ class Settings {
       
       Editor.update();
       
-      MapEditor.fixImageSmoothing(
+      Main.fixImageSmoothing(
         MapEditor.mapEditorSpriteSelectorCanvas,
         Sprite.spriteSheetWidth * Sprite.scaledSpriteSize,
         Sprite.spriteSheetHeight * Sprite.scaledSpriteSize
       );
       
-      MapEditor.fixImageSmoothing(
+      Main.fixImageSmoothing(
         MapEditor.mapEditorSelectedSpriteCanvas,
         Sprite.scaledSpriteSize,
         Sprite.scaledSpriteSize
       );
       
-      MapEditor.fixImageSmoothing(
+      Main.fixImageSmoothing(
         canvas,
         Sprite.spriteSheetWidth * Sprite.scaledSpriteSize,
         Sprite.spriteSheetHeight * Sprite.scaledSpriteSize

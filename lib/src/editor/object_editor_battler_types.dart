@@ -4,11 +4,11 @@ import 'dart:html';
 
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler_type.dart';
+import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/map_editor.dart';
 import 'package:dart_rpg/src/editor/object_editor.dart';
 
 class ObjectEditorBattlerTypes {
@@ -187,7 +187,7 @@ class ObjectEditorBattlerTypes {
     querySelector("#battler_types_container").setInnerHtml(battlerTypesHtml);
     
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
-      MapEditor.fixImageSmoothing(
+      Main.fixImageSmoothing(
         querySelector("#battler_type_${i}_sprite_canvas"),
         Sprite.scaledSpriteSize * 3,
         Sprite.scaledSpriteSize * 3
