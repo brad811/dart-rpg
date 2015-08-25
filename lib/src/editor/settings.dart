@@ -177,12 +177,6 @@ class Settings {
       );
       
       MapEditor.fixImageSmoothing(
-        querySelector("#battler_type_picture_canvas"),
-        Sprite.scaledSpriteSize * 3,
-        Sprite.scaledSpriteSize * 3
-      );
-      
-      MapEditor.fixImageSmoothing(
         canvas,
         Sprite.spriteSheetWidth * Sprite.scaledSpriteSize,
         Sprite.spriteSheetHeight * Sprite.scaledSpriteSize

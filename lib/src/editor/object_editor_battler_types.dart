@@ -19,21 +19,9 @@ class ObjectEditorBattlerTypes {
   
   static int selected;
   
-  static CanvasElement canvas;
-  static CanvasRenderingContext2D ctx;
-  
   static void setUp() {
     Editor.setUpTabs(advancedTabs);
     Editor.attachButtonListener("#add_battler_type_button", addNewBattlerType);
-    
-    canvas = querySelector("#battler_type_picture_canvas");
-    ctx = canvas.context2D;
-    
-    MapEditor.fixImageSmoothing(
-      canvas,
-      (Sprite.scaledSpriteSize * 3).round(),
-      (Sprite.scaledSpriteSize * 3).round()
-    );
     
     querySelector("#object_editor_battler_types_tab_header").onClick.listen((MouseEvent e) {
       ObjectEditorBattlerTypes.selectRow(0);
@@ -95,8 +83,6 @@ class ObjectEditorBattlerTypes {
     buildStatsHtml();
     buildAttacksHtml();
     
-    selectSprite();
-    
     Editor.attachButtonListener("#add_battler_type_level_button", addLevel);
     
     Editor.setMapDeleteButtonListeners(World.battlerTypes, "battler_type");
@@ -144,25 +130,6 @@ class ObjectEditorBattlerTypes {
     });
   }
   
-  static void selectSprite() {
-    if(selected == null || selected == -1)
-      return;
-    
-    String key = World.battlerTypes.keys.elementAt(selected);
-    
-    if(key == null)
-      return;
-    
-    ctx.fillStyle = "#ff00ff";
-    ctx.fillRect(0, 0, Sprite.scaledSpriteSize * 3, Sprite.scaledSpriteSize * 3);
-    
-    for(int i=0; i<3; i++) {
-      for(int j=0; j<3; j++) {
-        MapEditor.renderStaticSprite(ctx, World.battlerTypes[key].spriteId + (i) + (j*Sprite.spriteSheetWidth), i, j);
-      }
-    }
-  }
-  
   static void selectRow(int i) {
     selected = i;
     
@@ -188,8 +155,6 @@ class ObjectEditorBattlerTypes {
     // show the advanced tables for the selected battler type
     querySelector("#battler_type_${i}_stats_table").classes.remove("hidden");
     querySelector("#battler_type_${i}_attacks_table").classes.remove("hidden");
-    
-    selectSprite();
   }
   
   static void buildMainHtml() {
