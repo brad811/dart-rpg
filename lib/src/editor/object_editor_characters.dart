@@ -48,7 +48,7 @@ class ObjectEditorCharacters {
     World.characters["New Character"] = newCharacter;
     
     update();
-    ObjectEditor.update();
+    Editor.update();
   }
   
   static void addInventoryItem(MouseEvent e) {

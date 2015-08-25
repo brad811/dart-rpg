@@ -192,7 +192,7 @@ class Editor {
     container.style.width = "${ width }px";
     container.style.marginLeft = "-${ (width/2).round() }px";
     
-    MapEditor.fixImageSmoothing(canvas, Main.spritesImage.width * Sprite.spriteScale, Main.spritesImage.height * Sprite.spriteScale);
+    Main.fixImageSmoothing(canvas, Main.spritesImage.width * Sprite.spriteScale, Main.spritesImage.height * Sprite.spriteScale);
     
     // Draw pink background
     canvas.context2D.fillStyle = "#ff00ff";
