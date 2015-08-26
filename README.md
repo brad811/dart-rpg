@@ -23,7 +23,6 @@ A browser-based 2d rpg and game editor
 - undo/redo
 - interpolation when dragging fast
 - better tooltip (option to hide, more details)
-- sprite pickers for pictures and sprites
 - option to allow characters as party members
 - option to allow controlling other characters
 - in game save / load options
