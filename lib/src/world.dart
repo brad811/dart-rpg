@@ -100,7 +100,9 @@ class World {
       gameJson = querySelector("#export_json");
     }
     
-    if(gameJson != null && gameJson.value == "") {
+    if((gameJson == null || gameJson.value == "") && jsonString == "") {
+      obj = {};
+    } else if(gameJson != null && gameJson.value == "") {
       gameJson.value = jsonString;
       obj = JSON.decode(gameJson.value);
     } else {
@@ -115,7 +117,7 @@ class World {
       parseAttacks(obj["attacks"]);
       parseBattlerTypes(obj["battlerTypes"]);
       parseItems(obj["items"]);
-      parseMaps(obj["maps"], obj["characters"]);
+      parseMaps(obj["maps"]);
       parsePlayer(obj["player"]);
       parseGameEventChains(obj["gameEventChains"]);
       
@@ -126,6 +128,14 @@ class World {
   }
   
   void parseSettings(Map<String, String> settingsObject, Function callback) {
+    if(settingsObject == null) {
+      settingsObject = {
+        "spriteSheetLocation": "sprite_sheet.png",
+        "pixelsPerSprite": 16,
+        "spriteScale": 2
+      };
+    }
+    
     Main.spritesImageLocation = settingsObject["spriteSheetLocation"];
     Main.spritesImage = new ImageElement();
     
@@ -150,6 +160,11 @@ class World {
   
   void parseAttacks(Map<String, Map> attacksObject) {
     attacks = {};
+    
+    if(attacksObject == null) {
+      return;
+    }
+    
     for(String attackName in attacksObject.keys) {
       attacks[attackName] = new Attack(
           attackName,
@@ -161,6 +176,19 @@ class World {
   
   void parseBattlerTypes(Map<String, Map> battlerTypesObject) {
     battlerTypes = {};
+    
+    if(battlerTypesObject == null) {
+      String battlerTypeName = "new battler type";
+      
+      battlerTypes[battlerTypeName] = new BattlerType(
+          0, battlerTypeName,
+          1, 1, 1, 1, 1, 1,
+          {}, 1.0
+      );
+      
+      return;
+    }
+    
     for(String battlerTypeName in battlerTypesObject.keys) {
       battlerTypes[battlerTypeName] = new BattlerType(
           int.parse(battlerTypesObject[battlerTypeName]["spriteId"]),
@@ -188,8 +216,21 @@ class World {
     }
   }
   
-  void parseMaps(Map<String, Map> mapsObject, Map<String, Map> charactersObject) {
+  void parseMaps(Map<String, Map> mapsObject) {
     maps = {};
+    
+    if(mapsObject == null) {
+      mapsObject = {
+        "new map": {
+          "startMap": true,
+          "startX": 0,
+          "startY": 0,
+          "tiles": [[[null,null,null,null]]],
+          "battlers": []
+        }
+      };
+    }
+    
     curMap = mapsObject.keys.first;
     
     for(String mapName in mapsObject.keys) {
@@ -289,6 +330,11 @@ class World {
   
   void parseItems(Map<String, Map> itemsObject) {
     items = {};
+    
+    if(itemsObject == null) {
+      return;
+    }
+    
     for(String itemName in itemsObject.keys) {
       items[itemName] = new Item(
           int.parse(itemsObject[itemName]["pictureId"]),
@@ -303,6 +349,10 @@ class World {
   void parseCharacters(Map<String, Map> charactersObject) {
     // for character editor
     characters = {};
+    
+    if(charactersObject == null) {
+      return;
+    }
     
     for(String characterLabel in charactersObject.keys) {
       Character character = parseCharacter(charactersObject, characterLabel);
@@ -364,6 +414,21 @@ class World {
   }
   
   void parsePlayer(Map<String, Object> playerObject) {
+    if(playerObject == null) {
+      Main.player = new Player(startMap, startX, startY, 0);
+      
+      Main.player.battler = new Battler(
+        "Player",
+        battlerTypes[battlerTypes.keys.first],
+        2,
+        battlerTypes[battlerTypes.keys.first].getAttacksForLevel(2)
+      );
+      
+      Main.player.inventory = new Inventory([]);
+      
+      return;
+    }
+    
     Main.player = new Player(startMap, startX, startY, playerObject["spriteId"]);
     
     int level = playerObject["level"] as int;
@@ -390,6 +455,12 @@ class World {
   }
   
   void parseGameEventChains(Map<String, List<Map<String, String>>> gameEventChainsObject) {
+    World.gameEventChains = {};
+    
+    if(gameEventChainsObject == null) {
+      return;
+    }
+    
     gameEventChainsObject.forEach((String key, List<Map<String, String>> gameEvents) {
       List<GameEvent> gameEventChain = [];
       for(int i=0; i<gameEvents.length; i++) {
