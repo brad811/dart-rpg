@@ -123,7 +123,7 @@ class TextGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly) {
+  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
     String html = "";
     
     String readOnlyString = "";
@@ -134,10 +134,20 @@ class TextGameEvent implements GameEvent {
     html += "<table>";
     html += "  <tr><td>Picture Id</td><td>Text</td></tr>";
     html += "  <tr>";
-    html += "    <td><input type='text' class='number' id='${prefix}_picture_id' value='${pictureSpriteId}' ${readOnlyString} /></td>";
+    
+    html += "    <td>";
+    html += Editor.generateSpritePickerHtml("${prefix}_picture_id", pictureSpriteId, readOnly: readOnly);
+    html += "    </td>";
+    
     html += "    <td><textarea id='${prefix}_text' ${readOnlyString}>${text}</textarea>";
     html += "  </tr>";
     html += "</table>";
+    
+    if(callbacks != null) {
+      callbacks.add(() {
+        Editor.initSpritePicker("${prefix}_picture_id", pictureSpriteId, 3, 3, onInputChange, readOnly: readOnly);
+      });
+    }
     
     return html;
   }

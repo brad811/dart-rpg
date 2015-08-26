@@ -20,6 +20,7 @@ class Editor {
   static bool highlightSpecialTiles = true;
   
   static Map<String, StreamSubscription> listeners = new Map<String, StreamSubscription>();
+  static Map<String, StreamSubscription> popupSpritePickerCanvasListeners = new Map<String, StreamSubscription>();
   
   static Timer debounceTimer;
   static Duration debounceDelay = new Duration(milliseconds: 250);
@@ -166,16 +167,24 @@ class Editor {
     }
   }
   
-  static String generateSpritePickerHtml(String prefix, int value) {
+  static String generateSpritePickerHtml(String prefix, int value, { bool readOnly: false }) {
+    String readOnlyString = "";
+    if(readOnly) {
+      readOnlyString = "readonly";
+    }
+    
     String html =
       "<canvas id='${prefix}_canvas'></canvas><br />"+
-      "<input id='${prefix}' type='text' class='number' value='${ value }' />"+
-      "<button id='${prefix}_edit_button'>Edit</button>";
+      "<input id='${prefix}' type='text' class='number' value='${ value }'  ${readOnlyString} />";
+      
+    if(readOnlyString == "") {
+      html += "<button id='${prefix}_edit_button'>Edit</button>";
+    }
     
     return html;
   }
   
-  static void initSpritePicker(String prefix, int value, int sizeX, int sizeY, Function onInputChange) {
+  static void initSpritePicker(String prefix, int value, int sizeX, int sizeY, Function onInputChange, { bool readOnly: false }) {
     Main.fixImageSmoothing(
       querySelector("#${prefix}_canvas"),
       Sprite.scaledSpriteSize * sizeX,
@@ -184,12 +193,14 @@ class Editor {
     
     Editor.renderSprite("#${prefix}_canvas", value);
     
-    querySelector("#${prefix}_edit_button").onClick.listen((MouseEvent e) {
-      Editor.showPopupSpriteSelector(sizeX, sizeY, (int spriteId) {
-        (querySelector("#${prefix}") as TextInputElement).value = spriteId.toString();
-        onInputChange(null);
+    if(!readOnly) {
+      querySelector("#${prefix}_edit_button").onClick.listen((MouseEvent e) {
+        Editor.showPopupSpriteSelector(sizeX, sizeY, (int spriteId) {
+          (querySelector("#${prefix}") as TextInputElement).value = spriteId.toString();
+          onInputChange(null);
+        });
       });
-    });
+    }
   }
   
   static void renderSprite(String id, int spriteId) {
@@ -240,7 +251,11 @@ class Editor {
       }
     }
     
-    canvas.onClick.listen((MouseEvent e) {
+    if(popupSpritePickerCanvasListeners["onClick"] != null) {
+      popupSpritePickerCanvasListeners["onClick"].cancel();
+    }
+    
+    popupSpritePickerCanvasListeners["onClick"] = canvas.onClick.listen((MouseEvent e) {
       int x = (e.offset.x/Sprite.scaledSpriteSize).floor() - (sizeX/2).floor();
       int y = (e.offset.y/Sprite.scaledSpriteSize).floor() - (sizeY/2).floor();
       
@@ -254,7 +269,11 @@ class Editor {
       callback(y*Sprite.spriteSheetWidth + x);
     });
     
-    canvas.onMouseMove.listen((MouseEvent e) {
+    if(popupSpritePickerCanvasListeners["onMouseMove"] != null) {
+      popupSpritePickerCanvasListeners["onMouseMove"].cancel();
+    }
+    
+    popupSpritePickerCanvasListeners["onMouseMove"] = canvas.onMouseMove.listen((MouseEvent e) {
       // Draw pink background
       canvas.context2D.fillStyle = "#ff00ff";
       canvas.context2D.fillRect(0, 0, Main.spritesImage.width * Sprite.spriteScale, Main.spritesImage.height * Sprite.spriteScale);

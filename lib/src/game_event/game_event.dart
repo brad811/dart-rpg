@@ -65,7 +65,7 @@ class GameEvent implements InputHandler {
     }
   }
   
-  String buildHtml(String prefix, bool readOnly) => "";
+  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) => "";
   
   Map<String, Object> buildJson() => {};
 }

@@ -63,7 +63,7 @@ class StatChangeGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly) { /* TODO */ return ""; }
+  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) { /* TODO */ return ""; }
   
   GameEvent buildGameEvent(String prefix) { /* TODO */ return null; }
   

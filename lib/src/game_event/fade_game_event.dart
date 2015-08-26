@@ -72,7 +72,7 @@ class FadeGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly) {
+  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
     String html = "";
     
     String disabledString = "";

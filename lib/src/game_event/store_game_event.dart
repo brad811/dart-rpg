@@ -102,7 +102,7 @@ class StoreGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly) {
+  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
     return "";
   }
   

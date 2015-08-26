@@ -172,6 +172,8 @@ class ObjectEditorGameEvents {
   static void buildGameEventHtml() {
     String gameEventHtml = "";
     
+    List<Function> callbacks = [];
+    
     for(int i=0; i<World.gameEventChains.keys.length; i++) {
       String visibleString = "class='hidden'";
       if(selected == i) {
@@ -183,13 +185,21 @@ class ObjectEditorGameEvents {
       gameEventHtml += "<table id='game_event_chain_${i}_game_event_table' ${visibleString}>";
       gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
       for(int j=0; j<gameEventChain.length; j++) {
-        gameEventHtml += ObjectEditorGameEvents.buildGameEventTableRowHtml(gameEventChain[j], "game_event_chain_${i}_game_event_${j}", j);
+        gameEventHtml += ObjectEditorGameEvents.buildGameEventTableRowHtml(
+          gameEventChain[j], "game_event_chain_${i}_game_event_${j}", j, callbacks: callbacks
+        );
       }
       
       gameEventHtml += "</table>";
     }
     
     querySelector("#game_event_chain_game_events_container").setInnerHtml(gameEventHtml);
+    
+    if(callbacks != null) {
+      for(Function callback in callbacks) {
+        callback();
+      }
+    }
   }
   
   static void onInputChange(Event e) {
@@ -242,7 +252,7 @@ class ObjectEditorGameEvents {
     return GameEvent.buildGameEvent(gameEventType, prefix);
   }
   
-  static String buildGameEventTableRowHtml(GameEvent gameEvent, String prefix, int num, {bool readOnly: false}) {
+  static String buildGameEventTableRowHtml(GameEvent gameEvent, String prefix, int num, {bool readOnly: false, List<Function> callbacks}) {
     String gameEventHtml = "";
     gameEventHtml += "<tr>";
     gameEventHtml += "  <td>${num}</td>";
@@ -261,7 +271,7 @@ class ObjectEditorGameEvents {
       
       if(GameEvent.gameEventTypes[k] == gameEvent.getType()) {
         selectedText = "selected='selected'";
-        paramsHtml = gameEvent.buildHtml(prefix, readOnly);
+        paramsHtml = gameEvent.buildHtml(prefix, readOnly, callbacks, onInputChange);
       }
       
       gameEventHtml += "    <option ${selectedText}>${GameEvent.gameEventTypes[k]}</option>";
