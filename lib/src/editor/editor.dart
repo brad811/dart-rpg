@@ -191,7 +191,7 @@ class Editor {
       Sprite.scaledSpriteSize * sizeY
     );
     
-    Editor.renderSprite("#${prefix}_canvas", value);
+    Editor.renderSprite("#${prefix}_canvas", value, sizeX, sizeY);
     
     if(!readOnly) {
       querySelector("#${prefix}_edit_button").onClick.listen((MouseEvent e) {
@@ -203,15 +203,15 @@ class Editor {
     }
   }
   
-  static void renderSprite(String id, int spriteId) {
+  static void renderSprite(String id, int spriteId, int sizeX, int sizeY) {
     CanvasElement canvas = querySelector(id);
     CanvasRenderingContext2D ctx = canvas.context2D;
     
     ctx.fillStyle = "#ff00ff";
-    ctx.fillRect(0, 0, Sprite.scaledSpriteSize * 3, Sprite.scaledSpriteSize * 3);
+    ctx.fillRect(0, 0, Sprite.scaledSpriteSize * sizeX, Sprite.scaledSpriteSize * sizeY);
     
-    for(int i=0; i<3; i++) {
-      for(int j=0; j<3; j++) {
+    for(int i=0; i<sizeX; i++) {
+      for(int j=0; j<sizeY; j++) {
         MapEditor.renderStaticSprite(ctx, spriteId + (i) + (j*Sprite.spriteSheetWidth), i, j);
       }
     }
