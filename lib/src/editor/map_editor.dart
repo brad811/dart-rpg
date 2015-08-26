@@ -335,11 +335,16 @@ class MapEditor {
       return;
     }
     
-    mapTiles[y][x][layer] = new Tile(
-      solid,
-      new Sprite.int(selectedTile, x, y),
-      layered
-    );
+    // TODO: fill with attributes like solid and layered and encounter?
+    if(mapTiles[y][x][layer] == null) {
+      mapTiles[y][x][layer] = new Tile(
+        solid,
+        new Sprite.int(selectedTile, x, y),
+        layered
+      );
+    } else {
+      mapTiles[y][x][layer].sprite.id = selectedTile;
+    }
     
     // north
     if(y > 0) {
