@@ -220,6 +220,12 @@ class MapEditor {
       int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
       MapEditor.selectSprite(y*Sprite.spriteSheetWidth + x);
       previousSelectedTile = y*Sprite.spriteSheetWidth + x;
+      
+      if(querySelector("#tool_selector_eraser").classes.contains("selected")) {
+        querySelector("#tool_selector_brush").classes.add("selected");
+        querySelector("#tool_selector_eraser").classes.remove("selected");
+        querySelector("#tool_selector_fill").classes.remove("selected");
+      }
     });
   }
   
