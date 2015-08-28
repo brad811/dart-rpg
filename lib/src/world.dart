@@ -132,7 +132,8 @@ class World {
       settingsObject = {
         "spriteSheetLocation": "sprite_sheet.png",
         "pixelsPerSprite": 16,
-        "spriteScale": 2
+        "spriteScale": 2,
+        "framesPerSecond": 40
       };
     }
     
@@ -156,6 +157,9 @@ class World {
     
     Main.spritesImage.crossOrigin = "anonymous";
     Main.spritesImage.src = Main.spritesImageLocation;
+    
+    Main.framesPerSecond = (settingsObject["framesPerSecond"] != null) ? settingsObject["framesPerSecond"] as int : 40;
+    Main.timeDelay = (1000 / Main.framesPerSecond).round();
   }
   
   void parseAttacks(Map<String, Map> attacksObject) {

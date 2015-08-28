@@ -59,6 +59,11 @@ class Settings {
     html += "<td>&nbsp;<input id='sprite_sheet_scale' type='text' class='number' value='${ Sprite.spriteScale }' /></td>";
     html += "</tr>";
     
+    html += "<tr>";
+    html += "<td>Frames per second:&nbsp;</td>";
+    html += "<td>&nbsp;<input id='settings_frames_per_second' type='text' class='number' value='${ Main.framesPerSecond }' /></td>";
+    html += "</tr>";
+    
     html += "</table>";
     
     querySelector("#settings_main_tab").setInnerHtml(html);
@@ -153,6 +158,10 @@ class Settings {
     
     Sprite.scaledSpriteSize = Sprite.pixelsPerSprite * Sprite.spriteScale;
     
+    print("Before save: ${ Main.framesPerSecond }");
+    Main.framesPerSecond = Editor.getTextInputIntValue("#settings_frames_per_second", 40);
+    print("After save: ${ Main.framesPerSecond }");
+    
     Main.spritesImage = new ImageElement(src:Main.spritesImageLocation);
     Main.spritesImage.onLoad.listen((e) {
       Sprite.spriteSheetWidth = (Main.spritesImage.width / Sprite.pixelsPerSprite).round();
@@ -212,6 +221,9 @@ class Settings {
     json["spriteSheetLocation"] = Main.spritesImageLocation;
     json["pixelsPerSprite"] = Sprite.pixelsPerSprite;
     json["spriteScale"] = Sprite.spriteScale;
+    
+    print("Export: ${ Main.framesPerSecond }");
+    json["framesPerSecond"] = Main.framesPerSecond;
     
     exportJson["settings"] = json;
   }

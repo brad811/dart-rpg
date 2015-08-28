@@ -29,7 +29,8 @@ class Main {
   static InputHandler focusObject;
   static List<List<Tile>> renderList;
   
-  static final int timeDelay = 33;
+  static int framesPerSecond = 40;
+  static int timeDelay = (1000 / framesPerSecond).round();
   static double timeScale = 1.0;
   static bool inBattle = false;
   static Battle battle;
