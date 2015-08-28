@@ -123,7 +123,7 @@ class Character implements InteractableInterface {
       
       // handle entering null tiles
       if(tile != null) {
-        tile.enter();
+        tile.enter(this);
       }
     }
   }

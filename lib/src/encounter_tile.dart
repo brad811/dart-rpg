@@ -4,6 +4,7 @@ import 'dart:math' as math;
 
 import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/battler.dart';
+import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
@@ -21,7 +22,12 @@ class EncounterTile extends Tile {
   
   EncounterTile(Sprite sprite, [bool layered]) : super(false, sprite, layered);
   
-  void enter() {
+  void enter(Character character) {
+    // only the player can trigger encounters
+    if(character != Main.player) {
+      return;
+    }
+    
     double chance = rand.nextDouble();
     if(chance < 0.15) {
       chance = rand.nextDouble();

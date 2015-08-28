@@ -21,7 +21,7 @@ class Tile {
     }
   }
   
-  void enter() {}
+  void enter(Character character) {}
   
   void render() {
     sprite.render();

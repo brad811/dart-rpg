@@ -1,5 +1,6 @@
 library dart_rpg.warp_tile;
 
+import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
@@ -11,7 +12,7 @@ class WarpTile extends Tile {
   
   WarpTile(bool solid, Sprite sprite, this.destMap, this.destX, this.destY) : super(solid, sprite);
   
-  void enter() {
+  void enter(Character character) {
     Main.player.inputEnabled = false;
     Gui.fadeDarkAction(() {
       Main.world.curMap = destMap;

@@ -1,5 +1,6 @@
 library dart_rpg.event_tile;
 
+import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
@@ -14,7 +15,7 @@ class EventTile extends Tile {
   
   EventTile(this.gameEventChain, this.runOnce, Sprite sprite, [bool layered]) : super(false, sprite, layered);
   
-  void enter() {
+  void enter(Character character) {
     if((runOnce && !hasRun) || !runOnce) {
       List<GameEvent> gameEvents = World.gameEventChains[gameEventChain];
       
