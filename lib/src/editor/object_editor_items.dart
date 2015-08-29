@@ -126,6 +126,8 @@ class ObjectEditorItems {
   static void buildGameEventHtml() {
     String gameEventHtml = "";
     
+    List<Function> callbacks = [];
+    
     for(int i=0; i<World.items.keys.length; i++) {
       String visibleString = "class='hidden'";
       if(selected == i) {
@@ -162,7 +164,7 @@ class ObjectEditorItems {
               World.gameEventChains[item.gameEventChain][j],
               "item_${i}_game_event_${j}",
               j,
-              readOnly: true
+              readOnly: true, callbacks: callbacks
             );
         }
       }
@@ -172,6 +174,12 @@ class ObjectEditorItems {
     }
     
     querySelector("#item_game_event_container").setInnerHtml(gameEventHtml);
+    
+    if(callbacks != null) {
+      for(Function callback in callbacks) {
+        callback();
+      }
+    }
   }
   
   static void onInputChange(Event e) {
