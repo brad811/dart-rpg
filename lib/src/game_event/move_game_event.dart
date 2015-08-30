@@ -1,7 +1,7 @@
 library dart_rpg.move_game_event;
 
 import 'package:dart_rpg/src/character.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -19,7 +19,7 @@ class MoveGameEvent implements GameEvent {
   MoveGameEvent(this.direction, this.distance, [this.callback]);
   
   @override
-  void trigger(InteractableInterface interactable, [Function function]) {
+  void trigger(Interactable interactable, [Function function]) {
     character = interactable as Character;
     
     int traveled = 0;

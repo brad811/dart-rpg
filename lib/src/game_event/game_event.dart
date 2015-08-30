@@ -1,7 +1,7 @@
 library dart_rpg.game_event;
 
 import 'package:dart_rpg/src/input_handler.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/interactable.dart';
 
 import 'package:dart_rpg/src/game_event/battle_game_event.dart';
 import 'package:dart_rpg/src/game_event/chain_game_event.dart';
@@ -23,7 +23,7 @@ class GameEvent implements InputHandler {
   
   GameEvent([this.function, this.callback]);
   
-  void trigger(InteractableInterface interactable) {
+  void trigger(Interactable interactable) {
     if(function != null) {
       function(callback);
     } else {

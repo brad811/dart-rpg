@@ -412,7 +412,7 @@ class World {
     }
     
     // game events
-    character.gameEventChain = charactersObject[characterLabel]["gameEventChain"];
+    character.setGameEventChain(charactersObject[characterLabel]["gameEventChain"], 0);
     
     return character;
   }

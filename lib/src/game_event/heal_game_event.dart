@@ -1,7 +1,7 @@
 library dart_rpg.heal_game_event;
 
 import 'package:dart_rpg/src/character.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
@@ -19,7 +19,7 @@ class HealGameEvent implements GameEvent {
   HealGameEvent(this.character, this.amount, [this.callback]);
   
   @override
-  void trigger(InteractableInterface interactable, [Function function]) {
+  void trigger(Interactable interactable, [Function function]) {
     character.battler.curHealth += amount;
     
     if(character.battler.curHealth > character.battler.startingHealth)

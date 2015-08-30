@@ -1,7 +1,7 @@
 library dart_rpg.fade_game_event;
 
 import 'package:dart_rpg/src/gui.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -31,7 +31,7 @@ class FadeGameEvent implements GameEvent {
   FadeGameEvent(this.fadeType, [this.callback]);
   
   @override
-  void trigger(InteractableInterface interactable, [Function function]) {
+  void trigger(Interactable interactable, [Function function]) {
     Main.player.inputEnabled = false;
     Main.timeScale = 0.0;
     

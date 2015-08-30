@@ -1,6 +1,5 @@
 library dart_rpg.interactable;
 
-import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -8,7 +7,10 @@ import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class Interactable {
-  static GameEvent chainGameEvents(InteractableInterface interactable, List<GameEvent> gameEvents) {
+  String _gameEventChain;
+  int _gameEventChainOffset;
+  
+  static GameEvent chainGameEvents(Interactable interactable, List<GameEvent> gameEvents) {
     if(gameEvents == null || gameEvents.length == 0)
       return null;
     
@@ -32,5 +34,18 @@ class Interactable {
      };
      
      return gameEvents[0];
+  }
+  
+  void setGameEventChain(String gameEventChain, int gameEventChainOffset) {
+    _gameEventChain = gameEventChain;
+    _gameEventChainOffset = gameEventChainOffset;
+  }
+  
+  String getGameEventChain() {
+    return _gameEventChain;
+  }
+  
+  int getGameEventChainOffset() {
+    return _gameEventChainOffset;
   }
 }

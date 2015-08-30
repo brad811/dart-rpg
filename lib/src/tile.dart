@@ -1,11 +1,12 @@
 library dart_rpg.tile;
 
 import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/world.dart';
 
-class Tile {
+class Tile extends Interactable {
   final bool solid;
   final Sprite sprite;
   

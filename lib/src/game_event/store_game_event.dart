@@ -5,7 +5,7 @@ import 'dart:math' as math;
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 
@@ -25,7 +25,7 @@ class StoreGameEvent implements GameEvent {
   StoreGameEvent([this.callback]);
   
   @override
-  void trigger(InteractableInterface interactable, [Function function]) {
+  void trigger(Interactable interactable, [Function function]) {
     character = interactable as Character;
     
     GuiItemsMenu.trigger(character, purchaseItem, true, character);

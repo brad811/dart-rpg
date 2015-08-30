@@ -176,7 +176,7 @@ class ObjectEditorPlayer {
     
     Main.player.inventory.money = Editor.getTextInputIntValue("#player_money", 0);
     
-    Main.player.gameEventChain = Editor.getSelectInputStringValue("#player_game_event_chain");
+    Main.player.setGameEventChain(Editor.getSelectInputStringValue("#player_game_event_chain"), 0);
     
     Editor.updateAndRetainValue(e);
   }

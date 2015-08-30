@@ -1,7 +1,6 @@
 library dart_rpg.chain_game_event;
 
 import 'package:dart_rpg/src/interactable.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
@@ -18,11 +17,11 @@ class ChainGameEvent implements GameEvent {
   
   ChainGameEvent(this.gameEventChain, this.makeDefault, [this.callback]);
   
-  void trigger(InteractableInterface interactable, [Function function]) {
+  void trigger(Interactable interactable, [Function function]) {
     List<GameEvent> gameEvents = World.gameEventChains[gameEventChain];
     if(gameEvents != null && gameEvents.length > 0) {
       if(makeDefault) {
-        interactable.gameEventChain = gameEventChain;
+        interactable.setGameEventChain(gameEventChain, 0);
       }
       
       Main.focusObject = null;

@@ -199,7 +199,7 @@ canvas {
 .tab {
   background-color: #eee;
   height: 100%;
-  width: 516px;
+  width: 616px;
   overflow-y: scroll;
   padding: 8px;
   float: left;
@@ -269,7 +269,7 @@ textarea {
 
 #export_json, #export_json_object_editor {
   height: 60px;
-  width: 526px;
+  width: 626px;
 }
 
 /*
@@ -279,7 +279,7 @@ textarea {
 #object_editor_right {
   padding: 0 0 0 26px !important;
   margin: 10px;
-  width: 532px;
+  width: 632px;
 }
 
 #object_editor_right table, #object_editor_right table td {

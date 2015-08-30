@@ -2,7 +2,7 @@ library dart_rpg.delay_game_event;
 
 import 'dart:async';
 
-import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -17,7 +17,7 @@ class DelayGameEvent implements GameEvent {
   
   DelayGameEvent(this.milliseconds, [this.callback]);
   
-  void trigger(InteractableInterface interactable, [Function function]) {
+  void trigger(Interactable interactable, [Function function]) {
     Main.player.inputEnabled = false;
     Future future = new Future.delayed(new Duration(milliseconds: milliseconds), () {});
     

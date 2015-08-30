@@ -3,7 +3,7 @@ library dart_rpg.text_game_event;
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 
@@ -19,7 +19,7 @@ class TextGameEvent implements GameEvent {
   int pictureSpriteId;
   String text;
   ChoiceGameEvent choiceGameEvent;
-  InteractableInterface interactable;
+  Interactable interactable;
   
   static List<String>
       originalTextLines = [],
@@ -42,7 +42,7 @@ class TextGameEvent implements GameEvent {
   }
   
   @override
-  void trigger(InteractableInterface interactable, [Function function]) {
+  void trigger(Interactable interactable, [Function function]) {
     this.interactable = interactable;
     textLines = Gui.splitText(text, conversationWindowWidth);
     

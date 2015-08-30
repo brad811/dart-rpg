@@ -158,9 +158,7 @@ class Settings {
     
     Sprite.scaledSpriteSize = Sprite.pixelsPerSprite * Sprite.spriteScale;
     
-    print("Before save: ${ Main.framesPerSecond }");
     Main.framesPerSecond = Editor.getTextInputIntValue("#settings_frames_per_second", 40);
-    print("After save: ${ Main.framesPerSecond }");
     
     Main.spritesImage = new ImageElement(src:Main.spritesImageLocation);
     Main.spritesImage.onLoad.listen((e) {
@@ -222,7 +220,6 @@ class Settings {
     json["pixelsPerSprite"] = Sprite.pixelsPerSprite;
     json["spriteScale"] = Sprite.spriteScale;
     
-    print("Export: ${ Main.framesPerSecond }");
     json["framesPerSecond"] = Main.framesPerSecond;
     
     exportJson["settings"] = json;

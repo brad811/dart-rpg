@@ -20,8 +20,6 @@ class ObjectEditorCharacters {
   
   static int selected;
   
-  // TODO: update when adding new things
-  
   static void setUp() {
     Editor.setUpTabs(advancedTabs);
     Editor.attachButtonListener("#add_character_button", addNewCharacter);
@@ -145,12 +143,10 @@ class ObjectEditorCharacters {
     String charactersHtml = "<table class='editor_table'>"+
       "  <tr>"+
       "    <td>Num</td>"+
-      "    <td>Label</td>"+
-      "    <td>Name</td>"+
+      "    <td></td>"+
       "    <td>Sprite Id</td>"+
       "    <td>Picture Id</td>"+
-      "    <td>Size X</td>"+
-      "    <td>Size Y</td>"+
+      "    <td>Size</td>"+
       "    <td>Map</td>"+
       "    <td></td>"+
       "  </tr>";
@@ -161,8 +157,10 @@ class ObjectEditorCharacters {
       charactersHtml +=
         "<tr id='character_row_${i}'>"+
         "  <td>${i}</td>"+
-        "  <td><input id='character_${i}_label' type='text' value='${ key }' /></td>"+
-        "  <td><input id='character_${i}_name' type='text' value='${ World.characters[key].name }' /></td>"+
+        "  <td>"+
+        "    Label<br /><input id='character_${i}_label' type='text' value='${ key }' /><br />"+
+        "    Name<br /><input id='character_${i}_name' type='text' value='${ World.characters[key].name }' />"+
+        "  </td>"+
         
         "  <td>"+
         Editor.generateSpritePickerHtml("character_${i}_sprite_id", World.characters[key].spriteId)+
@@ -172,8 +170,10 @@ class ObjectEditorCharacters {
         Editor.generateSpritePickerHtml("character_${i}_picture_id", World.characters[key].pictureId)+
         "  </td>"+
         
-        "  <td><input id='character_${i}_size_x' type='text' class='number' value='${ World.characters[key].sizeX }' /></td>"+
-        "  <td><input id='character_${i}_size_y' type='text' class='number' value='${ World.characters[key].sizeY }' /></td>";
+        "  <td>"+
+        "    X: <input id='character_${i}_size_x' type='text' class='number' value='${ World.characters[key].sizeX }' /><br />"+
+        "    Y: <input id='character_${i}_size_y' type='text' class='number' value='${ World.characters[key].sizeY }' />"+
+        "  </td>";
         
         // map selector
         charactersHtml += "<td><select id='character_${i}_map'>";
@@ -278,7 +278,7 @@ class ObjectEditorCharacters {
         
         gameEventHtml += "  <option value='${name}' ";
         
-        if(character.gameEventChain == name) {
+        if(character.getGameEventChain() == name) {
           gameEventHtml += "selected='selected'";
         }
           
@@ -294,12 +294,12 @@ class ObjectEditorCharacters {
       gameEventHtml += "<table id='character_${i}_game_event_table'>";
       gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
       
-      if(character.gameEventChain != null && character.gameEventChain != ""
-          && World.gameEventChains[character.gameEventChain] != null) {
-        for(int j=0; j<World.gameEventChains[character.gameEventChain].length; j++) {
+      if(character.getGameEventChain() != null && character.getGameEventChain() != ""
+          && World.gameEventChains[character.getGameEventChain()] != null) {
+        for(int j=0; j<World.gameEventChains[character.getGameEventChain()].length; j++) {
           gameEventHtml +=
             ObjectEditorGameEvents.buildGameEventTableRowHtml(
-              World.gameEventChains[character.gameEventChain][j],
+              World.gameEventChains[character.getGameEventChain()][j],
               "character_${i}_game_event_${j}",
               j,
               readOnly: true, callbacks: callbacks
@@ -418,7 +418,7 @@ class ObjectEditorCharacters {
         character.inventory.addItem(World.items[itemName], itemQuantity);
       }
       
-      character.gameEventChain = Editor.getSelectInputStringValue("#character_${i}_game_event_chain");
+      character.setGameEventChain(Editor.getSelectInputStringValue("#character_${i}_game_event_chain"), 0);
     }
     
     Editor.updateAndRetainValue(e);
@@ -455,7 +455,7 @@ class ObjectEditorCharacters {
       characterJson["inventory"] = inventoryJson;
       
       // game event chain
-      characterJson["gameEventChain"] = character.gameEventChain;
+      characterJson["gameEventChain"] = character.getGameEventChain();
       
       // battle
       characterJson["battlerType"] = character.battler.battlerType.name;

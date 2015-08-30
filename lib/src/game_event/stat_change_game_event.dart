@@ -1,7 +1,7 @@
 library dart_rpg.stat_change_game_event;
 
 import 'package:dart_rpg/src/battler.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/interactable.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
@@ -26,7 +26,7 @@ class StatChangeGameEvent implements GameEvent {
     );
   
   @override
-  void trigger(InteractableInterface interactable, [Function function]) {
+  void trigger(Interactable interactable, [Function function]) {
     battler.curPhysicalAttack += physicalAttachChange;
     battler.curPhysicalDefense += physicalDefenseChange;
     battler.curMagicalAttack += magicalAttackChange;

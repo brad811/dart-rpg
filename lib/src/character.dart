@@ -5,7 +5,6 @@ import 'dart:math' as math;
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/interactable.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/player.dart';
@@ -13,7 +12,7 @@ import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
-class Character implements InteractableInterface {
+class Character extends Interactable {
   static final int
     DOWN = 0,
     RIGHT = 1,
@@ -47,7 +46,6 @@ class Character implements InteractableInterface {
     movementAmount;
   
   bool solid;
-  String gameEventChain;
   Function motionCallback;
   
   Battler battler;
@@ -281,7 +279,7 @@ class Character implements InteractableInterface {
   }
   
   void interact() {
-    List<GameEvent> gameEvents = World.gameEventChains[gameEventChain];
+    List<GameEvent> gameEvents = World.gameEventChains[getGameEventChain()].sublist(getGameEventChainOffset());
     if(gameEvents != null && gameEvents.length > 0) {
       Main.focusObject = null;
       Interactable.chainGameEvents(this, gameEvents).trigger(this);

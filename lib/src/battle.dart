@@ -8,7 +8,7 @@ import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
@@ -21,7 +21,7 @@ import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
-class Battle implements InteractableInterface {
+class Battle extends Interactable {
   String gameEventChain;
   List<List<Tile>> tiles = [];
   

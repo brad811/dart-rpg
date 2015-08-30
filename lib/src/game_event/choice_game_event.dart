@@ -8,7 +8,6 @@ import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
@@ -19,7 +18,7 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
   final String name = "Choice";
   Function function, callback;
   
-  InteractableInterface interactable;
+  Interactable interactable;
   final Map<String, String> choiceGameEventChains;
   GameEvent cancelEvent;
   GameEvent onChangeEvent;
@@ -47,7 +46,7 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
   }
   
   factory ChoiceGameEvent.custom(
-      InteractableInterface interactable,
+      Interactable interactable,
       Map<String, String> choiceGameEventChains,
       int posX, int posY, int sizeX, int sizeY, {GameEvent cancelEvent, GameEvent onChangeEvent}) {
     ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(
@@ -66,7 +65,7 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
     return choiceGameEvent;
   }
   
-  void trigger(InteractableInterface interactable, [Function function]) {
+  void trigger(Interactable interactable, [Function function]) {
     this.interactable = interactable;
     Main.focusObject = this;
     

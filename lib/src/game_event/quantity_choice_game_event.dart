@@ -5,7 +5,7 @@ import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input_handler.dart';
-import 'package:dart_rpg/src/interactable_interface.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
@@ -32,7 +32,7 @@ class QuantityChoiceGameEvent extends ChoiceGameEvent implements InputHandler {
   }
   
   @override
-  void trigger(InteractableInterface interactable, [Function function]) {
+  void trigger(Interactable interactable, [Function function]) {
     Main.focusObject = this;
     
     window = () {
