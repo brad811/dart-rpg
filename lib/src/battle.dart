@@ -26,16 +26,17 @@ class Battle extends Interactable {
   List<List<Tile>> tiles = [];
   
   ChoiceGameEvent main, fight;
-  GameEvent exit;
+  GameEvent run, exit;
   Battler friendly, enemy;
   Sprite friendlySprite, enemySprite;
+  bool canRun;
   
   GameEvent attackEvent;
   GameEvent postBattleCallback;
   
   math.Random rand = new math.Random();
   
-  Battle(this.friendly, this.enemy, [this.postBattleCallback]) {
+  Battle(this.friendly, this.enemy, [this.postBattleCallback, this.canRun = true]) {
     friendlySprite = new Sprite.int(friendly.battlerType.spriteId, 3, 7);
     enemySprite = new Sprite.int(enemy.battlerType.spriteId, 14, 1);
     
@@ -55,6 +56,16 @@ class Battle extends Interactable {
         this.postBattleCallback.trigger(this);
       } else {
         Main.focusObject = Main.player;
+      }
+    });
+    
+    run = new GameEvent((callback) {
+      if(this.canRun) {
+        Gui.clear();
+        new TextGameEvent(240, "You were able to escape!", () { exit.trigger(this); }).trigger(this);
+      } else {
+        Gui.clear();
+        new TextGameEvent(240, "You cannot run away from this battle!", () { main.trigger(this); }).trigger(this);
       }
     });
     
@@ -107,7 +118,6 @@ class Battle extends Interactable {
       GuiItemsMenu.trigger(Main.player, itemsConfirm);
     });
     
-    // TODO: make it so that some battles cannot be run from
     // TODO: make running possibly fail
     main = new ChoiceGameEvent.custom(
       this,
@@ -115,7 +125,7 @@ class Battle extends Interactable {
         "Fight": [fight],
         "Powers": [fight],
         "Items": [items],
-        "Run": [exit]
+        "Run": [run]
       }),
       15, 11, 5, 5
     );
