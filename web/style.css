@@ -199,10 +199,14 @@ canvas {
 .tab {
   background-color: #eee;
   height: 100%;
-  width: 616px;
+  width: 516px;
   overflow-y: scroll;
   padding: 8px;
   float: left;
+}
+
+#object_editor_inner_container .tab {
+	width: 616px;
 }
 
 .tab table {
@@ -267,7 +271,12 @@ textarea {
   width: 100px;
 }
 
-#export_json, #export_json_object_editor {
+#export_json {
+  height: 60px;
+  width: 526px;
+}
+
+#export_json_object_editor {
   height: 60px;
   width: 626px;
 }
