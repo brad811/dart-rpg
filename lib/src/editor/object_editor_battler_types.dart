@@ -4,8 +4,7 @@ import 'dart:html';
 
 import 'package:dart_rpg/src/attack.dart';
 import 'package:dart_rpg/src/battler_type.dart';
-import 'package:dart_rpg/src/main.dart';
-import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/game_type.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
@@ -30,7 +29,7 @@ class ObjectEditorBattlerTypes {
   
   static void addNewBattlerType(MouseEvent e) {
     World.battlerTypes["New Battler Type"] = new BattlerType(
-        0, "New Battler",
+        0, "New Battler", World.types.keys.first,
         0, 0, 0, 0, 0, 0,
         {}, 1.0
       );
@@ -108,10 +107,10 @@ class ObjectEditorBattlerTypes {
     }
     
     List<String> attrs = [
-      "sprite_id", "name",
+      "sprite_id", "name", "type", "rarity",
+      
       "health", "physical_attack", "magical_attack",
-      "physical_defense", "magical_defense", "speed",
-      "rarity"
+      "physical_defense", "magical_defense", "speed"
     ];
     
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
@@ -163,6 +162,7 @@ class ObjectEditorBattlerTypes {
       "    <td>Num</td>"+
       "    <td>Sprite Id</td>"+
       "    <td>Name</td>"+
+      "    <td>Type</td>"+
       "    <td>Rarity</td>"+
       "  </tr>";
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
@@ -176,7 +176,23 @@ class ObjectEditorBattlerTypes {
         Editor.generateSpritePickerHtml("battler_type_${i}_sprite_id", World.battlerTypes[key].spriteId)+
         "  </td>"+
         
-        "  <td><input id='battler_type_${i}_name' type='text' value='${ World.battlerTypes[key].name }' /></td>"+
+        "  <td><input id='battler_type_${i}_name' type='text' value='${ World.battlerTypes[key].name }' /></td>";
+      
+      battlerTypesHtml += "<td>";
+      
+      battlerTypesHtml += "<select id='battler_type_${i}_type'>";
+      for(GameType gameType in World.types.values) {
+        battlerTypesHtml += "<option ";
+        if(World.battlerTypes[key].type == gameType.name) {
+          battlerTypesHtml += " selected";
+        }
+        battlerTypesHtml += ">${ gameType.name }</option>";
+      }
+      battlerTypesHtml += "</select>";
+      
+      battlerTypesHtml += "</td>";
+      
+      battlerTypesHtml +=
         "  <td><input id='battler_type_${i}_rarity' type='text' class='number decimal' value='${ World.battlerTypes[key].rarity }' /></td>"+
         "  <td><button id='delete_battler_type_${i}'>Delete battler</button></td>" +
         "</tr>";
@@ -321,6 +337,7 @@ class ObjectEditorBattlerTypes {
         World.battlerTypes[name] = new BattlerType(
           Editor.getTextInputIntValue('#battler_type_${i}_sprite_id', 1),
           name,
+          Editor.getSelectInputStringValue("#battler_type_${i}_type"),
           Editor.getTextInputIntValue('#battler_type_${i}_health', 1),
           Editor.getTextInputIntValue('#battler_type_${i}_physical_attack', 1),
           Editor.getTextInputIntValue('#battler_type_${i}_magical_attack', 1),

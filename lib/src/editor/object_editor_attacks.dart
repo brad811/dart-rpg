@@ -3,6 +3,7 @@ library dart_rpg.object_editor_attacks;
 import 'dart:html';
 
 import 'package:dart_rpg/src/attack.dart';
+import 'package:dart_rpg/src/game_type.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
@@ -19,7 +20,7 @@ class ObjectEditorAttacks {
   }
   
   static void addNewAttack(MouseEvent e) {
-    World.attacks["New Attack"] = new Attack("New Attack", Attack.CATEGORY_PHYSICAL, 0);
+    World.attacks["New Attack"] = new Attack("New Attack", Attack.CATEGORY_PHYSICAL, World.types.keys.first, 0);
     update();
     ObjectEditor.update();
   }
@@ -27,7 +28,7 @@ class ObjectEditorAttacks {
   static void update() {
     String attacksHtml = "<table class='editor_table'>"+
       "  <tr>"+
-      "    <td>Num</td><td>Name</td><td>Category</td><td>Power</td>"+
+      "    <td>Num</td><td>Name</td><td>Category</td><td>Type</td><td>Power</td>"+
       "  </tr>";
     for(int i=0; i<World.attacks.keys.length; i++) {
       String key = World.attacks.keys.elementAt(i);
@@ -36,20 +37,33 @@ class ObjectEditorAttacks {
         "<tr>"+
         "  <td>${i}</td>"+
         "  <td><input id='attack_${i}_name' type='text' value='${ World.attacks[key].name }' /></td>"+
-        "  <td>"+
-        "    <select id='attack_${i}_category'>";
+        "  <td>";
       
+      attacksHtml += "<select id='attack_${i}_category'>";
       String physical_selected = "", magical_selected = "";
       if(World.attacks[key].category == Attack.CATEGORY_PHYSICAL) {
         physical_selected = "selected";
       } else if(World.attacks[key].category == Attack.CATEGORY_MAGICAL) {
         magical_selected = "selected";
       }
-      attacksHtml += "<option value='${Attack.CATEGORY_PHYSICAL}' ${physical_selected}>Physical</option>";
-      attacksHtml += "<option value='${Attack.CATEGORY_MAGICAL}' ${magical_selected}>Magical</option>";
+      attacksHtml += "  <option value='${Attack.CATEGORY_PHYSICAL}' ${physical_selected}>Physical</option>";
+      attacksHtml += "  <option value='${Attack.CATEGORY_MAGICAL}' ${magical_selected}>Magical</option>";
+      attacksHtml += "</select>";
+      
+      attacksHtml += "</td>";
+      attacksHtml += "<td>";
+      
+      attacksHtml += "<select id='attack_${i}_type'>";
+      for(GameType gameType in World.types.values) {
+        attacksHtml += "<option ";
+        if(World.attacks[key].type == gameType.name) {
+          attacksHtml += " selected";
+        }
+        attacksHtml += ">${ gameType.name }</option>";
+      }
+      attacksHtml += "</select>";
       
       attacksHtml +=
-        "    </select>"+
         "  </td>"+
         "  <td><input class='number' id='attack_${i}_power' type='text' value='${ World.attacks[key].power }' /></td>"+
         "  <td><button id='delete_attack_${i}'>Delete</button></td>"+
@@ -60,7 +74,7 @@ class ObjectEditorAttacks {
     
     Editor.setMapDeleteButtonListeners(World.attacks, "attack");
     
-    List<String> attrs = ["name", "category", "power"];
+    List<String> attrs = ["name", "category", "type", "power"];
     for(int i=0; i<World.attacks.keys.length; i++) {
       Editor.attachInputListeners("attack_${i}", attrs, onInputChange);
     }
@@ -77,6 +91,7 @@ class ObjectEditorAttacks {
         World.attacks[name] = new Attack(
           name,
           Editor.getSelectInputIntValue('#attack_${i}_category', 0),
+          Editor.getSelectInputStringValue('#attack_${i}_type'),
           Editor.getTextInputIntValue('#attack_${i}_power', 1)
         );
       } catch(e) {

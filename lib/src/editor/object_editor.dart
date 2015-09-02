@@ -9,10 +9,12 @@ import 'package:dart_rpg/src/editor/object_editor_characters.dart';
 import 'package:dart_rpg/src/editor/object_editor_game_events.dart';
 import 'package:dart_rpg/src/editor/object_editor_items.dart';
 import 'package:dart_rpg/src/editor/object_editor_player.dart';
+import 'package:dart_rpg/src/editor/object_editor_types.dart';
 
 class ObjectEditor {
   static List<String> objectEditorTabs = [
     "object_editor_attacks",
+    "object_editor_types",
     "object_editor_battler_types",
     "object_editor_characters",
     "object_editor_items",
@@ -27,6 +29,7 @@ class ObjectEditor {
   static void setUp() {
     Editor.setUpTabs(objectEditorTabs, () {
       // make sure advanced tabs stay hidden
+      ObjectEditorTypes.selected = -1;
       ObjectEditorBattlerTypes.selected = -1;
       ObjectEditorCharacters.selected = -1;
       ObjectEditorPlayer.selected = false;
@@ -42,6 +45,7 @@ class ObjectEditor {
     });
     
     ObjectEditorAttacks.setUp();
+    ObjectEditorTypes.setUp();
     ObjectEditorBattlerTypes.setUp();
     ObjectEditorCharacters.setUp();
     ObjectEditorItems.setUp();
@@ -51,6 +55,7 @@ class ObjectEditor {
   
   static void update() {
     ObjectEditorAttacks.update();
+    ObjectEditorTypes.update();
     ObjectEditorBattlerTypes.update();
     ObjectEditorCharacters.update();
     ObjectEditorItems.update();
@@ -60,6 +65,7 @@ class ObjectEditor {
   
   static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {
     ObjectEditorAttacks.export(exportJson);
+    ObjectEditorTypes.export(exportJson);
     ObjectEditorBattlerTypes.export(exportJson);
     ObjectEditorCharacters.export(exportJson);
     ObjectEditorItems.export(exportJson);

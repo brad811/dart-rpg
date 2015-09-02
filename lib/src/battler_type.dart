@@ -3,7 +3,7 @@ library dart_rpg.battler_type;
 import 'package:dart_rpg/src/attack.dart';
 
 class BattlerType {
-  final String name;
+  final String name, type;
   
   final int
     spriteId,
@@ -21,7 +21,7 @@ class BattlerType {
   final Map<int, List<Attack>> levelAttacks;
   
   BattlerType(
-      this.spriteId, this.name,
+      this.spriteId, this.name, this.type,
       this.baseHealth, this.basePhysicalAttack, this.baseMagicalAttack,
       this.basePhysicalDefense, this.baseMagicalDefense, this.baseSpeed,
       this.levelAttacks,

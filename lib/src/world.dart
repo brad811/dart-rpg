@@ -11,6 +11,7 @@ import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/event_tile.dart';
 import 'package:dart_rpg/src/game_map.dart';
+import 'package:dart_rpg/src/game_type.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/item.dart';
@@ -56,6 +57,7 @@ class World {
   int startX = 0, startY = 0;
   
   static Map<String, Attack> attacks = {};
+  static Map<String, GameType> types = {};
   static Map<String, BattlerType> battlerTypes = {};
   static Map<String, Item> items = {};
   static Map<String, Character> characters = {};
@@ -114,6 +116,7 @@ class World {
     }
     
     parseSettings(obj["settings"], () {
+      parseTypes(obj["types"]);
       parseAttacks(obj["attacks"]);
       parseBattlerTypes(obj["battlerTypes"]);
       parseItems(obj["items"]);
@@ -171,10 +174,30 @@ class World {
     
     for(String attackName in attacksObject.keys) {
       attacks[attackName] = new Attack(
-          attackName,
-          int.parse(attacksObject[attackName]["category"]),
-          int.parse(attacksObject[attackName]["power"])
+        attackName,
+        int.parse(attacksObject[attackName]["category"]),
+        attacksObject[attackName]["type"],
+        int.parse(attacksObject[attackName]["power"])
       );
+    }
+  }
+  
+  void parseTypes(Map<String, Map> typesObject) {
+    types = {};
+    
+    if(typesObject == null) {
+      types = {
+        "normal": new GameType("normal")
+      };
+      return;
+    }
+    
+    for(String typeName in typesObject.keys) {
+      types[typeName] = new GameType(
+        typeName
+      );
+      
+      // TODO: add effectiveness pairings
     }
   }
   
@@ -185,7 +208,7 @@ class World {
       String battlerTypeName = "new battler type";
       
       battlerTypes[battlerTypeName] = new BattlerType(
-          0, battlerTypeName,
+          0, battlerTypeName, World.types.keys.first,
           1, 1, 1, 1, 1, 1,
           {}, 1.0
       );
@@ -197,6 +220,7 @@ class World {
       battlerTypes[battlerTypeName] = new BattlerType(
           int.parse(battlerTypesObject[battlerTypeName]["spriteId"]),
           battlerTypeName,
+          battlerTypesObject[battlerTypeName]["type"],
           int.parse(battlerTypesObject[battlerTypeName]["health"]),
           int.parse(battlerTypesObject[battlerTypeName]["physicalAttack"]),
           int.parse(battlerTypesObject[battlerTypeName]["magicalAttack"]),

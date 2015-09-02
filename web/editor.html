@@ -157,6 +157,7 @@
             <tr>
               <td colspan=2>
                 <div class="tab_header" id="object_editor_attacks_tab_header">Attacks</div>
+                <div class="tab_header" id="object_editor_types_tab_header">Types</div>
                 <div class="tab_header" id="object_editor_battler_types_tab_header">Battler Types</div>
                 <div class="tab_header" id="object_editor_characters_tab_header">Characters</div>
                 <div class="tab_header" id="object_editor_items_tab_header">Items</div>
@@ -169,6 +170,10 @@
                 <div class="tab" id="object_editor_attacks_tab">
                   <button id="add_attack_button">Add new attack</button><hr />
                   <div id="attacks_container"></div>
+                </div>
+                <div class="tab" id="object_editor_types_tab">
+                  <button id="add_type_button">Add new type</button><hr />
+                  <div id="types_container"></div>
                 </div>
                 <div class="tab" id="object_editor_battler_types_tab">
                   <button id="add_battler_type_button">Add new battler type</button><hr />
@@ -195,6 +200,21 @@
                 <table>
                   <tr>
                     <td>
+                    
+                      <table id="object_editor_types_advanced" class="hidden">
+                        <tr>
+                          <td class="tab_headers">
+                            <div class="tab_header" id="type_effectiveness_tab_header">Effectiveness</div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="object_editor_tabs_container">
+                            <div class="tab" id="type_effectiveness_tab">
+                              <div id="type_effectiveness_container"></div>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
                     
                       <table id="object_editor_battler_types_advanced" class="hidden">
                         <tr>
