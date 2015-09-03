@@ -37,7 +37,7 @@ class Attack {
       defender.curHealth -= calculateDamage(attacker, defender);
       callback();
     });
-    textGameEvent.trigger(Main.player);
+    textGameEvent.trigger(Main.player.character);
   }
   
   int calculateDamage(Battler attacker, Battler defender) {

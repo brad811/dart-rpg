@@ -8,7 +8,6 @@ import 'package:dart_rpg/src/editor/object_editor_battler_types.dart';
 import 'package:dart_rpg/src/editor/object_editor_characters.dart';
 import 'package:dart_rpg/src/editor/object_editor_game_events.dart';
 import 'package:dart_rpg/src/editor/object_editor_items.dart';
-import 'package:dart_rpg/src/editor/object_editor_player.dart';
 import 'package:dart_rpg/src/editor/object_editor_types.dart';
 
 class ObjectEditor {
@@ -18,7 +17,6 @@ class ObjectEditor {
     "object_editor_battler_types",
     "object_editor_characters",
     "object_editor_items",
-    "object_editor_player",
     "object_editor_game_event_chains"
   ];
   
@@ -32,7 +30,6 @@ class ObjectEditor {
       ObjectEditorTypes.selected = -1;
       ObjectEditorBattlerTypes.selected = -1;
       ObjectEditorCharacters.selected = -1;
-      ObjectEditorPlayer.selected = false;
       ObjectEditorItems.selected = -1;
       ObjectEditorGameEvents.selected = -1;
       
@@ -49,7 +46,6 @@ class ObjectEditor {
     ObjectEditorBattlerTypes.setUp();
     ObjectEditorCharacters.setUp();
     ObjectEditorItems.setUp();
-    ObjectEditorPlayer.setUp();
     ObjectEditorGameEvents.setUp();
   }
   
@@ -59,7 +55,6 @@ class ObjectEditor {
     ObjectEditorBattlerTypes.update();
     ObjectEditorCharacters.update();
     ObjectEditorItems.update();
-    ObjectEditorPlayer.update();
     ObjectEditorGameEvents.update();
   }
   
@@ -69,7 +64,6 @@ class ObjectEditor {
     ObjectEditorBattlerTypes.export(exportJson);
     ObjectEditorCharacters.export(exportJson);
     ObjectEditorItems.export(exportJson);
-    ObjectEditorPlayer.export(exportJson);
     ObjectEditorGameEvents.export(exportJson);
   }
 }

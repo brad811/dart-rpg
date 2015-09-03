@@ -201,7 +201,7 @@ class Gui {
   }
   
   static void showStartMenu() {
-    GuiStartMenu.start.trigger(Main.player);
+    GuiStartMenu.start.trigger(Main.player.character);
   }
   
   static void addWindow(Function window) {

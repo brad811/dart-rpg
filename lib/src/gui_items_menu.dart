@@ -26,7 +26,7 @@ class GuiItemsMenu {
   
   static Function playerMoneyWindow = () {
     Gui.renderWindow(0, 10, 10, 2);
-    Font.renderStaticText(1.0, 21.75, "Money: " + Main.player.inventory.money.toString());
+    Font.renderStaticText(1.0, 21.75, "Money: " + Main.player.character.inventory.money.toString());
   };
   
   static Function storeMoneyWindow = () {
@@ -64,7 +64,7 @@ class GuiItemsMenu {
     
     GameEvent onCancel = new GameEvent((Function a) {
       Gui.removeWindow(descriptionWindow);
-      callbackEvent.trigger(Main.player);
+      callbackEvent.trigger(Main.player.character);
     });
     
     GameEvent onChange = new GameEvent((Function callback) {
@@ -105,7 +105,7 @@ class GuiItemsMenu {
     });
     
     itemChoice = new ChoiceGameEvent.custom(
-        Main.player,
+        Main.player.character,
         ChoiceGameEvent.generateChoiceMap("start_menu_items", items),
         0, 0,
         10, 10,
@@ -113,9 +113,9 @@ class GuiItemsMenu {
         onChangeEvent: onChange
     );
     
-    onChange.trigger(Main.player);
+    onChange.trigger(Main.player.character);
     
-    itemChoice.trigger(Main.player);
+    itemChoice.trigger(Main.player.character);
   });
   
   static trigger(Character character, Function callback,
@@ -132,6 +132,6 @@ class GuiItemsMenu {
     }
     
     items.callback = callback;
-    items.trigger(Main.player);
+    items.trigger(Main.player.character);
   }
 }

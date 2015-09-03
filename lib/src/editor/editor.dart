@@ -6,7 +6,6 @@ import 'dart:html';
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/main.dart';
-import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/world.dart';
 
@@ -32,8 +31,6 @@ class Editor {
   }
   
   static void start() {
-    Main.player = new Player("", 0, 0, 0);
-    
     Main.world = new World(() {
       Main.world.loadGame(() {
         Editor.setUp();

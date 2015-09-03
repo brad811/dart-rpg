@@ -26,7 +26,7 @@ class WarpGameEvent extends GameEvent {
     Character character;
     
     if(characterLabel == "____player") {
-      character = Main.player;
+      character = Main.player.character;
     } else {
       character = World.characters[characterLabel];
     }

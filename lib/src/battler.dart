@@ -157,7 +157,7 @@ class Battler {
             } else {
               callback();
             }
-          }).trigger(Main.player);
+          }).trigger(Main.player.character);
         } else {
           if(newAttacks.length > 1) {
             learnNewAttacks(newAttacks.sublist(1), callback);
@@ -175,7 +175,7 @@ class Battler {
                 "Yes": "____tmp_forget_move_yes",
                 "No": "____tmp_forget_move_no"
               },
-                cancelEvent: Interactable.chainGameEvents(Main.player, World.gameEventChains["____tmp_forget_move_no"])
+                cancelEvent: Interactable.chainGameEvents(Main.player.character, World.gameEventChains["____tmp_forget_move_no"])
               )
             )
           ];
@@ -211,7 +211,7 @@ class Battler {
             new TextGameEvent.choice(240, "Which move should be forgotten?",
               new ChoiceGameEvent(
                 moveOptions,
-                cancelEvent: Interactable.chainGameEvents(Main.player, World.gameEventChains["____tmp_forget_move_no"])
+                cancelEvent: Interactable.chainGameEvents(Main.player.character, World.gameEventChains["____tmp_forget_move_no"])
               )
             )
           ];
@@ -236,7 +236,7 @@ class Battler {
             })
           ];
           
-          Interactable.chainGameEvents(Main.player, World.gameEventChains["____tmp_forget_move"]).trigger(Main.player);
+          Interactable.chainGameEvents(Main.player.character, World.gameEventChains["____tmp_forget_move"]).trigger(Main.player.character);
         } else {
           // find the lowest level attack this battler still knows and replace it
           for(Attack attack in this.battlerType.levelAttacks.values) {

@@ -22,7 +22,7 @@ class BattleGameEvent implements GameEvent {
         // TODO: reset enemy position if player loses
         // TODO: allow custom actions for win and lose
         Main.battle = new Battle(
-            Main.player.battler,
+            Main.player.character.battler,
             character.battler,
             new GameEvent((_) {
               character.sightDistance = 0;

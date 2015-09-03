@@ -115,7 +115,7 @@ class Battle extends Interactable {
     
     GameEvent items = new GameEvent((Function callback) {
       Gui.clear();
-      GuiItemsMenu.trigger(Main.player, itemsConfirm);
+      GuiItemsMenu.trigger(Main.player.character, itemsConfirm);
     });
     
     // TODO: make running possibly fail
@@ -212,12 +212,13 @@ class Battle extends Interactable {
   void friendlyDie() {
     Gui.fadeDarkAction(() {
       Main.inBattle = false;
-      new HealGameEvent(Main.player, 9999, () {
+      new HealGameEvent(Main.player.character, 9999, () {
         Gui.clear();
-        Main.world.curMap = Main.player.startMap;
-        Main.player.warp(Main.player.startMap, Main.player.startX, Main.player.startY, World.LAYER_PLAYER, Character.DOWN);
+        Main.world.curMap = Main.player.character.startMap;
+        Main.player.character.warp(
+          Main.player.character.startMap, Main.player.character.startX, Main.player.character.startY, World.LAYER_PLAYER, Character.DOWN);
         Main.focusObject = Main.player;
-      }).trigger(Main.player);
+      }).trigger(Main.player.character);
     });
   }
   
@@ -296,7 +297,7 @@ class Battle extends Interactable {
   void drawExperienceBar() {
     Main.ctx.setFillColorRgb(85, 85, 85);
     double ratio =
-      (Main.player.battler.displayExperience - friendly.curLevelExperience()) /
+      (Main.player.character.battler.displayExperience - friendly.curLevelExperience()) /
       (friendly.nextLevelExperience() - friendly.curLevelExperience());
     Main.ctx.fillRect(
       11*Sprite.scaledSpriteSize - Sprite.spriteScale, 10.5*Sprite.scaledSpriteSize,

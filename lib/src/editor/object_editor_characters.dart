@@ -83,7 +83,9 @@ class ObjectEditorCharacters {
     
     List<String> attrs = [
       // main
-      "label", "name", "sprite_id", "picture_id", "size_x", "size_y", "map",
+      "label", "name", "player",
+      
+      "sprite_id", "picture_id", "size_x", "size_y", "map",
       
       // battle
       "battler_type", "battler_level", "sight_distance",
@@ -159,7 +161,15 @@ class ObjectEditorCharacters {
         "  <td>${i}</td>"+
         "  <td>"+
         "    Label<br /><input id='character_${i}_label' type='text' value='${ key }' /><br />"+
-        "    Name<br /><input id='character_${i}_name' type='text' value='${ World.characters[key].name }' />"+
+        "    Name<br /><input id='character_${i}_name' type='text' value='${ World.characters[key].name }' /><br />"+
+        "    <br />"+
+        "    <input id='character_${i}_player' type='checkbox' ";
+      
+      if(Main.player.character.label == World.characters.keys.elementAt(i)) {
+        charactersHtml += "checked='checked' ";
+      }
+      
+      charactersHtml += "/> Player"+
         "  </td>"+
         
         "  <td>"+
@@ -357,18 +367,34 @@ class ObjectEditorCharacters {
     Editor.enforceValueFormat(e);
     Editor.avoidNameCollision(e, "_label", World.characters);
     
+    String selectedPlayer = "";
+    if(e != null) {
+      Element element = e.target;
+      if(element.getAttribute("type") == "checkbox" && element.id.contains("_player")) {
+        if(Editor.getCheckboxInputBoolValue("#${element.id}")) {
+          selectedPlayer = element.id;
+        }
+      }
+    }
+    
     Map<String, Character> charactersBefore = new Map<String, Character>();
     charactersBefore.addAll(World.characters);
     
     World.characters = new Map<String, Character>();
     for(int i=0; querySelector('#character_${i}_label') != null; i++) {
       try {
+        String labelBefore = charactersBefore.keys.elementAt(i);
         String label = Editor.getTextInputStringValue('#character_${i}_label');
         
-        int mapX = 0, mapY = 0;
+        int mapX = 0, mapY = 0, layer = 1;
         if(charactersBefore[label] != null) {
           mapX = charactersBefore[label].mapX;
           mapY = charactersBefore[label].mapY;
+          layer = charactersBefore[label].layer;
+        } else if(charactersBefore[labelBefore] != null) {
+          mapX = charactersBefore[labelBefore].mapX;
+          mapY = charactersBefore[labelBefore].mapY;
+          layer = charactersBefore[labelBefore].layer;
         }
         
         Character character = new Character(
@@ -376,7 +402,7 @@ class ObjectEditorCharacters {
           Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
           Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
           mapX, mapY,
-          layer: World.LAYER_BELOW,
+          layer: layer,
           sizeX: Editor.getTextInputIntValue('#character_${i}_size_x', 1),
           sizeY: Editor.getTextInputIntValue('#character_${i}_size_y', 2),
           solid: true
@@ -402,9 +428,16 @@ class ObjectEditorCharacters {
         character.sightDistance = Editor.getTextInputIntValue('#character_${i}_sight_distance', 0);
         
         World.characters[label] = character;
-      } catch(e) {
+        
+        if(selectedPlayer == "character_${i}_player") {
+          Main.player.character = character;
+        } else if(selectedPlayer != "") {
+          (querySelector("#character_${i}_player") as CheckboxInputElement).checked = false;
+        }
+      } catch(e, stackTrace) {
         // could not update this character
         print("Error updating character: " + e.toString());
+        print(stackTrace);
       }
     }
     
@@ -461,6 +494,10 @@ class ObjectEditorCharacters {
       characterJson["battlerType"] = character.battler.battlerType.name;
       characterJson["battlerLevel"] = character.battler.level.toString();
       characterJson["sightDistance"] = character.sightDistance.toString();
+      
+      if(Main.player.character.label == character.label) {
+        characterJson["player"] = true;
+      }
       
       charactersJson[key] = characterJson;
     });

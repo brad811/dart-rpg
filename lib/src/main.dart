@@ -82,16 +82,6 @@ class Main {
       }
     });
     
-    Function createWorld = () {
-      timeScale = 0.0;
-      world = new World(() {
-        Main.fixImageSmoothing(c, (c.width / window.devicePixelRatio).round(), (c.height / window.devicePixelRatio).round());
-        focusObject = player;
-        timeScale = 1.0;
-        tick();
-      });
-    };
-    
     ButtonElement loadGameButton = querySelector("#load_game_button");
     loadGameButton.onClick.listen((MouseEvent e) {
       // TODO: cancel any running game events
@@ -101,6 +91,16 @@ class Main {
     });
     
     createWorld();
+  }
+  
+  static void createWorld() {
+    timeScale = 0.0;
+    world = new World(() {
+      Main.fixImageSmoothing(c, (c.width / window.devicePixelRatio).round(), (c.height / window.devicePixelRatio).round());
+      focusObject = player;
+      timeScale = 1.0;
+      tick();
+    });
   }
   
   static void fixImageSmoothing(CanvasElement canvas, int width, int height) {
@@ -126,8 +126,10 @@ class Main {
     // Keeps the value from being set to 0 in between checking it and dividing by it
     var curTimeScale = timeScale;
     
-    if(world.maps[world.curMap] == null)
+    if(world.maps[world.curMap] == null) {
+      print("Could not find ${world.curMap} in ${world.maps}");
       return;
+    }
  
     // Draw black background
     ctx.fillStyle = "#000000";
@@ -139,16 +141,11 @@ class Main {
         renderList.add([]);
       }
       
-      player.render(renderList);
       world.render(renderList);
       
       for(Character character in World.characters.values) {
         if(character.map == world.curMap) {
           character.render(renderList);
-          
-          if(curTimeScale > 0.0) {
-            character.tick();
-          }
         }
       }
       
@@ -158,8 +155,12 @@ class Main {
         }
       }
       
-      if(curTimeScale > 0.0) {
-        player.tick();
+      for(Character character in World.characters.values) {
+        if(character.map == world.curMap) {
+          if(curTimeScale > 0.0) {
+            character.tick();
+          }
+        }
       }
     } else {
       battle.render();

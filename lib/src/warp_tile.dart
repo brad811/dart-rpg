@@ -16,13 +16,16 @@ class WarpTile extends Tile {
     Main.player.inputEnabled = false;
     Gui.fadeDarkAction(() {
       Main.world.curMap = destMap;
-      Main.player.x = destX * Sprite.pixelsPerSprite * Sprite.spriteScale;
-      Main.player.y = destY * Sprite.pixelsPerSprite * Sprite.spriteScale;
-      Main.player.mapX = destX;
-      Main.player.mapY = destY;
       
-      Main.player.motionX = 0;
-      Main.player.motionY = 0;
+      character.map = destMap;
+      
+      character.x = destX * Sprite.pixelsPerSprite * Sprite.spriteScale;
+      character.y = destY * Sprite.pixelsPerSprite * Sprite.spriteScale;
+      character.mapX = destX;
+      character.mapY = destY;
+      
+      character.motionX = 0;
+      character.motionY = 0;
     }, () {
       Main.player.inputEnabled = true;
     });

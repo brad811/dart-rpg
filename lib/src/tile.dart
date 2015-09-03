@@ -33,19 +33,19 @@ class Tile extends Interactable {
       if(
           (
             ( // Player is walking down into the tile
-              (Main.player.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY &&
-              Main.player.mapY <= topSprite.posY &&
-              Main.player.direction == Character.DOWN
+              (Main.player.character.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY &&
+              Main.player.character.mapY <= topSprite.posY &&
+              Main.player.character.direction == Character.DOWN
             ) || ( // Player is walking down out of the tile
-              (Main.player.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY &&
-              Main.player.mapY >= topSprite.posY &&
-              Main.player.direction == Character.DOWN
+              (Main.player.character.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY &&
+              Main.player.character.mapY >= topSprite.posY &&
+              Main.player.character.direction == Character.DOWN
             ) || (
-              (Main.player.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY
+              (Main.player.character.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY
             )
           ) &&
           (
-            Main.player.x/Sprite.scaledSpriteSize - topSprite.posX <= 1.0
+            Main.player.character.x/Sprite.scaledSpriteSize - topSprite.posX <= 1.0
           )
       ) {
         Main.world.maps[Main.world.curMap]

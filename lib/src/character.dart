@@ -45,6 +45,9 @@ class Character extends Interactable {
     x, y,
     movementAmount;
   
+  String startMap;
+  int startX, startY;
+  
   bool solid;
   Function motionCallback;
   
@@ -61,6 +64,10 @@ class Character extends Interactable {
       this.mapX, this.mapY,
       {this.layer: World.LAYER_PLAYER, this.sizeX: 1, this.sizeY: 2, this.solid: true}) {
     curSpeed = walkSpeed;
+    
+    startX = mapX;
+    startY = mapY;
+    
     x = mapX * motionAmount;
     y = mapY * motionAmount;
   }
@@ -164,7 +171,9 @@ class Character extends Interactable {
         
         if(motionX == 0) {
           mapX -= 1;
-          checkForBattle();
+          if(this == Main.player.character) {
+            Main.player.checkForBattle();
+          }
         }
       }
       
@@ -182,7 +191,9 @@ class Character extends Interactable {
         
         if(motionX == 0) {
           mapX += 1;
-          checkForBattle();
+          if(this == Main.player.character) {
+            Main.player.checkForBattle();
+          }
         }
       }
       
@@ -200,7 +211,9 @@ class Character extends Interactable {
         
         if(motionY == 0) {
           mapY -= 1;
-          checkForBattle();
+          if(this == Main.player.character) {
+            Main.player.checkForBattle();
+          }
         }
       }
       
@@ -218,7 +231,9 @@ class Character extends Interactable {
         
         if(motionY == 0) {
           mapY += 1;
-          checkForBattle();
+          if(this == Main.player.character) {
+            Main.player.checkForBattle();
+          }
         }
       }
       
@@ -228,10 +243,6 @@ class Character extends Interactable {
       else if(motionY == 0 && motionStep == 2)
         motionStep = 1;
     }
-  }
-  
-  void checkForBattle() {
-    // Override in Player class
   }
   
   void warp(String map, int mapX, int mapY, int layer, int direction) {
@@ -285,13 +296,13 @@ class Character extends Interactable {
       Interactable.chainGameEvents(this, gameEvents).trigger(this);
     } else if(battler != null) {
       // talking to a player can make them face you and battle you
-      if(Main.player.mapX < mapX)
+      if(Main.player.character.mapX < mapX)
         direction = LEFT;
-      else if(Main.player.mapX > mapX)
+      else if(Main.player.character.mapX > mapX)
         direction = RIGHT;
-      else if(Main.player.mapY < mapY)
+      else if(Main.player.character.mapY < mapY)
         direction = UP;
-      else if(Main.player.mapY > mapY)
+      else if(Main.player.character.mapY > mapY)
         direction = DOWN;
       
       Main.player.checkForBattle();

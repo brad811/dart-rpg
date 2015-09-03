@@ -50,20 +50,8 @@ class MapEditorMaps {
   }
   
   static void update() {
-    String mapsHtml;
+    String mapsHtml = "";
     
-    mapsHtml = "<hr />Start map: <select id='start_map'>";
-    for(int i=0; i<Main.world.maps.keys.length; i++) {
-      String mapName = Main.world.maps.keys.elementAt(i);
-      mapsHtml += "<option";
-      if(Main.world.startMap == mapName) {
-        mapsHtml += " selected";
-      }
-      mapsHtml += ">${mapName}</option>";
-    }
-    mapsHtml += "</select>&nbsp;&nbsp;&nbsp;&nbsp;";
-    mapsHtml += "X: <input id='start_player_x' type='text' class='number' value='${Main.world.startX}' />&nbsp;&nbsp;&nbsp;&nbsp;";
-    mapsHtml += "Y: <input id='start_player_y' type='text' class='number' value='${Main.world.startY}' />";
     mapsHtml += "<hr />";
     
     mapsHtml += "<table class='editor_table'>"+
@@ -95,13 +83,8 @@ class MapEditorMaps {
       Editor.attachInputListeners("map_${i}", ["name"], onInputChange);
     }
     
-    Editor.attachInputListeners("start", ["map", "player_x", "player_y"], onInputChange);
-    
     setUpLayerVisibilityToggles();
     setUpMapSizeButtons();
-    
-    // handle the starting map disappearing
-    Main.world.startMap = Editor.getSelectInputStringValue("#start_map");
   }
   
   static void onInputChange(Event e) {
@@ -193,11 +176,6 @@ class MapEditorMaps {
             MapEditorEvents.events[newName] = MapEditorEvents.events[key];
             MapEditorEvents.events.remove(key);
           }
-          
-          // update the start map to have this new map name
-          if(Main.world.startMap == key) {
-            Main.world.startMap = newName;
-          }
         }
       } catch(e) {
         // could not update this map
@@ -215,10 +193,6 @@ class MapEditorMaps {
     
     setMapSelectorButtonListeners();
     setMapDeleteButtonListeners();
-    
-    Main.world.startMap = Editor.getSelectInputStringValue("#start_map");
-    Main.world.startX = Editor.getTextInputIntValue("#start_player_x", 0);
-    Main.world.startY = Editor.getTextInputIntValue("#start_player_y", 0);
     
     // TODO: tab scrolls when changing map name
     if(nameChange) {

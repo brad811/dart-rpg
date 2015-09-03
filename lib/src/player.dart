@@ -12,17 +12,12 @@ import 'package:dart_rpg/src/world.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 
-class Player extends Character implements InputHandler {
+class Player implements InputHandler {
   bool inputEnabled = true;
   
-  int startX, startY;
-  String startMap;
+  Character character;
   
-  Player(String startMap, int posX, int posY, int spriteId) : super("____player", spriteId, 238, posX, posY, layer: World.LAYER_PLAYER) {
-    startX = posX;
-    startY = posY;
-    this.startMap = startMap;
-  }
+  Player(this.character);
   
   @override
   void handleKeys(List<int> keyCodes) {
@@ -37,29 +32,28 @@ class Player extends Character implements InputHandler {
     }
     
     if(keyCodes.contains(Input.BACK))
-      curSpeed = runSpeed;
+      character.curSpeed = character.runSpeed;
     else
-      curSpeed = walkSpeed;
+      character.curSpeed = character.walkSpeed;
       
     if(keyCodes.contains(Input.LEFT)) {
-      move(Character.LEFT);
+      character.move(Character.LEFT);
       return;
     }
     if(keyCodes.contains(Input.RIGHT)) {
-      move(Character.RIGHT);
+      character.move(Character.RIGHT);
       return;
     }
     if(keyCodes.contains(Input.UP)) {
-      move(Character.UP);
+      character.move(Character.UP);
       return;
     }
     if(keyCodes.contains(Input.DOWN)) {
-      move(Character.DOWN);
+      character.move(Character.DOWN);
       return;
     }
   }
   
-  @override
   void checkForBattle() {
     // check for line-of-sight battles
     for(Character character in World.characters.values) {
@@ -71,16 +65,16 @@ class Player extends Character implements InputHandler {
         if(
           (
             character.direction == Character.UP &&
-            (Main.player.mapX == character.mapX && Main.player.mapY + i == character.mapY)
+            (Main.player.character.mapX == character.mapX && Main.player.character.mapY + i == character.mapY)
           ) || (
             character.direction == Character.DOWN &&
-            (Main.player.mapX == character.mapX && Main.player.mapY - i == character.mapY)
+            (Main.player.character.mapX == character.mapX && Main.player.character.mapY - i == character.mapY)
           ) || (
             character.direction == Character.LEFT &&
-            (Main.player.mapX + i == character.mapX && Main.player.mapY == character.mapY)
+            (Main.player.character.mapX + i == character.mapX && Main.player.character.mapY == character.mapY)
           ) || (
             character.direction == Character.RIGHT &&
-            (Main.player.mapX - i == character.mapX && Main.player.mapY == character.mapY)
+            (Main.player.character.mapX - i == character.mapX && Main.player.character.mapY == character.mapY)
           )
         ) {
           startCharacterEncounter(character);
@@ -93,11 +87,11 @@ class Player extends Character implements InputHandler {
     }
   }
   
-  void startCharacterEncounter(Character character) {
+  void startCharacterEncounter(Character otherCharacter) {
     Main.player.inputEnabled = false;
     
     Tile target = Main.world.maps[Main.world.curMap]
-        .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE];
+        .tiles[otherCharacter.mapY - otherCharacter.sizeY][otherCharacter.mapX][World.LAYER_ABOVE];
     
     Tile before = null;
     if(target != null)
@@ -108,13 +102,13 @@ class Player extends Character implements InputHandler {
         Main.timeScale = 0.0;
         // TODO: give this icon an assigned location on the sprite sheet
         Main.world.maps[Main.world.curMap]
-          .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE] =
-            new Tile(false, new Sprite.int(99, character.mapX, character.mapY - character.sizeY));
+          .tiles[otherCharacter.mapY - otherCharacter.sizeY][otherCharacter.mapX][World.LAYER_ABOVE] =
+            new Tile(false, new Sprite.int(99, otherCharacter.mapX, otherCharacter.mapY - otherCharacter.sizeY));
       }),
       new DelayedGameEvent(500, () {
         Main.timeScale = 1.0;
         Main.world.maps[Main.world.curMap]
-          .tiles[character.mapY - character.sizeY][character.mapX][World.LAYER_ABOVE] = before;
+          .tiles[otherCharacter.mapY - otherCharacter.sizeY][otherCharacter.mapX][World.LAYER_ABOVE] = before;
         
         List<GameEvent> characterGameEvents = [];
         characterGameEvents.add(new GameEvent((callback) {
@@ -122,47 +116,46 @@ class Player extends Character implements InputHandler {
           
           // Find out which direction the character should move in
           // and how far the character needs to move
-          if(mapX > character.mapX) {
+          if(character.mapX > otherCharacter.mapX) {
             movementDirection = Character.RIGHT;
-            movementAmount = mapX - character.mapX;
-          } else if(mapX < character.mapX) {
+            movementAmount = character.mapX - otherCharacter.mapX;
+          } else if(character.mapX < otherCharacter.mapX) {
             movementDirection = Character.LEFT;
-            movementAmount = character.mapX - mapX;
-          } else if(mapY > character.mapY) {
+            movementAmount = otherCharacter.mapX - character.mapX;
+          } else if(character.mapY > otherCharacter.mapY) {
             movementDirection = Character.DOWN;
-            movementAmount = mapY - character.mapY;
-          } else if(mapY < character.mapY) {
+            movementAmount = character.mapY - otherCharacter.mapY;
+          } else if(character.mapY < otherCharacter.mapY) {
             movementDirection = Character.UP;
-            movementAmount = character.mapY - mapY;
+            movementAmount = otherCharacter.mapY - character.mapY;
           }
           
           // So the character end up next to the tile the player is in
           movementAmount -= 1;
           
           Main.world.chainCharacterMovement(
-            character,
+            otherCharacter,
             new List<int>.generate(movementAmount, (int i) => movementDirection, growable: true),
-            character.interact
+            otherCharacter.interact
           );
         }));
         
-        characterGameEvents[0].trigger(this);
+        characterGameEvents[0].trigger(this.character);
       })
     ];
     
     DelayedGameEvent.executeDelayedEvents(delayedGameEvents);
   }
   
-  @override
   void interact() {
-    if(direction == Character.LEFT && Main.world.isInteractable(mapX-1, mapY)) {
-      Main.world.interact(mapX-1, mapY);
-    } else if(direction == Character.RIGHT && Main.world.isInteractable(mapX+1, mapY)) {
-      Main.world.interact(mapX+1, mapY);
-    } else if(direction == Character.UP && Main.world.isInteractable(mapX, mapY-1)) {
-      Main.world.interact(mapX, mapY-1);
-    } else if(direction == Character.DOWN && Main.world.isInteractable(mapX, mapY+1)) {
-      Main.world.interact(mapX, mapY+1);
+    if(character.direction == Character.LEFT && Main.world.isInteractable(character.mapX-1, character.mapY)) {
+      Main.world.interact(character.mapX-1, character.mapY);
+    } else if(character.direction == Character.RIGHT && Main.world.isInteractable(character.mapX+1, character.mapY)) {
+      Main.world.interact(character.mapX+1, character.mapY);
+    } else if(character.direction == Character.UP && Main.world.isInteractable(character.mapX, character.mapY-1)) {
+      Main.world.interact(character.mapX, character.mapY-1);
+    } else if(character.direction == Character.DOWN && Main.world.isInteractable(character.mapX, character.mapY+1)) {
+      Main.world.interact(character.mapX, character.mapY+1);
     }
   }
 }

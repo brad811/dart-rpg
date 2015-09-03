@@ -13,7 +13,7 @@ import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class GuiStartMenu {
   static ChoiceGameEvent start = new ChoiceGameEvent.custom(
-    Main.player,
+    Main.player.character,
     ChoiceGameEvent.generateChoiceMap("start_menu", {
       "Stats": [stats],
       "Powers": [exit],
@@ -27,26 +27,26 @@ class GuiStartMenu {
   );
   
   static GameEvent items = new GameEvent((Function a) {
-    GuiItemsMenu.trigger(Main.player, (Item item) {
+    GuiItemsMenu.trigger(Main.player.character, (Item item) {
       GameEvent confirmItemUse = new GameEvent((_) {
-        item = Main.player.inventory.removeItem(item.name);
+        item = Main.player.character.inventory.removeItem(item.name);
         
-        GameEvent gameEvent = item.use(Main.player.battler, new GameEvent((_) {
+        GameEvent gameEvent = item.use(Main.player.character.battler, new GameEvent((_) {
           Main.focusObject = Main.player;
-          items.trigger(Main.player);
+          items.trigger(Main.player.character);
         }));
         
-        gameEvent.trigger(Main.player);
+        gameEvent.trigger(Main.player.character);
       });
       
       GameEvent cancelItemUse = new GameEvent((_) {
         Gui.clear();
-        items.trigger(Main.player);
+        items.trigger(Main.player.character);
       });
       
       Gui.clear();
       if(item == null) {
-        start.trigger(Main.player);
+        start.trigger(Main.player.character);
       } else {
         // confirm dialog before using item from start menu
         new TextGameEvent.choice(237, "Use the ${item.name}?",
@@ -58,7 +58,7 @@ class GuiStartMenu {
                 }
               )
             )
-        ).trigger(Main.player);
+        ).trigger(Main.player.character);
       }
     });
   });
@@ -75,7 +75,7 @@ class GuiStartMenu {
         12, 8
       );
       
-      Battler battler = Main.player.battler;
+      Battler battler = Main.player.character.battler;
       Font.renderStaticText(2.0, 2.0, "Player");
       Font.renderStaticText(2.75, 3.5, "Health: ${battler.startingHealth}");
       Font.renderStaticText(2.75, 5.0, "Physical Attack: ${battler.startingPhysicalAttack}");
@@ -89,11 +89,11 @@ class GuiStartMenu {
     
     GameEvent powersBack = new GameEvent((Function a) {
       Gui.clear();
-      GuiStartMenu.start.trigger(Main.player);
+      GuiStartMenu.start.trigger(Main.player.character);
     });
     
     new ChoiceGameEvent.custom(
-        Main.player,
+        Main.player.character,
         ChoiceGameEvent.generateChoiceMap("start_menu_powers",
           {
             "Back": [powersBack]
@@ -102,6 +102,6 @@ class GuiStartMenu {
         15, 0,
         5, 2,
         cancelEvent: powersBack
-    ).trigger(Main.player);
+    ).trigger(Main.player.character);
   });
 }

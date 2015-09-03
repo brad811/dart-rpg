@@ -16,6 +16,8 @@ class HealGameEvent implements GameEvent {
   Character character;
   int amount;
   
+  String characterLabel = "";
+  
   HealGameEvent(this.character, this.amount, [this.callback]);
   
   @override
@@ -64,17 +66,17 @@ class HealGameEvent implements GameEvent {
     html += "<td><select id='${prefix}_character' ${disabledString}>";
     
     html += "  <option value='____player'";
-    if(character.label == "____player") {
+    if(this.characterLabel == "____player") {
       html += " selected";
     }
-    html += ">Player</option>";
+    html += ">Current Player</option>";
     
-    World.characters.forEach((String charactrLabel, Character curCharacter) {
-      html += "  <option value='${charactrLabel}'";
-      if(character.label == charactrLabel) {
+    World.characters.forEach((String characterLabel, Character curCharacter) {
+      html += "  <option value='${characterLabel}'";
+      if(this.characterLabel == characterLabel) {
         html += " selected";
       }
-      html += ">${charactrLabel}</option>";
+      html += ">${characterLabel}</option>";
     });
     
     html += "</select></td>";
@@ -93,14 +95,16 @@ class HealGameEvent implements GameEvent {
     String characterLabel = Editor.getSelectInputStringValue("#${prefix}_character");
     
     if(characterLabel == "____player") {
-      character = Main.player;
+      character = Main.player.character;
     } else {
       character = World.characters[characterLabel];
     }
     
     HealGameEvent healGameEvent = new HealGameEvent(
-        character, Editor.getTextInputIntValue("#${prefix}_amount", 0)
-      );
+      character, Editor.getTextInputIntValue("#${prefix}_amount", 0)
+    );
+    
+    healGameEvent.characterLabel = characterLabel;
     
     return healGameEvent;
   }
@@ -110,7 +114,7 @@ class HealGameEvent implements GameEvent {
     Map<String, Object> gameEventJson = {};
     
     gameEventJson["type"] = type;
-    gameEventJson["character"] = character.label;
+    gameEventJson["character"] = this.characterLabel;
     gameEventJson["amount"] = amount;
     
     return gameEventJson;

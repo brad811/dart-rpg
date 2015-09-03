@@ -53,9 +53,6 @@ class World {
   Map<String, GameMap> maps = {};
   String curMap = "";
   
-  String startMap = "";
-  int startX = 0, startY = 0;
-  
   static Map<String, Attack> attacks = {};
   static Map<String, GameType> types = {};
   static Map<String, BattlerType> battlerTypes = {};
@@ -70,7 +67,7 @@ class World {
   World(Function callback) {
     loadGame(() {
       // move to the start map
-      curMap = startMap;
+      curMap = Main.player.character.map;
       
       callback();
     });
@@ -121,10 +118,8 @@ class World {
       parseBattlerTypes(obj["battlerTypes"]);
       parseItems(obj["items"]);
       parseMaps(obj["maps"]);
-      parsePlayer(obj["player"]);
-      parseGameEventChains(obj["gameEventChains"]);
-      
       parseCharacters(obj["characters"]);
+      parseGameEventChains(obj["gameEventChains"]);
       
       callback();
     });
@@ -266,13 +261,6 @@ class World {
       maps[mapName] = gameMap;
       maps[mapName].tiles = [];
       
-      // set the map the game will start on
-      if(mapsObject[mapName]["startMap"] == true) {
-        startMap = mapName;
-        startX = mapsObject[mapName]["startX"];
-        startY = mapsObject[mapName]["startY"];
-      }
-      
       List<List<List<Tile>>> mapTiles = maps[mapName].tiles;
       
       for(int y=0; y<mapsObject[mapName]['tiles'].length; y++) {
@@ -393,24 +381,20 @@ class World {
       characterLabel,
       charactersObject[characterLabel]["spriteId"] as int,
       charactersObject[characterLabel]["pictureId"] as int,
-      1, 1,
-      layer: World.LAYER_PLAYER,
+      charactersObject[characterLabel]["mapX"],
+      charactersObject[characterLabel]["mapY"],
+      layer: charactersObject[characterLabel]["layer"],
       sizeX: charactersObject[characterLabel]["sizeX"] as int,
       sizeY: charactersObject[characterLabel]["sizeY"] as int,
-      solid: true
+      solid: charactersObject[characterLabel]["solid"]
     );
     
     character.name = charactersObject[characterLabel]["name"];
     
     character.map = charactersObject[characterLabel]["map"];
-    character.mapX = charactersObject[characterLabel]["mapX"];
-    character.mapY = charactersObject[characterLabel]["mapY"];
-    character.layer = charactersObject[characterLabel]["layer"];
-    character.direction = charactersObject[characterLabel]["direction"];
-    character.solid = charactersObject[characterLabel]["solid"];
+    character.startMap = character.map;
     
-    character.x = character.mapX * character.motionAmount;
-    character.y = character.mapY * character.motionAmount;
+    character.direction = charactersObject[characterLabel]["direction"];
     
     String battlerTypeName = charactersObject[characterLabel]["battlerType"];
     BattlerType battlerType = World.battlerTypes[battlerTypeName];
@@ -438,48 +422,11 @@ class World {
     // game events
     character.setGameEventChain(charactersObject[characterLabel]["gameEventChain"], 0);
     
+    if(charactersObject[characterLabel]["player"] == true) {
+      Main.player = new Player(character);
+    }
+    
     return character;
-  }
-  
-  void parsePlayer(Map<String, Object> playerObject) {
-    if(playerObject == null) {
-      Main.player = new Player(startMap, startX, startY, 0);
-      
-      Main.player.battler = new Battler(
-        "Player",
-        battlerTypes[battlerTypes.keys.first],
-        2,
-        battlerTypes[battlerTypes.keys.first].getAttacksForLevel(2)
-      );
-      
-      Main.player.inventory = new Inventory([]);
-      
-      return;
-    }
-    
-    Main.player = new Player(startMap, startX, startY, playerObject["spriteId"]);
-    
-    int level = playerObject["level"] as int;
-    
-    Main.player.battler = new Battler(
-      playerObject["name"],
-      battlerTypes[playerObject["battlerType"]],
-      level,
-      battlerTypes[playerObject["battlerType"]].getAttacksForLevel(level)
-    );
-    
-    // inventory
-    Main.player.inventory = new Inventory([]);
-    List<Map<String, String>> characterItems = playerObject["inventory"];
-    for(int i=0; i<characterItems.length; i++) {
-      String itemName = characterItems.elementAt(i)["item"];
-      int itemQuantity = int.parse(characterItems.elementAt(i)["quantity"]);
-      Main.player.inventory.addItem(World.items[itemName], itemQuantity);
-    }
-    
-    Main.player.inventory.money = playerObject["money"] as int;
-    
-    Main.player.name = playerObject["name"];
   }
   
   void parseGameEventChains(Map<String, List<Map<String, String>>> gameEventChainsObject) {
@@ -521,7 +468,7 @@ class World {
         } else if(gameEvents[i]["type"] == "heal") {
           Character character = World.characters[gameEvents[i]["character"]];
           if(character == null)
-            character = Main.player;
+            character = Main.player.character;
           
           HealGameEvent healGameEvent = new HealGameEvent(
               character,
@@ -617,7 +564,7 @@ class World {
       }
     }
     
-    if(Main.player.mapX == x && Main.player.mapY == y) {
+    if(Main.player.character.mapX == x && Main.player.character.mapY == y) {
       return true;
     }
     
@@ -662,12 +609,12 @@ class World {
       return;
     
     for(
-        var y=math.max(Main.player.mapY-(viewYSize/2+1).round(), 0);
-        y<Main.player.mapY+(viewYSize/2+1).round() && y<maps[curMap].tiles.length;
+        var y=math.max(Main.player.character.mapY-(viewYSize/2+1).round(), 0);
+        y<Main.player.character.mapY+(viewYSize/2+1).round() && y<maps[curMap].tiles.length;
         y++) {
       for(
-          var x=math.max(Main.player.mapX-(viewXSize/2).round(), 0);
-          x<Main.player.mapX+(viewXSize/2+2).round() && x<maps[curMap].tiles[y].length;
+          var x=math.max(Main.player.character.mapX-(viewXSize/2).round(), 0);
+          x<Main.player.character.mapX+(viewXSize/2+2).round() && x<maps[curMap].tiles[y].length;
           x++) {
         for(int layer in layers) {
           if(maps[curMap].tiles[y][x][layer] is Tile) {
