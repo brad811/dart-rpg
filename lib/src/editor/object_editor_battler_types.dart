@@ -380,6 +380,8 @@ class ObjectEditorBattlerTypes {
       });
       battlerTypeJson["levelAttacks"] = levelAttacks;
       
+      battlerTypeJson["type"] = battlerType.type;
+      
       battlerTypeJson["rarity"] = battlerType.rarity.toString();
       
       battlerTypesJson[battlerType.name] = battlerTypeJson;

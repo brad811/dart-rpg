@@ -108,6 +108,7 @@ class ObjectEditorAttacks {
     World.attacks.forEach((String key, Attack attack) {
       Map<String, String> attackJson = {};
       attackJson["category"] = attack.category.toString();
+      attackJson["type"] = attack.type;
       attackJson["power"] = attack.power.toString();
       attacksJson[attack.name] = attackJson;
     });
