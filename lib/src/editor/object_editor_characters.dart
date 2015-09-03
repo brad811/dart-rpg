@@ -87,6 +87,8 @@ class ObjectEditorCharacters {
       
       "sprite_id", "picture_id", "size_x", "size_y", "map",
       
+      "money",
+      
       // battle
       "battler_type", "battler_level", "sight_distance",
       
@@ -120,7 +122,7 @@ class ObjectEditorCharacters {
       querySelector("#character_row_${j}").classes.remove("selected");
       
       // hide the inventory items for other characters
-      querySelector("#character_${j}_inventory_table").classes.add("hidden");
+      querySelector("#character_${j}_inventory_container").classes.add("hidden");
       querySelector("#character_${j}_game_event_chain_container").classes.add("hidden");
       querySelector("#character_${j}_battle_container").classes.add("hidden");
     }
@@ -136,7 +138,7 @@ class ObjectEditorCharacters {
     querySelector("#object_editor_characters_advanced").classes.remove("hidden");
     
     // show the advanced tables for the selected character
-    querySelector("#character_${i}_inventory_table").classes.remove("hidden");
+    querySelector("#character_${i}_inventory_container").classes.remove("hidden");
     querySelector("#character_${i}_game_event_chain_container").classes.remove("hidden");
     querySelector("#character_${i}_battle_container").classes.remove("hidden");
   }
@@ -233,9 +235,16 @@ class ObjectEditorCharacters {
         visibleString = "";
       }
       
-      inventoryHtml += "<table id='character_${i}_inventory_table' ${visibleString}>";
-      inventoryHtml += "<tr><td>Num</td><td>Item</td><td>Quantity</td><td></td></tr>";
       Character character = World.characters.values.elementAt(i);
+      
+      inventoryHtml += "<div id='character_${i}_inventory_container' ${visibleString}>";
+      
+      inventoryHtml += "Money: <input id='character_${i}_money' type='text' class='number' value='${ character.inventory.money }' />";
+      inventoryHtml += "<hr />";
+      
+      inventoryHtml += "<table>";
+      inventoryHtml += "<tr><td>Num</td><td>Item</td><td>Quantity</td><td></td></tr>";
+      
       for(int j=0; j<character.inventory.itemNames().length; j++) {
         String curItemName = character.inventory.itemNames().elementAt(j);
         inventoryHtml += "<tr>";
@@ -261,6 +270,8 @@ class ObjectEditorCharacters {
       }
       
       inventoryHtml += "</table>";
+      
+      inventoryHtml += "</div>";
     }
     
     querySelector("#inventory_container").setInnerHtml(inventoryHtml);
@@ -451,6 +462,8 @@ class ObjectEditorCharacters {
         character.inventory.addItem(World.items[itemName], itemQuantity);
       }
       
+      character.inventory.money = Editor.getTextInputIntValue("#character_${i}_money", 0);
+      
       character.setGameEventChain(Editor.getSelectInputStringValue("#character_${i}_game_event_chain"), 0);
     }
     
@@ -486,6 +499,8 @@ class ObjectEditorCharacters {
       });
       
       characterJson["inventory"] = inventoryJson;
+      
+      characterJson["money"] = character.inventory.money;
       
       // game event chain
       characterJson["gameEventChain"] = character.getGameEventChain();

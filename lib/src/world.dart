@@ -419,6 +419,13 @@ class World {
       character.inventory.addItem(World.items[itemName], itemQuantity);
     }
     
+    // money
+    if(charactersObject[characterLabel]["money"] != null) {
+      character.inventory.money = charactersObject[characterLabel]["money"];
+    } else {
+      character.inventory.money = 0;
+    }
+    
     // game events
     character.setGameEventChain(charactersObject[characterLabel]["gameEventChain"], 0);
     
