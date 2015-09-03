@@ -119,7 +119,6 @@ class ObjectEditorTypes {
       
       html += "<div id='type_${i}_effectiveness_container' ${visibleString}>";
       
-      
       html += "<table>";
       html += "<tr><td>Num</td><td>Defending Type</td><td>Effectiveness</td></tr>";
       for(int j=0; j<World.types.keys.length; j++) {
@@ -129,7 +128,7 @@ class ObjectEditorTypes {
         html += "<td>${j}</td>";
         html += "<td>${defendingGameType.name}</td>";
         html += "<td><input id='type_${i}_effectiveness_${j}' type='text' class='number decimal' "+
-            "value='${defendingGameType.getEffectiveness(gameType.name)}' /></td>";
+            "value='${gameType.getEffectiveness(defendingGameType.name)}' /></td>";
         html += "</tr>";
       }
       html += "</table>";
