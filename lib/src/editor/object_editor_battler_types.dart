@@ -82,6 +82,12 @@ class ObjectEditorBattlerTypes {
     buildStatsHtml();
     buildAttacksHtml();
     
+    // highlight the selected row
+    if(querySelector("#battler_type_row_${selected}") != null) {
+      querySelector("#battler_type_row_${selected}").classes.add("selected");
+      querySelector("#object_editor_battler_types_advanced").classes.remove("hidden");
+    }
+    
     Editor.attachButtonListener("#add_battler_type_level_button", addLevel);
     
     Editor.setMapDeleteButtonListeners(World.battlerTypes, "battler_type");
