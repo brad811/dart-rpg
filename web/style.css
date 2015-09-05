@@ -1,143 +1,143 @@
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  width: 100%;
-  margin: 0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	width: 100%;
+	margin: 0;
 }
 
 .container {
-  position: absolute;
-  left: 50%;
-  margin-left: -320px;
-  margin-top: 10px;
-  width: 642px;
+	position: absolute;
+	left: 50%;
+	margin-left: -320px;
+	margin-top: 10px;
+	width: 642px;
 }
 
 canvas {
-  border: 1px solid black;
+	border: 1px solid black;
 }
 
 #controls {
-  width: 100%;
-  padding: 10px;
+	width: 100%;
+	padding: 10px;
 }
 
 #game_storage_container {
-  float: right;
-  line-height: 30px;
-  padding: 0 10px 0 10px;
+	float: right;
+	line-height: 30px;
+	padding: 0 10px 0 10px;
 }
 
 #game_storage_message {
-  font-weight: bold;
-  color: #080;
-  float: left;
+	font-weight: bold;
+	color: #080;
+	float: left;
 }
 
 #game_loader {
-  padding: 10px;
-  text-align: center;
+	padding: 10px;
+	text-align: center;
 }
 
 #game_loader div {
-  font-weight: bold;
-  margin-bottom: 8px;
+	font-weight: bold;
+	margin-bottom: 8px;
 }
 
 #game_loader textarea {
-  width: 100%;
-  height: 40px;
+	width: 100%;
+	height: 40px;
 }
 
 #game_loader button {
-  float: right;
-  padding: 4px 8px 4px 8px;
+	float: right;
+	padding: 4px 8px 4px 8px;
 }
 
 #controls_header {
-  text-align: center;
-  font-weight: bold;
+	text-align: center;
+	font-weight: bold;
 }
 
 .td_left {
-  text-align: right;
-  width: 50%;
-  padding-right: 20px;
-  padding-top: 4px;
+	text-align: right;
+	width: 50%;
+	padding-right: 20px;
+	padding-top: 4px;
 }
 
 .td_right {
-  text-align: left;
-  width: 50%;
-  padding-left: 20px;
-  padding-top: 4px;
+	text-align: left;
+	width: 50%;
+	padding-left: 20px;
+	padding-top: 4px;
 }
 
 /* Editor */
 
 #container {
-  width: 100%;
-  height: 100%;
-  padding: 10px 10px 0 10px;
+	width: 100%;
+	height: 100%;
+	padding: 10px 10px 0 10px;
 }
 
 #container, #container table {
-  border-spacing: 0;
+	border-spacing: 0;
 }
 
 #container td {
-  padding: 0;
+	padding: 0;
 }
 
 .editor_table td {
-  padding: 5px !important;
+	padding: 5px !important;
 }
 
 #editor_tabs {
-  height: 30px;
-  padding-bottom: 10px !important;
+	height: 30px;
+	padding-bottom: 10px !important;
 }
 
 #left_half {
-  background-color: #ddddff;
-  float: left;
-  overflow: scroll;
+	background-color: #ddddff;
+	float: left;
+	overflow: scroll;
 }
 
 #right_half {
-  vertical-align: top;
+	vertical-align: top;
 }
 
 #settings_container_left {
-  width: 100%;
-  height: 100%;
-  margin-right: 10px;
-  padding-right: 25px !important;
+	width: 100%;
+	height: 100%;
+	margin-right: 10px;
+	padding-right: 25px !important;
 }
 
 #settings_container_left textarea {
-  width: 400px;
-  height: 28px;
+	width: 400px;
+	height: 28px;
 }
 
 #settings_container_right {
-  width: 532px;
-  height: 100%;
-  overflow: scroll;
+	width: 532px;
+	height: 100%;
+	overflow: scroll;
 }
 
 #right_half_container {
-  height: 100%;
-  width: 532px;
-  margin-left: 10px;
+	height: 100%;
+	width: 532px;
+	margin-left: 10px;
 }
 
 #tooltip {
-  display: none;
-  position: absolute;
-  background-color: #fff;
-  border: 1px solid #000;
-  padding: 8px;
+	display: none;
+	position: absolute;
+	background-color: #fff;
+	border: 1px solid #000;
+	padding: 8px;
 }
 
 #popup_shade {
@@ -164,45 +164,45 @@ canvas {
 }
 
 .sprite_picker_container {
-  height: 256px;
-  width: 532px;
-  float: left;
-  margin-bottom: 10px;
-  overflow-y: scroll;
+	height: 256px;
+	width: 532px;
+	float: left;
+	margin-bottom: 10px;
+	overflow-y: scroll;
 }
 
 #editor_tabs_container, .object_editor_tabs_container {
-  height: 100%;
+	height: 100%;
 }
 
 .selected {
-  background-color: #eff;
+	background-color: #eff;
 }
 
 .tab_headers {
-  height: 30px;
-  float: left;
+	height: 30px;
+	float: left;
 }
 
 .tab_header {
-  float: left;
-  line-height: 30px;
-  padding: 0 10px 0 10px;
-  cursor: pointer;
-  background-color: #bbbbbb;
+	float: left;
+	line-height: 30px;
+	padding: 0 10px 0 10px;
+	cursor: pointer;
+	background-color: #bbbbbb;
 }
 
 .tab_header:hover {
-  background-color: #ffffff;
+	background-color: #ffffff;
 }
 
 .tab {
-  background-color: #eee;
-  height: 100%;
-  width: 516px;
-  overflow-y: scroll;
-  padding: 8px;
-  float: left;
+	background-color: #eee;
+	height: 100%;
+	width: 516px;
+	overflow-y: scroll;
+	padding: 8px;
+	float: left;
 }
 
 #object_editor_inner_container .tab {
@@ -210,75 +210,75 @@ canvas {
 }
 
 .tab table {
-  float: left;
+	float: left;
 }
 
 h4 {
-  margin-top: 5px;
-  margin-bottom: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 #size_buttons_container {
-  float: right;
+	float: right;
 }
 
 #size_buttons_container .center {
-  text-align: center;
+	text-align: center;
 }
 
 #size_x_up_button_pre, #size_x_down_button_pre,
 #size_x_up_button, #size_x_down_button {
-  width: 20px;
-  height: 100px;
+	width: 20px;
+	height: 100px;
 }
 
 #size_y_up_button_pre, #size_y_down_button_pre,
 #size_y_up_button, #size_y_down_button {
-  width: 100px;
-  height: 20px;
+	width: 100px;
+	height: 20px;
 }
 
 #size_x_up_button_pre, #size_x_up_button,
 #size_y_up_button_pre, #size_y_up_button {
-  background-color: #0c0;
+	background-color: #0c0;
 }
 
 #size_x_down_button_pre, #size_x_down_button,
 #size_y_down_button_pre, #size_y_down_button {
-  background-color: #c00;
+	background-color: #c00;
 }
 
 #layer_visibility_toggles {
-  float: left;
-  clear: left;
+	float: left;
+	clear: left;
 }
 
 textarea {
-  width: 160px;
-  height: 60px;
+	width: 160px;
+	height: 60px;
 }
 
 .export_json_container {
-  line-height: 0;
+	line-height: 0;
 }
 
 #maps_container td, #map_characters_container td,
 #warps_container td, #signs_container td, #battlers_container td, #events_container td {
-  text-align: center;
+	text-align: center;
 }
 
 #battlers_container .battlers_name_input {
-  width: 100px;
+	width: 100px;
 }
 
 #export_json {
-  height: 60px;
-  width: 526px;
+	height: 60px;
+	width: 526px;
 }
 
 #export_json_object_editor {
-  height: 60px;
-  width: 626px;
+	height: 60px;
+	width: 626px;
 }
 
 /*
@@ -286,52 +286,52 @@ textarea {
  */
  
 #object_editor_right {
-  padding: 0 0 0 26px !important;
-  margin: 10px;
-  width: 632px;
+	padding: 0 0 0 26px !important;
+	margin: 10px;
+	width: 632px;
 }
 
 #object_editor_right table, #object_editor_right table td {
-  height: 100%;
+	height: 100%;
 }
 
 .number {
-  width: 30px;
+	width: 30px;
 }
 
 #object_editor_tab td {
-  vertical-align: top;
+	vertical-align: top;
 }
 
 #object_editor_inner_container {
-  width: 100%;
-  height: 100%;
+	width: 100%;
+	height: 100%;
 }
 
 #object_editor_inner_main_area, #settings_tab {
-  height: 100%;
-  padding-right: 20px;
+	height: 100%;
+	padding-right: 20px;
 }
 
 #object_editor_inner_main_area .tab, #settings_tab .tab {
-  background-color: #eee;
-  height: 100%;
-  width: 100%;
-  overflow-y: scroll;
-  margin: 0;
+	background-color: #eee;
+	height: 100%;
+	width: 100%;
+	overflow-y: scroll;
+	margin: 0;
 }
 
 #settings_tab .tab td {
-  padding: 5px;
+	padding: 5px;
 }
 
 #object_editor_inner_main_area .tab td {
-  text-align: center;
+	text-align: center;
 }
 
 .object_editor_tabs_container td {
-  text-align: center;
-  padding: 5px !important;
+	text-align: center;
+	padding: 5px !important;
 }
 
 #battler_type_stats_container td {
@@ -339,7 +339,7 @@ textarea {
 }
 
 .hidden {
-  display: none;
+	display: none;
 }
 
 .tool_selector {
@@ -367,4 +367,3 @@ textarea {
 .breaker {
 	clear: left;
 }
-
