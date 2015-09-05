@@ -117,7 +117,6 @@ class MapEditorEvents {
       }
     }
     
-    // TODO: catch out of bounds values
     //Editor.updateAndRetainValue(e);
     MapEditor.updateMap(shouldExport: true);
   }

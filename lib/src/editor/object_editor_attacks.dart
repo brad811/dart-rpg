@@ -12,7 +12,7 @@ import 'package:dart_rpg/src/editor/object_editor.dart';
 // TODO: handle renaming attacks by updating everywhere
 // (otherwise they just disappear)
 
-// TODO: make sure all these update: attack, battler type, game event, character
+// TODO: make sure all these update everywhere: attack, battler type, game event, character
 
 class ObjectEditorAttacks {
   static void setUp() {
