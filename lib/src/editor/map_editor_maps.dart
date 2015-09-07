@@ -193,7 +193,6 @@ class MapEditorMaps {
     setMapSelectorButtonListeners();
     setMapDeleteButtonListeners();
     
-    // TODO: tab scrolls when changing map name
     if(nameChange) {
       Editor.updateAndRetainValue(e);
     } else {
