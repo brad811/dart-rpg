@@ -192,7 +192,12 @@ class World {
         typeName
       );
       
-      // TODO: add effectiveness pairings
+      // add effectiveness pairings
+      for(int i=0; i<typesObject[typeName]["effectiveness"].length; i++) {
+        String defendingType = typesObject[typeName]["effectiveness"].keys.elementAt(i);
+        
+        types[typeName].setEffectiveness(defendingType, typesObject[typeName]["effectiveness"][defendingType]);
+      }
     }
   }
   
