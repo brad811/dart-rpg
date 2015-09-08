@@ -3,16 +3,14 @@ library dart_rpg.object_editor_attacks;
 import 'dart:html';
 
 import 'package:dart_rpg/src/attack.dart';
+import 'package:dart_rpg/src/battler_type.dart';
 import 'package:dart_rpg/src/game_type.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/object_editor.dart';
 
-// TODO: handle renaming attacks by updating everywhere
-// (otherwise they just disappear)
-
-// TODO: make sure all these update everywhere: attack, battler type, game event, character
+// TODO: make sure all these update everywhere when renamed: attack, battler type, game event, character
 
 class ObjectEditorAttacks {
   static void setUp() {
@@ -84,16 +82,35 @@ class ObjectEditorAttacks {
     Editor.enforceValueFormat(e);
     Editor.avoidNameCollision(e, "_name", World.attacks);
     
+    Map<String, Attack> oldAttacks = new Map<String, Attack>();
+    oldAttacks.addAll(World.attacks);
+    
     World.attacks = new Map<String, Attack>();
     for(int i=0; querySelector('#attack_${i}_name') != null; i++) {
       try {
         String name = Editor.getTextInputStringValue('#attack_${i}_name');
+        
         World.attacks[name] = new Attack(
           name,
           Editor.getSelectInputIntValue('#attack_${i}_category', 0),
           Editor.getSelectInputStringValue('#attack_${i}_type'),
           Editor.getTextInputIntValue('#attack_${i}_power', 1)
         );
+        
+        // check if attack name was changed
+        if(name != oldAttacks.keys.elementAt(i)) {
+          // update battler type attack names
+          for(BattlerType battlerType in World.battlerTypes.values) {
+            for(int attackLevel in battlerType.levelAttacks.keys) {
+              for(Attack attack in battlerType.levelAttacks[attackLevel]) {
+                if(attack.name == oldAttacks.keys.elementAt(i)) {
+                  World.battlerTypes[battlerType.name].levelAttacks[attackLevel].remove(attack);
+                  World.battlerTypes[battlerType.name].levelAttacks[attackLevel].add(World.attacks[name]);
+                }
+              }
+            }
+          }
+        }
       } catch(e) {
         // could not update this attack
         print("Error updating attack: " + e.toString());

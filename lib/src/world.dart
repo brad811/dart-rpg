@@ -34,8 +34,6 @@ import 'package:dart_rpg/src/game_event/store_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 
-// TODO: maybe make player just another character so player can control multiple different people?
-
 class World {
   static const int
     LAYER_GROUND = 0,
