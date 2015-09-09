@@ -10,7 +10,7 @@ import 'package:dart_rpg/src/world.dart';
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/object_editor.dart';
 
-// TODO: make sure all these update everywhere when renamed: attack, battler type, game event, character
+// TODO: make sure all these update everywhere when renamed: battler type, game event, character
 
 class ObjectEditorAttacks {
   static void setUp() {

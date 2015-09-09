@@ -19,7 +19,6 @@ class Settings {
   static Map<String, DivElement> tabHeaderDivs = {};
   
   static void init() {
-    // attach listener to save button
     canvas = querySelector("#editor_sprite_settings_canvas");
     ctx = canvas.getContext("2d");
   }
@@ -31,6 +30,7 @@ class Settings {
   static void update() {
     buildMainHtml();
     
+    // attach listener to save button
     querySelector("#settings_save_button").onClick.listen((MouseEvent e) {
       save();
     });

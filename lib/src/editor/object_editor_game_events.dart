@@ -12,6 +12,7 @@ import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/object_editor.dart';
 
 // TODO: map editing events (place/remove/change warps, signs, tiles, events)
+// TODO: character editing events (change gameEventChain, battler/level, inventory, name, size, picture/sprite)
 // TODO: logic gate events IF this THEN gameEventChainA ELSE gameEventChainB
 // TODO: text input game event
 

@@ -11,10 +11,11 @@ import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/map_editor.dart';
 import 'package:dart_rpg/src/editor/object_editor.dart';
+import 'package:dart_rpg/src/editor/screen_editor.dart';
 import 'package:dart_rpg/src/editor/settings.dart';
 
 class Editor {
-  static List<String> editorTabs = ["map_editor", "object_editor", "settings"];
+  static List<String> editorTabs = ["map_editor", "object_editor", "screen_editor", "settings"];
   
   static bool highlightSpecialTiles = true;
   
@@ -27,6 +28,7 @@ class Editor {
   static void init() {
     ObjectEditor.init();
     MapEditor.init(start);
+    ScreenEditor.init();
     Settings.init();
   }
   
@@ -41,6 +43,7 @@ class Editor {
   static void setUp() {
     MapEditor.setUp();
     ObjectEditor.setUp();
+    ScreenEditor.setUp();
     Settings.setUp();
     
     Editor.setUpTabs(editorTabs);
@@ -82,6 +85,7 @@ class Editor {
   static void update() {
     MapEditor.update();
     ObjectEditor.update();
+    ScreenEditor.update();
     Settings.update();
     Editor.export();
   }
@@ -90,6 +94,7 @@ class Editor {
     Map<String, Map<String, Map<String, Object>>> exportJson = {};
     MapEditor.export(exportJson);
     ObjectEditor.export(exportJson);
+    ScreenEditor.export(exportJson);
     Settings.export(exportJson);
     
     String exportJsonString = JSON.encode(exportJson);
