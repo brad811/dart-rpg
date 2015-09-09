@@ -205,7 +205,7 @@ canvas {
 	float: left;
 }
 
-#object_editor_inner_container .tab {
+#object_editor_inner_container .tab, #screen_editor_tab .tab {
 	width: 616px;
 }
 
@@ -336,6 +336,17 @@ textarea {
 
 #battler_type_stats_container td {
 	text-align: right;
+}
+
+#screen_editor_left {
+	float: left;
+	overflow: scroll;
+}
+
+#screen_editor_right {
+	width: 616px;
+	height: 100%;
+	margin-right: 10px;
 }
 
 .hidden {

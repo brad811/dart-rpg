@@ -3,7 +3,6 @@ library dart_rpg.screen_editor;
 import 'dart:html';
 
 import 'package:dart_rpg/src/main.dart';
-import 'package:dart_rpg/src/sprite.dart';
 
 class ScreenEditor {
   static CanvasElement canvas;
@@ -15,7 +14,13 @@ class ScreenEditor {
   }
   
   static void setUp() {
-    // TODO
+    Function resizeFunction = (Event e) {
+      querySelector('#screen_editor_left').style.width = "${window.innerWidth - 662}px";
+      querySelector('#screen_editor_left').style.height = "${window.innerHeight - 60}px";
+    };
+    
+    window.onResize.listen(resizeFunction);
+    resizeFunction(null);
   }
   
   static void update() {
@@ -29,6 +34,7 @@ class ScreenEditor {
   }
   
   static void buildMainHtml() {
+    // TODO
   }
   
   static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {
