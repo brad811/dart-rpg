@@ -12,7 +12,6 @@ import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
-import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -21,9 +20,11 @@ import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
+import 'package:dart_rpg/src/screen/battle_screen.dart';
+
 class Battle extends Interactable {
   String gameEventChain;
-  List<List<Tile>> tiles = [];
+  BattleScreen battleScreen;
   
   ChoiceGameEvent main, fight;
   GameEvent run, exit;
@@ -40,13 +41,7 @@ class Battle extends Interactable {
     friendlySprite = new Sprite.int(friendly.battlerType.spriteId, 3, 7);
     enemySprite = new Sprite.int(enemy.battlerType.spriteId, 14, 1);
     
-    for(int y=0; y<Main.world.viewYSize; y++) {
-      tiles.add([]);
-      for(int x=0; x<Main.world.viewXSize; x++) {
-        // TODO: move this to the editor
-        tiles[y].add(new Tile(false, new Sprite.int(66, x, y)));
-      }
-    }
+    battleScreen = new BattleScreen();
     
     exit = new GameEvent((callback) {
       Gui.clear();
@@ -306,15 +301,7 @@ class Battle extends Interactable {
   }
   
   void render() {
-    // background
-    for(int y=0; y<tiles.length; y++) {
-      for(int x=0; x<tiles[0].length; x++) {
-        tiles[y][x].sprite.renderStatic();
-      }
-    }
-    
-    friendlySprite.renderStaticSized(3,3);
-    enemySprite.renderStaticSized(3,3);
+    battleScreen.render();
     
     // enemy health bar
     Main.ctx.setFillColorRgb(255, 255, 255);
@@ -322,7 +309,6 @@ class Battle extends Interactable {
       15*Sprite.spriteScale, 0*Sprite.scaledSpriteSize,
       130*Sprite.spriteScale, 1*Sprite.scaledSpriteSize
     );
-    
     
     double levelTextAdjust = 0.75 * (enemy.level.toString().length - 1);
     Font.renderStaticText(14.6 - levelTextAdjust, 0.8, "Lv ${enemy.level}");
