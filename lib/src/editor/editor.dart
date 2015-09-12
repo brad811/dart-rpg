@@ -14,6 +14,8 @@ import 'package:dart_rpg/src/editor/object_editor.dart';
 import 'package:dart_rpg/src/editor/screen_editor.dart';
 import 'package:dart_rpg/src/editor/settings.dart';
 
+// TODO: equation editor? (exp reqired to level up, chance to escape battle, stat gains from leveling up, exp gained from battle)
+
 class Editor {
   static List<String> editorTabs = ["map_editor", "object_editor", "screen_editor", "settings"];
   

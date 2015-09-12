@@ -14,6 +14,12 @@ class BattleScreen extends Screen {
         backgroundTiles[y].add(new Tile(false, new Sprite.int(66, x, y)));
       }
     }
+    
+    Main.battle.friendlySprite.posX = 3.0;
+    Main.battle.friendlySprite.posY = 7.0;
+    
+    Main.battle.enemySprite.posX = 14.0;
+    Main.battle.enemySprite.posY = 1.0;
   }
   
   @override

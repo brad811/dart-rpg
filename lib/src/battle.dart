@@ -38,8 +38,8 @@ class Battle extends Interactable {
   math.Random rand = new math.Random();
   
   Battle(this.friendly, this.enemy, [this.postBattleCallback, this.canRun = true]) {
-    friendlySprite = new Sprite.int(friendly.battlerType.spriteId, 3, 7);
-    enemySprite = new Sprite.int(enemy.battlerType.spriteId, 14, 1);
+    friendlySprite = new Sprite.int(friendly.battlerType.spriteId, 0, 0);
+    enemySprite = new Sprite.int(enemy.battlerType.spriteId, 0, 0);
     
     battleScreen = new BattleScreen();
     
