@@ -29,7 +29,6 @@ class Battle extends Interactable {
   ChoiceGameEvent main, fight;
   GameEvent run, exit;
   Battler friendly, enemy;
-  Sprite friendlySprite, enemySprite;
   bool canRun;
   
   GameEvent attackEvent;
@@ -38,10 +37,7 @@ class Battle extends Interactable {
   math.Random rand = new math.Random();
   
   Battle(this.friendly, this.enemy, [this.postBattleCallback, this.canRun = true]) {
-    friendlySprite = new Sprite.int(friendly.battlerType.spriteId, 0, 0);
-    enemySprite = new Sprite.int(enemy.battlerType.spriteId, 0, 0);
-    
-    battleScreen = new BattleScreen();
+    battleScreen = new BattleScreen(this.friendly, this.enemy);
     
     exit = new GameEvent((callback) {
       Gui.clear();
@@ -303,28 +299,14 @@ class Battle extends Interactable {
   void render() {
     battleScreen.render();
     
-    // enemy health bar
-    Main.ctx.setFillColorRgb(255, 255, 255);
-    Main.ctx.fillRect(
-      15*Sprite.spriteScale, 0*Sprite.scaledSpriteSize,
-      130*Sprite.spriteScale, 1*Sprite.scaledSpriteSize
-    );
-    
     double levelTextAdjust = 0.75 * (enemy.level.toString().length - 1);
     Font.renderStaticText(14.6 - levelTextAdjust, 0.8, "Lv ${enemy.level}");
     
     Font.renderStaticText(2.3, 0.8, "${enemy.battlerType.name}");
     drawHealthBar(1, 1, enemy.displayHealth/enemy.startingHealth);
     
-    // friendly health bar
-    Main.ctx.setFillColorRgb(255, 255, 255);
-    Main.ctx.fillRect(
-      175*Sprite.spriteScale, 8.125*Sprite.scaledSpriteSize,
-      130*Sprite.spriteScale, 2*Sprite.scaledSpriteSize
-    );
-    
     Font.renderStaticText(22.25, 17.0, "${friendly.battlerType.name}");
-    
+        
     levelTextAdjust = 0.75 * (friendly.level.toString().length - 1);
     Font.renderStaticText(34.6 - levelTextAdjust, 17.0, "Lv ${friendly.level}");
     
