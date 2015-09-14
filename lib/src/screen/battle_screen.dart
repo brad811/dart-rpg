@@ -11,6 +11,7 @@ class BattleScreen extends Screen {
   Sprite friendlySprite, enemySprite;
   
   BattleScreen(Battler friendly, Battler enemy) {
+    // TODO: move to editor
     for(int y=0; y<Main.world.viewYSize; y++) {
       backgroundTiles.add([]);
       for(int x=0; x<Main.world.viewXSize; x++) {
