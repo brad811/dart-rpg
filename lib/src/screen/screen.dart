@@ -1,8 +1,9 @@
 library dart_rpg.screen;
 
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/tile.dart';
 
-class Screen {
+class Screen extends Interactable {
   List<List<Tile>> backgroundTiles = [];
   
   void render() {

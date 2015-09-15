@@ -5,13 +5,11 @@ import 'dart:math' as math;
 
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/character.dart';
-import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
-import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -233,10 +231,6 @@ class Battle extends Interactable {
     });
   }
   
-  void tick() {
-    
-  }
-  
   void showExperienceGain(int originalExperience, callback) {
     if(friendly.displayExperience < friendly.experience) {
       friendly.displayExperience += math.max(1, ((friendly.experience - originalExperience) / (1000 / Main.timeDelay)).round());
@@ -261,60 +255,7 @@ class Battle extends Interactable {
     }
   }
   
-  void drawHealthBar(int x, int y, double health) {
-    Main.ctx.setFillColorRgb(0, 0, 0);
-    Main.ctx.fillRect(
-      x*Sprite.scaledSpriteSize - Sprite.spriteScale, y*Sprite.scaledSpriteSize - Sprite.spriteScale,
-      8*Sprite.scaledSpriteSize + Sprite.spriteScale*2, 4*Sprite.spriteScale + Sprite.spriteScale*2
-    );
-    
-    Main.ctx.setFillColorRgb(255, 255, 255);
-    Main.ctx.fillRect(
-      x*Sprite.scaledSpriteSize, y*Sprite.scaledSpriteSize,
-      8*Sprite.scaledSpriteSize, 4*Sprite.spriteScale
-    );
-    
-    if(health < 0.2)
-      Main.ctx.setFillColorRgb(85, 85, 85);
-    else
-      Main.ctx.setFillColorRgb(170, 170, 170);
-    
-    Main.ctx.fillRect(
-      x*Sprite.scaledSpriteSize, y*Sprite.scaledSpriteSize,
-      (8*health*Sprite.pixelsPerSprite).round()*Sprite.spriteScale, 4*Sprite.spriteScale
-    );
-  }
-  
-  void drawExperienceBar() {
-    Main.ctx.setFillColorRgb(85, 85, 85);
-    double ratio =
-      (Main.player.character.battler.displayExperience - friendly.curLevelExperience()) /
-      (friendly.nextLevelExperience() - friendly.curLevelExperience());
-    Main.ctx.fillRect(
-      11*Sprite.scaledSpriteSize - Sprite.spriteScale, 10.5*Sprite.scaledSpriteSize,
-      ratio*(8*Sprite.scaledSpriteSize + Sprite.spriteScale*2), 2*Sprite.spriteScale + Sprite.spriteScale*2
-    );
-  }
-  
   void render() {
     battleScreen.render();
-    
-    double levelTextAdjust = 0.75 * (enemy.level.toString().length - 1);
-    Font.renderStaticText(14.6 - levelTextAdjust, 0.8, "Lv ${enemy.level}");
-    
-    Font.renderStaticText(2.3, 0.8, "${enemy.battlerType.name}");
-    drawHealthBar(1, 1, enemy.displayHealth/enemy.startingHealth);
-    
-    Font.renderStaticText(22.25, 17.0, "${friendly.battlerType.name}");
-        
-    levelTextAdjust = 0.75 * (friendly.level.toString().length - 1);
-    Font.renderStaticText(34.6 - levelTextAdjust, 17.0, "Lv ${friendly.level}");
-    
-    Font.renderStaticText(22.25, 18.75, "${friendly.displayHealth}");
-    Font.renderStaticText(37.6 - ("${friendly.startingHealth}".length)*0.75, 18.75, "${friendly.startingHealth}");
-    
-    drawHealthBar(11, 10, friendly.displayHealth/friendly.startingHealth);
-    
-    drawExperienceBar();
   }
 }

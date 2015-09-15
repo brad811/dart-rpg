@@ -164,7 +164,6 @@ class Main {
       }
     } else {
       battle.render();
-      battle.tick();
     }
     
     Gui.render();
