@@ -13,6 +13,8 @@ import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
+import 'package:dart_rpg/src/screen/title_screen.dart';
+
 class Main {
   static final int
     canvasWidth = 640,
@@ -32,8 +34,12 @@ class Main {
   static int framesPerSecond = 40;
   static int timeDelay = (1000 / framesPerSecond).round();
   static double timeScale = 1.0;
+  
   static bool inBattle = false;
   static Battle battle;
+  
+  static bool onTitleScreen = false;
+  static TitleScreen titleScreen;
   
   static Timer tickTimer = null;
   
@@ -98,6 +104,11 @@ class Main {
     world = new World(() {
       Main.fixImageSmoothing(c, (c.width / window.devicePixelRatio).round(), (c.height / window.devicePixelRatio).round());
       focusObject = player;
+      
+      titleScreen = new TitleScreen();
+      Main.onTitleScreen = true;
+      titleScreen.trigger();
+      
       timeScale = 1.0;
       tick();
     });
@@ -135,7 +146,11 @@ class Main {
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     
-    if(!inBattle) {
+    if(onTitleScreen) {
+      titleScreen.render();
+    } else if(inBattle) {
+      battle.render();
+    } else {
       renderList = [];
       for(int i=0; i<World.layers.length; i++) {
         renderList.add([]);
@@ -162,8 +177,6 @@ class Main {
           }
         }
       }
-    } else {
-      battle.render();
     }
     
     Gui.render();

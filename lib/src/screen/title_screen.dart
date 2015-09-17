@@ -4,6 +4,9 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 
+import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/choice_game_event.dart';
+
 import 'package:dart_rpg/src/screen/screen.dart';
 
 class TitleScreen extends Screen {
@@ -22,5 +25,20 @@ class TitleScreen extends Screen {
     super.render();
     
     // TODO: render text, options
+  }
+  
+  void trigger() {
+    // TODO: enable other custom choice game event borders and text alignments
+    new ChoiceGameEvent(
+      ChoiceGameEvent.generateChoiceMap("battle_item_use", {
+          "New Game": [new GameEvent(newGame)]
+        }
+      )
+    ).trigger(this);
+  }
+  
+  void newGame(callback) {
+    Main.onTitleScreen = false;
+    Main.focusObject = Main.player;
   }
 }
