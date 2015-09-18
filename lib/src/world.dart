@@ -59,7 +59,7 @@ class World {
   static Map<String, List<GameEvent>> gameEventChains = {};
   
   // used when saving the game
-  static Map<String, Character> originalCharacters = {};
+  static Map<String, Map> originalCharacters = {};
   
   final int
     viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
@@ -75,22 +75,97 @@ class World {
   }
   
   void saveGame(Function callback) {
-    Map<String, Map> obj;
+    Map<String, Map> obj = {};
     
     // characters
-    obj["characters"] = {};
-    characters.forEach((String label, Character character) {
-      // TODO: only do this if there is a difference
-      obj["characters"][label] = {};
-      
-      // TODO: battler
-      // TODO: stats
-      // TODO: position / movement
-      // TODO: game event chain
-      // TODO: inventory
-    });
+    saveCharacterDifferences(obj);
     
     // TODO: tiles
+  }
+  
+  void saveCharacterDifferences(Map<String, Object> exportJson) {
+    Map<String, Map<String, String>> charactersJson = {};
+    World.characters.forEach((String key, Character character) {
+      Map<String, Object> characterJson = {};
+      
+      Map<String, Object> originalCharacterJson = originalCharacters[key];
+      
+      if(character.spriteId != originalCharacterJson["spriteId"])
+        characterJson["spriteId"] = character.spriteId;
+      
+      if(character.pictureId != originalCharacterJson["pictureId"])
+        characterJson["pictureId"] = character.pictureId;
+      
+      if(character.sizeX != originalCharacterJson["sizeX"])
+        characterJson["sizeX"] = character.sizeX;
+      
+      if(character.sizeY != originalCharacterJson["sizeY"])
+        characterJson["sizeY"] = character.sizeY;
+      
+      if(character.map != originalCharacterJson["map"])
+        characterJson["map"] = character.map;
+      
+      if(character.name != originalCharacterJson["name"])
+        characterJson["name"] = character.name;
+      
+      // map information
+      if(character.mapX != originalCharacterJson["mapX"])
+        characterJson["mapX"] = character.mapX;
+      
+      if(character.mapY != originalCharacterJson["mapY"])
+        characterJson["mapY"] = character.mapY;
+      
+      if(character.layer != originalCharacterJson["layer"])
+        characterJson["layer"] = character.layer;
+      
+      if(character.direction != originalCharacterJson["direction"])
+        characterJson["direction"] = character.direction;
+      
+      if(character.solid != originalCharacterJson["solid"])
+        characterJson["solid"] = character.solid;
+      
+      // inventory // TODO: differentiate per-item
+      List<Map<String, String>> inventoryJson = [];
+      character.inventory.itemNames().forEach((String itemName) {
+        Map<String, String> itemJson = {};
+        itemJson["item"] = itemName;
+        itemJson["quantity"] = character.inventory.getQuantity(itemName).toString();
+        
+        inventoryJson.add(itemJson);
+      });
+      
+      if(inventoryJson.toString() != originalCharacterJson["inventory"].toString())
+        characterJson["inventory"] = inventoryJson;
+      
+      if(character.inventory.money != originalCharacterJson["money"])
+        characterJson["money"] = character.inventory.money;
+      
+      // game event chain
+      if(character.getGameEventChain() != originalCharacterJson["gameEventChain"])
+        characterJson["gameEventChain"] = character.getGameEventChain();
+      
+      // battle // TODO: exp, stats, etc.
+      if(character.battler.battlerType.name != originalCharacterJson["battlerType"])
+        characterJson["battlerType"] = character.battler.battlerType.name;
+        
+      if(character.battler.level.toString() != originalCharacterJson["battlerLevel"])
+        characterJson["battlerLevel"] = character.battler.level.toString();
+          
+      if(character.sightDistance.toString() != originalCharacterJson["sightDistance"])
+        characterJson["sightDistance"] = character.sightDistance.toString();
+      
+      if(Main.player.character.label == character.label) {
+        if(originalCharacterJson["player"] != true)
+          characterJson["player"] = true;
+      } else if(originalCharacterJson["player"] == true) {
+        characterJson["player"] = false;
+      }
+      
+      if(characterJson.toString() != "{}")
+       charactersJson[key] = characterJson;
+    });
+    
+    exportJson["characters"] = charactersJson;
   }
   
   // TODO: rename? so it's not confused with save/load
@@ -134,6 +209,9 @@ class World {
     }
     
     parseSettings(obj["settings"], () {
+      // set the original characters for saving purposes
+      originalCharacters = obj["characters"];
+      
       parseTypes(obj["types"]);
       parseAttacks(obj["attacks"]);
       parseBattlerTypes(obj["battlerTypes"]);
@@ -141,9 +219,6 @@ class World {
       parseMaps(obj["maps"]);
       parseCharacters(obj["characters"]);
       parseGameEventChains(obj["gameEventChains"]);
-      
-      // set the original characters for saving purposes
-      originalCharacters.addAll(characters);
       
       callback();
     });
