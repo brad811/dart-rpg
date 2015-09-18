@@ -58,6 +58,9 @@ class World {
   static Map<String, Character> characters = {};
   static Map<String, List<GameEvent>> gameEventChains = {};
   
+  // used when saving the game
+  static Map<String, Character> originalCharacters = {};
+  
   final int
     viewXSize = (Main.canvasWidth/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round(),
     viewYSize = (Main.canvasHeight/(Sprite.pixelsPerSprite*Sprite.spriteScale)).round();
@@ -71,6 +74,26 @@ class World {
     });
   }
   
+  void saveGame(Function callback) {
+    Map<String, Map> obj;
+    
+    // characters
+    obj["characters"] = {};
+    characters.forEach((String label, Character character) {
+      // TODO: only do this if there is a difference
+      obj["characters"][label] = {};
+      
+      // TODO: battler
+      // TODO: stats
+      // TODO: position / movement
+      // TODO: game event chain
+      // TODO: inventory
+    });
+    
+    // TODO: tiles
+  }
+  
+  // TODO: rename? so it's not confused with save/load
   void loadGame(Function callback) {
     HttpRequest
       .getString("game.json")
@@ -118,6 +141,9 @@ class World {
       parseMaps(obj["maps"]);
       parseCharacters(obj["characters"]);
       parseGameEventChains(obj["gameEventChains"]);
+      
+      // set the original characters for saving purposes
+      originalCharacters.addAll(characters);
       
       callback();
     });
