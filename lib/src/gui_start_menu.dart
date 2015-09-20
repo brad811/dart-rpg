@@ -18,7 +18,7 @@ class GuiStartMenu {
       "Stats": [stats],
       "Powers": [exit],
       "Items": [items],
-      "Save": [exit],
+      "Save": [save],
       "Exit": [exit]
     }),
     15, 0,
@@ -66,6 +66,15 @@ class GuiStartMenu {
   static GameEvent exit = new GameEvent((Function a) {
     Gui.clear();
     Main.focusObject = Main.player;
+  });
+  
+  static GameEvent save = new GameEvent((Function a) {
+    Gui.clear();
+    Main.focusObject = Main.player;
+    // TODO: confirm dialog if save file already exists
+    Main.world.saveGame();
+    
+    new TextGameEvent(237, "Game saved! (not really)").trigger(Main.player.character);
   });
   
   static GameEvent stats = new GameEvent((Function a) {
