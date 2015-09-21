@@ -59,6 +59,7 @@ class World {
   static Map<String, List<GameEvent>> gameEventChains = {};
   
   // used when saving the game
+  static Map<String, Map> originalMaps = {};
   static Map<String, Map> originalCharacters = {};
   
   final int
@@ -74,13 +75,78 @@ class World {
     });
   }
   
-  void saveGame(Function callback) {
+  void saveGame() {
     Map<String, Map> obj = {};
     
     // characters
     saveCharacterDifferences(obj);
     
-    // TODO: tiles
+    // tiles
+    saveTileDifferences(obj);
+    
+    // TODO: store somewhere
+  }
+  
+  void saveTileDifferences(Map<String, Object> exportJson) {
+    Map<String, Map<String, String>> mapsJson = {};
+    
+    Main.world.maps.forEach((String key, GameMap map) {
+      Map<String, Map<int, Map<int, Map<int, Map<String, Object>>>>> mapJson = {};
+      
+      for(int y=0; y<map.tiles.length; y++) {
+        for(int x=0; x<map.tiles[y].length; x++) {
+          for(int layer=0; layer<map.tiles[y][x].length; layer++) {
+            Tile tile = map.tiles[y][x][layer];
+            Map<String, Object> originalTile = originalMaps[key]["tiles"][y][x][layer];
+            
+            if(tile == null && originalTile == null) {
+              continue;
+            }
+            
+            if(tile == null && originalTile != null) {
+              // TODO: indicated to set tile to null
+              continue;
+            }
+            
+            bool oneIsNull = false;
+            if(
+              (tile == null && originalTile != null) ||
+              (tile != null && originalTile == null)
+            ) {
+              oneIsNull = true;
+            }
+            
+            if(oneIsNull || tile.sprite.id != originalTile["spriteId"]) {
+              saveTileDifference(mapJson, y, x, layer, "spriteId", tile.sprite.id);
+            }
+            
+            // TODO: the rest of the tile properties
+          }
+        }
+      }
+    });
+    
+    exportJson["maps"] = mapsJson;
+  }
+  
+  void saveTileDifference(Map mapJson, int y, int x, int layer, String property, Object value) {
+    if(mapJson["tiles"] == null) {
+      mapJson["tiles"] = {};
+    }
+    
+    if(mapJson["tiles"][y] == null) {
+      mapJson["tiles"][y] = {};
+    }
+    
+    if(mapJson["tiles"][y][x] == null) {
+      mapJson["tiles"][y][x] = {};
+    }
+    
+    if(mapJson["tiles"][y][x][layer] == null) {
+      mapJson["tiles"][y][x][layer] = {};
+    }
+    
+    mapJson["tiles"][y][x][layer][property] = value;
   }
   
   void saveCharacterDifferences(Map<String, Object> exportJson) {
@@ -210,6 +276,7 @@ class World {
     
     parseSettings(obj["settings"], () {
       // set the original characters for saving purposes
+      originalMaps = obj["maps"];
       originalCharacters = obj["characters"];
       
       parseTypes(obj["types"]);
