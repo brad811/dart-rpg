@@ -128,6 +128,8 @@ class Character extends Interactable {
       
       // handle entering null tiles
       if(tile != null) {
+        // TODO: this shouldn't happen if a character encounter happens
+        //   perhaps have the battle check happen here, and actually trigger as a motion callback
         tile.enter(this);
       }
     }
