@@ -75,7 +75,86 @@ class World {
     });
   }
   
-  void saveGame() {
+  void loadGameProgress() {
+    if(!window.localStorage.containsKey("saved_game")) {
+      print("No saved game found!");
+      return;
+    }
+    
+    Map<String, Map> obj = JSON.decode(window.localStorage["saved_game"]);
+    
+    loadCharacterDifferences(obj["characters"]);
+  }
+  
+  void loadCharacterDifferences(Map<String, Map<String, Object>> charactersJson) {
+    charactersJson.forEach((String key, Map<String, Object> properties) {
+      Character character = World.characters[key];
+      
+      print("props: ${ properties }");
+      
+      if(properties.containsKey("spriteId"))
+        character.spriteId = properties["spriteId"];
+      
+      if(properties.containsKey("pictureId"))
+        character.pictureId = properties["pictureId"];
+      
+      if(properties.containsKey("sizeX"))
+        character.sizeX = properties["sizeX"];
+      
+      if(properties.containsKey("sizeY"))
+        character.sizeY = properties["sizeY"];
+      
+      if(properties.containsKey("map"))
+        character.map = properties["map"];
+      
+      if(properties.containsKey("name"))
+        character.name = properties["name"];
+      
+      // map information
+      if(properties.containsKey("mapX"))
+        character.warp(character.map, properties["mapX"], character.mapY, character.layer, character.direction);
+      
+      if(properties.containsKey("mapY"))
+        character.warp(character.map, character.mapX, properties["mapY"], character.layer, character.direction);
+      
+      if(properties.containsKey("layer"))
+        character.layer = properties["layer"];
+      
+      if(properties.containsKey("direction"))
+        character.direction = properties["direction"];
+      
+      if(properties.containsKey("solid"))
+        character.solid = properties["solid"];
+      
+      // inventory // TODO: differentiate per-item
+      if(properties.containsKey("inventory")) {
+        // TODO
+      }
+      
+      if(properties.containsKey("money"))
+        character.inventory.money = properties["money"];
+      
+      // game event chain
+      if(properties.containsKey("gameEventChain"))
+        character.setGameEventChain(properties["gameEventChain"], 0);
+      
+      // battle // TODO: exp, stats, etc.
+      
+      // TODO: battler type
+      
+      if(properties.containsKey("battlerLevel"))
+        character.battler.level = properties["battlerLevel"];
+      
+      if(properties.containsKey("sightDistance"))
+        character.sightDistance = properties["sightDistance"];
+      
+      if(properties.containsKey("player") && properties["player"] == true) {
+        Main.player.character = character;
+      }
+    });
+  }
+  
+  void saveGameProgress() {
     Map<String, Map> obj = {};
     
     // characters
@@ -85,6 +164,7 @@ class World {
     saveTileDifferences(obj);
     
     // TODO: store somewhere
+    window.localStorage["saved_game"] = JSON.encode(obj);
   }
   
   void saveTileDifferences(Map<String, Object> exportJson) {

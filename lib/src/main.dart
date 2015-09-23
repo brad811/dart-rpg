@@ -13,7 +13,7 @@ import 'package:dart_rpg/src/player.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'package:dart_rpg/src/screen/title_screen.dart';
+import 'package:dart_rpg/src/game_screen/title_screen.dart';
 
 class Main {
   static final int

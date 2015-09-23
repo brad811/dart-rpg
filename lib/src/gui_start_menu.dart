@@ -72,9 +72,9 @@ class GuiStartMenu {
     Gui.clear();
     Main.focusObject = Main.player;
     // TODO: confirm dialog if save file already exists
-    Main.world.saveGame();
+    Main.world.saveGameProgress();
     
-    new TextGameEvent(237, "Game saved! (not really)").trigger(Main.player.character);
+    new TextGameEvent(237, "Game saved!").trigger(Main.player.character);
   });
   
   static GameEvent stats = new GameEvent((Function a) {

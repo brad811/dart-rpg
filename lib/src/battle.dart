@@ -18,7 +18,7 @@ import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
-import 'package:dart_rpg/src/screen/battle_screen.dart';
+import 'package:dart_rpg/src/game_screen/battle_screen.dart';
 
 class Battle extends Interactable {
   BattleScreen battleScreen;

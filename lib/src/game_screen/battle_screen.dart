@@ -6,9 +6,9 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 
-import 'package:dart_rpg/src/screen/screen.dart';
+import 'package:dart_rpg/src/game_screen/game_screen.dart';
 
-class BattleScreen extends Screen {
+class BattleScreen extends GameScreen {
   Battler friendly, enemy;
   Sprite friendlySprite, enemySprite;
   
