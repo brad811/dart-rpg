@@ -76,12 +76,12 @@ class World {
   }
   
   void loadGameProgress() {
-    if(!window.localStorage.containsKey("saved_game")) {
+    if(!window.localStorage.containsKey("saved_progress")) {
       print("No saved game found!");
       return;
     }
     
-    Map<String, Map> obj = JSON.decode(window.localStorage["saved_game"]);
+    Map<String, Map> obj = JSON.decode(window.localStorage["saved_progress"]);
     
     loadCharacterDifferences(obj["characters"]);
   }
@@ -89,8 +89,6 @@ class World {
   void loadCharacterDifferences(Map<String, Map<String, Object>> charactersJson) {
     charactersJson.forEach((String key, Map<String, Object> properties) {
       Character character = World.characters[key];
-      
-      print("props: ${ properties }");
       
       if(properties.containsKey("spriteId"))
         character.spriteId = properties["spriteId"];
@@ -164,7 +162,7 @@ class World {
     saveTileDifferences(obj);
     
     // TODO: store somewhere
-    window.localStorage["saved_game"] = JSON.encode(obj);
+    window.localStorage["saved_progress"] = JSON.encode(obj);
   }
   
   void saveTileDifferences(Map<String, Object> exportJson) {

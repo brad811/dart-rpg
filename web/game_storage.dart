@@ -13,16 +13,18 @@ class GameStorage {
     
     html += "<div id='game_storage_message'></div>&nbsp;&nbsp;";
     
+    html += "Game Name: <input id='save_local_game_name' type='text' />&nbsp;";
+    html += "<button id='save_local_game_button'>Save Game</button>";
+    html += "&nbsp;&nbsp;&nbsp;&nbsp;";
+    
     html += "<select id='load_local_game_name'>";
     window.localStorage.keys.forEach((String key) {
-      html += "<option>${key}</option>";
+      if(key.startsWith("saved_game_")) {
+        html += "<option>${key.substring("saved_game_".length)}</option>";
+      }
     });
     html += "</select>&nbsp;";
-    
     html += "<button id='load_local_game_button'>Load Game</button>";
-    html += "&nbsp;&nbsp;&nbsp;&nbsp;";
-    html += "<input id='save_local_game_name' type='text' />&nbsp;";
-    html += "<button id='save_local_game_button'>Save Game</button>";
     
     querySelector("#game_storage_container").setInnerHtml(html);
     
@@ -41,7 +43,7 @@ class GameStorage {
     String gameName = gameNameInput.value.replaceAll(new RegExp(r'[^a-zA-Z0-9\._\ ,~!@#$%^&*()_+`\-=\[\]\\{}\|;:,./<>?]'), "_");
     
     // see if a game with this name already exists locally
-    if(window.localStorage[gameName] != null) {
+    if(window.localStorage["saved_game_${gameName}"] != null) {
       bool confirm = window.confirm("There is already a map with this name saved locally. Would you like to overwrite it?");
       if(!confirm) {
         return;
@@ -49,7 +51,7 @@ class GameStorage {
     }
     
     // save the game locally
-    window.localStorage[gameName] = (querySelector("#export_json") as TextAreaElement).value;
+    window.localStorage["saved_game_${gameName}"] = (querySelector("#export_json") as TextAreaElement).value;
     
     GameStorage.update();
     querySelector("#game_storage_message").text = "Game saved!";
@@ -62,7 +64,7 @@ class GameStorage {
     String gameName = Editor.getSelectInputStringValue("#load_local_game_name");
     
     // load saved game json
-    String gameJson = window.localStorage[gameName];
+    String gameJson = window.localStorage["saved_game_${gameName}"];
     
     // replace the json in the export box
     (querySelector("#export_json") as TextAreaElement).value = gameJson;
