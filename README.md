@@ -4,6 +4,7 @@ A browser-based 2d rpg and game editor
 ### Demo
 - Player: http://bradsproject.com/dart-rpg/
 - Editor: http://bradsproject.com/dart-rpg/editor.html
+- TIGSource Forum Thread: http://forums.tigsource.com/index.php?topic=50038
 
 ### Planned Features
 - music
