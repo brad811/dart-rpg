@@ -12,7 +12,7 @@ A browser-based 2d rpg and game editor
 - battle animations
 - lots more game event types
 - option to allow capturing wild monsters
-- equipable items
+- equippable items
 - hover-over info and details for tiles in map editor
 - different tools for map editor (fill, copy/paste, brush sizes)
 - touch/mouse controls (for mobile and non-keyboard playing)
