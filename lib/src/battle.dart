@@ -76,6 +76,8 @@ class Battle extends Interactable {
     
     Function itemsConfirm = (Item selectedItem) {
       GameEvent itemUseConfirm = new GameEvent((Function callback) {
+        Main.player.character.inventory.removeItem(selectedItem.name);
+        
         selectedItem.use(friendly, new GameEvent((_) {
           // TODO: only show health change if health-changing item was used?
           Gui.clear();
