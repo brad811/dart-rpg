@@ -3,6 +3,7 @@ library dart_rpg.main;
 import 'dart:async';
 import 'dart:html';
 import 'dart:js';
+import 'dart:math' as Math;
 
 import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/character.dart';
@@ -42,6 +43,7 @@ class Main {
   static TitleScreen titleScreen;
   
   static Timer tickTimer = null;
+  static Stopwatch stopwatch = new Stopwatch();
   
   static void init() {
     c = querySelector('canvas');
@@ -134,6 +136,9 @@ class Main {
   }
   
   static void tick() {
+    stopwatch.reset();
+    stopwatch.start();
+    
     // Keeps the value from being set to 0 in between checking it and dividing by it
     var curTimeScale = timeScale;
     
@@ -185,10 +190,12 @@ class Main {
     if(tickTimer != null)
       tickTimer.cancel();
     
+    int adjustedTimeDelay = Math.max(1, timeDelay - stopwatch.elapsedMilliseconds);
+    
     if(curTimeScale > 0.0) {
-      tickTimer = new Timer(new Duration(milliseconds: (timeDelay * (1/curTimeScale)).round()), () => tick());
+      tickTimer = new Timer(new Duration(milliseconds: (adjustedTimeDelay * (1/curTimeScale)).round()), () => tick());
     } else {
-      tickTimer = new Timer(new Duration(milliseconds: timeDelay), () => tick());
+      tickTimer = new Timer(new Duration(milliseconds: adjustedTimeDelay), () => tick());
     }
   }
 }
