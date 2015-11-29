@@ -47,6 +47,7 @@ class MapEditor {
   static List<List<Tile>> renderList;
   static int selectedTile, previousSelectedTile;
   static bool fill = false;
+  static bool stamp = false;
   
   static DivElement tooltip;
   
@@ -120,30 +121,48 @@ class MapEditor {
       selectedTile = previousSelectedTile;
       MapEditor.selectSprite(selectedTile);
       fill = false;
+      stamp = false;
       
       querySelector("#tool_selector_brush").classes.add("selected");
       querySelector("#tool_selector_eraser").classes.remove("selected");
       querySelector("#tool_selector_fill").classes.remove("selected");
+      querySelector("#tool_selector_stamp").classes.remove("selected");
     });
     
     querySelector("#tool_selector_eraser").onClick.listen((MouseEvent e) {
       previousSelectedTile = selectedTile;
       MapEditor.selectSprite(-1);
       fill = false;
+      stamp = false;
       
       querySelector("#tool_selector_brush").classes.remove("selected");
       querySelector("#tool_selector_eraser").classes.add("selected");
       querySelector("#tool_selector_fill").classes.remove("selected");
+      querySelector("#tool_selector_stamp").classes.remove("selected");
     });
     
     querySelector("#tool_selector_fill").onClick.listen((MouseEvent e) {
       selectedTile = previousSelectedTile;
       MapEditor.selectSprite(selectedTile);
       fill = true;
+      stamp = false;
       
       querySelector("#tool_selector_brush").classes.remove("selected");
       querySelector("#tool_selector_eraser").classes.remove("selected");
       querySelector("#tool_selector_fill").classes.add("selected");
+      querySelector("#tool_selector_stamp").classes.remove("selected");
+    });
+    
+    querySelector("#tool_selector_stamp").onClick.listen((MouseEvent e) {
+      selectedTile = previousSelectedTile;
+      MapEditor.selectSprite(selectedTile);
+      fill = false;
+      stamp = true;
+      
+      querySelector("#tool_selector_brush").classes.remove("selected");
+      querySelector("#tool_selector_eraser").classes.remove("selected");
+      querySelector("#tool_selector_fill").classes.remove("selected");
+      querySelector("#tool_selector_stamp").classes.add("selected");
     });
   }
   
@@ -225,6 +244,7 @@ class MapEditor {
         querySelector("#tool_selector_brush").classes.add("selected");
         querySelector("#tool_selector_eraser").classes.remove("selected");
         querySelector("#tool_selector_fill").classes.remove("selected");
+        querySelector("#tool_selector_stamp").classes.remove("selected");
       }
     });
   }
@@ -320,6 +340,18 @@ class MapEditor {
           tileBefore = -1;
         }
         floodFill(mapTiles, x, y, layer, tileBefore, solid, layered);
+      } else if(stamp == true) {
+        int height = Editor.getTextInputIntValue("#stamp_tool_height", 1);
+        int width = Editor.getTextInputIntValue("#stamp_tool_width", 1);
+        
+        for(int i=0; i<width; i++) {
+          for(int j=0; j<height; j++) {
+            mapTiles[y+j][x+i][layer] = new Tile(
+              solid,
+              new Sprite.int(selectedTile + (j*Sprite.spriteSheetWidth) + i, x+i, y+j)
+            );
+          }
+        }
       } else {
         mapTiles[y][x][layer] = new Tile(
           solid,
