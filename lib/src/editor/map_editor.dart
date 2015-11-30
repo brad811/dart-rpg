@@ -272,21 +272,34 @@ class MapEditor {
     
     MapEditor.updateMap();
     
-    // render the tile as it would appear with the selected tile applied to the selected layer
-    mapEditorCanvasContext.fillStyle = "#ff00ff";
-    mapEditorCanvasContext.fillRect(Sprite.scaledSpriteSize * x, Sprite.scaledSpriteSize * y, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
+    int
+      width = 1,
+      height = 1;
     
-    int selectedLayer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
+    if(stamp == true) {
+      width = Editor.getTextInputIntValue("#stamp_tool_width", 1);
+      height = Editor.getTextInputIntValue("#stamp_tool_height", 1);
+    }
     
-    for(int layer=0; layer<World.layers.length; layer++) {
-      if(selectedLayer == layer) {
-        renderStaticSprite(mapEditorCanvasContext, selectedTile, x, y);
-      } else {
-        Tile tile = Main.world.maps[Main.world.curMap].tiles[y][x][layer];
+    for(int i=0; i<width; i++) {
+      for(int j=0; j<height; j++) {
+        // render the tile as it would appear with the selected tile applied to the selected layer
+        mapEditorCanvasContext.fillStyle = "#ff00ff";
+        mapEditorCanvasContext.fillRect(Sprite.scaledSpriteSize * (x+i), Sprite.scaledSpriteSize * (y+j), Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
         
-        if(tile != null) {
-          int id = Main.world.maps[Main.world.curMap].tiles[y][x][layer].sprite.id;
-          renderStaticSprite(mapEditorCanvasContext, id, x, y);
+        int selectedLayer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
+        
+        for(int layer=0; layer<World.layers.length; layer++) {
+          if(selectedLayer == layer) {
+            renderStaticSprite(mapEditorCanvasContext, selectedTile + j*Sprite.spriteSheetWidth + i, x+i, y+j);
+          } else {
+            Tile tile = Main.world.maps[Main.world.curMap].tiles[y+j][x+i][layer];
+            
+            if(tile != null) {
+              int id = Main.world.maps[Main.world.curMap].tiles[y+j][x+i][layer].sprite.id;
+              renderStaticSprite(mapEditorCanvasContext, id, x+i, y+j);
+            }
+          }
         }
       }
     }
@@ -294,11 +307,17 @@ class MapEditor {
     // outline the tile
     mapEditorCanvasContext.lineWidth = 4;
     mapEditorCanvasContext.setStrokeColorRgb(255, 255, 255, 1.0);
-    mapEditorCanvasContext.strokeRect(Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2, Sprite.scaledSpriteSize + 4, Sprite.scaledSpriteSize + 4);
+    mapEditorCanvasContext.strokeRect(
+      Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2,
+      Sprite.scaledSpriteSize * width + 4, Sprite.scaledSpriteSize * height + 4
+    );
     
     mapEditorCanvasContext.lineWidth = 2;
     mapEditorCanvasContext.setStrokeColorRgb(0, 0, 0, 1.0);
-    mapEditorCanvasContext.strokeRect(Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2, Sprite.scaledSpriteSize + 4, Sprite.scaledSpriteSize + 4);
+    mapEditorCanvasContext.strokeRect(
+      Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2,
+      Sprite.scaledSpriteSize * width + 4, Sprite.scaledSpriteSize * height + 4
+    );
   }
   
   static void changeTile(MouseEvent e) {
