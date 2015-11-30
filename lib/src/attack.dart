@@ -17,8 +17,6 @@ class Attack {
   
   final int category;
   
-  // TODO: add attack types (fire, water, electric, etc.)
-  
   TextGameEvent textGameEvent;
   
   // TODO: add optional argument for attack behavior
