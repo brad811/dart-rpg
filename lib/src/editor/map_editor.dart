@@ -293,6 +293,11 @@ class MapEditor {
           if(selectedLayer == layer) {
             renderStaticSprite(mapEditorCanvasContext, selectedTile + j*Sprite.spriteSheetWidth + i, x+i, y+j);
           } else {
+            if(y+j >= Main.world.maps[Main.world.curMap].tiles.length ||
+                x+i >= Main.world.maps[Main.world.curMap].tiles[y+j].length) {
+              continue;
+            }
+
             Tile tile = Main.world.maps[Main.world.curMap].tiles[y+j][x+i][layer];
             
             if(tile != null) {
