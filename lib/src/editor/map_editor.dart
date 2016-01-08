@@ -46,8 +46,9 @@ class MapEditor {
   
   static List<List<Tile>> renderList;
   static int selectedTile, previousSelectedTile;
-  static bool fill = false;
-  static bool stamp = false;
+
+  static List<String> availableTools = ["select", "brush", "erase", "fill", "stamp"];
+  static String selectedTool = "brush";
   
   static DivElement tooltip;
   
@@ -115,54 +116,32 @@ class MapEditor {
     
     MapEditor.updateMap();
   }
-  
-  static void setUpToolSelectors() {
-    querySelector("#tool_selector_brush").onClick.listen((MouseEvent e) {
-      selectedTile = previousSelectedTile;
-      MapEditor.selectSprite(selectedTile);
-      fill = false;
-      stamp = false;
-      
-      querySelector("#tool_selector_brush").classes.add("selected");
-      querySelector("#tool_selector_eraser").classes.remove("selected");
-      querySelector("#tool_selector_fill").classes.remove("selected");
-      querySelector("#tool_selector_stamp").classes.remove("selected");
+
+  static void selectTool(String newTool) {
+    availableTools.forEach((String curTool) {
+      querySelector("#tool_selector_" + curTool).classes.remove("selected");
+
+      if(curTool == newTool) {
+        querySelector("#tool_selector_" + curTool).classes.add("selected");
+      }
     });
-    
-    querySelector("#tool_selector_eraser").onClick.listen((MouseEvent e) {
+
+    if(newTool == "erase") {
       previousSelectedTile = selectedTile;
       MapEditor.selectSprite(-1);
-      fill = false;
-      stamp = false;
-      
-      querySelector("#tool_selector_brush").classes.remove("selected");
-      querySelector("#tool_selector_eraser").classes.add("selected");
-      querySelector("#tool_selector_fill").classes.remove("selected");
-      querySelector("#tool_selector_stamp").classes.remove("selected");
-    });
-    
-    querySelector("#tool_selector_fill").onClick.listen((MouseEvent e) {
+    } else {
       selectedTile = previousSelectedTile;
       MapEditor.selectSprite(selectedTile);
-      fill = true;
-      stamp = false;
-      
-      querySelector("#tool_selector_brush").classes.remove("selected");
-      querySelector("#tool_selector_eraser").classes.remove("selected");
-      querySelector("#tool_selector_fill").classes.add("selected");
-      querySelector("#tool_selector_stamp").classes.remove("selected");
-    });
-    
-    querySelector("#tool_selector_stamp").onClick.listen((MouseEvent e) {
-      selectedTile = previousSelectedTile;
-      MapEditor.selectSprite(selectedTile);
-      fill = false;
-      stamp = true;
-      
-      querySelector("#tool_selector_brush").classes.remove("selected");
-      querySelector("#tool_selector_eraser").classes.remove("selected");
-      querySelector("#tool_selector_fill").classes.remove("selected");
-      querySelector("#tool_selector_stamp").classes.add("selected");
+    }
+
+    selectedTool = newTool;
+  }
+  
+  static void setUpToolSelectors() {
+    availableTools.forEach((String curTool) {
+      querySelector("#tool_selector_" + curTool).onClick.listen((MouseEvent e) {
+        selectTool(curTool);
+      });
     });
   }
   
@@ -240,9 +219,9 @@ class MapEditor {
       MapEditor.selectSprite(y*Sprite.spriteSheetWidth + x);
       previousSelectedTile = y*Sprite.spriteSheetWidth + x;
       
-      if(querySelector("#tool_selector_eraser").classes.contains("selected")) {
+      if(querySelector("#tool_selector_erase").classes.contains("selected")) {
         querySelector("#tool_selector_brush").classes.add("selected");
-        querySelector("#tool_selector_eraser").classes.remove("selected");
+        querySelector("#tool_selector_erase").classes.remove("selected");
         querySelector("#tool_selector_fill").classes.remove("selected");
         querySelector("#tool_selector_stamp").classes.remove("selected");
       }
@@ -276,7 +255,8 @@ class MapEditor {
       width = 1,
       height = 1;
     
-    if(stamp == true) {
+    if(selectedTool == "stamp") {
+      // TODO: only do this when these values change, not on every tile hover
       width = Editor.getTextInputIntValue("#stamp_tool_width", 1);
       height = Editor.getTextInputIntValue("#stamp_tool_height", 1);
     }
@@ -355,7 +335,7 @@ class MapEditor {
         layered
       );
     } else {
-      if(fill == true) {
+      if(selectedTool == "fill") {
         List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
         int tileBefore;
         if(mapTiles[y][x][layer] != null) {
@@ -364,7 +344,7 @@ class MapEditor {
           tileBefore = -1;
         }
         floodFill(mapTiles, x, y, layer, tileBefore, solid, layered);
-      } else if(stamp == true) {
+      } else if(selectedTool == "stamp") {
         int height = Editor.getTextInputIntValue("#stamp_tool_height", 1);
         int width = Editor.getTextInputIntValue("#stamp_tool_width", 1);
         
@@ -376,6 +356,8 @@ class MapEditor {
             );
           }
         }
+      } else if(selectedTool == "select") {
+        // TODO: implement select tool
       } else {
         mapTiles[y][x][layer] = new Tile(
           solid,
