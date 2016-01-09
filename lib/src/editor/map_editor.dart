@@ -142,6 +142,9 @@ class MapEditor {
     }
 
     selectedTool = newTool;
+
+    lastChangeX = -1;
+    lastChangeY = -1;
   }
   
   static void setUpToolSelectors() {
