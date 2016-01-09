@@ -48,9 +48,9 @@ class MapEditor {
   static int selectedTile, previousSelectedTile;
 
   static List<String> availableTools = ["select", "brush", "erase", "fill", "stamp"];
-  static String selectedTool = "brush";
+  static String selectedTool = "select";
   
-  static DivElement tooltip;
+  static DivElement tooltip, tileInfo;
   
   static void init(Function callback) {
     mapEditorCanvas = querySelector('#editor_main_canvas');
@@ -104,6 +104,8 @@ class MapEditor {
     MapEditorEvents.setUp();
     
     setUpSpritePicker();
+
+    selectTool("select");
   }
   
   static void update() {
@@ -132,6 +134,11 @@ class MapEditor {
     } else {
       selectedTile = previousSelectedTile;
       MapEditor.selectSprite(selectedTile);
+    }
+
+    if(selectedTool == "select" && newTool != "select") {
+      tileInfo.style.display = "none";
+      MapEditor.updateMap();
     }
 
     selectedTool = newTool;
@@ -177,6 +184,7 @@ class MapEditor {
     mapEditorCanvas.onClick.listen(changeTile);
     
     tooltip = querySelector('#tooltip');
+    tileInfo = querySelector('#tile_info');
     /*StreamSubscription mouseMoveStream = */
     mapEditorCanvas.onMouseMove.listen(hoverTile);
     
@@ -184,10 +192,17 @@ class MapEditor {
       lastHoverX = -1;
       lastHoverY = -1;
       tooltip.style.display = "none";
-      MapEditor.updateMap();
+
+      if(selectedTool != "select") {
+        MapEditor.updateMap();
+      }
     });
     
     mapEditorCanvas.onMouseDown.listen((MouseEvent e) {
+      if(selectedTool == "select") {
+        return;
+      }
+
       StreamSubscription mouseMoveStream = mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
         e.preventDefault();
         changeTile(e);
@@ -220,15 +235,16 @@ class MapEditor {
       previousSelectedTile = y*Sprite.spriteSheetWidth + x;
       
       if(querySelector("#tool_selector_erase").classes.contains("selected")) {
-        querySelector("#tool_selector_brush").classes.add("selected");
-        querySelector("#tool_selector_erase").classes.remove("selected");
-        querySelector("#tool_selector_fill").classes.remove("selected");
-        querySelector("#tool_selector_stamp").classes.remove("selected");
+        selectTool("brush");
       }
     });
   }
   
   static void hoverTile(MouseEvent e) {
+    if(selectedTool == "select") {
+      return;
+    }
+
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
     
@@ -236,11 +252,13 @@ class MapEditor {
       return;
     }
     
-    // update the tooltip
-    tooltip.style.display = "block";
-    tooltip.style.left = "${e.page.x + 30}px";
-    tooltip.style.top = "${e.page.y - 10}px";
-    tooltip.text = "x: ${x}, y: ${y}";
+    if(selectedTool != "select") {
+      // update the tooltip
+      tooltip.style.display = "block";
+      tooltip.style.left = "${e.page.x + 30}px";
+      tooltip.style.top = "${e.page.y - 10}px";
+      tooltip.text = "x: ${x}, y: ${y}";
+    }
     
     if(x == lastHoverX && y == lastHoverY) {
       return;
@@ -260,7 +278,7 @@ class MapEditor {
       width = Editor.getTextInputIntValue("#stamp_tool_width", 1);
       height = Editor.getTextInputIntValue("#stamp_tool_height", 1);
     }
-    
+
     for(int i=0; i<width; i++) {
       for(int j=0; j<height; j++) {
         // render the tile as it would appear with the selected tile applied to the selected layer
@@ -289,7 +307,11 @@ class MapEditor {
       }
     }
     
-    // outline the tile
+    outlineSelectedTiles(x, y, width, height);
+    
+  }
+
+  static void outlineSelectedTiles(x, y, width, height) {
     mapEditorCanvasContext.lineWidth = 4;
     mapEditorCanvasContext.setStrokeColorRgb(255, 255, 255, 1.0);
     mapEditorCanvasContext.strokeRect(
@@ -357,7 +379,54 @@ class MapEditor {
           }
         }
       } else if(selectedTool == "select") {
-        // TODO: implement select tool
+        tooltip.style.display = "none";
+
+        String html = "";
+
+        html += 
+          "Tile Info<br />" +
+          "<hr />" +
+          "X: ${x}<br />" +
+          "Y: ${y}<br />";
+
+        if(mapTiles[y][x][3] != null) {
+          html +=
+            "<hr />" +
+            "Above<br />" +
+            "Sprite id: ${mapTiles[y][x][3].sprite.id}<br />" +
+            "Solid: ${mapTiles[y][x][3].solid}<br />";
+        }
+
+        if(mapTiles[y][x][2] != null) {
+          html +=
+            "<hr />" +
+            "Player<br />" +
+            "Sprite id: ${mapTiles[y][x][2].sprite.id}<br />" +
+            "Solid: ${mapTiles[y][x][2].solid}<br />";
+        }
+
+        if(mapTiles[y][x][1] != null) {
+          html +=
+            "<hr />" +
+            "Below<br />" +
+            "Sprite id: ${mapTiles[y][x][1].sprite.id}<br />" +
+            "Solid: ${mapTiles[y][x][1].solid}<br />";
+        }
+
+        if(mapTiles[y][x][0] != null) {
+          html +=
+            "<hr />" +
+            "Ground<br />" +
+            "Sprite id: ${mapTiles[y][x][0].sprite.id}<br />" +
+            "Solid: ${mapTiles[y][x][0].solid}<br />";
+        }
+
+        tileInfo.setInnerHtml(html);
+
+        tileInfo.style.display = "block";
+        tileInfo.style.left = "${(x+1) * Sprite.scaledSpriteSize + 5}px";
+        tileInfo.style.top = "${(y) * Sprite.scaledSpriteSize}px";
+        tileInfo.style.width = "150px";
       } else {
         mapTiles[y][x][layer] = new Tile(
           solid,
@@ -366,8 +435,12 @@ class MapEditor {
         );
       }
     }
-    
+
     MapEditor.updateMap(shouldExport: true);
+    
+    if(selectedTool == "select") {
+      outlineSelectedTiles(x, y, 1, 1);
+    }
   }
   
   static void floodFill(List<List<List<Tile>>> mapTiles, int x, int y, int layer, int tileBefore, bool solid, bool layered) {

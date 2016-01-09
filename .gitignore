@@ -1,3 +1,4 @@
 pubspec.lock
 packages
 web/packages
+.packages

@@ -140,6 +140,14 @@ canvas {
 	padding: 8px;
 }
 
+#tile_info {
+	display: none;
+	position: absolute;
+	background-color: #fff;
+	border: 1px solid #000;
+	padding: 8px;
+}
+
 #popup_shade {
 	position: absolute;
 	background-color: #000;
