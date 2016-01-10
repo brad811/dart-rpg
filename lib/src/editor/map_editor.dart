@@ -184,7 +184,7 @@ class MapEditor {
     previousSelectedTile = 66;
     MapEditor.selectSprite(66);
     
-    mapEditorCanvas.onClick.listen(changeTile);
+    mapEditorCanvas.onClick.listen(handleTileClickOrDrag);
     
     tooltip = querySelector('#tooltip');
     tileInfo = querySelector('#tile_info');
@@ -208,7 +208,7 @@ class MapEditor {
 
       StreamSubscription mouseMoveStream = mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
         e.preventDefault();
-        changeTile(e);
+        handleTileClickOrDrag(e);
       });
       
       e.preventDefault();
@@ -311,7 +311,6 @@ class MapEditor {
     }
     
     outlineSelectedTiles(x, y, width, height);
-    
   }
 
   static void outlineSelectedTiles(x, y, width, height) {
@@ -329,11 +328,22 @@ class MapEditor {
       Sprite.scaledSpriteSize * width + 4, Sprite.scaledSpriteSize * height + 4
     );
   }
-  
-  static void changeTile(MouseEvent e) {
-    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+
+  static void handleTileClickOrDrag(MouseEvent e) {
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+
+    // TODO: maybe save these and change them onInputChange
+    int layer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
+    bool solid = Editor.getCheckboxInputBoolValue("#solid");
+    bool layered = Editor.getCheckboxInputBoolValue("#layered");
+    bool encounter = Editor.getCheckboxInputBoolValue("#encounter");
+
+    changeTile(x, y, layer, solid, layered, encounter);
+  }
+  
+  static void changeTile(int x, int y, int layer, bool solid, bool layered, bool encounter) {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     
     if(y >= mapTiles.length || x >= mapTiles[0].length)
       return;
@@ -344,12 +354,6 @@ class MapEditor {
     
     lastChangeX = x;
     lastChangeY = y;
-    
-    // TODO: maybe save these and change them onInputChange
-    int layer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
-    bool solid = Editor.getCheckboxInputBoolValue("#solid");
-    bool layered = Editor.getCheckboxInputBoolValue("#layered");
-    bool encounter = Editor.getCheckboxInputBoolValue("#encounter");
     
     if(selectedTile == -1) {
       mapTiles[y][x][layer] = null;
@@ -392,44 +396,53 @@ class MapEditor {
           "X: ${x}<br />" +
           "Y: ${y}<br />";
 
-        if(mapTiles[y][x][3] != null) {
-          html +=
-            "<hr />" +
-            "Above<br />" +
-            "Sprite id: ${mapTiles[y][x][3].sprite.id}<br />" +
-            "Solid: ${mapTiles[y][x][3].solid}<br />";
-        }
 
-        if(mapTiles[y][x][2] != null) {
-          html +=
-            "<hr />" +
-            "Player<br />" +
-            "Sprite id: ${mapTiles[y][x][2].sprite.id}<br />" +
-            "Solid: ${mapTiles[y][x][2].solid}<br />";
-        }
+        List<String> layerNames = ["Ground", "Below", "Player", "Above"];
+        for(int i=layerNames.length-1; i>=0; i--) {
+          if(mapTiles[y][x][i] != null) {
+            html +=
+              "<hr />" +
+              "${layerNames[i]}<br />" +
 
-        if(mapTiles[y][x][1] != null) {
-          html +=
-            "<hr />" +
-            "Below<br />" +
-            "Sprite id: ${mapTiles[y][x][1].sprite.id}<br />" +
-            "Solid: ${mapTiles[y][x][1].solid}<br />";
-        }
-
-        if(mapTiles[y][x][0] != null) {
-          html +=
-            "<hr />" +
-            "Ground<br />" +
-            "Sprite id: ${mapTiles[y][x][0].sprite.id}<br />" +
-            "Solid: ${mapTiles[y][x][0].solid}<br />";
+              "<table>" +
+              "<tr><td>" +
+              Editor.generateSpritePickerHtml("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id) +
+              "</td><td>" +
+              "Solid: ${mapTiles[y][x][i].solid}<br />" +
+              "Layered: ${mapTiles[y][x][i].layered}<br />" +
+              "Encounter: ${mapTiles[y][x][i] is EncounterTile}<br />" +
+              "</td></tr></table>";
+          }
         }
 
         tileInfo.setInnerHtml(html);
 
+        for(int i=layerNames.length-1; i>=0; i--) {
+          if(mapTiles[y][x][i] != null) {
+            Editor.initSpritePicker("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id, 1, 1,
+              (Event e) {
+                mapTiles[y][x][i].sprite.id = Editor.getTextInputIntValue("#tile_info_layer_${i}_sprite_id", 0);
+                MapEditor.updateMap();
+                outlineSelectedTiles(x, y, 1, 1);
+
+                lastChangeX = -1;
+                lastChangeY = -1;
+
+                changeTile(
+                  x, y, i,
+                  mapTiles[y][x][i].solid,
+                  mapTiles[y][x][i].layered,
+                  mapTiles[y][x][i] is EncounterTile
+                );
+              }
+            );
+          }
+        }
+
         tileInfo.style.display = "block";
         tileInfo.style.left = "${(x+1) * Sprite.scaledSpriteSize + 5}px";
         tileInfo.style.top = "${(y) * Sprite.scaledSpriteSize}px";
-        tileInfo.style.width = "150px";
+        tileInfo.style.width = "200px";
       } else {
         mapTiles[y][x][layer] = new Tile(
           solid,
