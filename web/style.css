@@ -383,6 +383,16 @@ textarea {
 	background-color: #fff;
 }
 
+#tile_info .tile_info_layer_name {
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+#tile_info .tile_info_checkboxes {
+	padding-left: 10px;
+	vertical-align: top;
+}
+
 .breaker {
 	clear: left;
 }
