@@ -159,7 +159,7 @@ class Editor {
     for(int i=0; i<target.length; i++) {
       if(listeners["#delete_${targetName}_${i}"] != null)
         listeners["#delete_${targetName}_${i}"].cancel();
-      
+
       listeners["#delete_${targetName}_${i}"] =
           querySelector("#delete_${targetName}_${i}").onClick.listen((MouseEvent e) {
         bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');

@@ -376,16 +376,25 @@ class MapEditor {
 
         html +=
           "<hr />" +
-          "<div class='tile_info_layer_name'>${layerNames[i]}</div>" +
 
           "<table>" +
-          "<tr><td>" +
-          Editor.generateSpritePickerHtml("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id) +
-          "</td><td class='tile_info_checkboxes'>" +
-          "<input type='checkbox' id='tile_info_layer_${i}_solid' ${solidCheckedHtml} /> Solid<br />" +
-          "<input type='checkbox' id='tile_info_layer_${i}_layered' ${layeredCheckedHtml} /> Layered<br />" +
-          "<input type='checkbox' id='tile_info_layer_${i}_encounter' ${encounterCheckedHtml} /> Encounter<br />" +
-          "</td></tr></table>";
+            "<tr>" +
+              "<td class='tile_info_layer_name'>${layerNames[i]}</td>" +
+              "<td class='tile_info_delete'>" +
+                "<input type='button' id='delete_tile_info_layer_${i}' value='Delete' />" +
+              "</td>" +
+            "</tr>" +
+            "<tr>" +
+              "<td>" +
+                Editor.generateSpritePickerHtml("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id) +
+              "</td>" +
+              "<td class='tile_info_checkboxes'>" +
+                "<input type='checkbox' id='tile_info_layer_${i}_solid' ${solidCheckedHtml} /> Solid<br />" +
+                "<input type='checkbox' id='tile_info_layer_${i}_layered' ${layeredCheckedHtml} /> Layered<br />" +
+                "<input type='checkbox' id='tile_info_layer_${i}_encounter' ${encounterCheckedHtml} /> Encounter<br />" +
+              "</td>" +
+            "</tr>" +
+          "</table>";
       }
     }
 
@@ -423,6 +432,18 @@ class MapEditor {
         Editor.initSpritePicker("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id, 1, 1, tileInfoInputChange);
 
         Editor.attachInputListeners("tile_info_layer_${i}", ["solid", "layered", "encounter"], tileInfoInputChange);
+
+        querySelector("#delete_tile_info_layer_${i}").onClick.listen((MouseEvent e) {
+          int selectedTileBefore = selectedTile;
+          selectedTile = -1;
+          lastChangeX = -1;
+          lastChangeY = -1;
+          changeTile(x, y, i, false, false, false);
+          selectedTile = selectedTileBefore;
+          MapEditor.updateMap();
+          outlineSelectedTiles(x, y, 1, 1);
+          showTileInfo(x, y);
+        });
       }
     }
 

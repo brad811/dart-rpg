@@ -383,9 +383,21 @@ textarea {
 	background-color: #fff;
 }
 
+#tile_info table {
+	width: 100%;
+}
+
+#tile_info table tr td {
+	vertical-align: top;
+}
+
 #tile_info .tile_info_layer_name {
 	font-weight: bold;
-	margin-bottom: 5px;
+	padding-bottom: 5px;
+}
+
+#tile_info .tile_info_delete {
+	text-align: right;
 }
 
 #tile_info .tile_info_checkboxes {
