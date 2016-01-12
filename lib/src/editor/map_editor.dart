@@ -342,6 +342,96 @@ class MapEditor {
     changeTile(x, y, layer, solid, layered, encounter);
   }
   
+  static void showTileInfo(int x, int y) {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+
+    tooltip.style.display = "none";
+
+    String html = "";
+
+    html += 
+      "Tile Info<br />" +
+      "<hr />" +
+      "X: ${x}<br />" +
+      "Y: ${y}<br />";
+
+
+    List<String> layerNames = ["Ground", "Below", "Player", "Above"];
+    for(int i=layerNames.length-1; i>=0; i--) {
+      if(mapTiles[y][x][i] != null) {
+        String solidCheckedHtml = "";
+        if(mapTiles[y][x][i].solid == true) {
+          solidCheckedHtml = "checked='checked'";
+        }
+
+        String layeredCheckedHtml = "";
+        if(mapTiles[y][x][i].layered == true) {
+          layeredCheckedHtml = "checked='checked'";
+        }
+
+        String encounterCheckedHtml = "";
+        if(mapTiles[y][x][i] is EncounterTile) {
+          encounterCheckedHtml = "checked='checked'";
+        }
+
+        html +=
+          "<hr />" +
+          "<div class='tile_info_layer_name'>${layerNames[i]}</div>" +
+
+          "<table>" +
+          "<tr><td>" +
+          Editor.generateSpritePickerHtml("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id) +
+          "</td><td class='tile_info_checkboxes'>" +
+          "<input type='checkbox' id='tile_info_layer_${i}_solid' ${solidCheckedHtml} /> Solid<br />" +
+          "<input type='checkbox' id='tile_info_layer_${i}_layered' ${layeredCheckedHtml} /> Layered<br />" +
+          "<input type='checkbox' id='tile_info_layer_${i}_encounter' ${encounterCheckedHtml} /> Encounter<br />" +
+          "</td></tr></table>";
+      }
+    }
+
+    tileInfo.setInnerHtml(html);
+
+    for(int i=layerNames.length-1; i>=0; i--) {
+      if(mapTiles[y][x][i] != null) {
+        Function tileInfoInputChange = (Event e) {
+          mapTiles[y][x][i].sprite.id = Editor.getTextInputIntValue("#tile_info_layer_${i}_sprite_id", 0);
+
+          // TODO: this should be done more cleanly
+          selectedTool = "brush";
+          int selectedTileBefore = selectedTile;
+          selectedTile = mapTiles[y][x][i].sprite.id;
+
+          lastChangeX = -1;
+          lastChangeY = -1;
+
+          changeTile(
+            x, y, i,
+            Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_solid"),
+            Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_layered"),
+            Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_encounter")
+          );
+
+          MapEditor.updateMap();
+          outlineSelectedTiles(x, y, 1, 1);
+
+          showTileInfo(x, y);
+
+          selectedTool = "select";
+          selectedTile = selectedTileBefore;
+        };
+
+        Editor.initSpritePicker("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id, 1, 1, tileInfoInputChange);
+
+        Editor.attachInputListeners("tile_info_layer_${i}", ["solid", "layered", "encounter"], tileInfoInputChange);
+      }
+    }
+
+    tileInfo.style.display = "block";
+    tileInfo.style.left = "${(x+1) * Sprite.scaledSpriteSize + 5}px";
+    tileInfo.style.top = "${(y) * Sprite.scaledSpriteSize}px";
+    tileInfo.style.width = "200px";
+  }
+
   static void changeTile(int x, int y, int layer, bool solid, bool layered, bool encounter) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     
@@ -386,89 +476,7 @@ class MapEditor {
           }
         }
       } else if(selectedTool == "select") {
-        tooltip.style.display = "none";
-
-        String html = "";
-
-        html += 
-          "Tile Info<br />" +
-          "<hr />" +
-          "X: ${x}<br />" +
-          "Y: ${y}<br />";
-
-
-        List<String> layerNames = ["Ground", "Below", "Player", "Above"];
-        for(int i=layerNames.length-1; i>=0; i--) {
-          if(mapTiles[y][x][i] != null) {
-            String solidCheckedHtml = "";
-            if(mapTiles[y][x][i].solid == true) {
-              solidCheckedHtml = "checked='checked'";
-            }
-
-            String layeredCheckedHtml = "";
-            if(mapTiles[y][x][i].layered == true) {
-              layeredCheckedHtml = "checked='checked'";
-            }
-
-            String encounterCheckedHtml = "";
-            if(mapTiles[y][x][i] is EncounterTile) {
-              encounterCheckedHtml = "checked='checked'";
-            }
-
-            html +=
-              "<hr />" +
-              "<div class='tile_info_layer_name'>${layerNames[i]}</div>" +
-
-              "<table>" +
-              "<tr><td>" +
-              Editor.generateSpritePickerHtml("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id) +
-              "</td><td class='tile_info_checkboxes'>" +
-              "<input type='checkbox' id='tile_info_layer_${i}_solid' ${solidCheckedHtml} /> Solid<br />" +
-              "<input type='checkbox' id='tile_info_layer_${i}_layered' ${layeredCheckedHtml} /> Layered<br />" +
-              "<input type='checkbox' id='tile_info_layer_${i}_encounter' ${encounterCheckedHtml} /> Encounter<br />" +
-              "</td></tr></table>";
-          }
-        }
-
-        tileInfo.setInnerHtml(html);
-
-        for(int i=layerNames.length-1; i>=0; i--) {
-          if(mapTiles[y][x][i] != null) {
-            Function tileInfoInputChange = (Event e) {
-              mapTiles[y][x][i].sprite.id = Editor.getTextInputIntValue("#tile_info_layer_${i}_sprite_id", 0);
-
-              // TODO: this should be done more cleanly
-              selectedTool = "brush";
-              int selectedTileBefore = selectedTile;
-              selectedTile = mapTiles[y][x][i].sprite.id;
-
-              lastChangeX = -1;
-              lastChangeY = -1;
-
-              changeTile(
-                x, y, i,
-                Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_solid"),
-                Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_layered"),
-                Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_encounter")
-              );
-
-              MapEditor.updateMap();
-              outlineSelectedTiles(x, y, 1, 1);
-
-              selectedTool = "select";
-              selectedTile = selectedTileBefore;
-            };
-
-            Editor.initSpritePicker("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id, 1, 1, tileInfoInputChange);
-
-            Editor.attachInputListeners("tile_info_layer_${i}", ["solid", "layered", "encounter"], tileInfoInputChange);
-          }
-        }
-
-        tileInfo.style.display = "block";
-        tileInfo.style.left = "${(x+1) * Sprite.scaledSpriteSize + 5}px";
-        tileInfo.style.top = "${(y) * Sprite.scaledSpriteSize}px";
-        tileInfo.style.width = "200px";
+        showTileInfo(x, y);
       } else {
         mapTiles[y][x][layer] = new Tile(
           solid,
