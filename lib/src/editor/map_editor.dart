@@ -21,6 +21,8 @@ import 'package:dart_rpg/src/editor/map_editor_signs.dart';
 import 'package:dart_rpg/src/editor/map_editor_warps.dart';
 import 'package:dart_rpg/src/editor/map_editor_battlers.dart';
 
+// TODO: allow for dynamic number of layers
+
 class MapEditor {
   static CanvasElement
     mapEditorCanvas,
