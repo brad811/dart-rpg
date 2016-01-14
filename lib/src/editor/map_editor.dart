@@ -246,10 +246,6 @@ class MapEditor {
   }
   
   static void hoverTile(MouseEvent e) {
-    if(selectedTool == "select") {
-      return;
-    }
-
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
     
@@ -272,6 +268,7 @@ class MapEditor {
     lastHoverX = x;
     lastHoverY = y;
     
+    // TODO: only update tiles that have been drawn on instead of entire map
     MapEditor.updateMap();
     
     int
@@ -284,28 +281,30 @@ class MapEditor {
       height = Editor.getTextInputIntValue("#stamp_tool_height", 1);
     }
 
-    for(int i=0; i<width; i++) {
-      for(int j=0; j<height; j++) {
-        // render the tile as it would appear with the selected tile applied to the selected layer
-        mapEditorCanvasContext.fillStyle = "#ff00ff";
-        mapEditorCanvasContext.fillRect(Sprite.scaledSpriteSize * (x+i), Sprite.scaledSpriteSize * (y+j), Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
-        
-        int selectedLayer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
-        
-        for(int layer=0; layer<World.layers.length; layer++) {
-          if(selectedLayer == layer) {
-            renderStaticSprite(mapEditorCanvasContext, selectedTile + j*Sprite.spriteSheetWidth + i, x+i, y+j);
-          } else {
-            if(y+j >= Main.world.maps[Main.world.curMap].tiles.length ||
-                x+i >= Main.world.maps[Main.world.curMap].tiles[y+j].length) {
-              continue;
-            }
+    if(selectedTool != "select") {
+      for(int i=0; i<width; i++) {
+        for(int j=0; j<height; j++) {
+          // render the tile as it would appear with the selected tile applied to the selected layer
+          mapEditorCanvasContext.fillStyle = "#ff00ff";
+          mapEditorCanvasContext.fillRect(Sprite.scaledSpriteSize * (x+i), Sprite.scaledSpriteSize * (y+j), Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
+          
+          int selectedLayer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
+          
+          for(int layer=0; layer<World.layers.length; layer++) {
+            if(selectedLayer == layer) {
+              renderStaticSprite(mapEditorCanvasContext, selectedTile + j*Sprite.spriteSheetWidth + i, x+i, y+j);
+            } else {
+              if(y+j >= Main.world.maps[Main.world.curMap].tiles.length ||
+                  x+i >= Main.world.maps[Main.world.curMap].tiles[y+j].length) {
+                continue;
+              }
 
-            Tile tile = Main.world.maps[Main.world.curMap].tiles[y+j][x+i][layer];
-            
-            if(tile != null) {
-              int id = Main.world.maps[Main.world.curMap].tiles[y+j][x+i][layer].sprite.id;
-              renderStaticSprite(mapEditorCanvasContext, id, x+i, y+j);
+              Tile tile = Main.world.maps[Main.world.curMap].tiles[y+j][x+i][layer];
+              
+              if(tile != null) {
+                int id = Main.world.maps[Main.world.curMap].tiles[y+j][x+i][layer].sprite.id;
+                renderStaticSprite(mapEditorCanvasContext, id, x+i, y+j);
+              }
             }
           }
         }
