@@ -246,6 +246,10 @@ class MapEditor {
   }
   
   static void hoverTile(MouseEvent e) {
+    if(tileInfo.style.display != "none") {
+      return;
+    }
+
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
     
