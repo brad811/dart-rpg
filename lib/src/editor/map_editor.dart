@@ -42,7 +42,9 @@ class MapEditor {
     lastHoverX = -1,
     lastHoverY = -1,
     lastChangeX = -1,
-    lastChangeY = -1;
+    lastChangeY = -1,
+    lastTileInfoX = -1,
+    lastTileInfoY = -1;
   
   static List<bool> layerVisible = [];
   
@@ -464,7 +466,7 @@ class MapEditor {
     if(y >= mapTiles.length || x >= mapTiles[0].length)
       return;
     
-    if(x == lastChangeX && y == lastChangeY) {
+    if(x == lastChangeX && y == lastChangeY && selectedTool != "select") {
       return;
     }
     
@@ -502,7 +504,13 @@ class MapEditor {
           }
         }
       } else if(selectedTool == "select") {
-        showTileInfo(x, y);
+        if(lastTileInfoX == x && lastTileInfoY == y && tileInfo.style.display != "none") {
+          tileInfo.style.display = "none";
+        } else {
+          lastTileInfoX = x;
+          lastTileInfoY = y;
+          showTileInfo(x, y);
+        }
       } else {
         mapTiles[y][x][layer] = new Tile(
           solid,
