@@ -20,16 +20,21 @@ class ObjectEditorBattlerTypes extends Component {
   static List<String> advancedTabs = ["battler_type_stats", "battler_type_attacks"];
 
   getInitialState() => {
-    'selected': 0,
+    'selected': -1,
     'selectedAdvancedTab': 'stats'
   };
 
-  componentDidMount(a) {
+  componentDidMount(Element rootNode) {
     initSpritePickers();
   }
 
   componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
     initSpritePickers();
+    if(state['selected'] > World.battlerTypes.length - 1) {
+      setState({
+        'selected': World.battlerTypes.length - 1
+      });
+    }
   }
 
   initSpritePickers() {
@@ -38,63 +43,71 @@ class ObjectEditorBattlerTypes extends Component {
     }
   }
 
-  getStatsTab() {
+  void update() {
+    this.setState({});
+  }
+
+  JsObject getStatsTab() {
     List<JsObject> tables = [];
     
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
       BattlerType battlerType = World.battlerTypes.values.elementAt(i);
 
       tables.add(
-        table({'id': 'battler_type_${i}_stats_table', 'className': state['selected'] == i ? '' : 'hidden'}, tbody({}, [
-          tr({}, [
+        table({'id': 'battler_type_${i}_stats_table', 'className': state['selected'] == i ? '' : 'hidden'}, tbody({},
+          tr({},
             td({}, "Stat"),
             td({}, "Value")
-          ]),
-          tr({}, [
+          ),
+          tr({},
             td({}, "Health"),
             td({},
               input({'id': 'battler_type_${i}_health', 'type': 'text', 'className': 'number', 'value': battlerType.baseHealth})
             )
-          ]),
+          ),
 
-          tr({}, [
+          tr({},
             td({}, "Physical Attack"),
             td({},
               input({'id': 'battler_type_${i}_physical_attack', 'type': 'text', 'className': 'number', 'value': battlerType.basePhysicalAttack})
             )
-          ]),
-          tr({}, [
+          ),
+          tr({},
             td({}, "Physical Defense"),
             td({},
               input({'id': 'battler_type_${i}_physical_defense', 'type': 'text', 'className': 'number', 'value': battlerType.basePhysicalDefense})
             )
-          ]),
-          tr({}, [
+          ),
+          tr({},
             td({}, "Magical Attack"),
             td({},
               input({'id': 'battler_type_${i}_magical_attack', 'type': 'text', 'className': 'number', 'value': battlerType.baseMagicalAttack})
             )
-          ]),
-          tr({}, [
+          ),
+          tr({},
             td({}, "Magicl Defense"),
             td({},
               input({'id': 'battler_type_${i}_magical_defense', 'type': 'text', 'className': 'number', 'value': battlerType.baseMagicalDefense})
             )
-          ]),
-          tr({}, [
+          ),
+          tr({},
             td({}, "Speed"),
             td({},
               input({'id': 'battler_type_${i}_speed', 'type': 'text', 'className': 'number', 'value': battlerType.baseSpeed})
             )
-          ])
-        ]))
+          )
+        ))
       );
     }
     
-    return div({}, tables);
+    return div({'className': state['selectedAdvancedTab'] == 'stats' ? '' : 'hidden'}, tables);
   }
 
   getAttacksTab() {
+    if(state['selected'] == -1) {
+      return div({});
+    }
+
     BattlerType battlerType = World.battlerTypes.values.elementAt(state['selected']);
 
     List<JsObject> elements = [];
@@ -135,17 +148,17 @@ class ObjectEditorBattlerTypes extends Component {
         });
 
         attackRows.addAll([
-          select({'id': 'battler_type_${state['selected']}_level_${level}_attack_${j}_name', 'value': attack.name}, options),
+          select({
+            'id': 'battler_type_${state['selected']}_level_${level}_attack_${j}_name',
+            'value': attack.name,
+            'onChange': onInputChange
+          }, options),
           button({
             'id': 'delete_battler_type_${state['selected']}_level_${level}_attack_${j}',
-            'onClick': (MouseEvent e) {
-              Editor.confirmListDelete(
-                World.battlerTypes.values.elementAt(i).levelAttacks[level],
-                j,
-                "level attack",
-                () { props['update'](immediate: true); }
-              );
-            }
+            'onClick': Editor.generateConfirmDeleteFunction(
+              World.battlerTypes.values.elementAt(state['selected']).levelAttacks[level],
+              j, "level attack", update
+            )
           }, "Delete"),
           br({})
         ]);
@@ -167,14 +180,10 @@ class ObjectEditorBattlerTypes extends Component {
           td({},
             button({
               'id': 'delete_battler_type_${state['selected']}_level_${levelNum}',
-              'onClick': (MouseEvent e) {
-                Editor.confirmMapDelete(
-                  World.battlerTypes.values.elementAt(state['selected']).levelAttacks,
-                  level,
-                  "level",
-                  () { props['update'](immediate: true); }
-                );
-              }
+              'onClick': Editor.generateConfirmDeleteFunction(
+                World.battlerTypes.values.elementAt(state['selected']).levelAttacks,
+                level, "level", update
+              )
             }, "Delete level")
           )
         )
@@ -189,20 +198,20 @@ class ObjectEditorBattlerTypes extends Component {
       ))
     );
 
-    return div({}, elements);
+    return div({'className': state['selectedAdvancedTab'] == 'attacks' ? '' : 'hidden'}, elements);
   }
 
   render() {
     List<JsObject> tableRows = [];
 
     tableRows.add(
-      tr({}, [
+      tr({},
         td({}, "Num"),
         td({}, "Sprite Id"),
         td({}, "Name"),
         td({}, "Type"),
         td({}, "Rarity")
-      ])
+      )
     );
 
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
@@ -220,12 +229,18 @@ class ObjectEditorBattlerTypes extends Component {
         tr({
           'id': 'battler_type_row_${i}',
           'className': state['selected'] == i ? 'selected' : '',
-          'onClick': (MouseEvent e) { setState({'selected': i}); }
-        }, [
+          'onClick': (MouseEvent e) { setState({'selected': i}); },
+          'onFocus': (MouseEvent e) { setState({'selected': i}); }
+        },
           td({}, i),
           td({}, Editor.generateSpritePickerHtml("battler_type_${i}_sprite_id", World.battlerTypes[key].spriteId)),
           td({},
-            input({'id': 'battler_type_${i}_name', 'type': 'text', 'defaultValue': World.battlerTypes[key].name, 'onChange': onInputChange})
+            input({
+              'id': 'battler_type_${i}_name',
+              'type': 'text',
+              'value': World.battlerTypes[key].name,
+              'onChange': onInputChange
+            })
           ),
           td({},
             select({'id': 'battler_type_${i}_type', 'value': World.battlerTypes[key].type, 'onChange': onInputChange}, options)
@@ -235,40 +250,26 @@ class ObjectEditorBattlerTypes extends Component {
               'id': 'battler_type_${i}_rarity',
               'type': 'text',
               'className': 'number decimal',
-              'value': World.battlerTypes[key].rarity,
+              'value': World.battlerTypes[key].rarity.toString(),
               'onChange': onInputChange
             })
           ),
           td({},
             button({
               'id': 'delete_battler_type_${i}',
-              'onClick': (MouseEvent e) { Editor.confirmMapDelete(World.battlerTypes, key, "battler type", props['update']); },
+              'onClick': Editor.generateConfirmDeleteFunction(World.battlerTypes, key, "battler type", update),
             }, "Delete battler")
           )
-        ])
+        )
       );
     }
 
-    JsObject advancedTab;
-
-    if(state['selectedAdvancedTab'] == 'stats') {
-      advancedTab =
-        div({'id': 'battler_type_stats_tab', 'className': 'tab'},
-          div({'id': 'battler_type_stats_container'}, getStatsTab())
-        );
-    } else if(state['selectedAdvancedTab'] == 'attacks') {
-      advancedTab =
-        div({'id': 'battler_type_attacks_tab', 'className': 'tab'},
-          div({'id': 'battler_type_attacks_container'}, getAttacksTab())
-        );
-    }
-
     return
-      div({'id': 'object_editor_battler_types_container', 'className': 'object_editor_tab_container'}, [
+      div({'id': 'object_editor_battler_types_container', 'className': 'object_editor_tab_container'},
 
         table({
           'id': 'object_editor_battler_types_advanced',
-          'className': 'object_editor_advanced_tab'}, tbody({}, [
+          'className': 'object_editor_advanced_tab'}, tbody({},
           tr({},
             td({'className': 'tab_headers'},
               div({
@@ -284,9 +285,14 @@ class ObjectEditorBattlerTypes extends Component {
             )
           ),
           tr({},
-            td({'className': 'object_editor_tabs_container'}, advancedTab)
+            td({'className': 'object_editor_tabs_container'},
+              div({'id': 'battler_type_stats_tab', 'className': 'tab'},
+                div({'id': 'battler_type_stats_container'}, getStatsTab()),
+                div({'id': 'battler_type_attacks_container'}, getAttacksTab())
+              )
+            )
           )
-        ])),
+        )),
 
         div({'id': 'object_editor_battler_types_tab', 'className': 'tab object_editor_tab'},
           div({'className': 'object_editor_inner_tab'}, [
@@ -298,7 +304,7 @@ class ObjectEditorBattlerTypes extends Component {
           ])
         )
 
-      ]);
+      );
   }
 
   void addNewBattlerType(MouseEvent e) {
@@ -308,7 +314,7 @@ class ObjectEditorBattlerTypes extends Component {
         {}, 1.0
       );
 
-    props['update']();
+    update();
   }
 
   void addLevel(MouseEvent e) {
@@ -317,6 +323,9 @@ class ObjectEditorBattlerTypes extends Component {
     if(selectedBattlerType.levelAttacks[level] != null) {
       return;
     }
+
+    // clear input field
+    (querySelector("#battler_type_level") as TextInputElement).value = "";
     
     selectedBattlerType.levelAttacks[level] = [];
     
@@ -331,7 +340,7 @@ class ObjectEditorBattlerTypes extends Component {
       selectedBattlerType.levelAttacks[level] = levelAttacks[level];
     });
     
-    props['update'](immediate: true);
+    update();
   }
   
   void addAttack(int battler, int level) {
@@ -343,7 +352,7 @@ class ObjectEditorBattlerTypes extends Component {
       if(!attacks.contains(attack)) {
         attacks.add(attack);
         
-        props['update']();
+        update();
         return;
       }
     }
@@ -352,48 +361,56 @@ class ObjectEditorBattlerTypes extends Component {
   void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     Editor.avoidNameCollision(e, "_name", World.battlerTypes);
-    
-    World.battlerTypes = new Map<String, BattlerType>();
-    for(int i=0; querySelector('#battler_type_${i}_name') != null; i++) {
-      try {
-        String name = Editor.getTextInputStringValue('#battler_type_${i}_name');
-        
-        Map<int, List<Attack>> levelAttacks = new Map<int, List<Attack>>();
-        for(int j=0; querySelector("#battler_type_${i}_level_num_${j}") != null; j++) {
-          int level = int.parse(querySelector("#battler_type_${i}_level_num_${j}").innerHtml);
-          for(int k=0; querySelector("#battler_type_${i}_level_${level}_attack_${k}_name") != null; k++) {
-            String attackName = Editor.getSelectInputStringValue("#battler_type_${i}_level_${level}_attack_${k}_name");
-            Attack attack = World.attacks[attackName];
-            
-            if(levelAttacks[level] == null) {
-              levelAttacks[level] = [];
+
+    try {
+      String oldName = World.battlerTypes.keys.elementAt(state['selected']);
+      String name = Editor.getTextInputStringValue('#battler_type_${state['selected']}_name');
+
+      Map<String, BattlerType> newBattlerTypes = {};
+
+      World.battlerTypes.forEach((String key, BattlerType battlerType) {
+        if(key != oldName) {
+          newBattlerTypes[key] = battlerType;
+        } else {
+          Map<int, List<Attack>> levelAttacks = new Map<int, List<Attack>>();
+          for(int j=0; querySelector("#battler_type_${state['selected']}_level_num_${j}") != null; j++) {
+            int level = int.parse(querySelector("#battler_type_${state['selected']}_level_num_${j}").innerHtml);
+            for(int k=0; querySelector("#battler_type_${state['selected']}_level_${level}_attack_${k}_name") != null; k++) {
+              String attackName = Editor.getSelectInputStringValue("#battler_type_${state['selected']}_level_${level}_attack_${k}_name");
+              Attack attack = World.attacks[attackName];
+              
+              if(levelAttacks[level] == null) {
+                levelAttacks[level] = [];
+              }
+              
+              levelAttacks[level].add(attack);
             }
-            
-            levelAttacks[level].add(attack);
           }
+          
+          newBattlerTypes[name] = new BattlerType(
+            Editor.getTextInputIntValue('#battler_type_${state['selected']}_sprite_id', 1),
+            name,
+            Editor.getSelectInputStringValue("#battler_type_${state['selected']}_type"),
+            Editor.getTextInputIntValue('#battler_type_${state['selected']}_health', 1),
+            Editor.getTextInputIntValue('#battler_type_${state['selected']}_physical_attack', 1),
+            Editor.getTextInputIntValue('#battler_type_${state['selected']}_magical_attack', 1),
+            Editor.getTextInputIntValue('#battler_type_${state['selected']}_physical_defense', 1),
+            Editor.getTextInputIntValue('#battler_type_${state['selected']}_magical_defense', 1),
+            Editor.getTextInputIntValue('#battler_type_${state['selected']}_speed', 1),
+            levelAttacks,
+            Editor.getTextInputDoubleValue('#battler_type_${state['selected']}_rarity', 1.0)
+          );
         }
-        
-        World.battlerTypes[name] = new BattlerType(
-          Editor.getTextInputIntValue('#battler_type_${i}_sprite_id', 1),
-          name,
-          Editor.getSelectInputStringValue("#battler_type_${i}_type"),
-          Editor.getTextInputIntValue('#battler_type_${i}_health', 1),
-          Editor.getTextInputIntValue('#battler_type_${i}_physical_attack', 1),
-          Editor.getTextInputIntValue('#battler_type_${i}_magical_attack', 1),
-          Editor.getTextInputIntValue('#battler_type_${i}_physical_defense', 1),
-          Editor.getTextInputIntValue('#battler_type_${i}_magical_defense', 1),
-          Editor.getTextInputIntValue('#battler_type_${i}_speed', 1),
-          levelAttacks,
-          Editor.getTextInputDoubleValue('#battler_type_${i}_rarity', 1.0)
-        );
-      } catch(e, stackTrace) {
-        // could not update this battler type
-        print("Error updating battler type: " + e.toString());
-        print(stackTrace);
-      }
+      });
+
+      World.battlerTypes = newBattlerTypes;
+    } catch(e, stackTrace) {
+      // could not update this battler type
+      print("Error updating battler type: " + e.toString());
+      print(stackTrace);
     }
 
-    Editor.updateAndRetainValue(e, props['update']);
+    update();
   }
   
   static void export(Map<String, Object> exportJson) {

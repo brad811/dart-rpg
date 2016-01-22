@@ -170,6 +170,22 @@ class Editor extends Component {
     tabHeaderDivs[tabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
   }
 
+  static Function generateConfirmDeleteFunction(Object target, Object key, String targetName, Function callback) {
+    if(target is Map) {
+      return
+        (MouseEvent e) {
+          confirmMapDelete(target, key, targetName, callback);
+        };
+    } else if(target is List) {
+      return
+        (MouseEvent e) {
+          confirmListDelete(target, key, targetName, callback);
+        };
+    } else {
+      return null;
+    }
+  }
+
   static void confirmMapDelete(Map<Object, Object> target, Object key, String targetName, Function callback) {
     bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
     if(confirm) {
@@ -179,7 +195,6 @@ class Editor extends Component {
   }
 
   static void confirmListDelete(List<Object> target, int offset, String targetName, Function callback) {
-    print("doing confirmListDelete");
     bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
     if(confirm) {
       target.removeAt(offset);
@@ -437,7 +452,7 @@ class Editor extends Component {
       String valueBefore = inputElement.value;
       
       // update everything
-      callback(() {
+      callback(callback: () {
         // restore the cursor position
         inputElement = querySelector('#' + target.id);
         inputElement.value = valueBefore;
@@ -452,7 +467,7 @@ class Editor extends Component {
       String valueBefore = inputElement.value;
       
       // update everything
-      callback(() {
+      callback(callback: () {
         // restore the cursor position
         inputElement = querySelector('#' + target.id);
         inputElement.value = valueBefore;

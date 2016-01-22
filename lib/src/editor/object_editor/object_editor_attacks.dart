@@ -9,7 +9,6 @@ import 'package:dart_rpg/src/game_type.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/object_editor/object_editor.dart';
 
 import 'package:react/react.dart';
 
@@ -98,7 +97,6 @@ class ObjectEditorAttacks extends Component {
   void addNewAttack(MouseEvent e) {
     World.attacks["New Attack"] = new Attack("New Attack", Attack.CATEGORY_PHYSICAL, World.types.keys.first, 0);
     props['update']();
-    ObjectEditor.update();
   }
   
   void onInputChange(Event e) {
@@ -140,7 +138,7 @@ class ObjectEditorAttacks extends Component {
       }
     }
     
-    Editor.updateAndRetainValue(e, props['update']);
+    this.setState({});
   }
   
   static void export(Map<String, Object> exportJson) {
