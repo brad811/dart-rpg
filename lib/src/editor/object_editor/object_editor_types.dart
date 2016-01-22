@@ -7,14 +7,21 @@ import 'package:dart_rpg/src/game_type.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/object_editor/object_editor.dart';
 
 import 'package:react/react.dart';
 
-class ObjectEditorTypesComponent extends Component {
-  void onInputChange() {
-    // TODO: implement!
-    print("ObjectEditorTypesComponent.onInputChange not yet implemented!");
+class ObjectEditorTypes extends Component {
+  getInitialState() => {
+    'selected': -1
+  };
+  
+  void addNewType(MouseEvent e) {
+    World.types["New Type"] = new GameType("New Type");
+    update();
+  }
+  
+  void update() {
+    setState({});
   }
 
   render() {
@@ -30,33 +37,63 @@ class ObjectEditorTypesComponent extends Component {
       GameType gameType = World.types.values.elementAt(i);
 
       tableRows.add(
-        tr({'id': 'type_row_${i}'}, [
+        tr({
+          'id': 'type_row_${i}',
+          'className': state['selected'] == i ? 'selected' : '',
+          'onClick': (MouseEvent e) { setState({'selected': i}); },
+          'onFocus': (MouseEvent e) { setState({'selected': i}); }
+        }, [
           td({}, i),
           td({},
-            input({'id': 'type_${i}_name', 'type': 'text', 'value': gameType.name})
+            input({'id': 'type_${i}_name', 'type': 'text', 'value': gameType.name, 'onChange': onInputChange})
           ),
           td({},
-            button({'id': 'delete_type_${i}'}, "Delete")
+            button({
+              'id': 'delete_type_${i}',
+              'onClick': Editor.generateConfirmDeleteFunction(World.types, gameType.name, "type", update)
+            }, "Delete")
           )
         ])
       );
     }
 
-    return table({'className': 'editor_table'}, tbody({}, tableRows));
+    return
+      div({'id': 'object_editor_types_container', 'className': 'object_editor_tab_container'},
+
+        table({
+          'id': 'object_editor_types_advanced',
+          'className': 'object_editor_advanced_tab'}, tbody({},
+          tr({},
+            td({'className': 'tab_headers'},
+              div({
+                'id': 'type_effectiveness_tab_header',
+                'className': 'tab_header selected'
+              }, "Effectiveness")
+            )
+          ),
+          tr({},
+            td({'className': 'object_editor_tabs_container'},
+              div({'id': 'type_effectiveness_tab', 'className': 'tab'},
+                div({'id': 'type_effectiveness_container'}, getEffectivenessTab())
+              )
+            )
+          )
+        )),
+
+        div({'id': 'object_editor_types_tab', 'className': 'tab object_editor_tab'},
+          div({'className': 'object_editor_inner_tab'}, [
+            button({'id': 'add_type_button', 'onClick': addNewType}, "Add new type"),
+            hr({}),
+            div({'id': 'types_container'}, [
+              table({'className': 'editor_table'}, tbody({}, tableRows))
+            ])
+          ])
+        )
+
+      );
   }
-}
 
-var objectEditorTypesComponent = registerComponent(() => new ObjectEditorTypesComponent());
-
-class ObjectEditorTypesEffectivenessComponent extends Component {
-  int selected = -1;
-
-  void onInputChange() {
-    // TODO: implement!
-    print("ObjectEditorTypesEffectivenessComponent.onInputChange not yet implemented!");
-  }
-
-  render() {
+  JsObject getEffectivenessTab() {
     List<JsObject> typeContainers = [];
 
     for(int i=0; i<World.types.keys.length; i++) {
@@ -82,7 +119,8 @@ class ObjectEditorTypesEffectivenessComponent extends Component {
                 'id': 'type_${i}_effectiveness_${j}',
                 'type': 'text',
                 'className': 'number decimal',
-                'value': gameType.getEffectiveness(defendingGameType.name)
+                'value': gameType.getEffectiveness(defendingGameType.name).toString(),
+                'onChange': onInputChange
               })
             )
           ])
@@ -90,132 +128,55 @@ class ObjectEditorTypesEffectivenessComponent extends Component {
       }
 
       typeContainers.add(
-        div({'id': 'type_${i}_effectiveness_container', 'className': selected == i ? '' : 'hidden'},
-          table({}, tableRows)
+        div({'id': 'type_${i}_effectiveness_container', 'className': state['selected'] == i ? '' : 'hidden'},
+          table({}, tbody({}, tableRows))
         )
       );
     }
 
     return div({}, typeContainers);
   }
-}
 
-var objectEditorTypesEffectivenessComponent = registerComponent(() => new ObjectEditorTypesEffectivenessComponent());
-
-class ObjectEditorTypes {
-  static List<String> advancedTabs = ["type_effectiveness"];
-  
-  static int selected;
-  
-  static void setUp() {
-    Editor.setUpTabs(advancedTabs);
-    Editor.attachButtonListener("#add_type_button", addNewType);
-    
-    querySelector("#object_editor_types_tab_header").onClick.listen((MouseEvent e) {
-      ObjectEditorTypes.selectRow(0);
-    });
-  }
-  
-  static void addNewType(MouseEvent e) {
-    World.types["New Type"] = new GameType("New Type");
-    update();
-    ObjectEditor.update();
-  }
-  
-  static void update() {
-    render(objectEditorTypesComponent({}), querySelector('#types_container'));
-    render(objectEditorTypesEffectivenessComponent({}), querySelector('#type_effectiveness_container'));
-    
-    // highlight the selected row
-    if(querySelector("#type_row_${selected}") != null) {
-      querySelector("#type_row_${selected}").classes.add("selected");
-      querySelector("#object_editor_types_advanced").classes.remove("hidden");
-    }
-    
-    Editor.setMapDeleteButtonListeners(World.types, "type", () { /* TODO: fix */ });
-    
-    List<String> attrs = [
-      "name"
-    ];
-    for(int i=0; i<World.types.keys.length; i++) {
-      Editor.attachInputListeners("type_${i}", attrs, onInputChange);
-      
-      // when a row is clicked, set it as selected and highlight it
-      Editor.attachButtonListener("#type_row_${i}", (Event e) {
-        if(querySelector("#type_row_${i}") != null) {
-          selectRow(i);
-        }
-      });
-      
-      List<String> advancedAttrs = [];
-      for(int j=0; j<World.types.keys.length; j++) {
-        advancedAttrs.add("effectiveness_${j}");
-      }
-      
-      Editor.attachInputListeners("type_${i}", advancedAttrs, onInputChange);
-    }
-  }
-  
-  static void selectRow(int i) {
-    selected = i;
-    
-    for(int j=0; j<World.types.keys.length; j++) {
-      // un-highlight other rows
-      querySelector("#type_row_${j}").classes.remove("selected");
-      
-      // hide the advanced containers for other rows
-      querySelector("#type_${j}_effectiveness_container").classes.add("hidden");
-    }
-    
-    if(querySelector("#type_row_${i}") == null) {
-      return;
-    }
-    
-    // hightlight the selected row
-    querySelector("#type_row_${i}").classes.add("selected");
-    
-    // show the advanced area
-    querySelector("#object_editor_types_advanced").classes.remove("hidden");
-    
-    // show the advanced tables for the selected row
-    querySelector("#type_${i}_effectiveness_container").classes.remove("hidden");
-  }
-  
-  static void onInputChange(Event e) {
+  void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     Editor.avoidNameCollision(e, "_name", World.types);
-    
-    World.types = new Map<String, GameType>();
-    for(int i=0; querySelector('#type_${i}_name') != null; i++) {
+
+    String oldName = World.types.keys.elementAt(state['selected']);
+    String name = Editor.getTextInputStringValue('#type_${state['selected']}_name');
+
+    Map<String, GameType> newTypes = {};
+
+    World.types.forEach((String key, GameType type) {
       try {
-        String name = Editor.getTextInputStringValue("#type_${i}_name");
-        World.types[name] = new GameType(name);
+        if(key != oldName) {
+          newTypes[key] = type;
+        } else {
+          String name = Editor.getTextInputStringValue("#type_${state['selected']}_name");
+          newTypes[name] = new GameType(name);
+        }
       } catch(e) {
         // could not update this type
         print("Error updating type: " + e.toString());
       }
-    }
-    
-    for(int i=0; i<World.types.keys.length; i++) {
+    });
+
+    World.types = newTypes;
+
+    for(int j=0; j<World.types.keys.length; j++) {
       try {
-        GameType attackingType = World.types.values.elementAt(i);
-        
-        // iterate through effectiveness
-        for(int j=0; j<World.types.keys.length; j++) {
-          attackingType.setEffectiveness(
-            World.types.keys.elementAt(j),
-            Editor.getTextInputDoubleValue("#type_${i}_effectiveness_${j}", 1.0)
-          );
-        }
+        World.types[name].setEffectiveness(
+          World.types.keys.elementAt(j),
+          Editor.getTextInputDoubleValue("#type_${state['selected']}_effectiveness_${j}", 1.0)
+        );
       } catch(e) {
         // could not update this type
         print("Error updating type effectiveness: " + e.toString());
       }
     }
     
-    Editor.updateAndRetainValue(e, () { /* TODO: fix */ });
+    update();
   }
-  
+
   static void export(Map<String, Object> exportJson) {
     Map<String, Map<String, String>> typesJson = {};
     for(int i=0; i<World.types.keys.length; i++) {
@@ -239,3 +200,4 @@ class ObjectEditorTypes {
     exportJson["types"] = typesJson;
   }
 }
+

@@ -13,6 +13,7 @@ import 'package:dart_rpg/src/editor/object_editor/object_editor_types.dart';
 import 'package:react/react.dart';
 
 var objectEditorAttacks = registerComponent(() => new ObjectEditorAttacks());
+var objectEditorTypes = registerComponent(() => new ObjectEditorTypes());
 var objectEditorBattlerTypes = registerComponent(() => new ObjectEditorBattlerTypes());
 
 class ObjectEditor extends Component {
@@ -160,6 +161,8 @@ class ObjectEditor extends Component {
 
     if(state['selectedTab'] == "attacks") {
       selectedTab = objectEditorAttacks({});
+    } else if(state['selectedTab'] == "types") {
+      selectedTab = objectEditorTypes({});
     } else if(state['selectedTab'] == "battler_types") {
       selectedTab = objectEditorBattlerTypes({});
     }

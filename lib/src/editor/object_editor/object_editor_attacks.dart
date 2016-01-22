@@ -157,7 +157,7 @@ class ObjectEditorAttacks extends Component {
       }
     }
     
-    this.setState({});
+    update();
   }
   
   static void export(Map<String, Object> exportJson) {
