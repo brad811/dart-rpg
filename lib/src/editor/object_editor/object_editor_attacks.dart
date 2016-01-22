@@ -15,6 +15,10 @@ import 'package:react/react.dart';
 // TODO: make sure all these update everywhere when renamed: battler type, game event, character
 
 class ObjectEditorAttacks extends Component {
+  void update() {
+    this.setState({});
+  }
+
   render() {
     List<JsObject> tableRows = [
       tr({},
@@ -39,26 +43,41 @@ class ObjectEditorAttacks extends Component {
 
       tableRows.add(
         tr({},
+          td({}, i),
           td({},
-            input({'id': 'attack_${i}_name', 'type': 'text', 'defaultValue': World.attacks[key].name, 'onChange': onInputChange})
+            input({
+              'id': 'attack_${i}_name',
+              'type': 'text',
+              'value': World.attacks[key].name,
+              'onChange': onInputChange
+            })
           ),
           td({},
-            select({'id': 'attack_${i}_category', 'defaultValue': World.attacks[key].category, 'onChange': onInputChange}, [
-              option({'defaultValue': Attack.CATEGORY_PHYSICAL}, "Physical"),
-              option({'defaultValue': Attack.CATEGORY_MAGICAL}, "Magical")
+            select({'id': 'attack_${i}_category', 'value': World.attacks[key].category, 'onChange': onInputChange}, [
+              option({'value': Attack.CATEGORY_PHYSICAL}, "Physical"),
+              option({'value': Attack.CATEGORY_MAGICAL}, "Magical")
             ])
           ),
           td({},
-            select({'id': 'attack_${i}_type', 'defaultValue': World.attacks[key].type, 'onChange': onInputChange}, options)
+            select({
+              'id': 'attack_${i}_type',
+              'value': World.attacks[key].type,
+              'onChange': onInputChange}, options
+            )
           ),
           td({},
-            input({'id': 'attack_${i}_power', 'type': 'text', 'className': 'number', 'defaultValue': World.attacks[key].power, 'onChange': onInputChange})
+            input({
+              'id': 'attack_${i}_power',
+              'type': 'text',
+              'className': 'number',
+              'value': World.attacks[key].power,
+              'onChange': onInputChange
+            })
           ),
           td({},
             button({
               'id': 'delete_attack_${i}',
-              'onClick': (MouseEvent e) { Editor.confirmMapDelete(World.attacks, key, "attack", props['update']); },
-              'onChange': onInputChange
+              'onClick': Editor.generateConfirmDeleteFunction(World.attacks, key, "attack", update)
             }, "Delete")
           )
         )
@@ -66,12 +85,12 @@ class ObjectEditorAttacks extends Component {
     }
 
     return
-      div({'id': 'object_editor_attacks_container', 'className': 'object_editor_tab_container'}, [
+      div({'id': 'object_editor_attacks_container', 'className': 'object_editor_tab_container'},
 
-        table({'id': 'object_editor_attacks_advanced', 'className': 'object_editor_advanced_tab'}, [
+        table({'id': 'object_editor_attacks_advanced', 'className': 'object_editor_advanced_tab'},
           tr({},
             td({'className': 'tab_headers'},
-              div({'id': 'type_effectiveness_tab_header', 'className': 'tab_header'}, "")
+              div({'className': 'tab_header'}, "")
             )
           ),
           tr({},
@@ -79,24 +98,24 @@ class ObjectEditorAttacks extends Component {
               div({'className': 'tab'})
             )
           )
-        ]),
+        ),
 
         div({'id': 'object_editor_attacks_tab', 'className': 'tab object_editor_tab'},
-          div({'className': 'object_editor_inner_tab'}, [
+          div({'className': 'object_editor_inner_tab'},
             button({'id': 'add_attack_button', 'onClick': addNewAttack}, "Add new attack"),
             hr({}),
-            div({'id': 'attacks_container'}, [
+            div({'id': 'attacks_container'},
               table({'className': 'editor_table'}, tbody({}, tableRows))
-            ])
-          ])
+            )
+          )
         )
 
-      ]);
+      );
   }
 
   void addNewAttack(MouseEvent e) {
     World.attacks["New Attack"] = new Attack("New Attack", Attack.CATEGORY_PHYSICAL, World.types.keys.first, 0);
-    props['update']();
+    update();
   }
   
   void onInputChange(Event e) {

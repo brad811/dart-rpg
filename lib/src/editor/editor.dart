@@ -174,21 +174,22 @@ class Editor extends Component {
   }
 
   static Function generateConfirmDeleteFunction(Object target, Object key, String targetName, Function callback) {
-    if(target is Map) {
-      return
-        (MouseEvent e) {
-          confirmMapDelete(target, key, targetName, callback);
-        };
-    } else if(target is List) {
-      return
-        (MouseEvent e) {
-          confirmListDelete(target, key, targetName, callback);
-        };
-    } else {
-      return null;
-    }
+    return (MouseEvent e) {
+      bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
+      if(confirm) {
+        if(target is Map)
+          target.remove(key);
+        else if(target is List)
+          target.removeAt(key);
+        else
+          print("Warning: invalid target passed to generateConfirmDeleteFunction!");
+
+        callback();
+      }
+    };
   }
 
+  @deprecated
   static void confirmMapDelete(Map<Object, Object> target, Object key, String targetName, Function callback) {
     bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
     if(confirm) {
@@ -197,6 +198,7 @@ class Editor extends Component {
     }
   }
 
+  @deprecated
   static void confirmListDelete(List<Object> target, int offset, String targetName, Function callback) {
     bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
     if(confirm) {

@@ -159,9 +159,9 @@ class ObjectEditor extends Component {
     JsObject selectedTab;
 
     if(state['selectedTab'] == "attacks") {
-      selectedTab = objectEditorAttacks({'update': props['update']});
+      selectedTab = objectEditorAttacks({});
     } else if(state['selectedTab'] == "battler_types") {
-      selectedTab = objectEditorBattlerTypes({'update': props['update']});
+      selectedTab = objectEditorBattlerTypes({});
     }
 
     List<JsObject> tabHeaders = [];
