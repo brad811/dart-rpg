@@ -1,6 +1,7 @@
 library dart_rpg.map_editor_signs;
 
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sign.dart';
@@ -9,14 +10,22 @@ import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/map_editor.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 
-class MapEditorSigns {
+import 'package:react/react.dart';
+
+class MapEditorSigns extends Component {
   static Map<String, List<Sign>> signs = {};
-  
-  static void setUp() {
-    Editor.attachButtonListener("#add_sign_button", addNewSign);
+
+  attachListeners() {
+    setSignDeleteButtonListeners();
     
+    for(int i=0; i<signs[Main.world.curMap].length; i++) {
+      Editor.attachInputListeners("sign_${i}", ["posx", "posy", "pic", "text"], onInputChange);
+    }
+  }
+
+  componentWillMount() {
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
       List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
@@ -44,40 +53,82 @@ class MapEditorSigns {
       }
     }
   }
+
+  componentDidMount(Element rootNode) {
+    Editor.attachButtonListener("#add_sign_button", addNewSign);
+    attachListeners();
+  }
+
+  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+    attachListeners();
+  }
+
+  render() {
+    List<JsObject> tableRows = [
+      tr({},
+        td({}, "Num"),
+        td({}, "X"),
+        td({}, "Y"),
+        td({}, "Pic"),
+        td({}, "Text"),
+        td({})
+      )
+    ];
+
+    for(int i=0; i<signs[Main.world.curMap].length; i++) {
+      tableRows.add(
+        tr({}, [
+          td({}, i),
+          td({},
+            input({
+              'id': 'sign_${i}_posx',
+              'type': 'text',
+              'className': 'number',
+              'value': signs[Main.world.curMap][i].sprite.posX.round()
+            })
+          ),
+          td({},
+            input({
+              'id': 'sign_${i}_posy',
+              'type': 'text',
+              'className': 'number',
+              'value': signs[Main.world.curMap][i].sprite.posY.round()
+            })
+          ),
+          td({},
+            input({
+              'id': 'sign_${i}_pic',
+              'type': 'text',
+              'className': 'number',
+              'value': signs[Main.world.curMap][i].textEvent.pictureSpriteId
+            })
+          ),
+          td({},
+            textarea({'id': 'sign_${i}_text', 'value': signs[Main.world.curMap][i].textEvent.text})
+          ),
+          td({},
+            button({'id': 'delete_sign_${i}'}, "Delete")
+          )
+        ])
+      );
+    }
+
+    return
+      div({'id': 'signs_tab', 'className': 'tab'}, [
+        button({'id': 'add_sign_button', 'onClick': addNewSign}, "Add new sign"),
+        hr({}),
+        div({'id': 'signs_container'}, [
+          table({'className': 'editor_table'}, tbody({}, tableRows))
+        ])
+      ]);
+  }
   
-  static void addNewSign(MouseEvent e) {
+  void addNewSign(MouseEvent e) {
     signs[Main.world.curMap].add( new Sign(false, new Sprite.int(0, 0, 0), 234, "Text") );
-    Editor.update();
+    props['update']();
   }
   
-  static void update() {
-    String signsHtml;
-    signsHtml = "<table class='editor_table'>"+
-      "  <tr>"+
-      "    <td>Num</td><td>X</td><td>Y</td><td>Pic</td><td>Text</td><td></td>"+
-      "  </tr>";
-    for(int i=0; i<signs[Main.world.curMap].length; i++) {
-      signsHtml +=
-        "<tr>"+
-        "  <td>${i}</td>"+
-        "  <td><input id='sign_${i}_posx' type='text' class='number' value='${ signs[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
-        "  <td><input id='sign_${i}_posy' type='text' class='number' value='${ signs[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
-        "  <td><input id='sign_${i}_pic' type='text' class='number' value='${ signs[Main.world.curMap][i].textEvent.pictureSpriteId }' /></td>"+
-        "  <td><textarea id='sign_${i}_text' />${ signs[Main.world.curMap][i].textEvent.text }</textarea></td>"+
-        "  <td><button id='delete_sign_${i}'>Delete</button></td>" +
-        "</tr>";
-    }
-    signsHtml += "</table>";
-    querySelector("#signs_container").setInnerHtml(signsHtml);
-    
-    setSignDeleteButtonListeners();
-    
-    for(int i=0; i<signs[Main.world.curMap].length; i++) {
-      Editor.attachInputListeners("sign_${i}", ["posx", "posy", "pic", "text"], onInputChange);
-    }
-  }
-  
-  static void onInputChange(Event e) {
+  void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     
     for(int i=0; i<signs[Main.world.curMap].length; i++) {
@@ -101,19 +152,19 @@ class MapEditorSigns {
     MapEditor.updateMap(shouldExport: true);
   }
   
-  static void setSignDeleteButtonListeners() {
+  void setSignDeleteButtonListeners() {
     for(int i=0; i<signs[Main.world.curMap].length; i++) {
       Editor.attachButtonListener("#delete_sign_${i}", (MouseEvent e) {
         bool confirm = window.confirm('Are you sure you would like to delete this sign?');
         if(confirm) {
           signs[Main.world.curMap].removeAt(i);
-          Editor.update();
+          props['update']();
         }
       });
     }
   }
   
-  static void shift(int xAmount, int yAmount) {
+  void shift(int xAmount, int yAmount) {
     for(Sign sign in signs[Main.world.curMap]) {
       if(sign == null)
         continue;

@@ -1,5 +1,7 @@
 library dart_rpg.stat_change_game_event;
 
+import 'dart:js';
+
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/interactable.dart';
 
@@ -63,7 +65,7 @@ class StatChangeGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) { /* TODO */ return ""; }
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) { /* TODO */ return null; }
   
   GameEvent buildGameEvent(String prefix) { /* TODO */ return null; }
   

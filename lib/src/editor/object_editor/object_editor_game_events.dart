@@ -1,6 +1,7 @@
 library dart_rpg.object_editor_game_events;
 
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/world.dart';
 
@@ -9,12 +10,118 @@ import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/object_editor.dart';
+import 'package:dart_rpg/src/editor/object_editor/object_editor.dart';
+
+import 'package:react/react.dart';
 
 // TODO: map editing events (place/remove/change warps, signs, tiles, events)
 // TODO: character editing events (change gameEventChain, battler/level, inventory, name, size, picture/sprite)
 // TODO: logic gate events IF this THEN gameEventChainA ELSE gameEventChainB
 // TODO: text input game event
+
+class ObjectEditorGameEventChainsComponent extends Component {
+  void render() {
+    List tableRows = [];
+
+    tableRows.add(
+      tr({}, [
+        td({}, "Num"),
+        td({}, "Label"),
+        td({}, "Num Game events"),
+        td({})
+      ])
+    );
+
+    for(int i=0; i<World.gameEventChains.keys.length; i++) {
+      String key = World.gameEventChains.keys.elementAt(i);
+
+      tableRows.add(
+        tr({'id': 'game_event_chain_row_${i}'}, [
+          td({}, i),
+          td({},
+            input({
+              'id': 'game_event_chain_${i}_label',
+              'type': 'text',
+              'value': key
+            })
+          ),
+          td({}, World.gameEventChains[key].length),
+          td({},
+            button({'id': 'delete_game_event_chain_${i}'}, "Delete")
+          )
+        ])
+      );
+    }
+
+    return
+      table({'className': 'editor_table'},
+        tbody({}, tableRows)
+      );
+  }
+}
+
+var objectEditorGameEventChainsComponent = registerComponent(() => new ObjectEditorGameEventChainsComponent());
+
+class ObjectEditorGameEventComponent extends Component {
+  // TODO: use state
+  int selected;
+  List<Function> callbacks = [];
+
+  componentDidMount(a) {
+    callCallbacks();
+  }
+
+  componentDidUpdate(a, b, c) {
+    callCallbacks();
+  }
+
+  void callCallbacks() {
+    if(callbacks != null) {
+      for(Function callback in callbacks) {
+        callback();
+      }
+    }
+  }
+
+  render() {
+    this.callbacks = [];
+    List<JsObject> tables = [];
+
+    for(int i=0; i<World.gameEventChains.keys.length; i++) {
+      List<GameEvent> gameEventChain = World.gameEventChains.values.elementAt(i);
+
+      List<JsObject> tableRows = [
+        tr({}, [
+          td({}, "Num"),
+          td({}, "Event Type"),
+          td({}, "Params"),
+          td({})
+        ])
+      ];
+
+      for(int j=0; j<gameEventChain.length; j++) {
+        tableRows.add(
+          ObjectEditorGameEvents.buildGameEventTableRowHtml(
+            gameEventChain[j], "game_event_chain_${i}_game_event_${j}", j, callbacks: callbacks
+          )
+        );
+      }
+
+      tables.add(
+        table({'id': 'game_event_chain_${i}_game_event_table', 'className': selected != i? 'hidden' : ''}, tableRows)
+      );
+    }
+
+    this.callbacks = callbacks;
+
+    return div({}, tables);
+  }
+}
+
+var objectEditorGameEventComponent = registerComponent(() => new ObjectEditorGameEventComponent());
+
+
+
 
 class ObjectEditorGameEvents {
   static List<String> advancedTabs = ["game_event_chain_game_events"];
@@ -22,6 +129,8 @@ class ObjectEditorGameEvents {
   static int selected;
   
   static void setUp() {
+    render(objectEditorGameEventChainsComponent({}), querySelector('#game_event_chains_container'));
+
     Editor.setUpTabs(advancedTabs);
     Editor.attachButtonListener("#add_game_event_chain_button", addGameEventChain);
     Editor.attachButtonListener("#add_game_event_button", addGameEvent);
@@ -51,8 +160,8 @@ class ObjectEditorGameEvents {
   }
   
   static void update() {
-    buildMainHtml();
-    buildGameEventHtml();
+    render(objectEditorGameEventChainsComponent({}), querySelector('#game_event_chains_container'));
+    render(objectEditorGameEventComponent({}), querySelector('#game_event_chain_game_events_container'));
     
     // highlight the selected row
     if(querySelector("#game_event_chain_row_${selected}") != null) {
@@ -144,65 +253,6 @@ class ObjectEditorGameEvents {
     querySelector("#game_event_chain_${i}_game_event_table").classes.remove("hidden");
   }
   
-  static void buildMainHtml() {
-    String gameEventChainsHtml = "<table class='editor_table'>"+
-      "  <tr>"+
-      "    <td>Num</td>"+
-      "    <td>Label</td>"+
-      "    <td>Num Game Events</td>"+
-      "    <td></td>"+
-      "  </tr>";
-    
-    for(int i=0; i<World.gameEventChains.keys.length; i++) {
-      String key = World.gameEventChains.keys.elementAt(i);
-      
-      gameEventChainsHtml +=
-        "<tr id='game_event_chain_row_${i}'>"+
-        "  <td>${i}</td>"+
-        "  <td><input id='game_event_chain_${i}_label' type='text' value='${ key }' /></td>"+
-        "  <td>${ World.gameEventChains[key].length }</td>"+
-        "  <td><button id='delete_game_event_chain_${i}'>Delete</button></td>"+
-        "</tr>";
-    }
-    
-    gameEventChainsHtml += "</table>";
-    
-    querySelector("#game_event_chains_container").setInnerHtml(gameEventChainsHtml);
-  }
-  
-  static void buildGameEventHtml() {
-    String gameEventHtml = "";
-    
-    List<Function> callbacks = [];
-    
-    for(int i=0; i<World.gameEventChains.keys.length; i++) {
-      String visibleString = "class='hidden'";
-      if(selected == i) {
-        visibleString = "";
-      }
-      
-      List<GameEvent> gameEventChain = World.gameEventChains.values.elementAt(i);
-      
-      gameEventHtml += "<table id='game_event_chain_${i}_game_event_table' ${visibleString}>";
-      gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
-      for(int j=0; j<gameEventChain.length; j++) {
-        gameEventHtml += ObjectEditorGameEvents.buildGameEventTableRowHtml(
-          gameEventChain[j], "game_event_chain_${i}_game_event_${j}", j, callbacks: callbacks
-        );
-      }
-      
-      gameEventHtml += "</table>";
-    }
-    
-    querySelector("#game_event_chain_game_events_container").setInnerHtml(gameEventHtml);
-    
-    if(callbacks != null) {
-      for(Function callback in callbacks) {
-        callback();
-      }
-    }
-  }
-  
   static void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     Editor.avoidNameCollision(e, "_label", World.gameEventChains);
@@ -253,42 +303,33 @@ class ObjectEditorGameEvents {
     return GameEvent.buildGameEvent(gameEventType, prefix);
   }
   
-  static String buildGameEventTableRowHtml(GameEvent gameEvent, String prefix, int num, {bool readOnly: false, List<Function> callbacks}) {
-    String gameEventHtml = "";
-    gameEventHtml += "<tr>";
-    gameEventHtml += "  <td>${num}</td>";
+  static JsObject buildGameEventTableRowHtml(GameEvent gameEvent, String prefix, int num, {bool readOnly: false, List<Function> callbacks}) {
+    JsObject paramsHtml;
     
-    String disabledString = "";
-    if(readOnly) {
-      disabledString = "disabled='disabled' ";
-    }
-    
-    gameEventHtml += "  <td><select id='${prefix}_type' ${disabledString}>";
-    
-    String paramsHtml = "";
-    
+    List<JsObject> options = [];
+
     for(int k=0; k<GameEvent.gameEventTypes.length; k++) {
-      String selectedText = "";
-      
+      options.add(
+        option({}, GameEvent.gameEventTypes[k])
+      );
+
       if(GameEvent.gameEventTypes[k] == gameEvent.getType()) {
-        selectedText = "selected='selected'";
         paramsHtml = gameEvent.buildHtml(prefix, readOnly, callbacks, onInputChange);
       }
-      
-      gameEventHtml += "    <option ${selectedText}>${GameEvent.gameEventTypes[k]}</option>";
     }
     
-    gameEventHtml += "  </select></td>";
-    gameEventHtml += "  <td>${paramsHtml}</td>";
-    gameEventHtml += "  <td>";
-    
+    JsObject buttonHtml = null;
     if(!readOnly) {
-      gameEventHtml += "<button id='delete_${prefix}'>Delete</button>";
+      buttonHtml = button({'id': 'delete_${prefix}'}, "Delete");
     }
     
-    gameEventHtml += "</td>";
-    gameEventHtml += "</tr>";
-    
-    return gameEventHtml;
+    return tr({}, [
+      td({}, num),
+      td({},
+        select({'id': '${prefix}_type', 'disabled': readOnly, 'value': gameEvent.getType()}, options)
+      ),
+      td({}, paramsHtml),
+      td({}, buttonHtml)
+    ]);
   }
 }

@@ -1,5 +1,7 @@
 library dart_rpg.text_game_event;
 
+import "dart:js";
+
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/input.dart';
@@ -11,6 +13,8 @@ import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+
+import 'package:react/react.dart';
 
 class TextGameEvent implements GameEvent {
   static final String type = "text";
@@ -123,33 +127,23 @@ class TextGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
-    String html = "";
-    
-    String readOnlyString = "";
-    if(readOnly) {
-      readOnlyString = "readonly";
-    }
-    
-    html += "<table>";
-    html += "  <tr><td>Picture Id</td><td>Text</td></tr>";
-    html += "  <tr>";
-    
-    html += "    <td>";
-    html += Editor.generateSpritePickerHtml("${prefix}_picture_id", pictureSpriteId, readOnly: readOnly);
-    html += "    </td>";
-    
-    html += "    <td><textarea id='${prefix}_text' ${readOnlyString}>${text}</textarea>";
-    html += "  </tr>";
-    html += "</table>";
-    
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
     if(callbacks != null) {
       callbacks.add(() {
         Editor.initSpritePicker("${prefix}_picture_id", pictureSpriteId, 3, 3, onInputChange, readOnly: readOnly);
       });
     }
     
-    return html;
+    return table({}, tbody({}, [
+      tr({}, [
+        td({}, "Picture Id"),
+        td({}, "Text")
+      ]),
+      tr({}, [
+        td({}, Editor.generateSpritePickerHtml("${prefix}_picture_id", pictureSpriteId, readOnly: readOnly)),
+        td({}, textarea({'id': '${prefix}_text', 'readOnly': readOnly}, text))
+      ])
+    ]));
   }
   
   static GameEvent buildGameEvent(String prefix) {

@@ -1,6 +1,7 @@
 library dart_rpg.delay_game_event;
 
 import 'dart:async';
+import 'dart:js';
 
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -8,6 +9,8 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+
+import 'package:react/react.dart';
 
 class DelayGameEvent implements GameEvent {
   static final String type = "delay";
@@ -41,25 +44,23 @@ class DelayGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
-    String html = "";
-    
-    String readOnlyString = "";
-    if(readOnly) {
-      readOnlyString = "readonly";
-    }
-    
-    html += "<table>";
-    html += "  <tr><td>Milliseconds</td></tr>";
-    html += "  <tr>";
-    
-    // milliseconds
-    html += "    <td><input type='text' class='number' id='${prefix}_milliseconds' value='${milliseconds}' ${readOnlyString} /></td>";
-    
-    html += "  </tr>";
-    html += "</table>";
-    
-    return html;
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+    return table({}, tbody({}, [
+      tr({},
+        td({}, "Milliseconds")
+      ),
+      tr({},
+        td({},
+          input({
+            'type': 'text',
+            'class': 'number',
+            'id': '${prefix}_milliseconds',
+            'value': milliseconds,
+            'readOnly': readOnly
+          })
+        )
+      )
+    ]));
   }
   
   static GameEvent buildGameEvent(String prefix) {

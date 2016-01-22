@@ -1,5 +1,7 @@
 library dart_rpg.warp_game_event;
 
+import 'dart:js';
+
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -8,6 +10,8 @@ import 'package:dart_rpg/src/world.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+
+import 'package:react/react.dart';
 
 class WarpGameEvent extends GameEvent {
   static final String type = "warp";
@@ -49,90 +53,83 @@ class WarpGameEvent extends GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
-    String html = "";
-    
-    String disabledString = "";
-    String readOnlyString = "";
-    if(readOnly) {
-      disabledString = "disabled='disabled' ";
-      readOnlyString = "readonly";
-    }
-    
-    html += "<table>";
-    html += "  <tr><td>Character</td><td>New Map</td></tr>";
-    html += "  <tr>";
-    
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
     // TODO: perhaps add generators for these in base editor
     
-    // character
-    html += "<td><select id='${prefix}_character' ${disabledString}>";
-    
-    html += "  <option value='____player'";
-    if(characterLabel == "____player") {
-      html += " selected";
-    }
-    html += ">Player</option>";
-    
+    List<JsObject> characterOptions = [];
+
+    characterOptions.add(
+      option({'value': '____player'}, "Player")
+    );
+
     World.characters.forEach((String curCharacterLabel, Character character) {
-      html += "  <option value='${curCharacterLabel}'";
-      if(characterLabel == curCharacterLabel) {
-        html += " selected";
-      }
-      html += ">${curCharacterLabel}</option>";
+      characterOptions.add(
+        option({'value': curCharacterLabel}, curCharacterLabel)
+      );
     });
     
-    html += "</select></td>";
-    
-    // new map selector
-    html += "<td><select id='${prefix}_new_map' ${disabledString}>";
+    List<JsObject> mapOptions = [];
     Main.world.maps.keys.forEach((String key) {
-      html += "<option value='${key}'";
-      if(newMap == key) {
-        html += " selected";
-      }
-      
-      html += ">${key}</option>";
+      mapOptions.add(
+        option({'value': key}, key)
+      );
     });
     
-    html += "</tr></table> <br /> <table><tr><td>X</td><td>Y</td><td>Layer</td><td>Direction</td></tr><tr>";
-    
-    // x
-    html += "<td><input type='text' class='number' id='${prefix}_x' value='${x}' ${readOnlyString} /></td>";
-    
-    // y
-    html += "<td><input type='text' class='number' id='${prefix}_y' value='${y}' ${readOnlyString} /></td>";
-    
-    // layer
-    html += "<td><select id='${prefix}_layer' ${disabledString}>";
     List<String> layers = ["Ground", "Below", "Player", "Above"];
+    List<JsObject> layerOptions = [];
     for(int curLayer=0; curLayer<layers.length; curLayer++) {
-      html += "<option value='${curLayer}'";
-      if(layer == curLayer) {
-        html += " selected";
-      }
-      
-      html += ">${layers[curLayer]}</option>";
+      layerOptions.add(
+        option({'value': curLayer}, layers[curLayer])
+      );
     }
-    html += "</select></td>";
-    
-    // direction
-    html += "<td><select id='${prefix}_direction' ${disabledString}>";
+
     List<String> directions = ["Down", "Right", "Up", "Left"];
+    List<JsObject> directionOptions = [];
     for(int curDirection=0; curDirection<directions.length; curDirection++) {
-      html += "<option value='${curDirection}'";
-      if(direction == curDirection) {
-        html += " selected";
-      }
-      
-      html += ">${directions[curDirection]}</option>";
+      directionOptions.add(
+        option({'value': curDirection}, directions[curDirection])
+      );
     }
-    html += "</select></td>";
-    
-    html += "  </tr>";
-    html += "</table>";
-    
-    return html;
+
+    return div({}, [
+      table({}, tbody({}, [
+        tr({}, [
+          td({}, "Character"),
+          td({}, "New Map")
+        ]),
+        tr({}, [
+          td({},
+            select({'id': '${prefix}_character', 'disabled': readOnly, 'value': characterLabel}, characterOptions)
+          ),
+          td({},
+            select({'id': '${prefix}_new_map', 'disabled': readOnly, 'value': newMap}, mapOptions)
+          )
+        ])
+      ])),
+      br({}),
+      table({}, tbody({}, [
+        tr({}, [
+          td({}, "X"),
+          td({}, "Y"),
+          td({}, "Layer"),
+          td({}, "Direction")
+        ]),
+        tr({}, [
+          td({},
+            input({'type': 'text', 'className': 'number', 'id': '${prefix}_x', 'value': x, 'readOnly': readOnly})
+          ),
+          td({},
+            input({'type': 'text', 'className': 'number', 'id': '${prefix}_y', 'value': y, 'readOnly': readOnly})
+          ),
+          td({},
+            select({'id': '${prefix}_layer', 'disabled': readOnly, 'value': layer}, layerOptions)
+          ),
+          td({},
+            select({'id': '${prefix}_direction', 'disabled': readOnly, 'value': direction}, directionOptions)
+          )
+        ])
+      ]))
+    ]);
   }
   
   static GameEvent buildGameEvent(String prefix) {

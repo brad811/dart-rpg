@@ -1,5 +1,7 @@
 library dart_rpg.fade_game_event;
 
+import 'dart:js';
+
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -8,6 +10,8 @@ import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+
+import 'package:react/react.dart';
 
 class FadeGameEvent implements GameEvent {
   static final String type = "fade";
@@ -72,35 +76,25 @@ class FadeGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
-    String html = "";
-    
-    String disabledString = "";
-    if(readOnly) {
-      disabledString = "disabled='disabled' ";
-    }
-    
-    html += "<table>";
-    html += "  <tr><td>Fade Type</td></tr>";
-    html += "  <tr>";
-    
-    // fade type
-    html += "<td><select id='${prefix}_fade_type' ${disabledString}>";
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
     List<String> fadeTypes = ["Normal to white", "White to normal", "Normal to black", "Black to normal"];
+    List<JsObject> options = [];
     for(int curFadeType=0; curFadeType<fadeTypes.length; curFadeType++) {
-      html += "<option value='${curFadeType}'";
-      if(fadeType == curFadeType) {
-        html += " selected";
-      }
-      
-      html += ">${fadeTypes.elementAt(curFadeType)}</option>";
+      options.add(
+        option({'value': curFadeType}, fadeTypes.elementAt(curFadeType))
+      );
     }
-    html += "</select></td>";
     
-    html += "  </tr>";
-    html += "</table>";
-    
-    return html;
+    return table({}, tbody({}, [
+      tr({},
+        td({}, "Fade Type")
+      ),
+      tr({},
+        td({},
+          select({'id': '${prefix}_fade_type', 'disabled': readOnly, 'value': fadeType}, options)
+        )
+      )
+    ]));
   }
   
   static GameEvent buildGameEvent(String prefix) {

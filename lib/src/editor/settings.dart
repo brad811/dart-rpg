@@ -6,28 +6,44 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/map_editor.dart';
-import 'package:dart_rpg/src/editor/object_editor.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
+import 'package:dart_rpg/src/editor/object_editor/object_editor.dart';
 
-class Settings {
-  static CanvasElement canvas;
+import 'package:react/react.dart';
+
+class Settings extends Component {
+  static CanvasElement settingsCanvas;
   static CanvasRenderingContext2D ctx;
   static DivElement tooltip;
   
   static List<String> tabs = [];
   static Map<String, DivElement> tabDivs = {};
   static Map<String, DivElement> tabHeaderDivs = {};
+
+  render() {
+    return
+      tr({'id': 'settings_tab'}, [
+        td({'id': 'settings_container_left'},
+          div({'id': 'settings_main_tab'})
+        ),
+        td({},
+          div({'id': 'settings_container_right'},
+            canvas({'id': 'editor_sprite_settings_canvas', 'width': 256, 'height': 256})
+          )
+        )
+      ]);
+  }
   
   static void init() {
-    canvas = querySelector("#editor_sprite_settings_canvas");
-    ctx = canvas.getContext("2d");
+    settingsCanvas = querySelector("#editor_sprite_settings_canvas");
+    ctx = settingsCanvas.getContext("2d");
   }
   
   static void setUp() {
     setUpSpriteCanvas();
   }
   
-  static void update() {
+  void update() {
     buildMainHtml();
     
     // attach listener to save button
@@ -71,7 +87,7 @@ class Settings {
   
   static void setUpSpriteCanvas() {
     Main.fixImageSmoothing(
-      canvas,
+      settingsCanvas,
       (Main.spritesImage.width * Sprite.spriteScale).round(),
       (Main.spritesImage.height * Sprite.spriteScale).round()
     );
@@ -102,9 +118,9 @@ class Settings {
     
     tooltip = querySelector('#tooltip');
     
-    canvas.onMouseMove.listen(outlineTile);
+    settingsCanvas.onMouseMove.listen(outlineTile);
     
-    canvas.onMouseLeave.listen((MouseEvent e) {
+    settingsCanvas.onMouseLeave.listen((MouseEvent e) {
       tooltip.style.display = "none";
     });
   }
@@ -150,7 +166,7 @@ class Settings {
     tooltip.text = "x: ${x}, y: ${y}, id: ${ (y*Sprite.spriteSheetWidth) + x }";
   }
   
-  static void save() {
+  void save() {
     Main.spritesImageLocation = Editor.getTextAreaStringValue("#sprite_sheet_location");
     
     Sprite.pixelsPerSprite = Editor.getTextInputIntValue("#sprite_sheet_pixels_per_sprite", 16);
@@ -165,11 +181,11 @@ class Settings {
       Sprite.spriteSheetWidth = (Main.spritesImage.width / Sprite.pixelsPerSprite).round();
       Sprite.spriteSheetHeight = (Main.spritesImage.height / Sprite.pixelsPerSprite).round();
       
-      MapEditor.setUp();
+      //MapEditor.setUp();
       ObjectEditor.setUp();
       Settings.setUp();
       
-      Editor.update();
+      props['update']();
       
       Main.fixImageSmoothing(
         MapEditor.mapEditorSpriteSelectorCanvas,
@@ -184,7 +200,7 @@ class Settings {
       );
       
       Main.fixImageSmoothing(
-        canvas,
+        settingsCanvas,
         Sprite.spriteSheetWidth * Sprite.scaledSpriteSize,
         Sprite.spriteSheetHeight * Sprite.scaledSpriteSize
       );

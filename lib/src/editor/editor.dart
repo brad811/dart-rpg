@@ -3,20 +3,28 @@ library dart_rpg.editor;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
+import 'dart:js';
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/world.dart';
 
-import 'package:dart_rpg/src/editor/map_editor.dart';
-import 'package:dart_rpg/src/editor/object_editor.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
+import 'package:dart_rpg/src/editor/object_editor/object_editor.dart';
 import 'package:dart_rpg/src/editor/screen_editor.dart';
 import 'package:dart_rpg/src/editor/settings.dart';
 
+import 'package:react/react.dart';
+
 // TODO: equation editor? (exp reqired to level up, chance to escape battle, stat gains from leveling up, exp gained from battle)
 
-class Editor {
+var mapEditor = registerComponent(() => new MapEditor());
+var objectEditor = registerComponent(() => new ObjectEditor());
+var screenEditor = registerComponent(() => new ScreenEditor());
+var settings = registerComponent(() => new Settings());
+
+class Editor extends Component {
   static List<String> editorTabs = ["map_editor", "object_editor", "screen_editor", "settings"];
   
   static bool highlightSpecialTiles = true;
@@ -26,73 +34,95 @@ class Editor {
   
   static Timer debounceTimer;
   static Duration debounceDelay = new Duration(milliseconds: 250);
-  
-  static void init() {
-    ObjectEditor.init();
-    MapEditor.init(start);
-    ScreenEditor.init();
-    Settings.init();
-  }
-  
-  static void start() {
+
+  getInitialState() => {
+    'gameLoaded': false,
+    'doneSettingUp': false
+  };
+
+  componentDidMount(Element rootNode) {
     Main.world = new World(() {
       Main.world.loadGame(() {
-        Editor.setUp();
+        this.setState({'gameLoaded': true});
+        this.export();
       });
     });
   }
-  
-  static void setUp() {
-    MapEditor.setUp();
-    ObjectEditor.setUp();
-    ScreenEditor.setUp();
-    Settings.setUp();
-    
-    Editor.setUpTabs(editorTabs);
-    
-    Editor.update();
-    
-    Function resizeFunction = (Event e) {
-      querySelector('#left_half').style.width = "${window.innerWidth - 562}px";
-      querySelector('#left_half').style.height = "${window.innerHeight - 60}px";
-      querySelector('#container').style.height = "${window.innerHeight - 10}px";
-    };
-    
-    window.onResize.listen(resizeFunction);
-    resizeFunction(null);
-    
-    ButtonElement loadGameButton = querySelector("#load_game_button");
-    loadGameButton.onClick.listen(loadGame);
+
+  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+    if(!this.state['doneSettingUp']) {
+      setUpTabs(editorTabs);
+
+      Function resizeFunction = (Event e) {
+        querySelector('#left_half').style.width = "${window.innerWidth - 562}px";
+        querySelector('#left_half').style.height = "${window.innerHeight - 60}px";
+        querySelector('#container').style.height = "${window.innerHeight - 10}px";
+      };
+      
+      window.onResize.listen(resizeFunction);
+      resizeFunction(null);
+
+      this.setState({'doneSettingUp': true});
+    }
+  }
+
+  render() {
+    if(!this.state['gameLoaded']) {
+      return div({}, "Loading game...");
+    }
+
+    return
+      div({}, [
+        table({'id': 'container'}, tbody({}, [
+          tr({}, [
+            td({'id': 'editor_tabs', 'colSpan': 2}, [
+              div({'id': 'map_editor_tab_header', 'className': 'tab_header'}, "Map Editor"),
+              div({'id': 'object_editor_tab_header', 'className': 'tab_header'}, "Object Editor"),
+              div({'id': 'screen_editor_tab_header', 'className': 'tab_header'}, "Screen Editor"),
+              div({'id': 'settings_tab_header', 'className': 'tab_header'}, "Settings"),
+
+              // TODO: make this a component
+              div({'id': 'game_storage_container'}, "Loading...")
+            ])
+          ]),
+          mapEditor({'update': debounceUpdate}),
+          objectEditor({'update': debounceUpdate}),
+          screenEditor({'update': debounceUpdate}),
+          settings({'update': debounceUpdate})
+        ])),
+        div({'id': 'tooltip'}),
+        div({'id': 'popup_shade'}),
+        div({'id': 'popup_sprite_selector_container'}, [
+          canvas({'id': 'popup_sprite_selector_canvas'})
+        ])
+      ]);
   }
   
-  static void loadGame(MouseEvent e) {
+  static void loadGame(Function callback) {
     Main.world.parseGame(Editor.getTextAreaStringValue("#export_json"), () {
-      Editor.setUp();
+      callback();
     });
   }
   
-  static void debounceUpdate([Function callback]) {
+  void debounceUpdate({Function callback, bool immediate: false}) {
     if(debounceTimer != null) {
       debounceTimer.cancel();
     }
-    
-    debounceTimer = new Timer(debounceDelay, () {
-      Editor.update();
+
+    debounceTimer = new Timer(immediate ? new Duration(seconds: 0) : debounceDelay, () {
+      update();
       if(callback != null) {
         callback();
       }
     });
   }
   
-  static void update() {
-    MapEditor.update();
-    ObjectEditor.update();
-    ScreenEditor.update();
-    Settings.update();
-    Editor.export();
+  void update() {
+    this.setState({});
+    this.export();
   }
   
-  static void export() {
+  void export() {
     Map<String, Map<String, Map<String, Object>>> exportJson = {};
     MapEditor.export(exportJson);
     ObjectEditor.export(exportJson);
@@ -115,6 +145,7 @@ class Editor {
     
     for(String tab in tabs) {
       tabDivs[tab] = querySelector("#${tab}_tab");
+
       tabDivs[tab].style.display = "none";
       
       tabHeaderDivs[tab] = querySelector("#${tab}_tab_header");
@@ -138,8 +169,25 @@ class Editor {
     tabDivs[tabDivs.keys.first].style.display = "";
     tabHeaderDivs[tabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
   }
+
+  static void confirmMapDelete(Map<Object, Object> target, Object key, String targetName, Function callback) {
+    bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
+    if(confirm) {
+      target.remove(key);
+      callback();
+    }
+  }
+
+  static void confirmListDelete(List<Object> target, int offset, String targetName, Function callback) {
+    print("doing confirmListDelete");
+    bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
+    if(confirm) {
+      target.removeAt(offset);
+      callback();
+    }
+  }
   
-  static void setMapDeleteButtonListeners(Map<Object, Object> target, String targetName) {
+  static void setMapDeleteButtonListeners(Map<Object, Object> target, String targetName, Function callback) {
     for(int i=0; i<target.keys.length; i++) {
       if(listeners["#delete_${targetName}_${i}"] != null)
         listeners["#delete_${targetName}_${i}"].cancel();
@@ -149,13 +197,13 @@ class Editor {
         bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
         if(confirm) {
           target.remove(target.keys.elementAt(i));
-          Editor.update();
+          callback();
         }
       });
     }
   }
   
-  static void setListDeleteButtonListeners(List<Object> target, String targetName) {
+  static void setListDeleteButtonListeners(List<Object> target, String targetName, Function callback) {
     for(int i=0; i<target.length; i++) {
       if(listeners["#delete_${targetName}_${i}"] != null)
         listeners["#delete_${targetName}_${i}"].cancel();
@@ -165,27 +213,32 @@ class Editor {
         bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
         if(confirm) {
           target.removeAt(i);
-          Editor.update();
+          callback();
         }
       });
     }
   }
   
-  static String generateSpritePickerHtml(String prefix, int value, { bool readOnly: false }) {
-    String readOnlyString = "";
-    if(readOnly) {
-      readOnlyString = "readonly";
+  static JsObject generateSpritePickerHtml(String prefix, int value, { bool readOnly: false }) {
+    List<JsObject> elements = [
+      canvas({'id': '${prefix}_canvas'}),
+      br({}),
+      input({
+        'id': prefix,
+        'type': 'text',
+        'className': 'number',
+        'value': value,
+        'readOnly': readOnly
+      })
+    ];
+
+    if(!readOnly) {
+      elements.add(
+        button({'id': '${prefix}_edit_button'}, "Edit")
+      );
     }
     
-    String html =
-      "<canvas id='${prefix}_canvas'></canvas><br />"+
-      "<input id='${prefix}' type='text' class='number' value='${ value }'  ${readOnlyString} />";
-      
-    if(readOnlyString == "") {
-      html += "<button id='${prefix}_edit_button'>Edit</button>";
-    }
-    
-    return html;
+    return div({}, elements);
   }
   
   static void initSpritePicker(String prefix, int value, int sizeX, int sizeY, Function onInputChange, { bool readOnly: false }) {
@@ -364,9 +417,9 @@ class Editor {
     }
   }
   
-  static void updateAndRetainValue(Event e) {
+  static void updateAndRetainValue(Event e, Function callback) {
     if(e == null) {
-      Editor.update();
+      callback();
       return;
     }
     
@@ -375,7 +428,7 @@ class Editor {
       TextInputElement target = e.target;
       
       if(target.getAttribute("type") == "checkbox") {
-        Editor.debounceUpdate();
+        callback();
         return;
       }
       
@@ -384,7 +437,7 @@ class Editor {
       String valueBefore = inputElement.value;
       
       // update everything
-      Editor.debounceUpdate(() {
+      callback(() {
         // restore the cursor position
         inputElement = querySelector('#' + target.id);
         inputElement.value = valueBefore;
@@ -399,7 +452,7 @@ class Editor {
       String valueBefore = inputElement.value;
       
       // update everything
-      Editor.debounceUpdate(() {
+      callback(() {
         // restore the cursor position
         inputElement = querySelector('#' + target.id);
         inputElement.value = valueBefore;
@@ -408,7 +461,7 @@ class Editor {
       });
     } else {
       // update everything
-      Editor.update();
+      callback();
     }
   }
   

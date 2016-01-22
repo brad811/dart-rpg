@@ -1,12 +1,106 @@
 library dart_rpg.object_editor_types;
 
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/game_type.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/object_editor.dart';
+import 'package:dart_rpg/src/editor/object_editor/object_editor.dart';
+
+import 'package:react/react.dart';
+
+class ObjectEditorTypesComponent extends Component {
+  void onInputChange() {
+    // TODO: implement!
+    print("ObjectEditorTypesComponent.onInputChange not yet implemented!");
+  }
+
+  render() {
+    List<JsObject> tableRows = [
+      tr({},
+        td({}, "Num"),
+        td({}, "Name"),
+        td({})
+      )
+    ];
+
+    for(int i=0; i<World.types.keys.length; i++) {
+      GameType gameType = World.types.values.elementAt(i);
+
+      tableRows.add(
+        tr({'id': 'type_row_${i}'}, [
+          td({}, i),
+          td({},
+            input({'id': 'type_${i}_name', 'type': 'text', 'value': gameType.name})
+          ),
+          td({},
+            button({'id': 'delete_type_${i}'}, "Delete")
+          )
+        ])
+      );
+    }
+
+    return table({'className': 'editor_table'}, tbody({}, tableRows));
+  }
+}
+
+var objectEditorTypesComponent = registerComponent(() => new ObjectEditorTypesComponent());
+
+class ObjectEditorTypesEffectivenessComponent extends Component {
+  int selected = -1;
+
+  void onInputChange() {
+    // TODO: implement!
+    print("ObjectEditorTypesEffectivenessComponent.onInputChange not yet implemented!");
+  }
+
+  render() {
+    List<JsObject> typeContainers = [];
+
+    for(int i=0; i<World.types.keys.length; i++) {
+      GameType gameType = World.types.values.elementAt(i);
+
+      List<JsObject> tableRows = [
+        tr({}, [
+          td({}, "Num"),
+          td({}, "Defending Type"),
+          td({}, "Effectiveness")
+        ])
+      ];
+
+      for(int j=0; j<World.types.keys.length; j++) {
+        GameType defendingGameType = World.types.values.elementAt(j);
+
+        tableRows.add(
+          tr({}, [
+            td({}, j),
+            td({}, defendingGameType.name),
+            td({},
+              input({
+                'id': 'type_${i}_effectiveness_${j}',
+                'type': 'text',
+                'className': 'number decimal',
+                'value': gameType.getEffectiveness(defendingGameType.name)
+              })
+            )
+          ])
+        );
+      }
+
+      typeContainers.add(
+        div({'id': 'type_${i}_effectiveness_container', 'className': selected == i ? '' : 'hidden'},
+          table({}, tableRows)
+        )
+      );
+    }
+
+    return div({}, typeContainers);
+  }
+}
+
+var objectEditorTypesEffectivenessComponent = registerComponent(() => new ObjectEditorTypesEffectivenessComponent());
 
 class ObjectEditorTypes {
   static List<String> advancedTabs = ["type_effectiveness"];
@@ -29,8 +123,8 @@ class ObjectEditorTypes {
   }
   
   static void update() {
-    buildMainHtml();
-    buildEffectivenessHtml();
+    render(objectEditorTypesComponent({}), querySelector('#types_container'));
+    render(objectEditorTypesEffectivenessComponent({}), querySelector('#type_effectiveness_container'));
     
     // highlight the selected row
     if(querySelector("#type_row_${selected}") != null) {
@@ -38,7 +132,7 @@ class ObjectEditorTypes {
       querySelector("#object_editor_types_advanced").classes.remove("hidden");
     }
     
-    Editor.setMapDeleteButtonListeners(World.types, "type");
+    Editor.setMapDeleteButtonListeners(World.types, "type", () { /* TODO: fix */ });
     
     List<String> attrs = [
       "name"
@@ -87,58 +181,6 @@ class ObjectEditorTypes {
     querySelector("#type_${i}_effectiveness_container").classes.remove("hidden");
   }
   
-  static void buildMainHtml() {
-    String html = "<table class='editor_table'>"+
-      "  <tr>"+
-      "    <td>Num</td><td>Name</td><td></td>"+
-      "  </tr>";
-    for(int i=0; i<World.types.keys.length; i++) {
-      GameType gameType = World.types.values.elementAt(i);
-      
-      html +=
-        "<tr id='type_row_${i}'>"+
-        "  <td>${i}</td>"+
-        "  <td><input id='type_${i}_name' type='text' value='${gameType.name}' /></td>"+
-        "  <td><button id='delete_type_${i}'>Delete</button></td>"+
-        "</tr>";
-    }
-    html += "</table>";
-    querySelector("#types_container").setInnerHtml(html);
-  }
-  
-  static void buildEffectivenessHtml() {
-    String html = "";
-    
-    for(int i=0; i<World.types.keys.length; i++) {
-      String visibleString = "class='hidden'";
-      if(selected == i) {
-        visibleString = "";
-      }
-      
-      GameType gameType = World.types.values.elementAt(i);
-      
-      html += "<div id='type_${i}_effectiveness_container' ${visibleString}>";
-      
-      html += "<table>";
-      html += "<tr><td>Num</td><td>Defending Type</td><td>Effectiveness</td></tr>";
-      for(int j=0; j<World.types.keys.length; j++) {
-        GameType defendingGameType = World.types.values.elementAt(j);
-        
-        html += "<tr>";
-        html += "<td>${j}</td>";
-        html += "<td>${defendingGameType.name}</td>";
-        html += "<td><input id='type_${i}_effectiveness_${j}' type='text' class='number decimal' "+
-            "value='${gameType.getEffectiveness(defendingGameType.name)}' /></td>";
-        html += "</tr>";
-      }
-      html += "</table>";
-
-      html += "</div>";
-    }
-    
-    querySelector("#type_effectiveness_container").setInnerHtml(html);
-  }
-  
   static void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     Editor.avoidNameCollision(e, "_name", World.types);
@@ -171,7 +213,7 @@ class ObjectEditorTypes {
       }
     }
     
-    Editor.updateAndRetainValue(e);
+    Editor.updateAndRetainValue(e, () { /* TODO: fix */ });
   }
   
   static void export(Map<String, Object> exportJson) {

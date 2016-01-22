@@ -14,16 +14,29 @@ import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/map_editor_characters.dart';
-import 'package:dart_rpg/src/editor/map_editor_events.dart';
-import 'package:dart_rpg/src/editor/map_editor_maps.dart';
-import 'package:dart_rpg/src/editor/map_editor_signs.dart';
-import 'package:dart_rpg/src/editor/map_editor_warps.dart';
-import 'package:dart_rpg/src/editor/map_editor_battlers.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor_characters.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor_events.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor_maps.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor_signs.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor_tile_info.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor_tiles.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor_warps.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor_battlers.dart';
+
+import 'package:react/react.dart';
 
 // TODO: allow for dynamic number of layers
 
-class MapEditor {
+var mapEditorMaps = registerComponent(() => new MapEditorMaps());
+var mapEditorTiles = registerComponent(() => new MapEditorTiles());
+var mapEditorCharacters = registerComponent(() => new MapEditorCharacters());
+var mapEditorWarps = registerComponent(() => new MapEditorWarps());
+var mapEditorSigns = registerComponent(() => new MapEditorSigns());
+var mapEditorBattlers = registerComponent(() => new MapEditorBattlers());
+var mapEditorEvents = registerComponent(() => new MapEditorEvents());
+var mapEditorTileInfo = registerComponent(() => new MapEditorTileInfo());
+
+class MapEditor extends Component {
   static CanvasElement
     mapEditorCanvas,
     mapEditorSpriteSelectorCanvas,
@@ -55,8 +68,8 @@ class MapEditor {
   static String selectedTool = "select";
   
   static DivElement tooltip, tileInfo;
-  
-  static void init(Function callback) {
+
+  componentDidMount(Element rootNode) {
     mapEditorCanvas = querySelector('#editor_main_canvas');
     mapEditorCanvasContext = mapEditorCanvas.getContext("2d");
     
@@ -77,11 +90,7 @@ class MapEditor {
     for(int i=0; i<World.layers.length; i++) {
       layerVisible.add(true);
     }
-    
-    callback();
-  }
-  
-  static void setUp() {
+
     Editor.setUpTabs(mapEditorTabs);
     
     // resize the sprite picker to match the loaded sprite sheet image
@@ -98,32 +107,73 @@ class MapEditor {
       (Sprite.scaledSpriteSize).round()
     );
     
-    setUpToolSelectors();
-    
-    MapEditorMaps.setUp();
-    MapEditorCharacters.setUp();
-    MapEditorWarps.setUp();
-    MapEditorSigns.setUp();
-    MapEditorBattlers.setUp();
-    MapEditorEvents.setUp();
-    
+    setUpToolSelectors();    
     setUpSpritePicker();
-
     selectTool("select");
-  }
-  
-  static void update() {
-    MapEditorMaps.update();
-    MapEditorCharacters.update();
-    MapEditorWarps.update();
-    MapEditorSigns.update();
-    MapEditorBattlers.update();
-    MapEditorEvents.update();
-    
-    MapEditor.updateMap();
+
+    updateMap();
   }
 
-  static void selectTool(String newTool) {
+  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+    updateMap();
+  }
+
+  render() {
+    return
+      tr({'id': 'map_editor_tab'}, [
+        td({'id': 'left_half'}, [
+          div({'style': {'position': 'relative', 'width': 0, 'height': 0}}, [
+            mapEditorTileInfo({'ref': 'tileInfo', 'update': props['update']})
+          ]),
+          canvas({'id': 'editor_main_canvas', 'width': 640, 'height': 512})
+        ]),
+        td({'id': 'right_half'}, [
+          table({'id': 'right_half_container'}, tbody({}, [
+            tr({}, [
+              td({'className': 'sprite_picker_container'}, [
+                canvas({'id': 'editor_sprite_canvas', 'width': 256, 'height': 256})
+              ])
+            ]),
+            tr({}, [
+              td({'className': 'tab_headers'}, [
+                div({'id': 'maps_tab_header', 'className': 'tab_header'}, "Maps"),
+                div({'id': 'tiles_tab_header', 'className': 'tab_header'}, "Tiles"),
+                div({'id': 'map_characters_tab_header', 'className': 'tab_header'}, "Characters"),
+                div({'id': 'warps_tab_header', 'className': 'tab_header'}, "Warps"),
+                div({'id': 'signs_tab_header', 'className': 'tab_header'}, "Signs"),
+                div({'id': 'battlers_tab_header', 'className': 'tab_header'}, "Battlers"),
+                div({'id': 'events_tab_header', 'className': 'tab_header'}, "Events"),
+              ])
+            ]),
+            tr({}, [
+              td({'id': 'editor_tabs_container'}, [
+                mapEditorMaps({'ref': 'mapEditorMaps', 'update': props['update']}),
+                mapEditorTiles({'ref': 'mapEditorTiles', 'update': props['update'], 'shift': props['shift']}),
+                mapEditorCharacters({'ref': 'mapEditorCharacters', 'update': props['update']}),
+                mapEditorWarps({'ref': 'mapEditorWarps', 'update': props['update']}),
+                mapEditorSigns({'ref': 'mapEditorSigns', 'update': props['update']}),
+                mapEditorBattlers({'ref': 'mapEditorBattlers', 'update': props['update']}),
+                mapEditorEvents({'ref': 'mapEditorEvents', 'update': props['update']})
+              ])
+            ]),
+            tr({}, [
+              td({'className': 'export_json_container'}, [
+                textarea({'id': 'export_json'}),
+                button({'id': 'load_game_button', 'onClick': (e) { Editor.loadGame(props['update']); }}, "Load")
+              ])
+            ])
+          ]))
+        ])
+      ]);
+  }
+
+  void shift(int xAmount, int yAmount) {
+    ref('mapEditorMaps').shift(xAmount, yAmount);
+    ref('mapEditorSigns').shift(xAmount, yAmount);
+    ref('mapEditorEvents').shift(xAmount, yAmount);
+  }
+
+  void selectTool(String newTool) {
     availableTools.forEach((String curTool) {
       querySelector("#tool_selector_" + curTool).classes.remove("selected");
 
@@ -151,7 +201,7 @@ class MapEditor {
     lastChangeY = -1;
   }
   
-  static void setUpToolSelectors() {
+  void setUpToolSelectors() {
     availableTools.forEach((String curTool) {
       querySelector("#tool_selector_" + curTool).onClick.listen((MouseEvent e) {
         selectTool(curTool);
@@ -159,7 +209,7 @@ class MapEditor {
     });
   }
   
-  static void setUpSpritePicker() {
+  void setUpSpritePicker() {
     mapEditorSpriteSelectorCanvasContext.fillStyle = "#ff00ff";
     mapEditorSpriteSelectorCanvasContext.fillRect(
       0, 0,
@@ -248,7 +298,8 @@ class MapEditor {
   }
   
   static void hoverTile(MouseEvent e) {
-    if(tileInfo.style.display != "none") {
+    // tileInfo.style.display != "none"
+    if(tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
       return;
     }
 
@@ -336,7 +387,7 @@ class MapEditor {
     );
   }
 
-  static void handleTileClickOrDrag(MouseEvent e) {
+  void handleTileClickOrDrag(MouseEvent e) {
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
 
@@ -349,63 +400,14 @@ class MapEditor {
     changeTile(x, y, layer, solid, layered, encounter);
   }
   
-  static void showTileInfo(int x, int y) {
-    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-
+  void showTileInfo(int x, int y) {
     tooltip.style.display = "none";
 
-    String html = "";
+    // TODO: update tile_info
+    ref('tileInfo').setTile(x, y);
 
-    html += 
-      "Tile Info<br />" +
-      "<hr />" +
-      "X: ${x}<br />" +
-      "Y: ${y}<br />";
-
-
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     List<String> layerNames = ["Ground", "Below", "Player", "Above"];
-    for(int i=layerNames.length-1; i>=0; i--) {
-      if(mapTiles[y][x][i] != null) {
-        String solidCheckedHtml = "";
-        if(mapTiles[y][x][i].solid == true) {
-          solidCheckedHtml = "checked='checked'";
-        }
-
-        String layeredCheckedHtml = "";
-        if(mapTiles[y][x][i].layered == true) {
-          layeredCheckedHtml = "checked='checked'";
-        }
-
-        String encounterCheckedHtml = "";
-        if(mapTiles[y][x][i] is EncounterTile) {
-          encounterCheckedHtml = "checked='checked'";
-        }
-
-        html +=
-          "<hr />" +
-
-          "<table>" +
-            "<tr>" +
-              "<td class='tile_info_layer_name'>${layerNames[i]}</td>" +
-              "<td class='tile_info_delete'>" +
-                "<input type='button' id='delete_tile_info_layer_${i}' value='Delete' />" +
-              "</td>" +
-            "</tr>" +
-            "<tr>" +
-              "<td>" +
-                Editor.generateSpritePickerHtml("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id) +
-              "</td>" +
-              "<td class='tile_info_checkboxes'>" +
-                "<input type='checkbox' id='tile_info_layer_${i}_solid' ${solidCheckedHtml} /> Solid<br />" +
-                "<input type='checkbox' id='tile_info_layer_${i}_layered' ${layeredCheckedHtml} /> Layered<br />" +
-                "<input type='checkbox' id='tile_info_layer_${i}_encounter' ${encounterCheckedHtml} /> Encounter<br />" +
-              "</td>" +
-            "</tr>" +
-          "</table>";
-      }
-    }
-
-    tileInfo.setInnerHtml(html);
 
     for(int i=layerNames.length-1; i>=0; i--) {
       if(mapTiles[y][x][i] != null) {
@@ -460,7 +462,7 @@ class MapEditor {
     tileInfo.style.width = "200px";
   }
 
-  static void changeTile(int x, int y, int layer, bool solid, bool layered, bool encounter) {
+  void changeTile(int x, int y, int layer, bool solid, bool layered, bool encounter) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     
     if(y >= mapTiles.length || x >= mapTiles[0].length)
@@ -504,7 +506,7 @@ class MapEditor {
           }
         }
       } else if(selectedTool == "select") {
-        if(lastTileInfoX == x && lastTileInfoY == y && tileInfo.style.display != "none") {
+        if(lastTileInfoX == x && lastTileInfoY == y && tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
           tileInfo.style.display = "none";
         } else {
           lastTileInfoX = x;
@@ -632,7 +634,8 @@ class MapEditor {
     renderColoredTiles();
     
     if(shouldExport) {
-      Editor.export();
+      // TODO
+      //Editor.export();
     }
   }
   
@@ -721,7 +724,7 @@ class MapEditor {
         colorTracker["sign"] = 1;
       }
     });
-    
+
     MapEditorEvents.events[Main.world.curMap].forEach((EventTile eventTile) {
       int x = eventTile.sprite.posX.round();
       int y = eventTile.sprite.posY.round();

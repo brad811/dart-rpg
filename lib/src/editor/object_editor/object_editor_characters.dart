@@ -1,6 +1,7 @@
 library dart_rpg.object_editor_characters;
 
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
@@ -10,10 +11,311 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/object_editor.dart';
-import 'package:dart_rpg/src/editor/object_editor_game_events.dart';
+import 'package:dart_rpg/src/editor/object_editor/object_editor.dart';
+import 'package:dart_rpg/src/editor/object_editor/object_editor_game_events.dart';
+
+import 'package:react/react.dart';
 
 // TODO: dimensions, where character is solid and interactable
+
+class ObjectEditorCharacterComponent extends Component {
+  void onInputChange() {
+    // TODO: implement!
+    print("ObjectEditorCharacterComponent.onInputChange not yet implemented!");
+  }
+
+  componentDidMount(a) {
+    initSpritePickers();
+  }
+
+  componentDidUpdate(a, b, c) {
+    initSpritePickers();
+  }
+
+  initSpritePickers() {
+    int i = 0;
+    for(String key in World.characters.keys) {
+      Editor.initSpritePicker(
+        "character_${i}_sprite_id",
+        World.characters[key].spriteId,
+        World.characters[key].sizeX, World.characters[key].sizeY,
+        onInputChange
+      );
+      
+      Editor.initSpritePicker(
+        "character_${i}_picture_id",
+        World.characters[key].pictureId,
+        3, 3,
+        onInputChange
+      );
+      
+      i += 1;
+    }
+  }
+
+  render() {
+    List<JsObject> tableRows = [];
+
+    tableRows.add(
+      tr({}, [
+        td({}, "Num"),
+        td({}),
+        td({}, "Sprite Id"),
+        td({}, "Picture Id"),
+        td({}, "Size"),
+        td({}, "Map"),
+        td({})
+      ])
+    );
+
+    for(int i=0; i<World.characters.keys.length; i++) {
+      String key = World.characters.keys.elementAt(i);
+
+      List<JsObject> options = [];
+
+      Main.world.maps.keys.forEach((String mapName) {
+        options.add(
+          option({'value': mapName}, mapName)
+        );
+      });
+
+      tableRows.add(
+        tr({'id': 'character_row_${i}'}, [
+          td({}, i),
+          td({}, [
+            "Label", br({}),
+            input({'id': 'character_${i}_label', 'type': 'text', 'value': key}), br({}),
+            "Name", br({}),
+            input({'id': 'character_${i}_name', 'type': 'text', 'value': World.characters[key].name}), br({}),
+            br({}),
+            input({
+              'id': 'character_${i}_player',
+              'type': 'checkbox',
+              'checked': Main.player.character.label == World.characters.keys.elementAt(i)
+            }),
+            "Player"
+          ]),
+          td({},
+            Editor.generateSpritePickerHtml("character_${i}_sprite_id", World.characters[key].spriteId)
+          ),
+          td({},
+            Editor.generateSpritePickerHtml("character_${i}_picture_id", World.characters[key].pictureId)
+          ),
+          td({}, [
+            "X: ",
+            input({'id': 'character_${i}_size_x', 'type': 'text', 'className': 'number', 'value': World.characters[key].sizeX}),
+            br({}),
+            "Y: ",
+            input({'id': 'character_${i}_size_y', 'type': 'text', 'className': 'number', 'value': World.characters[key].sizeY})
+          ]),
+          td({},
+            select({'id': 'character_${i}_map', 'value': World.characters[key].map}, options)
+          ),
+          td({},
+            button({'id': 'delete_character_${i}'})
+          )
+        ])
+      );
+    }
+
+    return table({'className': 'editor_table'}, tbody({}, tableRows));
+  }
+}
+
+var objectEditorCharacterComponent = registerComponent(() => new ObjectEditorCharacterComponent());
+
+class ObjectEditorCharacterInventoryComponent extends Component {
+  int selected;
+
+  render() {
+    List<JsObject> inventoryContainers = [];
+
+    for(int i=0; i<World.characters.keys.length; i++) {
+      Character character = World.characters.values.elementAt(i);
+
+      List<JsObject> tableRows = [];
+
+      tableRows.add(
+        tr({}, [
+          td({}, "Num"),
+          td({}, "Item"),
+          td({}, "Quantity"),
+          td({})
+        ])
+      );
+
+      for(int j=0; j<character.inventory.itemNames().length; j++) {
+        String curItemName = character.inventory.itemNames().elementAt(j);
+
+        List<JsObject> options = [];
+
+        World.items.keys.forEach((String itemOptionName) {
+          if(itemOptionName != curItemName && character.inventory.itemNames().contains(itemOptionName)) {
+            // don't show items that are already somewhere else in the character's inventory
+            return;
+          }
+
+          options.add(
+            option({}, itemOptionName)
+          );
+        });
+
+        tableRows.add(
+          tr({},
+            td({}, j),
+            td({},
+              select({'id': 'character_${i}_inventory_${j}_item', 'value': curItemName})
+            ),
+            td({},
+              input({
+                'id': 'character_${i}_inventory_${j}_quantity',
+                'type': 'text',
+                'className': 'number',
+                'value': character.inventory.getQuantity(curItemName)
+              })
+            ),
+            td({'id': 'delete_character_${i}_item_${j}'}, "Delete")
+          )
+        );
+      }
+
+      inventoryContainers.add(
+        div({'id': 'character_${i}_inventory_container', 'className': selected == i ? '' : 'hidden'}, [
+          "Money: ",
+          input({'id': 'character_${i}_money', 'type': 'text', 'className': 'number', 'value': character.inventory.money}),
+          hr({}),
+          table({}, tableRows)
+        ])
+      );
+    }
+
+    return div({}, inventoryContainers);
+  }
+}
+
+var objectEditorCharacterInventoryComponent = registerComponent(() => new ObjectEditorCharacterInventoryComponent());
+
+class ObjectEditorCharacterGameEventComponent extends Component {
+  int selected;
+  List<Function> callbacks = [];
+
+  componentDidMount(a) {
+    callCallbacks();
+  }
+
+  componentDidUpdate(a, b, c) {
+    callCallbacks();
+  }
+
+  void callCallbacks() {
+    if(callbacks != null) {
+      for(Function callback in callbacks) {
+        callback();
+      }
+    }
+  }
+
+  render() {
+    this.callbacks = [];
+    List<JsObject> gameEventContainers = [];
+
+    for(int i=0; i<World.characters.keys.length; i++) {
+      Character character = World.characters.values.elementAt(i);
+
+      List<JsObject> options = [
+        option({'value': ''}, "None")
+      ];
+
+      for(int j=0; j<World.gameEventChains.keys.length; j++) {
+        String name = World.gameEventChains.keys.elementAt(j);
+
+        options.add(
+          option({'value': name}, name)
+        );
+      }
+
+      List<JsObject> tableRows = [
+        tr({}, [
+          td({}, "Num"),
+          td({}, "Event Type"),
+          td({}, "Params"),
+          td({})
+        ])
+      ];
+
+      if(character.getGameEventChain() != null && character.getGameEventChain() != ""
+          && World.gameEventChains[character.getGameEventChain()] != null) {
+        for(int j=0; j<World.gameEventChains[character.getGameEventChain()].length; j++) {
+          tableRows.add(
+            ObjectEditorGameEvents.buildGameEventTableRowHtml(
+              World.gameEventChains[character.getGameEventChain()][j],
+              "character_${i}_game_event_${j}",
+              j,
+              readOnly: true, callbacks: this.callbacks
+            )
+          );
+        }
+      }
+
+      gameEventContainers.add(
+        div({'id': 'character_${i}_game_event_chain_container', 'className': selected == i ? '' : 'hidden'}, [
+          "Game Event Chain: ",
+          select({'id': 'character_${i}_game_event_chain'}, options),
+          hr({}),
+          "Sight distance: ",
+          input({'id': 'character_${i}_sight_distance', 'type': 'text', 'className': 'number', 'value': character.sightDistance}),
+          hr({}),
+          table({'id': 'character_${i}_game_event_table'}, tableRows)
+        ])
+      );
+    }
+
+    return div({}, gameEventContainers);
+  }
+}
+
+var objectEditorCharacterGameEventComponent = registerComponent(() => new ObjectEditorCharacterGameEventComponent());
+
+class ObjectEditorCharacterBattleComponent extends Component {
+  int selected;
+
+  render() {
+    List<JsObject> battleContainers = [];
+
+    for(int i=0; i<World.characters.keys.length; i++) {
+      Character character = World.characters.values.elementAt(i);
+
+      List<JsObject> options = [];
+
+      World.battlerTypes.forEach((String name, BattlerType battlerType) {
+        options.add(
+          option({'value': battlerType.name}, battlerType.name)
+        );
+      });
+
+      battleContainers.add(
+        table({'id': 'character_${i}_battle_container', 'className': selected == i ? '' : 'hidden'}, [
+          tr({}, [
+            td({}, "Battler Type"),
+            td({}, "Level")
+          ]),
+          tr({}, [
+            td({},
+              select({'id': 'character_${i}_battler_type', 'value': character.battler.battlerType.name}, options)
+            ),
+            td({},
+              input({'id': 'character_${i}_battler_level', 'type': 'text', 'className': 'number', 'value': character.battler.level})
+            )
+          ])
+        ])
+      );
+    }
+
+    return div({}, battleContainers);
+  }
+}
+
+var objectEditorCharacterBattleComponent = registerComponent(() => new ObjectEditorCharacterBattleComponent());
 
 class ObjectEditorCharacters {
   static List<String> advancedTabs = ["character_inventory", "character_game_event", "character_battle"];
@@ -64,10 +366,11 @@ class ObjectEditorCharacters {
   }
   
   static void update() {
-    buildMainHtml();
-    buildInventoryHtml();
-    buildGameEventHtml();
-    buildBattleHtml();
+    render(objectEditorCharacterComponent({}), querySelector('#characters_container'));
+
+    render(objectEditorCharacterInventoryComponent({}), querySelector('#inventory_container'));
+    render(objectEditorCharacterGameEventComponent({}), querySelector('#character_game_event_container'));
+    render(objectEditorCharacterBattleComponent({}), querySelector('#battle_container'));
     
     // highlight the selected row
     if(querySelector("#character_row_${selected}") != null) {
@@ -141,237 +444,6 @@ class ObjectEditorCharacters {
     querySelector("#character_${i}_inventory_container").classes.remove("hidden");
     querySelector("#character_${i}_game_event_chain_container").classes.remove("hidden");
     querySelector("#character_${i}_battle_container").classes.remove("hidden");
-  }
-  
-  static void buildMainHtml() {
-    String charactersHtml = "<table class='editor_table'>"+
-      "  <tr>"+
-      "    <td>Num</td>"+
-      "    <td></td>"+
-      "    <td>Sprite Id</td>"+
-      "    <td>Picture Id</td>"+
-      "    <td>Size</td>"+
-      "    <td>Map</td>"+
-      "    <td></td>"+
-      "  </tr>";
-    
-    for(int i=0; i<World.characters.keys.length; i++) {
-      String key = World.characters.keys.elementAt(i);
-      
-      charactersHtml +=
-        "<tr id='character_row_${i}'>"+
-        "  <td>${i}</td>"+
-        "  <td>"+
-        "    Label<br /><input id='character_${i}_label' type='text' value='${ key }' /><br />"+
-        "    Name<br /><input id='character_${i}_name' type='text' value='${ World.characters[key].name }' /><br />"+
-        "    <br />"+
-        "    <input id='character_${i}_player' type='checkbox' ";
-      
-      if(Main.player.character.label == World.characters.keys.elementAt(i)) {
-        charactersHtml += "checked='checked' ";
-      }
-      
-      charactersHtml += "/> Player"+
-        "  </td>"+
-        
-        "  <td>"+
-        Editor.generateSpritePickerHtml("character_${i}_sprite_id", World.characters[key].spriteId)+
-        "  </td>"+
-        
-        "  <td>"+
-        Editor.generateSpritePickerHtml("character_${i}_picture_id", World.characters[key].pictureId)+
-        "  </td>"+
-        
-        "  <td>"+
-        "    X: <input id='character_${i}_size_x' type='text' class='number' value='${ World.characters[key].sizeX }' /><br />"+
-        "    Y: <input id='character_${i}_size_y' type='text' class='number' value='${ World.characters[key].sizeY }' />"+
-        "  </td>";
-        
-        // map selector
-        charactersHtml += "<td><select id='character_${i}_map'>";
-        Main.world.maps.keys.forEach((String mapName) {
-          charactersHtml += "<option value='${mapName}'";
-          if(World.characters[key].map == mapName) {
-            charactersHtml += " selected";
-          }
-          
-          charactersHtml += ">${mapName}</option>";
-        });
-        
-        charactersHtml += "  <td><button id='delete_character_${i}'>Delete</button></td>"+
-        "</tr>";
-    }
-    
-    charactersHtml += "</table>";
-    
-    querySelector("#characters_container").setInnerHtml(charactersHtml);
-    
-    int i = 0;
-    for(String key in World.characters.keys) {
-      Editor.initSpritePicker(
-        "character_${i}_sprite_id",
-        World.characters[key].spriteId,
-        World.characters[key].sizeX, World.characters[key].sizeY,
-        onInputChange
-      );
-      
-      Editor.initSpritePicker(
-        "character_${i}_picture_id",
-        World.characters[key].pictureId,
-        3, 3,
-        onInputChange
-      );
-      
-      i += 1;
-    }
-  }
-  
-  static void buildInventoryHtml() {
-    String inventoryHtml = "";
-    
-    for(int i=0; i<World.characters.keys.length; i++) {
-      String visibleString = "class='hidden'";
-      if(selected == i) {
-        visibleString = "";
-      }
-      
-      Character character = World.characters.values.elementAt(i);
-      
-      inventoryHtml += "<div id='character_${i}_inventory_container' ${visibleString}>";
-      
-      inventoryHtml += "Money: <input id='character_${i}_money' type='text' class='number' value='${ character.inventory.money }' />";
-      inventoryHtml += "<hr />";
-      
-      inventoryHtml += "<table>";
-      inventoryHtml += "<tr><td>Num</td><td>Item</td><td>Quantity</td><td></td></tr>";
-      
-      for(int j=0; j<character.inventory.itemNames().length; j++) {
-        String curItemName = character.inventory.itemNames().elementAt(j);
-        inventoryHtml += "<tr>";
-        inventoryHtml += "  <td>${j}</td>";
-        inventoryHtml += "  <td><select id='character_${i}_inventory_${j}_item'>";
-        World.items.keys.forEach((String itemOptionName) {
-          String selectedString = "";
-          
-          if(itemOptionName != curItemName && character.inventory.itemNames().contains(itemOptionName)) {
-            // don't show items that are already somewhere else in the character's inventory
-            return;
-          }
-          
-          if(itemOptionName == curItemName) {
-            selectedString = "selected=\"selected\"";
-          }
-          inventoryHtml += "<option ${selectedString}>${itemOptionName}</option>";
-        });
-        inventoryHtml += "  </select></td>";
-        inventoryHtml += "  <td><input id='character_${i}_inventory_${j}_quantity' type='text' class='number' value='${character.inventory.getQuantity(curItemName)}' /></td>";
-        inventoryHtml += "  <td><button id='delete_character_${i}_item_${j}'>Delete</button></td>";
-        inventoryHtml += "</tr>";
-      }
-      
-      inventoryHtml += "</table>";
-      
-      inventoryHtml += "</div>";
-    }
-    
-    querySelector("#inventory_container").setInnerHtml(inventoryHtml);
-  }
-  
-  static void buildGameEventHtml() {
-    String gameEventHtml = "";
-    
-    List<Function> callbacks = [];
-    
-    for(int i=0; i<World.characters.keys.length; i++) {
-      String visibleString = "class='hidden'";
-      if(selected == i) {
-        visibleString = "";
-      }
-      
-      Character character = World.characters.values.elementAt(i);
-      
-      // game event chain selector
-      gameEventHtml += "<div id='character_${i}_game_event_chain_container' ${visibleString}>";
-      gameEventHtml += "Game Event Chain: <select id='character_${i}_game_event_chain'>";
-      gameEventHtml += "  <option value=''>None</option>";
-      for(int j=0; j<World.gameEventChains.keys.length; j++) {
-        String name = World.gameEventChains.keys.elementAt(j);
-        
-        gameEventHtml += "  <option value='${name}' ";
-        
-        if(character.getGameEventChain() == name) {
-          gameEventHtml += "selected='selected'";
-        }
-          
-        gameEventHtml += ">${name}</option>";
-      }
-      gameEventHtml += "</select><hr />";
-      
-      // sight distance
-      gameEventHtml += "Sight Distance: ";
-      gameEventHtml += "<input id='character_${i}_sight_distance' type='text' class='number' value='${character.sightDistance}' />";
-      gameEventHtml += "<hr />";
-      
-      gameEventHtml += "<table id='character_${i}_game_event_table'>";
-      gameEventHtml += "<tr><td>Num</td><td>Event Type</td><td>Params</td><td></td></tr>";
-      
-      if(character.getGameEventChain() != null && character.getGameEventChain() != ""
-          && World.gameEventChains[character.getGameEventChain()] != null) {
-        for(int j=0; j<World.gameEventChains[character.getGameEventChain()].length; j++) {
-          gameEventHtml +=
-            ObjectEditorGameEvents.buildGameEventTableRowHtml(
-              World.gameEventChains[character.getGameEventChain()][j],
-              "character_${i}_game_event_${j}",
-              j,
-              readOnly: true, callbacks: callbacks
-            );
-        }
-      }
-      
-      gameEventHtml += "</table>";
-      gameEventHtml += "</div>";
-    }
-    
-    querySelector("#character_game_event_container").setInnerHtml(gameEventHtml);
-    
-    if(callbacks != null) {
-      for(Function callback in callbacks) {
-        callback();
-      }
-    }
-  }
-  
-  static void buildBattleHtml() {
-    String battleHtml = "";
-    
-    for(int i=0; i<World.characters.keys.length; i++) {
-      String visibleString = "class='hidden'";
-      if(selected == i) {
-        visibleString = "";
-      }
-      
-      Character character = World.characters.values.elementAt(i);
-      
-      battleHtml += "<table id='character_${i}_battle_container' ${visibleString}>";
-      battleHtml += "<tr><td>Battler Type</td><td>Level</td></tr>";
-      
-      battleHtml += "<tr><td><select id='character_${i}_battler_type'>";
-      World.battlerTypes.forEach((String name, BattlerType battlerType) {
-        battleHtml += "<option value='${battlerType.name}'";
-        if(character.battler.battlerType.name == name) {
-          battleHtml += " selected";
-        }
-        
-        battleHtml += ">${battlerType.name}</option>";
-      });
-      battleHtml += "</select></td>";
-      
-      battleHtml += "<td><input id='character_${i}_battler_level' type='text' class='number' value='${character.battler.level}' /></td>";
-      
-      battleHtml += "</tr></table>";
-    }
-    
-    querySelector("#battle_container").setInnerHtml(battleHtml);
   }
   
   static void onInputChange(Event e) {

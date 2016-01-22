@@ -1,5 +1,7 @@
 library dart_rpg.move_game_event;
 
+import 'dart:js';
+
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -7,6 +9,8 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+
+import 'package:react/react.dart';
 
 class MoveGameEvent implements GameEvent {
   static final String type = "move";
@@ -54,40 +58,29 @@ class MoveGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
-    String html = "";
-    
-    String disabledString = "";
-    String readOnlyString = "";
-    if(readOnly) {
-      disabledString = "disabled='disabled' ";
-      readOnlyString = "readonly";
-    }
-    
-    html += "<table>";
-    html += "  <tr><td>Direction</td><td>Distance</td></tr>";
-    html += "  <tr>";
-    
-    // direction
-    html += "<td><select id='${prefix}_direction' ${disabledString}>";
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
     List<String> directions = ["Down", "Right", "Up", "Left"];
+    List<JsObject> options = [];
     for(int dir=0; dir<directions.length; dir++) {
-      html += "<option value='${dir}'";
-      if(direction == dir) {
-        html += " selected";
-      }
-      
-      html += ">${directions[dir]}</option>";
+      options.add(
+        option({'value': dir}, directions[dir])
+      );
     }
-    html += "</select></td>";
-    
-    // distance
-    html += "    <td><input type='text' class='number' id='${prefix}_distance' value='${distance}' ${readOnlyString} /></td>";
-    
-    html += "  </tr>";
-    html += "</table>";
-    
-    return html;
+
+    return table({}, tbody({}, [
+      tr({}, [
+        td({}, "Direction"),
+        td({}, "Distance")
+      ]),
+      tr({}, [
+        td({},
+          select({'id': '${prefix}_direction', 'disabled': readOnly, 'value': direction}, options)
+        ),
+        td({},
+          input({'type': 'text', 'class': 'number', 'id': '${prefix}_distance', 'value': distance, 'readOnly': readOnly})
+        )
+      ])
+    ]));
   }
   
   static GameEvent buildGameEvent(String prefix) {

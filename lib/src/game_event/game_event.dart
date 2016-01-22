@@ -1,5 +1,7 @@
 library dart_rpg.game_event;
 
+import 'dart:js';
+
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable.dart';
 
@@ -65,7 +67,7 @@ class GameEvent implements InputHandler {
     }
   }
   
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) => "";
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) => null;
   
   Map<String, Object> buildJson() => {};
 }

@@ -200,6 +200,10 @@ canvas {
 	background-color: #bbbbbb;
 }
 
+.tab_header.selected {
+	background-color: #eee;
+}
+
 .tab_header:hover {
 	background-color: #ffffff;
 }
@@ -213,7 +217,7 @@ canvas {
 	float: left;
 }
 
-#object_editor_inner_container .tab, #screen_editor_tab .tab {
+#screen_editor_tab .tab {
 	width: 616px;
 }
 
@@ -287,16 +291,50 @@ textarea {
 #export_json_object_editor {
 	height: 60px;
 	width: 626px;
+	display: none;
 }
 
 /*
  * Object Editor
  */
- 
-#object_editor_right {
-	padding: 0 0 0 26px !important;
-	margin: 10px;
+
+#object_editor_inner_main_area {
+	height: 100%;
+}
+
+.object_editor_tab {
+	padding: 0;
+}
+
+.object_editor_inner_tab {
+	padding: 8px;
+}
+
+.object_editor_tab_container {
+	height: 100%;
+}
+
+#object_editor_tab #object_editor_inner_main_area .tab {
+	float: none;
+	width: auto;
+}
+
+#object_editor_tab_headers_container {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.object_editor_advanced_tab {
+	margin-left: 10px;
 	width: 632px;
+	height: 100%;
+	float: right;
+}
+
+#object_editor_inner_main_area .tab {
+	overflow-x: scroll;
+	height: 100%;
 }
 
 #object_editor_right table, #object_editor_right table td {
@@ -312,11 +350,13 @@ textarea {
 }
 
 #object_editor_inner_container {
+	position: relative;
+	padding-top: 30px;
 	width: 100%;
 	height: 100%;
 }
 
-#object_editor_inner_main_area, #settings_tab {
+#settings_tab {
 	height: 100%;
 	padding-right: 20px;
 }
@@ -406,5 +446,5 @@ textarea {
 }
 
 .breaker {
-	clear: left;
+	clear: both;
 }

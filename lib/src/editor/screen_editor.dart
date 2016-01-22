@@ -4,13 +4,26 @@ import 'dart:html';
 
 import 'package:dart_rpg/src/main.dart';
 
-class ScreenEditor {
-  static CanvasElement canvas;
+import 'package:react/react.dart';
+
+class ScreenEditor extends Component {
+  static CanvasElement screenCanvas;
   static CanvasRenderingContext2D ctx;
   
+  render() {
+    return tr({'id': 'screen_editor_tab'}, [
+      td({'id': 'screen_editor_left'},
+        canvas({'id': 'screen_editor_canvas'})
+      ),
+      td({'id': 'screen_editor_right'},
+        div({'className': 'tab'})
+      )
+    ]);
+  }
+
   static void init() {
-    canvas = querySelector("#screen_editor_canvas");
-    ctx = canvas.getContext("2d");
+    screenCanvas = querySelector("#screen_editor_canvas");
+    ctx = screenCanvas.getContext("2d");
   }
   
   static void setUp() {
@@ -27,7 +40,7 @@ class ScreenEditor {
     // TODO
     buildMainHtml();
     
-    Main.fixImageSmoothing(canvas, Main.canvasWidth, Main.canvasHeight);
+    Main.fixImageSmoothing(screenCanvas, Main.canvasWidth, Main.canvasHeight);
     
     ctx.fillStyle = "#ff00ff";
     ctx.fillRect(0, 0, Main.canvasWidth, Main.canvasHeight);

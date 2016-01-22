@@ -1,5 +1,6 @@
 library dart_rpg.store_game_event;
 
+import 'dart:js';
 import 'dart:math' as math;
 
 import 'package:dart_rpg/src/character.dart';
@@ -102,8 +103,8 @@ class StoreGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
-    return "";
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+    return null;
   }
   
   static GameEvent buildGameEvent(String prefix) {

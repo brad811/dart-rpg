@@ -1,5 +1,7 @@
 library dart_rpg.heal_game_event;
 
+import 'dart:js';
+
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -8,6 +10,8 @@ import 'package:dart_rpg/src/world.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+
+import 'package:react/react.dart';
 
 class HealGameEvent implements GameEvent {
   static final String type = "heal";
@@ -48,46 +52,27 @@ class HealGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
-    String html = "";
-    
-    String disabledString = "";
-    String readOnlyString = "";
-    if(readOnly) {
-      disabledString = "disabled='disabled' ";
-      readOnlyString = "readonly";
-    }
-    
-    html += "<table>";
-    html += "  <tr><td>Character</td><td>Amount</td></tr>";
-    html += "  <tr>";
-    
-    // character
-    html += "<td><select id='${prefix}_character' ${disabledString}>";
-    
-    html += "  <option value='____player'";
-    if(this.characterLabel == "____player") {
-      html += " selected";
-    }
-    html += ">Current Player</option>";
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+    List<JsObject> options = [
+      option({'value': '____player'}, "Current Player")
+    ];
     
     World.characters.forEach((String characterLabel, Character curCharacter) {
-      html += "  <option value='${characterLabel}'";
-      if(this.characterLabel == characterLabel) {
-        html += " selected";
-      }
-      html += ">${characterLabel}</option>";
+      options.add(
+        option({'value': characterLabel}, characterLabel)
+      );
     });
     
-    html += "</select></td>";
-    
-    // amount
-    html += "    <td><input type='text' class='number' id='${prefix}_amount' value='${amount}' ${readOnlyString} /></td>";
-    
-    html += "  </tr>";
-    html += "</table>";
-    
-    return html;
+    return table({}, tbody({}, [
+      tr({},
+        td({},
+          select({'id': '${prefix}_character', 'disabled': readOnly, 'value': characterLabel}, options)
+        ),
+        td({},
+          input({'type': 'text', 'class': 'number', 'id': '${prefix}_amount', 'value': amount, 'readOnly': readOnly})
+        )
+      )
+    ]));
   }
   
   static GameEvent buildGameEvent(String prefix) {

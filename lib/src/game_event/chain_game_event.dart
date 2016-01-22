@@ -1,5 +1,7 @@
 library dart_rpg.chain_game_event;
 
+import "dart:js";
+
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
@@ -7,6 +9,8 @@ import 'package:dart_rpg/src/world.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+
+import 'package:react/react.dart';
 
 class ChainGameEvent implements GameEvent {
   static final String type = "chain";
@@ -45,41 +49,43 @@ class ChainGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
-    String html = "";
-    
-    String disabledString = "";
-    if(readOnly) {
-      disabledString = "disabled='disabled' ";
-    }
-    
-    html += "<table>";
-    html += "  <tr><td>Game Event Chain</td><td>Make Default</td></tr>";
-    html += "  <tr>";
-    
-    // game event chain
-    html += "<td><select id='${prefix}_game_event_chain' ${disabledString}>";
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+    List<JsObject> tableRows = [];
+
+    tableRows.add(
+      tr({}, [
+        td({}, "Game Event Chain"),
+        td({}, "Make Default")
+      ])
+    );
+
+    List<JsObject> options = [];
+
     World.gameEventChains.keys.forEach((String key) {
-      html += "<option value='${key}'";
-      if(gameEventChain == key) {
-        html += " selected";
-      }
-      
-      html += ">${key}</option>";
+      options.add(
+        option({'value': key}, key)
+      );
     });
+
+    tableRows.add(
+      tr({}, [
+        td({},
+          select(
+            {
+              'id': '${prefix}_game_event_chain',
+              'disabled': readOnly,
+              'value': gameEventChain
+            },
+            options
+          )
+        ),
+        td({},
+          input({'id': '${prefix}_make_default', 'type': 'checkbox', 'checked': makeDefault})
+        )
+      ])
+    );
     
-    html += "</select></td>";
-    
-    html += "<td><input id='${prefix}_make_default' type='checkbox' ";
-    if(makeDefault) {
-      html += "checked='checked' ";
-    }
-    html += "/></td>";
-    
-    html += "  </tr>";
-    html += "</table>";
-    
-    return html;
+    return table({}, tbody({}, tableRows));
   }
   
   static GameEvent buildGameEvent(String prefix) {

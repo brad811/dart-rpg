@@ -1,6 +1,7 @@
 library dart_rpg.map_editor_warps;
 
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
@@ -9,14 +10,14 @@ import 'package:dart_rpg/src/warp_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/map_editor.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 
-class MapEditorWarps {
+import 'package:react/react.dart';
+
+class MapEditorWarps extends Component {
   static Map<String, List<WarpTile>> warps = {};
-  
-  static void setUp() {
-    Editor.attachButtonListener("#add_warp_button", addNewWarp);
-    
+
+  componentWillMount() {
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
       List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
@@ -46,8 +47,92 @@ class MapEditorWarps {
       }
     }
   }
+
+  componentDidMount(a) {
+    setWarpDeleteButtonListeners();
+    
+    for(int i=0; i<warps[Main.world.curMap].length; i++) {
+      Editor.attachInputListeners("warp_${i}", ["posx", "posy", "dest_map", "dest_x", "dest_y"], onInputChange);
+    }
+  }
+
+  render() {
+    List<JsObject> tableRows = [
+      tr({}, [
+        td({}, "Num"),
+        td({}, "X"),
+        td({}, "Y"),
+        td({}, "Dest Map"),
+        td({}, "Dest X"),
+        td({}, "Dest Y"),
+        td({})
+      ])
+    ];
+
+    List<JsObject> destMapOptions = [];
+    for(String key in Main.world.maps.keys) {
+      destMapOptions.add(
+        option({'value': key}, key)
+      );
+    }
+
+    for(int i=0; i<warps[Main.world.curMap].length; i++) {
+      tableRows.add(
+        tr({}, [
+          td({}, i),
+          td({},
+            input({
+              'id': 'warp_${i}_posx',
+              'type': 'text',
+              'className':'number',
+              'value': warps[Main.world.curMap][i].sprite.posX.round()
+            })
+          ),
+          td({},
+            input({
+              'id': 'warp_${i}_posy',
+              'type': 'text',
+              'className':'number',
+              'value': warps[Main.world.curMap][i].sprite.posY.round()
+            })
+          ),
+          td({},
+            select({'id': 'warp_${i}_dest_map'}, destMapOptions)
+          ),
+          td({},
+            input({
+              'id': 'warp_${i}_dest_x',
+              'type': 'text',
+              'className':'number',
+              'value': warps[Main.world.curMap][i].destX
+            })
+          ),
+          td({},
+            input({
+              'id': 'warp_${i}_dest_y',
+              'type': 'text',
+              'className':'number',
+              'value': warps[Main.world.curMap][i].destY
+            })
+          ),
+          td({},
+            button({'id': 'delete_warp_${i}'}, 'Delete')
+          )
+        ])
+      );
+    }
+
+    return
+      div({'id': 'warps_tab', 'className': 'tab'}, [
+        button({'id': 'add_warp_button', 'onClick': addNewWarp}, "Add new warp"),
+        hr({}),
+        div({'id': 'warps_container'}, [
+          table({'className': 'editor_table'}, tbody({}, tableRows))
+        ])
+      ]);
+  }
   
-  static void addNewWarp(MouseEvent e) {
+  void addNewWarp(MouseEvent e) {
     warps[Main.world.curMap].add(
       new WarpTile(
         false,
@@ -56,50 +141,10 @@ class MapEditorWarps {
       )
     );
     
-    Editor.update();
+    props['update']();
   }
   
-  static void update() {
-    String warpsHtml;
-    warpsHtml = "<table class='editor_table'>"+
-      "  <tr>"+
-      "    <td>Num</td><td>X</td><td>Y</td><td>Dest Map</td><td>Dest X</td><td>Dest Y</td><td></td>"+
-      "  </tr>";
-    for(int i=0; i<warps[Main.world.curMap].length; i++) {
-      warpsHtml +=
-        "<tr>"+
-        "  <td>${i}</td>"+
-        "  <td><input id='warp_${i}_posx' type='text' class='number' value='${ warps[Main.world.curMap][i].sprite.posX.round() }' /></td>"+
-        "  <td><input id='warp_${i}_posy' type='text' class='number' value='${ warps[Main.world.curMap][i].sprite.posY.round() }' /></td>"+
-        "  <td>"+
-        "    <select id='warp_${i}_dest_map'>";
-        
-      for(String key in Main.world.maps.keys) {
-        if(warps[Main.world.curMap][i].destMap == key)
-          warpsHtml += "<option selected=\"selected\" value=\"${key}\">${key}</option>";
-        else
-          warpsHtml += "<option value=\"${key}\">${key}</option>";
-      }
-        
-      warpsHtml +=
-        "    </select>"+
-        "  </td>"+
-        "  <td><input id='warp_${i}_dest_x' type='text' class='number' value='${ warps[Main.world.curMap][i].destX }' /></td>"+
-        "  <td><input id='warp_${i}_dest_y' type='text' class='number' value='${ warps[Main.world.curMap][i].destY }' /></td>"+
-        "  <td><button id='delete_warp_${i}'>Delete</button></td>" +
-        "</tr>";
-    }
-    warpsHtml += "</table>";
-    querySelector("#warps_container").setInnerHtml(warpsHtml);
-    
-    setWarpDeleteButtonListeners();
-    
-    for(int i=0; i<warps[Main.world.curMap].length; i++) {
-      Editor.attachInputListeners("warp_${i}", ["posx", "posy", "dest_map", "dest_x", "dest_y"], onInputChange);
-    }
-  }
-  
-  static void onInputChange(Event e) {
+  void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     
     for(int i=0; i<warps[Main.world.curMap].length; i++) {
@@ -117,19 +162,19 @@ class MapEditorWarps {
     MapEditor.updateMap(shouldExport: true);
   }
   
-  static void setWarpDeleteButtonListeners() {
+  void setWarpDeleteButtonListeners() {
     for(int i=0; i<warps[Main.world.curMap].length; i++) {
       Editor.attachButtonListener("#delete_warp_${i}", (MouseEvent e) {
         bool confirm = window.confirm('Are you sure you would like to delete this warp?');
         if(confirm) {
           warps[Main.world.curMap].removeAt(i);
-          Editor.update();
+          props['update']();
         }
       });
     }
   }
   
-  static void shift(int xAmount, int yAmount) {
+  void shift(int xAmount, int yAmount) {
     warps.forEach((String mapName, List<WarpTile> warpTiles) {
       warpTiles.forEach((WarpTile warpTile) {
         if(warpTile == null)

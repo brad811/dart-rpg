@@ -1,6 +1,7 @@
 library dart_rpg.choice_game_event;
 
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -12,6 +13,8 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+
+import 'package:react/react.dart';
 
 class ChoiceGameEvent implements GameEvent, InputHandler {
   static final String type = "choice";
@@ -182,48 +185,55 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
-    String html = "";
-    
-    String disabledString = "";
-    String readOnlyString = "";
-    if(readOnly) {
-      disabledString = "disabled='disabled' ";
-      readOnlyString = "readonly";
-    }
-    
-    html += "<table>";
-    html += "  <tr><td>Choice Name</td><td>Game Event Chain</td><td></td></tr>";
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+    List<JsObject> tableRows = [];
+
+    tableRows.add(
+      tr({}, [
+        td({}, "Choice Name"),
+        td({}, "Game Event Chain"),
+        td({})
+      ])
+    );
     
     int i = 0;
     choiceGameEventChains.forEach((String choiceName, String chainName) {
-      // choice name
-      html += "<tr><td>";
-      html += "<input type='text' id='${prefix}_choice_name_${i}' value='${choiceName}' ${readOnlyString} />";
-      html += "</td>";
-      
-      // game event chain
-      html += "<td><select id='${prefix}_chain_name_${i}' ${disabledString}>";
-      
+      List<JsObject> options = [];
       World.gameEventChains.keys.forEach((String key) {
-        html += "<option value='${key}'";
-        if(chainName == key) {
-          html += " selected";
-        }
-        
-        html += ">${key}</option>";
+        options.add(
+          option({'value': key}, key)
+        );
       });
-      
-      html += "</select></td><td><button id='delete_${prefix}_choice_${i}'>Delete</button></td></tr>";
+
+      tableRows.add(
+        tr({}, [
+          td({},
+            input({
+              'type': 'text',
+              'id': '${prefix}_choice_name_${i}',
+              'value': choiceName,
+              'readOnly': readOnly
+            })
+          ),
+          td({},
+            select({'id': '${prefix}_chain_name_${i}', 'disabled': readOnly, 'value': chainName},
+              options
+            )
+          ),
+          td({},
+            button({'id': 'delete_${prefix}_choice_${i}'}, "Delete")
+          )
+        ])
+      );
       
       i += 1;
     });
     
-    html += "</table>";
-    
-    html += "<br /><button id='${prefix}_add_choice'>Add choice</button>";
-    
-    return html;
+    return div({}, [
+      table({}, tbody({}, tableRows)),
+      br({}),
+      button({'id': '${prefix}_add_choice'}, "Add choice")
+    ]);
   }
   
   static GameEvent buildGameEvent(String prefix) {
