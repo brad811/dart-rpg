@@ -35,6 +35,8 @@ class Editor extends Component {
   static Timer debounceTimer;
   static Duration debounceDelay = new Duration(milliseconds: 250);
 
+  static String exportJsonString = "";
+
   getInitialState() => {
     'gameLoaded': false,
     'doneSettingUp': false
@@ -123,19 +125,20 @@ class Editor extends Component {
   }
   
   void export() {
+    print("Exporting...");
+
     Map<String, Map<String, Map<String, Object>>> exportJson = {};
     MapEditor.export(exportJson);
     ObjectEditor.export(exportJson);
     ScreenEditor.export(exportJson);
     Settings.export(exportJson);
     
-    String exportJsonString = JSON.encode(exportJson);
-    
-    TextAreaElement textarea = querySelector("#export_json");
-    textarea.value = exportJsonString;
-    
-    TextAreaElement textarea2 = querySelector("#export_json_object_editor");
-    textarea2.value = exportJsonString;
+    Editor.exportJsonString = JSON.encode(exportJson);
+
+    TextAreaElement exportJsonTextarea = querySelector("#export_json");
+    if(exportJsonTextarea != null) {
+      exportJsonTextarea.value = Editor.exportJsonString;
+    }
   }
   
   static void setUpTabs(List<String> tabs, [Function callback]) {

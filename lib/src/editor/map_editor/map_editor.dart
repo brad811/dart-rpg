@@ -158,7 +158,7 @@ class MapEditor extends Component {
             ]),
             tr({}, [
               td({'className': 'export_json_container'}, [
-                textarea({'id': 'export_json'}),
+                textarea({'id': 'export_json', 'value': Editor.exportJsonString}),
                 button({'id': 'load_game_button', 'onClick': (e) { Editor.loadGame(props['update']); }}, "Load")
               ])
             ])
