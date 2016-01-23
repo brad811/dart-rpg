@@ -17,8 +17,6 @@ class ObjectEditorBattlerTypes extends Component {
   //   so people can name them stuff like "end_boss_1"
   //   but still have a pretty display name like "Bob"
 
-  static List<String> advancedTabs = ["battler_type_stats", "battler_type_attacks"];
-
   getInitialState() => {
     'selected': -1,
     'selectedAdvancedTab': 'stats'
@@ -286,7 +284,7 @@ class ObjectEditorBattlerTypes extends Component {
           ),
           tr({},
             td({'className': 'object_editor_tabs_container'},
-              div({'id': 'battler_type_stats_tab', 'className': 'tab'},
+              div({'className': 'tab'},
                 div({'id': 'battler_type_stats_container'}, getStatsTab()),
                 div({'id': 'battler_type_attacks_container'}, getAttacksTab())
               )

@@ -134,16 +134,16 @@ class TextGameEvent implements GameEvent {
       });
     }
     
-    return table({}, tbody({}, [
-      tr({}, [
+    return table({}, tbody({},
+      tr({},
         td({}, "Picture Id"),
         td({}, "Text")
-      ]),
-      tr({}, [
+      ),
+      tr({},
         td({}, Editor.generateSpritePickerHtml("${prefix}_picture_id", pictureSpriteId, readOnly: readOnly)),
-        td({}, textarea({'id': '${prefix}_text', 'readOnly': readOnly}, text))
-      ])
-    ]));
+        td({}, textarea({'id': '${prefix}_text', 'readOnly': readOnly, 'value': text, 'onChange': onInputChange}))
+      )
+    ));
   }
   
   static GameEvent buildGameEvent(String prefix) {

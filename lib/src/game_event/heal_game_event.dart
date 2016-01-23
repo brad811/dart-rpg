@@ -69,7 +69,7 @@ class HealGameEvent implements GameEvent {
           select({'id': '${prefix}_character', 'disabled': readOnly, 'value': characterLabel}, options)
         ),
         td({},
-          input({'type': 'text', 'class': 'number', 'id': '${prefix}_amount', 'value': amount, 'readOnly': readOnly})
+          input({'type': 'text', 'className': 'number', 'id': '${prefix}_amount', 'value': amount, 'readOnly': readOnly})
         )
       )
     ]));

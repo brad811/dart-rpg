@@ -77,7 +77,13 @@ class MoveGameEvent implements GameEvent {
           select({'id': '${prefix}_direction', 'disabled': readOnly, 'value': direction}, options)
         ),
         td({},
-          input({'type': 'text', 'class': 'number', 'id': '${prefix}_distance', 'value': distance, 'readOnly': readOnly})
+          input({
+            'type': 'text',
+            'className': 'number',
+            'id': '${prefix}_distance',
+            'value': distance,
+            'readOnly': readOnly
+          })
         )
       ])
     ]));

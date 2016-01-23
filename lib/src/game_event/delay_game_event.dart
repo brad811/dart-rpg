@@ -53,7 +53,7 @@ class DelayGameEvent implements GameEvent {
         td({},
           input({
             'type': 'text',
-            'class': 'number',
+            'className': 'number',
             'id': '${prefix}_milliseconds',
             'value': milliseconds,
             'readOnly': readOnly
