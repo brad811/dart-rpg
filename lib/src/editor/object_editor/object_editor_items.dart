@@ -7,7 +7,6 @@ import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'package:dart_rpg/src/editor/object_editor/object_editor.dart';
 import 'package:dart_rpg/src/editor/object_editor/object_editor_game_events.dart';
 
 import 'package:react/react.dart';
@@ -16,18 +15,20 @@ import 'package:react/react.dart';
 // TODO: item targets
 // TODO: max length of things
 
-class ObjectEditorItemsComponent extends Component {
-  void onInputChange() {
-    // TODO: implement!
-    print("ObjectEditorItemComponent.onInputChange not yet implemented!");
-  }
+class ObjectEditorItems extends Component {
+  List<Function> callbacks = [];
 
-  componentDidMount(a) {
+  getInitialState() => {
+    'selected': -1
+  };
+
+  componentDidMount(Element rootNode) {
     initSpritePickers();
   }
 
-  componentDidUpdate(a, b, c) {
+  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
     initSpritePickers();
+    callCallbacks();
   }
 
   initSpritePickers() {
@@ -39,6 +40,18 @@ class ObjectEditorItemsComponent extends Component {
         onInputChange
       );
     }
+  }
+
+  void callCallbacks() {
+    if(callbacks != null) {
+      for(Function callback in callbacks) {
+        callback();
+      }
+    }
+  }
+
+  void update() {
+    setState({});
   }
 
   render() {
@@ -56,200 +69,177 @@ class ObjectEditorItemsComponent extends Component {
       Item item = World.items.values.elementAt(i);
 
       tableRows.add(
-        tr({'id': 'item_row_${i}'}, [
+        tr({
+          'id': 'item_row_${i}',
+          'className': state['selected'] == i ? 'selected' : '',
+          'onClick': (MouseEvent e) { setState({'selected': i}); },
+          'onFocus': (MouseEvent e) { setState({'selected': i}); }
+        },
           td({}, i),
           td({},
             Editor.generateSpritePickerHtml("item_${i}_picture_id", item.pictureId)
           ),
           td({},
-            input({'id': 'item_${i}_name', 'type': 'text', 'value': item.name})
+            input({
+              'id': 'item_${i}_name',
+              'type': 'text',
+              'value': item.name,
+              'onChange': onInputChange
+            })
           ),
           td({},
-            input({'id': 'item_${i}_base_price', 'type': 'text', 'className': 'number', 'value': item.basePrice})
+            input({
+              'id': 'item_${i}_base_price',
+              'type': 'text',
+              'className': 'number',
+              'value': item.basePrice,
+              'onChange': onInputChange
+            })
           ),
           td({},
-            textarea({'id': 'item_${i}_description', 'value': item.description})
+            textarea({
+              'id': 'item_${i}_description',
+              'value': item.description,
+              'onChange': onInputChange
+            })
           ),
           td({},
-            button({'id': 'delete_item_${i}'}, "Delete")
-          ),
-        ])
+            button({
+              'id': 'delete_item_${i}',
+              'onClick': Editor.generateConfirmDeleteFunction(World.items, item.name, "item", update)
+            }, "Delete")
+          )
+        )
       );
     }
 
-    return table({'className': 'editor_table'}, tableRows);
+    return
+      div({'id': 'object_editor_items_container', 'className': 'object_editor_tab_container'},
+
+        table({
+          'id': 'object_editor_items_advanced',
+          'className': 'object_editor_advanced_tab'}, tbody({},
+          tr({},
+            td({'className': 'tab_headers'},
+              div({
+                'id': 'item_game_event_tab_header',
+                'className': 'tab_header selected'
+              }, "Game Event")
+            )
+          ),
+          tr({},
+            td({'className': 'object_editor_tabs_container'},
+              div({'className': 'tab'},
+                div({'id': 'item_game_event_container'}, getGameEventTab())
+              )
+            )
+          )
+        )),
+
+        div({'id': 'object_editor_items_tab', 'className': 'tab object_editor_tab'},
+          div({'className': 'object_editor_inner_tab'}, [
+            button({'id': 'add_item_button', 'onClick': addNewItem}, "Add new item"),
+            hr({}),
+            div({'id': 'battler_types_container'}, [
+              table({'className': 'editor_table'}, tbody({}, tableRows))
+            ])
+          ])
+        )
+
+      );
   }
-}
 
-var objectEditorItemsComponent = registerComponent(() => new ObjectEditorItemsComponent());
-
-class ObjectEditorItemGameEventComponent extends Component {
-  int selected = -1;
-  List<Function> callbacks = [];
-
-  componentDidMount(a) {
-    callCallbacks();
-  }
-
-  componentDidUpdate(a, b, c) {
-    callCallbacks();
-  }
-
-  void callCallbacks() {
-    if(callbacks != null) {
-      for(Function callback in callbacks) {
-        callback();
-      }
+  getGameEventTab() {
+    if(state['selected'] == -1) {
+      return div({});
     }
-  }
 
-  render() {
     List<JsObject> gameEventContainers = [];
 
-    for(int i=0; i<World.items.keys.length; i++) {
-      Item item = World.items.values.elementAt(i);
+    Item item = World.items.values.elementAt(state['selected']);
 
-      List<JsObject> options = [
-        option({'value': ''}, "None")
-      ];
+    List<JsObject> options = [
+      option({'value': ''}, "None")
+    ];
 
-      for(int j=0; j<World.gameEventChains.keys.length; j++) {
-        String name = World.gameEventChains.keys.elementAt(j);
+    for(int j=0; j<World.gameEventChains.keys.length; j++) {
+      String name = World.gameEventChains.keys.elementAt(j);
 
-        options.add(
-          option({'value': name}, name)
-        );
-      }
-
-      List<JsObject> tableRows = [];
-
-      if(item.gameEventChain != null && item.gameEventChain != ""
-          && World.gameEventChains[item.gameEventChain] != null) {
-        for(int j=0; j<World.gameEventChains[item.gameEventChain].length; j++) {
-          tableRows.add(
-            ObjectEditorGameEvents.buildGameEventTableRowHtml(
-              World.gameEventChains[item.gameEventChain][j],
-              "item_${i}_game_event_${j}",
-              j,
-              readOnly: true, callbacks: callbacks
-            )
-          );
-        }
-      }
-
-      gameEventContainers.add(
-        div({'id': 'item_${i}_game_event_chain_container', 'className': selected == i ? '' : 'hidden'}, [
-          "Game Event Chain: ",
-          select({'id': 'item_${i}_game_event_chain', 'value': item.gameEventChain}, options),
-          hr({}),
-          table({'id': 'item_${i}_game_event_table'}, tbody({}, tableRows))
-        ])
+      options.add(
+        option({'value': name}, name)
       );
     }
+
+    List<JsObject> tableRows = [];
+
+    callbacks = [];
+
+    if(item.gameEventChain != null && item.gameEventChain != ""
+        && World.gameEventChains[item.gameEventChain] != null) {
+      for(int j=0; j<World.gameEventChains[item.gameEventChain].length; j++) {
+        tableRows.add(
+          ObjectEditorGameEvents.buildGameEventTableRowHtml(
+            World.gameEventChains[item.gameEventChain][j],
+            "item_${state['selected']}_game_event_${j}",
+            j,
+            readOnly: true, callbacks: callbacks
+          )
+        );
+      }
+    }
+
+    gameEventContainers.add(
+      div({'id': 'item_${state['selected']}_game_event_chain_container'}, [
+        "Game Event Chain: ",
+        select({
+          'id': 'item_${state['selected']}_game_event_chain',
+          'value': item.gameEventChain,
+          'onChange': onInputChange
+        }, options),
+        hr({}),
+        table({'id': 'item_${state['selected']}_game_event_table'}, tbody({}, tableRows))
+      ])
+    );
 
     return div({}, gameEventContainers);
   }
-}
-
-var objectEditorItemGameEventComponent = registerComponent(() => new ObjectEditorItemGameEventComponent());
-
-class ObjectEditorItems {
-  static List<String> advancedTabs = ["item_game_event"];
   
-  static int selected;
-  
-  static void setUp() {
-    Editor.setUpTabs(advancedTabs);
-    Editor.attachButtonListener("#add_item_button", addNewItem);
-    
-    querySelector("#object_editor_items_tab_header").onClick.listen((MouseEvent e) {
-      ObjectEditorItems.selectRow(0);
-    });
-  }
-  
-  static void addNewItem(MouseEvent e) {
+  void addNewItem(MouseEvent e) {
     World.items["Item"] = new Item();
     update();
-    ObjectEditor.update();
   }
   
-  static void update() {
-    render(objectEditorItemsComponent({}), querySelector('#items_container'));
-    render(objectEditorItemGameEventComponent({}), querySelector('#item_game_event_container'));
-    
-    // highlight the selected row
-    if(querySelector("#item_row_${selected}") != null) {
-      querySelector("#item_row_${selected}").classes.add("selected");
-      querySelector("#object_editor_items_advanced").classes.remove("hidden");
-    }
-    
-    Editor.setMapDeleteButtonListeners(World.items, "item");
-    
-    List<String> attrs = [
-      "picture_id", "name", "base_price", "description",
-      
-      // game event chain
-      "game_event_chain"
-    ];
-    for(int i=0; i<World.items.keys.length; i++) {
-      Editor.attachInputListeners("item_${i}", attrs, onInputChange);
-      
-      // when a row is clicked, set it as selected and highlight it
-      Editor.attachButtonListener("#item_row_${i}", (Event e) {
-        if(querySelector("#item_row_${i}") != null) {
-          selectRow(i);
-        }
-      });
-    }
-  }
-  
-  static void selectRow(int i) {
-    selected = i;
-    
-    for(int j=0; j<World.items.keys.length; j++) {
-      // un-highlight other item rows
-      querySelector("#item_row_${j}").classes.remove("selected");
-      
-      // hide the advanced containers for other rows
-      querySelector("#item_${j}_game_event_chain_container").classes.add("hidden");
-    }
-    
-    if(querySelector("#item_row_${i}") == null) {
-      return;
-    }
-    
-    // hightlight the selected row
-    querySelector("#item_row_${i}").classes.add("selected");
-    
-    // show the advanced area
-    querySelector("#object_editor_items_advanced").classes.remove("hidden");
-    
-    // show the advanced tables for the selected row
-    querySelector("#item_${i}_game_event_chain_container").classes.remove("hidden");
-  }
-  
-  static void onInputChange(Event e) {
+  void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     Editor.avoidNameCollision(e, "_name", World.items);
     
-    World.items = new Map<String, Item>();
-    for(int i=0; querySelector('#item_${i}_name') != null; i++) {
-      try {
-        String name = Editor.getTextInputStringValue("#item_${i}_name");
-        World.items[name] = new Item(
-          Editor.getTextInputIntValue('#item_${i}_picture_id', 1),
-          name,
-          Editor.getTextInputIntValue('#item_${i}_base_price', 1),
-          Editor.getTextAreaStringValue("#item_${i}_description"),
-          Editor.getSelectInputStringValue("#item_${i}_game_event_chain")
-        );
-      } catch(e) {
-        // could not update this item
-        print("Error updating item: " + e.toString());
+    Map<String, Item> newItems = {};
+
+    String oldName = World.items.keys.elementAt(state['selected']);
+    String name = Editor.getTextInputStringValue('#item_${state['selected']}_name');
+
+    World.items.forEach((String key, Item item) {
+      if(key != oldName) {
+        newItems[key] = World.items[key];
+      } else {
+        try {
+          newItems[name] = new Item(
+            Editor.getTextInputIntValue('#item_${state['selected']}_picture_id', 1),
+            name,
+            Editor.getTextInputIntValue('#item_${state['selected']}_base_price', 1),
+            Editor.getTextAreaStringValue("#item_${state['selected']}_description"),
+            Editor.getSelectInputStringValue("#item_${state['selected']}_game_event_chain")
+          );
+        } catch(e) {
+          // could not update this item
+          print("Error updating item: " + e.toString());
+        }
       }
-    }
+    });
+
+    World.items = newItems;
     
-    Editor.updateAndRetainValue(e);
+    update();
   }
   
   static void export(Map<String, Object> exportJson) {

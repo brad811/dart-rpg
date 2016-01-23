@@ -16,6 +16,7 @@ var objectEditorAttacks = registerComponent(() => new ObjectEditorAttacks());
 var objectEditorTypes = registerComponent(() => new ObjectEditorTypes());
 var objectEditorBattlerTypes = registerComponent(() => new ObjectEditorBattlerTypes());
 var objectEditorCharacters = registerComponent(() => new ObjectEditorCharacters());
+var objectEditorItems = registerComponent(() => new ObjectEditorItems());
 
 class ObjectEditor extends Component {
   getInitialState() => {
@@ -37,12 +38,6 @@ class ObjectEditor extends Component {
             tr({}, [
               td({'id': 'object_editor_inner_main_area'}, [
 
-                div({'id': 'object_editor_items_tab', 'className': 'tab'}, [
-                  button({'id': 'add_item_button'}, "Add new item"),
-                  hr({}),
-                  div({'id': 'items_container'})
-                ]),
-
                 div({'id': 'object_editor_game_event_chains_tab', 'className': 'tab'}, [
                   button({'id': 'add_game_event_chain_button'}, "Add new game event chain"),
                   hr({}),
@@ -54,21 +49,6 @@ class ObjectEditor extends Component {
                 table({}, [
                   tr({}, [
                     td({}, [
-
-                      table({'id': 'object_editor_items_advanced', 'className': 'hidden'}, [
-                        tr({},
-                          td({'className': 'tab_headers'},
-                            div({'id': 'item_game_event_tab_header', 'className': 'tab_header'}, "Game Event")
-                          )
-                        ),
-                        tr({},
-                          td({'className': 'object_editor_tabs_container'},
-                            div({'id': 'item_game_event_tab', 'className': 'tab'},
-                              div({'id': 'item_game_event_container'})
-                            )
-                          )
-                        )
-                      ]),
 
                       table({'id': 'object_editor_game_event_chains_advanced', 'className': 'hidden'}, [
                         tr({},
@@ -112,6 +92,8 @@ class ObjectEditor extends Component {
       selectedTab = objectEditorBattlerTypes({});
     } else if(state['selectedTab'] == "characters") {
       selectedTab = objectEditorCharacters({});
+    } else if(state['selectedTab'] == "items") {
+      selectedTab = objectEditorItems({});
     }
 
     List<JsObject> tabHeaders = [];
