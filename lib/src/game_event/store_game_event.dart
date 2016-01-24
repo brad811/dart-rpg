@@ -103,7 +103,7 @@ class StoreGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) {
     return null;
   }
   

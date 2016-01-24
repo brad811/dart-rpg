@@ -58,7 +58,7 @@ class MoveGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) {
     List<String> directions = ["Down", "Right", "Up", "Left"];
     List<JsObject> options = [];
     for(int dir=0; dir<directions.length; dir++) {
@@ -67,26 +67,32 @@ class MoveGameEvent implements GameEvent {
       );
     }
 
-    return table({}, tbody({}, [
-      tr({}, [
+    return table({}, tbody({},
+      tr({},
         td({}, "Direction"),
         td({}, "Distance")
-      ]),
-      tr({}, [
+      ),
+      tr({},
         td({},
-          select({'id': '${prefix}_direction', 'disabled': readOnly, 'value': direction}, options)
+          select({
+            'id': '${prefix}_direction',
+            'disabled': readOnly,
+            'value': direction,
+            'onChange': onInputChange
+          }, options)
         ),
         td({},
           input({
+            'id': '${prefix}_distance',
             'type': 'text',
             'className': 'number',
-            'id': '${prefix}_distance',
             'value': distance,
-            'readOnly': readOnly
+            'readOnly': readOnly,
+            'onChange': onInputChange
           })
         )
-      ])
-    ]));
+      )
+    ));
   }
   
   static GameEvent buildGameEvent(String prefix) {

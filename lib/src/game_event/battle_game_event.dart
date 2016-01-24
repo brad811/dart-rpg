@@ -1,11 +1,15 @@
 library dart_rpg.battle_game_event;
 
+import 'dart:js';
+
 import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/main.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
+
+import 'package:react/react.dart';
 
 class BattleGameEvent implements GameEvent {
   static final String type = "battle";
@@ -51,8 +55,8 @@ class BattleGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  String buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
-    return "";
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) {
+    return div({});
   }
   
   static GameEvent buildGameEvent(String prefix) {

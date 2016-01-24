@@ -17,6 +17,7 @@ var objectEditorTypes = registerComponent(() => new ObjectEditorTypes());
 var objectEditorBattlerTypes = registerComponent(() => new ObjectEditorBattlerTypes());
 var objectEditorCharacters = registerComponent(() => new ObjectEditorCharacters());
 var objectEditorItems = registerComponent(() => new ObjectEditorItems());
+var objectEditorGameEvents = registerComponent(() => new ObjectEditorGameEvents());
 
 class ObjectEditor extends Component {
   getInitialState() => {
@@ -24,64 +25,6 @@ class ObjectEditor extends Component {
   };
 
   render() {
-    /*
-    return
-      tr({'id': 'object_editor_tab'}, [
-        td({'colSpan': 2}, [
-          table({'id': 'object_editor_inner_container'}, [
-            tr({}, [
-              td({'colSpan': 2}, [
-                div({'id': 'object_editor_items_tab_header', 'className': 'tab_header'}, "Items"),
-                div({'id': 'object_editor_game_event_chains_tab_header', 'className': 'tab_header'}, "Game Events")
-              ])
-            ]),
-            tr({}, [
-              td({'id': 'object_editor_inner_main_area'}, [
-
-                div({'id': 'object_editor_game_event_chains_tab', 'className': 'tab'}, [
-                  button({'id': 'add_game_event_chain_button'}, "Add new game event chain"),
-                  hr({}),
-                  div({'id': 'game_event_chains_container'})
-                ])
-
-              ]),
-              td({'id': 'object_editor_right'}, [
-                table({}, [
-                  tr({}, [
-                    td({}, [
-
-                      table({'id': 'object_editor_game_event_chains_advanced', 'className': 'hidden'}, [
-                        tr({},
-                          td({'className': 'tab_headers'},
-                            div({'id': 'game_event_chain_game_events_tab_header', 'className': 'tab_header'}, "Game Events")
-                          )
-                        ),
-                        tr({},
-                          td({'className': 'object_editor_tabs_container'},
-                            div({'id': 'game_event_chain_game_events_tab', 'className': 'tab'},
-                              button({'id': 'add_game_event_button'}, "Add new game event"),
-                              hr({}),
-                              div({'id': 'game_event_chain_game_events_container'})
-                            )
-                          )
-                        )
-                      ])
-
-                    ])
-                  ]),
-                  tr({},
-                    td({'className': 'export_json_container'},
-                      textarea({'id': 'export_json_object_editor'})
-                    )
-                  )
-                ])
-              ])
-            ])
-          ])
-        ])
-      ]);
-    */
-
     JsObject selectedTab;
 
     if(state['selectedTab'] == "attacks") {
@@ -94,6 +37,8 @@ class ObjectEditor extends Component {
       selectedTab = objectEditorCharacters({});
     } else if(state['selectedTab'] == "items") {
       selectedTab = objectEditorItems({});
+    } else if(state['selectedTab'] == "game_event_chains") {
+      selectedTab = objectEditorGameEvents({});
     }
 
     List<JsObject> tabHeaders = [];

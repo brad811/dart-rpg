@@ -65,7 +65,7 @@ class StatChangeGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) { /* TODO */ return null; }
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) { /* TODO */ return null; }
   
   GameEvent buildGameEvent(String prefix) { /* TODO */ return null; }
   

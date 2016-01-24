@@ -271,16 +271,23 @@ class ObjectEditorCharacters extends Component {
               'onChange': onInputChange
             })
           ),
-          td({
-            'id': 'delete_character_${state['selected']}_item_${j}',
-            'onClick': Editor.generateConfirmDeleteFunction(World.characters.values.elementAt(state['selected']), curItemName, "inventory item", update)
-          }, "Delete")
+          td({},
+            button({
+              'id': 'delete_character_${state['selected']}_item_${j}',
+              'onClick': Editor.generateConfirmDeleteFunction(World.characters.values.elementAt(state['selected']), curItemName, "inventory item", update)
+            }, "Delete")
+          )
         )
       );
     }
 
     inventoryContainers.add(
       div({'id': 'character_${state['selected']}_inventory_container'},
+        button({
+          'id': 'add_inventory_item_button',
+          'onClick': addInventoryItem
+        }, "Add new inventory item"),
+        hr({}),
         "Money: ",
         input({
           'id': 'character_${state['selected']}_money',
@@ -333,11 +340,11 @@ class ObjectEditorCharacters extends Component {
         && World.gameEventChains[character.getGameEventChain()] != null) {
       for(int j=0; j<World.gameEventChains[character.getGameEventChain()].length; j++) {
         tableRows.add(
-          ObjectEditorGameEvents.buildGameEventTableRowHtml(
+          ObjectEditorGameEvents.buildReadOnlyGameEventTableRowHtml(
             World.gameEventChains[character.getGameEventChain()][j],
             "character_${state['selected']}_game_event_${j}",
             j,
-            readOnly: true, callbacks: callbacks
+            callbacks
           )
         );
       }

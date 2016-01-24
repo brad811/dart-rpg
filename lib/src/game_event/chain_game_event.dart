@@ -49,14 +49,14 @@ class ChainGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) {
     List<JsObject> tableRows = [];
 
     tableRows.add(
-      tr({}, [
+      tr({},
         td({}, "Game Event Chain"),
         td({}, "Make Default")
-      ])
+      )
     );
 
     List<JsObject> options = [];
@@ -68,21 +68,27 @@ class ChainGameEvent implements GameEvent {
     });
 
     tableRows.add(
-      tr({}, [
+      tr({},
         td({},
           select(
             {
               'id': '${prefix}_game_event_chain',
               'disabled': readOnly,
-              'value': gameEventChain
+              'value': gameEventChain,
+              'onChange': onInputChange
             },
             options
           )
         ),
         td({},
-          input({'id': '${prefix}_make_default', 'type': 'checkbox', 'checked': makeDefault})
+          input({
+            'id': '${prefix}_make_default',
+            'type': 'checkbox',
+            'checked': makeDefault,
+            'onChange': onInputChange
+          })
         )
-      ])
+      )
     );
     
     return table({}, tbody({}, tableRows));

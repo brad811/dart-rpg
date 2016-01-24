@@ -127,7 +127,7 @@ class TextGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) {
     if(callbacks != null) {
       callbacks.add(() {
         Editor.initSpritePicker("${prefix}_picture_id", pictureSpriteId, 3, 3, onInputChange, readOnly: readOnly);

@@ -76,7 +76,7 @@ class FadeGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) {
     List<String> fadeTypes = ["Normal to white", "White to normal", "Normal to black", "Black to normal"];
     List<JsObject> options = [];
     for(int curFadeType=0; curFadeType<fadeTypes.length; curFadeType++) {
@@ -91,7 +91,12 @@ class FadeGameEvent implements GameEvent {
       ),
       tr({},
         td({},
-          select({'id': '${prefix}_fade_type', 'disabled': readOnly, 'value': fadeType}, options)
+          select({
+            'id': '${prefix}_fade_type',
+            'disabled': readOnly,
+            'value': fadeType,
+            'onChange': onInputChange
+          }, options)
         )
       )
     ]));

@@ -52,7 +52,7 @@ class HealGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) {
     List<JsObject> options = [
       option({'value': '____player'}, "Current Player")
     ];
@@ -63,16 +63,28 @@ class HealGameEvent implements GameEvent {
       );
     });
     
-    return table({}, tbody({}, [
+    return table({}, tbody({},
       tr({},
         td({},
-          select({'id': '${prefix}_character', 'disabled': readOnly, 'value': characterLabel}, options)
+          select({
+            'id': '${prefix}_character',
+            'disabled': readOnly,
+            'value': characterLabel,
+            'onChange': onInputChange
+          }, options)
         ),
         td({},
-          input({'type': 'text', 'className': 'number', 'id': '${prefix}_amount', 'value': amount, 'readOnly': readOnly})
+          input({
+            'id': '${prefix}_amount',
+            'type': 'text',
+            'className': 'number',
+            'value': amount,
+            'readOnly': readOnly,
+            'onChange': onInputChange
+          })
         )
       )
-    ]));
+    ));
   }
   
   static GameEvent buildGameEvent(String prefix) {

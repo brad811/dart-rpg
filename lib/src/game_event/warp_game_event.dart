@@ -53,7 +53,7 @@ class WarpGameEvent extends GameEvent {
   String getType() => type;
   
   @override
-  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) {
     // TODO: perhaps add generators for these in base editor
     
     List<JsObject> characterOptions = [];
@@ -91,45 +91,79 @@ class WarpGameEvent extends GameEvent {
       );
     }
 
-    return div({}, [
-      table({}, tbody({}, [
-        tr({}, [
+    return div({},
+      table({}, tbody({},
+        tr({},
           td({}, "Character"),
           td({}, "New Map")
-        ]),
-        tr({}, [
+        ),
+        tr({},
           td({},
-            select({'id': '${prefix}_character', 'disabled': readOnly, 'value': characterLabel}, characterOptions)
+            select({
+              'id': '${prefix}_character',
+              'disabled': readOnly,
+              'value': characterLabel,
+              'onChange': onInputChange
+            }, characterOptions)
           ),
           td({},
-            select({'id': '${prefix}_new_map', 'disabled': readOnly, 'value': newMap}, mapOptions)
+            select({
+              'id': '${prefix}_new_map',
+              'disabled': readOnly,
+              'value': newMap,
+              'onChange': onInputChange
+            }, mapOptions)
           )
-        ])
-      ])),
+        )
+      )),
       br({}),
-      table({}, tbody({}, [
-        tr({}, [
+      table({}, tbody({},
+        tr({},
           td({}, "X"),
           td({}, "Y"),
           td({}, "Layer"),
           td({}, "Direction")
-        ]),
-        tr({}, [
+        ),
+        tr({},
           td({},
-            input({'type': 'text', 'className': 'number', 'id': '${prefix}_x', 'value': x, 'readOnly': readOnly})
+            input({
+              'id': '${prefix}_x',
+              'type': 'text',
+              'className': 'number',
+              'value': x,
+              'readOnly': readOnly,
+              'onChange': onInputChange
+            })
           ),
           td({},
-            input({'type': 'text', 'className': 'number', 'id': '${prefix}_y', 'value': y, 'readOnly': readOnly})
+            input({
+              'id': '${prefix}_y',
+              'type': 'text',
+              'className': 'number',
+              'value': y,
+              'readOnly': readOnly,
+              'onChange': onInputChange
+            })
           ),
           td({},
-            select({'id': '${prefix}_layer', 'disabled': readOnly, 'value': layer}, layerOptions)
+            select({
+              'id': '${prefix}_layer',
+              'disabled': readOnly,
+              'value': layer,
+              'onChange': onInputChange
+            }, layerOptions)
           ),
           td({},
-            select({'id': '${prefix}_direction', 'disabled': readOnly, 'value': direction}, directionOptions)
+            select({
+              'id': '${prefix}_direction',
+              'disabled': readOnly,
+              'value': direction,
+              'onChange': onInputChange
+            }, directionOptions)
           )
-        ])
-      ]))
-    ]);
+        )
+      ))
+    );
   }
   
   static GameEvent buildGameEvent(String prefix) {

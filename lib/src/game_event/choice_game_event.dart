@@ -185,15 +185,15 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
   String getType() => type;
   
   @override
-  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) {
     List<JsObject> tableRows = [];
 
     tableRows.add(
-      tr({}, [
+      tr({},
         td({}, "Choice Name"),
         td({}, "Game Event Chain"),
         td({})
-      ])
+      )
     );
     
     int i = 0;
@@ -206,34 +206,51 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
       });
 
       tableRows.add(
-        tr({}, [
+        tr({},
           td({},
             input({
               'type': 'text',
               'id': '${prefix}_choice_name_${i}',
               'value': choiceName,
-              'readOnly': readOnly
+              'readOnly': readOnly,
+              'onChange': onInputChange
             })
           ),
           td({},
-            select({'id': '${prefix}_chain_name_${i}', 'disabled': readOnly, 'value': chainName},
-              options
-            )
+            select({
+              'id': '${prefix}_chain_name_${i}',
+              'disabled': readOnly,
+              'value': chainName,
+              'onChange': onInputChange
+            }, options)
           ),
           td({},
-            button({'id': 'delete_${prefix}_choice_${i}'}, "Delete")
+            button({
+              'id': 'delete_${prefix}_choice_${i}',
+              'onClick': Editor.generateConfirmDeleteFunction(choiceGameEventChains, choiceName, "option", update)
+            }, "Delete")
           )
-        ])
+        )
       );
       
       i += 1;
     });
-    
-    return div({}, [
+
+    return div({},
       table({}, tbody({}, tableRows)),
       br({}),
-      button({'id': '${prefix}_add_choice'}, "Add choice")
-    ]);
+      button({
+        'id': '${prefix}_add_choice',
+        'onClick': (MouseEvent e) { addChoice(update); }
+      }, "Add choice")
+    );
+  }
+
+  void addChoice(Function update) {
+    if(choiceGameEventChains["New choice"] == null) {
+      choiceGameEventChains["New choice"] = World.gameEventChains.keys.first;
+      update();
+    }
   }
   
   static GameEvent buildGameEvent(String prefix) {

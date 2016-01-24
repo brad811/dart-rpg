@@ -67,7 +67,7 @@ class GameEvent implements InputHandler {
     }
   }
   
-  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) => null;
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) => null;
   
   Map<String, Object> buildJson() => {};
 }

@@ -178,11 +178,11 @@ class ObjectEditorItems extends Component {
         && World.gameEventChains[item.gameEventChain] != null) {
       for(int j=0; j<World.gameEventChains[item.gameEventChain].length; j++) {
         tableRows.add(
-          ObjectEditorGameEvents.buildGameEventTableRowHtml(
+          ObjectEditorGameEvents.buildReadOnlyGameEventTableRowHtml(
             World.gameEventChains[item.gameEventChain][j],
             "item_${state['selected']}_game_event_${j}",
             j,
-            readOnly: true, callbacks: callbacks
+            callbacks
           )
         );
       }

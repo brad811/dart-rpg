@@ -44,8 +44,8 @@ class DelayGameEvent implements GameEvent {
   String getType() => type;
   
   @override
-  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange) {
-    return table({}, tbody({}, [
+  JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) {
+    return table({}, tbody({},
       tr({},
         td({}, "Milliseconds")
       ),
@@ -56,11 +56,12 @@ class DelayGameEvent implements GameEvent {
             'className': 'number',
             'id': '${prefix}_milliseconds',
             'value': milliseconds,
-            'readOnly': readOnly
+            'readOnly': readOnly,
+            'onChange': onInputChange
           })
         )
       )
-    ]));
+    ));
   }
   
   static GameEvent buildGameEvent(String prefix) {
