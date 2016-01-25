@@ -3,17 +3,15 @@ library dart_rpg.map_editor_tile_info;
 import 'dart:js';
 
 import 'package:dart_rpg/src/encounter_tile.dart';
-import 'package:dart_rpg/src/event_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/tile.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 
 import 'package:react/react.dart';
 
 class MapEditorTileInfo extends Component {
-  Map<String, List<EventTile>> events = {};
-
   getInitialState() => {
     'x': 0,
     'y': 0
@@ -64,7 +62,7 @@ class MapEditorTileInfo extends Component {
       }
     }
 
-    return div({'id': 'tile_info'}, [
+    return div({'id': 'tile_info', 'className': MapEditor.selectedTool == "select" ? '' : 'hidden'}, [
       "Tile Info", br({}),
       hr({}),
       "X: ${x}", br({}),

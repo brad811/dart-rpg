@@ -17,24 +17,10 @@ import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
-import 'package:dart_rpg/src/editor/map_editor/map_editor_events.dart';
-import 'package:dart_rpg/src/editor/map_editor/map_editor_signs.dart';
-import 'package:dart_rpg/src/editor/map_editor/map_editor_warps.dart';
 
 import 'package:react/react.dart';
 
 class MapEditorMaps extends Component {
-  componentDidMount(Element rootNode) {
-    Editor.attachButtonListener("#add_map_button", addNewMap);
-
-    setMapSelectorButtonListeners();
-    setMapDeleteButtonListeners();
-    
-    for(int i=0; i<Main.world.maps.length; i++) {
-      Editor.attachInputListeners("map_${i}", ["name"], onInputChange);
-    }
-  }
-
   render() {
     List<JsObject> tableRows = [
       tr({}, [
@@ -53,7 +39,10 @@ class MapEditorMaps extends Component {
       if(Main.world.curMap != key) {
         mapButton = 
           td({},
-            button({'id': 'map_select_${i}'}, i)
+            button({
+              'id': 'map_select_${i}',
+              'onClick': (MouseEvent e) { Main.world.curMap = key; props['update'](); }
+            }, i)
           );
       } else {
         mapButton = td({}, i);
@@ -63,12 +52,28 @@ class MapEditorMaps extends Component {
         tr({}, [
           mapButton,
           td({},
-            input({'id': 'map_${i}_name', 'type': 'text', 'value': Main.world.maps[key].name})
+            input({
+              'id': 'map_${i}_name',
+              'type': 'text',
+              'value': Main.world.maps[key].name,
+              'onChange': onInputChange
+            })
           ),
           td({}, Main.world.maps[key].tiles[0].length),
           td({}, Main.world.maps[key].tiles.length),
           td({},
-            button({'id': 'delete_map_${i}'}, "Delete")
+            button({
+              'id': 'delete_map_${i}',
+              'onClick': Editor.generateConfirmDeleteFunction(
+                Main.world.maps, key, "map", () {
+                  if(Main.world.maps.length == 0) {
+                    addNewMap(null);
+                  }
+                  
+                  Main.world.curMap = Main.world.maps.keys.first;
+                  props['update'](shouldExport: false);
+                })
+            }, "Delete")
           )
         ])
       );
@@ -76,7 +81,7 @@ class MapEditorMaps extends Component {
 
     return
       div({'id': 'maps_tab', 'className': 'tab'}, [
-        button({'id': 'add_map_button'}, "Add new map"),
+        button({'id': 'add_map_button', 'onClick': addNewMap}, "Add new map"),
         div({'id': 'maps_container'}, [
           hr({}),
           table({'className': 'editor_table'}, tbody({}, tableRows))
@@ -98,9 +103,9 @@ class MapEditorMaps extends Component {
       [ [ nulls ] ]
     );
     
-    MapEditorWarps.warps["new map"] = [];
-    MapEditorSigns.signs["new map"] = [];
-    MapEditorEvents.events["new map"] = [];
+    MapEditor.warps["new map"] = [];
+    MapEditor.signs["new map"] = [];
+    MapEditor.events["new map"] = [];
     Main.world.maps["new map"].battlerChances = [];
     
     props['update']();
@@ -140,10 +145,10 @@ class MapEditorMaps extends Component {
         newMaps[newName] = Main.world.maps[key];
         newMaps[newName].name = newName;
         
-        newWarps[newName] = MapEditorWarps.warps[key];
-        newSigns[newName] = MapEditorSigns.signs[key];
+        newWarps[newName] = MapEditor.warps[key];
+        newSigns[newName] = MapEditor.signs[key];
         newBattlers[newName] = Main.world.maps[key].battlerChances;
-        newEvents[newName] = MapEditorEvents.events[key];
+        newEvents[newName] = MapEditor.events[key];
         
         if(newName != key && Main.world.curMap == key && changedByUser) {
           Main.world.curMap = newName;
@@ -151,7 +156,7 @@ class MapEditorMaps extends Component {
         
         if(newName != key) {
           // update all warp destinations that include this map name
-          MapEditorWarps.warps.forEach((String map, List<WarpTile> warpTiles) {
+          MapEditor.warps.forEach((String map, List<WarpTile> warpTiles) {
             warpTiles.forEach((WarpTile warpTile) {
               if(warpTile.destMap == key)
                 warpTile.destMap = newName;
@@ -159,15 +164,15 @@ class MapEditorMaps extends Component {
           });
           
           // update warps list to have this new map name
-          if(MapEditorWarps.warps.containsKey(key)) {
-            MapEditorWarps.warps[newName] = MapEditorWarps.warps[key];
-            MapEditorWarps.warps.remove(key);
+          if(MapEditor.warps.containsKey(key)) {
+            MapEditor.warps[newName] = MapEditor.warps[key];
+            MapEditor.warps.remove(key);
           }
           
           // update signs list to have this new map name
-          if(MapEditorSigns.signs.containsKey(key)) {
-             MapEditorSigns.signs[newName] = MapEditorSigns.signs[key];
-             MapEditorSigns.signs.remove(key);
+          if(MapEditor.signs.containsKey(key)) {
+             MapEditor.signs[newName] = MapEditor.signs[key];
+             MapEditor.signs.remove(key);
           }
           
           // update characters to have this new map name
@@ -189,9 +194,9 @@ class MapEditorMaps extends Component {
           });
           
           // update events list to have this new map name
-          if(MapEditorEvents.events.containsKey(key)) {
-            MapEditorEvents.events[newName] = MapEditorEvents.events[key];
-            MapEditorEvents.events.remove(key);
+          if(MapEditor.events.containsKey(key)) {
+            MapEditor.events[newName] = MapEditor.events[key];
+            MapEditor.events.remove(key);
           }
         }
       } catch(e) {
@@ -201,50 +206,17 @@ class MapEditorMaps extends Component {
     }
     
     Main.world.maps = newMaps;
-    MapEditorWarps.warps = newWarps;
-    MapEditorSigns.signs = newSigns;
-    MapEditorEvents.events = newEvents;
+    MapEditor.warps = newWarps;
+    MapEditor.signs = newSigns;
+    MapEditor.events = newEvents;
     Main.world.maps.forEach((String mapName, GameMap map) {
       map.battlerChances = newBattlers[mapName];
     });
-    
-    setMapSelectorButtonListeners();
-    setMapDeleteButtonListeners();
     
     if(nameChange) {
       Editor.updateAndRetainValue(e, props['update']);
     } else {
       MapEditor.updateMap(shouldExport: true);
-    }
-  }
-  
-  void setMapSelectorButtonListeners() {
-    for(int i=0; i<Main.world.maps.length; i++) {
-      String key = Main.world.maps.keys.elementAt(i);
-      if(Main.world.curMap != key) {
-        Editor.attachButtonListener("#map_select_${i}", (MouseEvent e) {
-          Main.world.curMap = key;
-          props['update']();
-        });
-      }
-    }
-  }
-  
-  void setMapDeleteButtonListeners() {
-    for(int i=0; i<Main.world.maps.length; i++) {
-      Editor.attachButtonListener("#delete_map_${i}", (MouseEvent e) {
-        bool confirm = window.confirm('Are you sure you would like to delete this map?');
-        if(confirm) {
-          String mapName = Main.world.maps.keys.elementAt(i);
-          Main.world.maps.remove(mapName);
-          if(Main.world.maps.length == 0) {
-            addNewMap(null);
-          }
-          
-          Main.world.curMap = Main.world.maps.keys.first;
-          props['update']();
-        }
-      });
     }
   }
 }

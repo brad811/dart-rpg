@@ -29,17 +29,16 @@ class Editor extends Component {
   
   static bool highlightSpecialTiles = true;
   
+  static StreamSubscription resizeListener;
   static Map<String, StreamSubscription> listeners = new Map<String, StreamSubscription>();
   static Map<String, StreamSubscription> popupSpritePickerCanvasListeners = new Map<String, StreamSubscription>();
-  
-  static Timer debounceTimer;
-  static Duration debounceDelay = new Duration(milliseconds: 250);
 
   static String exportJsonString = "";
 
   getInitialState() => {
     'gameLoaded': false,
-    'doneSettingUp': false
+    'doneSettingUp': false,
+    'selectedTab': 'mapEditor'
   };
 
   componentDidMount(Element rootNode) {
@@ -53,19 +52,18 @@ class Editor extends Component {
 
   componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
     if(!this.state['doneSettingUp']) {
-      setUpTabs(editorTabs);
-
-      Function resizeFunction = (Event e) {
-        querySelector('#left_half').style.width = "${window.innerWidth - 562}px";
-        querySelector('#left_half').style.height = "${window.innerHeight - 60}px";
-        querySelector('#container').style.height = "${window.innerHeight - 10}px";
-      };
-      
-      window.onResize.listen(resizeFunction);
-      resizeFunction(null);
+      if(resizeListener != null) {
+        resizeListener.cancel();
+      }
+      resizeListener = window.onResize.listen(handleResize);
+      handleResize(null);
 
       this.setState({'doneSettingUp': true});
     }
+  }
+
+  void handleResize(Event e) {
+    querySelector('#container').style.height = "${window.innerHeight - 10}px";
   }
 
   render() {
@@ -73,31 +71,55 @@ class Editor extends Component {
       return div({}, "Loading game...");
     }
 
+    JsObject selectedTab;
+    if(state['selectedTab'] == 'mapEditor') {
+      selectedTab = mapEditor({'update': update});
+    } else if(state['selectedTab'] == 'objectEditor') {
+      selectedTab = objectEditor({'update': update});
+    } else if(state['selectedTab'] == 'screenEditor') {
+      selectedTab = screenEditor({'update': update});
+    } else if(state['selectedTab'] == 'settings') {
+      selectedTab = settings({'update': update});
+    }
+
     return
-      div({}, [
-        table({'id': 'container'}, tbody({}, [
-          tr({}, [
-            td({'id': 'editor_tabs', 'colSpan': 2}, [
-              div({'id': 'map_editor_tab_header', 'className': 'tab_header'}, "Map Editor"),
-              div({'id': 'object_editor_tab_header', 'className': 'tab_header'}, "Object Editor"),
-              div({'id': 'screen_editor_tab_header', 'className': 'tab_header'}, "Screen Editor"),
-              div({'id': 'settings_tab_header', 'className': 'tab_header'}, "Settings"),
+      div({},
+        table({'id': 'container'}, tbody({},
+          tr({},
+            td({'id': 'editor_tabs', 'colSpan': 2},
+              div({
+                'id': 'map_editor_tab_header',
+                'className': 'tab_header ' + (state['selectedTab'] == 'mapEditor' ? 'selected' : ''),
+                'onClick': (MouseEvent e) { setState({'selectedTab': 'mapEditor'}); }
+              }, "Map Editor"),
+              div({
+                'id': 'object_editor_tab_header',
+                'className': 'tab_header ' + (state['selectedTab'] == 'objectEditor' ? 'selected' : ''),
+                'onClick': (MouseEvent e) { setState({'selectedTab': 'objectEditor'}); }
+              }, "Object Editor"),
+              div({
+                'id': 'screen_editor_tab_header',
+                'className': 'tab_header ' + (state['selectedTab'] == 'screenEditor' ? 'selected' : ''),
+                'onClick': (MouseEvent e) { setState({'selectedTab': 'screenEditor'}); }
+              }, "Screen Editor"),
+              div({
+                'id': 'settings_tab_header',
+                'className': 'tab_header ' + (state['selectedTab'] == 'settings' ? 'selected' : ''),
+                'onClick': (MouseEvent e) { setState({'selectedTab': 'settings'}); }
+              }, "Settings"),
 
               // TODO: make this a component
               div({'id': 'game_storage_container'}, "Loading...")
-            ])
-          ]),
-          mapEditor({'update': debounceUpdate}),
-          objectEditor({'update': debounceUpdate}),
-          screenEditor({'update': debounceUpdate}),
-          settings({'update': debounceUpdate})
-        ])),
+            )
+          ),
+          selectedTab
+        )),
         div({'id': 'tooltip'}),
         div({'id': 'popup_shade'}),
-        div({'id': 'popup_sprite_selector_container'}, [
+        div({'id': 'popup_sprite_selector_container'},
           canvas({'id': 'popup_sprite_selector_canvas'})
-        ])
-      ]);
+        )
+      );
   }
   
   static void loadGame(Function callback) {
@@ -106,6 +128,10 @@ class Editor extends Component {
     });
   }
   
+  /*
+  static Timer debounceTimer;
+  static Duration debounceDelay = new Duration(milliseconds: 250);
+
   void debounceUpdate({Function callback, bool immediate: false}) {
     if(debounceTimer != null) {
       debounceTimer.cancel();
@@ -118,10 +144,14 @@ class Editor extends Component {
       }
     });
   }
+  */
   
-  void update() {
+  void update({bool shouldExport: false}) {
     this.setState({});
-    this.export();
+
+    if(shouldExport) {
+      this.export();
+    }
   }
   
   void export() {
@@ -139,38 +169,6 @@ class Editor extends Component {
     if(exportJsonTextarea != null) {
       exportJsonTextarea.value = Editor.exportJsonString;
     }
-  }
-  
-  static void setUpTabs(List<String> tabs, [Function callback]) {
-    Map<String, DivElement>
-      tabDivs = {},
-      tabHeaderDivs = {};
-    
-    for(String tab in tabs) {
-      tabDivs[tab] = querySelector("#${tab}_tab");
-
-      tabDivs[tab].style.display = "none";
-      
-      tabHeaderDivs[tab] = querySelector("#${tab}_tab_header");
-      tabHeaderDivs[tab].style.backgroundColor = "";
-      
-      tabHeaderDivs[tab].onClick.listen((MouseEvent e) {
-        for(String tabb in tabs) {
-          tabDivs[tabb].style.display = "none";
-          tabHeaderDivs[tabb].style.backgroundColor = "";
-        }
-        
-        tabDivs[tab].style.display = "";
-        tabHeaderDivs[tab].style.backgroundColor = "#eeeeee";
-        
-        if(callback != null) {
-          callback();
-        }
-      });
-    }
-    
-    tabDivs[tabDivs.keys.first].style.display = "";
-    tabHeaderDivs[tabHeaderDivs.keys.first].style.backgroundColor = "#eeeeee";
   }
 
   static Function generateConfirmDeleteFunction(Object target, Object key, String targetName, Function callback) {

@@ -5,9 +5,7 @@ import 'dart:js';
 
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
-import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
-import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
@@ -15,43 +13,10 @@ import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 import 'package:react/react.dart';
 
 class MapEditorWarps extends Component {
-  static Map<String, List<WarpTile>> warps = {};
-
-  componentWillMount() {
-    for(int i=0; i<Main.world.maps.length; i++) {
-      String key = Main.world.maps.keys.elementAt(i);
-      List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
-      warps[key] = [];
-      
-      for(var y=0; y<mapTiles.length; y++) {
-        for(var x=0; x<mapTiles[y].length; x++) {
-          for(int layer in World.layers) {
-            if(mapTiles[y][x][layer] is WarpTile) {
-              // make a copy of the warp tile
-              WarpTile mapWarpTile = mapTiles[y][x][layer];
-              WarpTile warpTile = new WarpTile(
-                  mapWarpTile.solid,
-                  new Sprite(
-                    mapWarpTile.sprite.id,
-                    mapWarpTile.sprite.posX,
-                    mapWarpTile.sprite.posY
-                  ),
-                  mapWarpTile.destMap,
-                  mapWarpTile.destX,
-                  mapWarpTile.destY
-                );
-              warps[key].add(warpTile);
-            }
-          }
-        }
-      }
-    }
-  }
-
   componentDidMount(a) {
     setWarpDeleteButtonListeners();
     
-    for(int i=0; i<warps[Main.world.curMap].length; i++) {
+    for(int i=0; i<MapEditor.warps[Main.world.curMap].length; i++) {
       Editor.attachInputListeners("warp_${i}", ["posx", "posy", "dest_map", "dest_x", "dest_y"], onInputChange);
     }
   }
@@ -76,7 +41,7 @@ class MapEditorWarps extends Component {
       );
     }
 
-    for(int i=0; i<warps[Main.world.curMap].length; i++) {
+    for(int i=0; i<MapEditor.warps[Main.world.curMap].length; i++) {
       tableRows.add(
         tr({}, [
           td({}, i),
@@ -85,7 +50,7 @@ class MapEditorWarps extends Component {
               'id': 'warp_${i}_posx',
               'type': 'text',
               'className':'number',
-              'value': warps[Main.world.curMap][i].sprite.posX.round()
+              'value': MapEditor.warps[Main.world.curMap][i].sprite.posX.round()
             })
           ),
           td({},
@@ -93,7 +58,7 @@ class MapEditorWarps extends Component {
               'id': 'warp_${i}_posy',
               'type': 'text',
               'className':'number',
-              'value': warps[Main.world.curMap][i].sprite.posY.round()
+              'value': MapEditor.warps[Main.world.curMap][i].sprite.posY.round()
             })
           ),
           td({},
@@ -104,7 +69,7 @@ class MapEditorWarps extends Component {
               'id': 'warp_${i}_dest_x',
               'type': 'text',
               'className':'number',
-              'value': warps[Main.world.curMap][i].destX
+              'value': MapEditor.warps[Main.world.curMap][i].destX
             })
           ),
           td({},
@@ -112,7 +77,7 @@ class MapEditorWarps extends Component {
               'id': 'warp_${i}_dest_y',
               'type': 'text',
               'className':'number',
-              'value': warps[Main.world.curMap][i].destY
+              'value': MapEditor.warps[Main.world.curMap][i].destY
             })
           ),
           td({},
@@ -133,7 +98,7 @@ class MapEditorWarps extends Component {
   }
   
   void addNewWarp(MouseEvent e) {
-    warps[Main.world.curMap].add(
+    MapEditor.warps[Main.world.curMap].add(
       new WarpTile(
         false,
         new Sprite.int(0, 0, 0),
@@ -147,13 +112,13 @@ class MapEditorWarps extends Component {
   void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     
-    for(int i=0; i<warps[Main.world.curMap].length; i++) {
+    for(int i=0; i<MapEditor.warps[Main.world.curMap].length; i++) {
       try {
-        warps[Main.world.curMap][i].sprite.posX = double.parse((querySelector('#warp_${i}_posx') as InputElement).value);
-        warps[Main.world.curMap][i].sprite.posY = double.parse((querySelector('#warp_${i}_posy') as InputElement).value);
-        warps[Main.world.curMap][i].destMap = (querySelector('#warp_${i}_dest_map') as SelectElement).value;
-        warps[Main.world.curMap][i].destX = int.parse((querySelector('#warp_${i}_dest_x') as InputElement).value);
-        warps[Main.world.curMap][i].destY = int.parse((querySelector('#warp_${i}_dest_y') as InputElement).value);
+        MapEditor.warps[Main.world.curMap][i].sprite.posX = double.parse((querySelector('#warp_${i}_posx') as InputElement).value);
+        MapEditor.warps[Main.world.curMap][i].sprite.posY = double.parse((querySelector('#warp_${i}_posy') as InputElement).value);
+        MapEditor.warps[Main.world.curMap][i].destMap = (querySelector('#warp_${i}_dest_map') as SelectElement).value;
+        MapEditor.warps[Main.world.curMap][i].destX = int.parse((querySelector('#warp_${i}_dest_x') as InputElement).value);
+        MapEditor.warps[Main.world.curMap][i].destY = int.parse((querySelector('#warp_${i}_dest_y') as InputElement).value);
       } catch(e) {
         // could not update this warp
       }
@@ -163,11 +128,11 @@ class MapEditorWarps extends Component {
   }
   
   void setWarpDeleteButtonListeners() {
-    for(int i=0; i<warps[Main.world.curMap].length; i++) {
+    for(int i=0; i<MapEditor.warps[Main.world.curMap].length; i++) {
       Editor.attachButtonListener("#delete_warp_${i}", (MouseEvent e) {
         bool confirm = window.confirm('Are you sure you would like to delete this warp?');
         if(confirm) {
-          warps[Main.world.curMap].removeAt(i);
+          MapEditor.warps[Main.world.curMap].removeAt(i);
           props['update']();
         }
       });
@@ -175,7 +140,7 @@ class MapEditorWarps extends Component {
   }
   
   void shift(int xAmount, int yAmount) {
-    warps.forEach((String mapName, List<WarpTile> warpTiles) {
+    MapEditor.warps.forEach((String mapName, List<WarpTile> warpTiles) {
       warpTiles.forEach((WarpTile warpTile) {
         if(warpTile == null)
           return;
@@ -200,7 +165,7 @@ class MapEditorWarps extends Component {
               warpTile.sprite.posY < 0 ||
               warpTile.sprite.posY >= Main.world.maps[Main.world.curMap].tiles.length) {
             // delete it
-            warps[Main.world.curMap].remove(warpTile);
+            MapEditor.warps[Main.world.curMap].remove(warpTile);
           }
         }
         
@@ -215,7 +180,7 @@ class MapEditorWarps extends Component {
   }
   
   static void export(List<List<List<Map>>> jsonMap, String key) {
-    for(WarpTile warp in warps[key]) {
+    for(WarpTile warp in MapEditor.warps[key]) {
       int
         x = warp.sprite.posX.round(),
         y = warp.sprite.posY.round();

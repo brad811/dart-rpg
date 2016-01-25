@@ -2,6 +2,7 @@ library dart_rpg.map_editor;
 
 import 'dart:async';
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
@@ -39,13 +40,11 @@ var mapEditorTileInfo = registerComponent(() => new MapEditorTileInfo());
 class MapEditor extends Component {
   static CanvasElement
     mapEditorCanvas,
-    mapEditorSpriteSelectorCanvas,
-    mapEditorSelectedSpriteCanvas;
+    mapEditorSpriteSelectorCanvas;
   
   static CanvasRenderingContext2D
     mapEditorCanvasContext,
-    mapEditorSpriteSelectorCanvasContext,
-    mapEditorSelectedSpriteCanvasContext;
+    mapEditorSpriteSelectorCanvasContext;
   
   static List<String> mapEditorTabs = ["maps", "tiles", "map_characters", "warps", "signs", "battlers", "events"];
   
@@ -62,22 +61,118 @@ class MapEditor extends Component {
   static List<bool> layerVisible = [];
   
   static List<List<Tile>> renderList;
-  static int selectedTile, previousSelectedTile;
-
-  static List<String> availableTools = ["select", "brush", "erase", "fill", "stamp"];
-  static String selectedTool = "select";
   
   static DivElement tooltip, tileInfo;
 
+  static String selectedTool = "select";
+  static int selectedTile = -1, previousSelectedTile = -1;
+
+  static Map<String, List<WarpTile>> warps = {};
+  static Map<String, List<Sign>> signs = {};
+  static Map<String, List<EventTile>> events = {};
+
+  StreamSubscription resizeListener;
+
+  getInitialState() => {
+    'selectedTab': 'maps'
+  };
+
+  componentWillMount() {
+    // build list of warps
+    for(int i=0; i<Main.world.maps.length; i++) {
+      String key = Main.world.maps.keys.elementAt(i);
+      List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
+      warps[key] = [];
+      
+      for(var y=0; y<mapTiles.length; y++) {
+        for(var x=0; x<mapTiles[y].length; x++) {
+          for(int layer in World.layers) {
+            if(mapTiles[y][x][layer] is WarpTile) {
+              // make a copy of the warp tile
+              WarpTile mapWarpTile = mapTiles[y][x][layer];
+              WarpTile warpTile = new WarpTile(
+                  mapWarpTile.solid,
+                  new Sprite(
+                    mapWarpTile.sprite.id,
+                    mapWarpTile.sprite.posX,
+                    mapWarpTile.sprite.posY
+                  ),
+                  mapWarpTile.destMap,
+                  mapWarpTile.destX,
+                  mapWarpTile.destY
+                );
+              warps[key].add(warpTile);
+            }
+          }
+        }
+      }
+    }
+
+    // build list of signs
+    for(int i=0; i<Main.world.maps.length; i++) {
+      String key = Main.world.maps.keys.elementAt(i);
+      List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
+      signs[key] = [];
+      
+      for(var y=0; y<mapTiles.length; y++) {
+        for(var x=0; x<mapTiles[y].length; x++) {
+          for(int layer in World.layers) {
+            if(mapTiles[y][x][layer] is Sign) {
+              Sign mapSignTile = mapTiles[y][x][layer];
+              Sign signTile = new Sign(
+                  mapSignTile.solid,
+                  new Sprite(
+                    mapSignTile.sprite.id,
+                    mapSignTile.sprite.posX,
+                    mapSignTile.sprite.posY
+                  ),
+                  mapSignTile.textEvent.pictureSpriteId,
+                  mapSignTile.textEvent.text
+                );
+              signs[key].add(signTile);
+            }
+          }
+        }
+      }
+    }
+
+    // build list of events
+    for(int i=0; i<Main.world.maps.length; i++) {
+      String key = Main.world.maps.keys.elementAt(i);
+      List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
+      events[key] = [];
+      
+      for(var y=0; y<mapTiles.length; y++) {
+        for(var x=0; x<mapTiles[y].length; x++) {
+          for(int layer in World.layers) {
+            if(mapTiles[y][x][layer] is EventTile) {
+              EventTile mapEventTile = mapTiles[y][x][layer];
+              EventTile eventTile = new EventTile(
+                  mapEventTile.gameEventChain,
+                  mapEventTile.runOnce,
+                  new Sprite(
+                    mapEventTile.sprite.id,
+                    mapEventTile.sprite.posX,
+                    mapEventTile.sprite.posY
+                  )
+                );
+              events[key].add(eventTile);
+            }
+          }
+        }
+      }
+    }
+  }
+
   componentDidMount(Element rootNode) {
+    resizeListener = window.onResize.listen(handleResize);
+    handleResize(null);
+
     mapEditorCanvas = querySelector('#editor_main_canvas');
     mapEditorCanvasContext = mapEditorCanvas.getContext("2d");
     
     mapEditorSpriteSelectorCanvas = querySelector('#editor_sprite_canvas');
     mapEditorSpriteSelectorCanvasContext = mapEditorSpriteSelectorCanvas.getContext("2d");
-    
-    mapEditorSelectedSpriteCanvas = querySelector('#editor_selected_sprite_canvas');
-    mapEditorSelectedSpriteCanvasContext = mapEditorSelectedSpriteCanvas.getContext("2d");
     
     if(window.devicePixelRatio != 1.0) {
       ElementList<Element> canvasElements = querySelectorAll("canvas");
@@ -90,8 +185,6 @@ class MapEditor extends Component {
     for(int i=0; i<World.layers.length; i++) {
       layerVisible.add(true);
     }
-
-    Editor.setUpTabs(mapEditorTabs);
     
     // resize the sprite picker to match the loaded sprite sheet image
     Main.fixImageSmoothing(
@@ -100,16 +193,7 @@ class MapEditor extends Component {
       (Main.spritesImage.height * Sprite.spriteScale).round()
     );
     
-    // picked sprite canvas
-    Main.fixImageSmoothing(
-      MapEditor.mapEditorSelectedSpriteCanvas,
-      (Sprite.scaledSpriteSize).round(),
-      (Sprite.scaledSpriteSize).round()
-    );
-    
-    setUpToolSelectors();    
     setUpSpritePicker();
-    selectTool("select");
 
     updateMap();
   }
@@ -118,95 +202,108 @@ class MapEditor extends Component {
     updateMap();
   }
 
+  void update() {
+    setState({});
+  }
+
+  void handleResize(Event e) {
+    querySelector('#left_half').style.width = "${window.innerWidth - 562}px";
+    querySelector('#left_half').style.height = "${window.innerHeight - 60}px";
+  }
+
   render() {
+    JsObject selectedTab;
+    if(state['selectedTab'] == "maps") {
+      selectedTab = mapEditorMaps({'update': props['update']});
+    } else if(state['selectedTab'] == "tiles") {
+      selectedTab = mapEditorTiles({'selectedTile': state['selectedTile']});
+    } else if(state['selectedTab'] == "map_characters") {
+      selectedTab = mapEditorCharacters({'update': props['update']});
+    } else if(state['selectedTab'] == "warps") {
+      selectedTab = mapEditorWarps({'update': props['update']});
+    } else if(state['selectedTab'] == "signs") {
+      selectedTab = mapEditorSigns({'update': props['update']});
+    } else if(state['selectedTab'] == "battlers") {
+      selectedTab = mapEditorBattlers({'update': props['update']});
+    } else if(state['selectedTab'] == "events") {
+      selectedTab = mapEditorEvents({'update': props['update']});
+    }
+
     return
-      tr({'id': 'map_editor_tab'}, [
-        td({'id': 'left_half'}, [
-          div({'style': {'position': 'relative', 'width': 0, 'height': 0}}, [
+      tr({'id': 'map_editor_tab'},
+        td({'id': 'left_half'},
+          div({'style': {'position': 'relative', 'width': 0, 'height': 0}},
             mapEditorTileInfo({'ref': 'tileInfo', 'update': props['update']})
-          ]),
+          ),
           canvas({'id': 'editor_main_canvas', 'width': 640, 'height': 512})
-        ]),
-        td({'id': 'right_half'}, [
-          table({'id': 'right_half_container'}, tbody({}, [
-            tr({}, [
-              td({'className': 'sprite_picker_container'}, [
+        ),
+        td({'id': 'right_half'},
+          table({'id': 'right_half_container'}, tbody({},
+            tr({},
+              td({'className': 'sprite_picker_container'},
                 canvas({'id': 'editor_sprite_canvas', 'width': 256, 'height': 256})
-              ])
-            ]),
-            tr({}, [
-              td({'className': 'tab_headers'}, [
-                div({'id': 'maps_tab_header', 'className': 'tab_header'}, "Maps"),
-                div({'id': 'tiles_tab_header', 'className': 'tab_header'}, "Tiles"),
-                div({'id': 'map_characters_tab_header', 'className': 'tab_header'}, "Characters"),
-                div({'id': 'warps_tab_header', 'className': 'tab_header'}, "Warps"),
-                div({'id': 'signs_tab_header', 'className': 'tab_header'}, "Signs"),
-                div({'id': 'battlers_tab_header', 'className': 'tab_header'}, "Battlers"),
-                div({'id': 'events_tab_header', 'className': 'tab_header'}, "Events"),
-              ])
-            ]),
-            tr({}, [
-              td({'id': 'editor_tabs_container'}, [
-                mapEditorMaps({'ref': 'mapEditorMaps', 'update': props['update']}),
-                mapEditorTiles({'ref': 'mapEditorTiles', 'update': props['update'], 'shift': props['shift']}),
-                mapEditorCharacters({'ref': 'mapEditorCharacters', 'update': props['update']}),
-                mapEditorWarps({'ref': 'mapEditorWarps', 'update': props['update']}),
-                mapEditorSigns({'ref': 'mapEditorSigns', 'update': props['update']}),
-                mapEditorBattlers({'ref': 'mapEditorBattlers', 'update': props['update']}),
-                mapEditorEvents({'ref': 'mapEditorEvents', 'update': props['update']})
-              ])
-            ]),
-            tr({}, [
-              td({'className': 'export_json_container'}, [
-                textarea({'id': 'export_json', 'value': Editor.exportJsonString}),
+              )
+            ),
+            tr({},
+              td({'className': 'tab_headers'},
+                div({
+                  'id': 'maps_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "maps" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'maps'}); }
+                  }, "Maps"),
+                div({
+                  'id': 'tiles_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "tiles" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'tiles'}); }
+                }, "Tiles"),
+                div({
+                  'id': 'map_characters_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "map_characters" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'map_characters'}); }
+                }, "Characters"),
+                div({
+                  'id': 'warps_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "warps" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'warps'}); }
+                }, "Warps"),
+                div({
+                  'id': 'signs_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "signs" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'signs'}); }
+                }, "Signs"),
+                div({
+                  'id': 'battlers_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "battlers" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'battlers'}); }
+                }, "Battlers"),
+                div({
+                  'id': 'events_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "events" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'events'}); }
+                }, "Events")
+              )
+            ),
+            tr({},
+              td({'id': 'editor_tabs_container'},
+                selectedTab
+              )
+            ),
+            tr({},
+              td({'className': 'export_json_container'},
+                textarea({'id': 'export_json', 'value': Editor.exportJsonString, 'onChange': ''}),
                 button({'id': 'load_game_button', 'onClick': (e) { Editor.loadGame(props['update']); }}, "Load")
-              ])
-            ])
-          ]))
-        ])
-      ]);
+              )
+            )
+          ))
+        )
+      );
   }
 
   void shift(int xAmount, int yAmount) {
+    // TODO
     ref('mapEditorMaps').shift(xAmount, yAmount);
     ref('mapEditorSigns').shift(xAmount, yAmount);
     ref('mapEditorEvents').shift(xAmount, yAmount);
-  }
-
-  void selectTool(String newTool) {
-    availableTools.forEach((String curTool) {
-      querySelector("#tool_selector_" + curTool).classes.remove("selected");
-
-      if(curTool == newTool) {
-        querySelector("#tool_selector_" + curTool).classes.add("selected");
-      }
-    });
-
-    if(newTool == "erase") {
-      previousSelectedTile = selectedTile;
-      MapEditor.selectSprite(-1);
-    } else {
-      selectedTile = previousSelectedTile;
-      MapEditor.selectSprite(selectedTile);
-    }
-
-    if(selectedTool == "select" && newTool != "select") {
-      tileInfo.style.display = "none";
-      MapEditor.updateMap();
-    }
-
-    selectedTool = newTool;
-
-    lastChangeX = -1;
-    lastChangeY = -1;
-  }
-  
-  void setUpToolSelectors() {
-    availableTools.forEach((String curTool) {
-      querySelector("#tool_selector_" + curTool).onClick.listen((MouseEvent e) {
-        selectTool(curTool);
-      });
-    });
   }
   
   void setUpSpritePicker() {
@@ -232,11 +329,6 @@ class MapEditor extends Component {
         }
       }
     }
-    
-    // TODO: make this a different value?
-    selectedTile = 66;
-    previousSelectedTile = 66;
-    MapEditor.selectSprite(66);
     
     mapEditorCanvas.onClick.listen(handleTileClickOrDrag);
     
@@ -288,12 +380,14 @@ class MapEditor extends Component {
     mapEditorSpriteSelectorCanvas.onClick.listen((MouseEvent e) {
       int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
       int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-      MapEditor.selectSprite(y*Sprite.spriteSheetWidth + x);
+      selectedTile = y*Sprite.spriteSheetWidth + x;
       previousSelectedTile = y*Sprite.spriteSheetWidth + x;
-      
-      if(querySelector("#tool_selector_erase").classes.contains("selected")) {
-        selectTool("brush");
+
+      if(selectedTool == "select" || selectedTool == "erase") {
+        selectedTool = "brush";
       }
+
+      update();
     });
   }
   
@@ -475,7 +569,15 @@ class MapEditor extends Component {
     lastChangeX = x;
     lastChangeY = y;
     
-    if(selectedTile == -1) {
+    if(selectedTool == "select") {
+      if(lastTileInfoX == x && lastTileInfoY == y && tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
+        tileInfo.style.display = "none";
+      } else {
+        lastTileInfoX = x;
+        lastTileInfoY = y;
+        showTileInfo(x, y);
+      }
+    } else if(selectedTile == -1) {
       mapTiles[y][x][layer] = null;
     } else if(encounter) {
       // TODO: fill
@@ -504,14 +606,6 @@ class MapEditor extends Component {
               new Sprite.int(selectedTile + (j*Sprite.spriteSheetWidth) + i, x+i, y+j)
             );
           }
-        }
-      } else if(selectedTool == "select") {
-        if(lastTileInfoX == x && lastTileInfoY == y && tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
-          tileInfo.style.display = "none";
-        } else {
-          lastTileInfoX = x;
-          lastTileInfoY = y;
-          showTileInfo(x, y);
         }
       } else {
         mapTiles[y][x][layer] = new Tile(
@@ -577,10 +671,12 @@ class MapEditor extends Component {
       Main.fixImageSmoothing(mapEditorCanvas, mapEditorCanvasWidth, mapEditorCanvasHeight);
     }
     
+    /*
     int xSize = Main.world.maps[ Main.world.curMap ].tiles[0].length;
     int ySize = Main.world.maps[ Main.world.curMap ].tiles.length;
     
     querySelector("#cur_map_size").text = "(${ xSize } x ${ ySize })";
+    */
   }
   
   static void updateMap({bool shouldExport: false}) {
@@ -691,7 +787,7 @@ class MapEditor extends Component {
       }
     }
     
-    MapEditorWarps.warps[Main.world.curMap].forEach((WarpTile warpTile) {
+    warps[Main.world.curMap].forEach((WarpTile warpTile) {
       int x = warpTile.sprite.posX.round();
       int y = warpTile.sprite.posY.round();
       String key = "${x},${y}";
@@ -708,7 +804,7 @@ class MapEditor extends Component {
       }
     });
     
-    MapEditorSigns.signs[Main.world.curMap].forEach((Sign sign) {
+    signs[Main.world.curMap].forEach((Sign sign) {
       int x = sign.sprite.posX.round();
       int y = sign.sprite.posY.round();
       String key = "${x},${y}";
@@ -725,7 +821,7 @@ class MapEditor extends Component {
       }
     });
 
-    MapEditorEvents.events[Main.world.curMap].forEach((EventTile eventTile) {
+    events[Main.world.curMap].forEach((EventTile eventTile) {
       int x = eventTile.sprite.posX.round();
       int y = eventTile.sprite.posY.round();
       String key = "${x},${y}";
@@ -939,11 +1035,8 @@ class MapEditor extends Component {
     mapEditorCanvasContext.stroke();
   }
   
-  static void selectSprite(int id) {
-    selectedTile = id;
-    mapEditorSelectedSpriteCanvasContext.fillStyle = "#ff00ff";
-    mapEditorSelectedSpriteCanvasContext.fillRect(0, 0, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
-    renderStaticSprite(mapEditorSelectedSpriteCanvasContext, id, 0, 0);
+  void selectSprite(int id) {
+    setState({'selectedTile': id});
   }
   
   static void renderStaticSprite(CanvasRenderingContext2D ctx, int id, int posX, int posY) {

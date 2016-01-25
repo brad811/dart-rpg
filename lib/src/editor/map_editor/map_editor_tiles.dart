@@ -4,6 +4,7 @@ import 'dart:html';
 
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
@@ -18,20 +19,107 @@ import 'package:react/react.dart';
 // TODO: allow for dynamic number of layers
 
 class MapEditorTiles extends Component {
+  CanvasElement mapEditorSelectedSpriteCanvas;
+  CanvasRenderingContext2D mapEditorSelectedSpriteCanvasContext;
+
+  static String previousSelectedTool;
+  static List<String> availableTools = ["select", "brush", "erase", "fill", "stamp"];
+
   componentDidMount(Element rootNode) {
+    mapEditorSelectedSpriteCanvas = querySelector('#editor_selected_sprite_canvas');
+    mapEditorSelectedSpriteCanvasContext = mapEditorSelectedSpriteCanvas.getContext("2d");
+    
+    // picked sprite canvas
+    Main.fixImageSmoothing(
+      mapEditorSelectedSpriteCanvas,
+      (Sprite.scaledSpriteSize).round(),
+      (Sprite.scaledSpriteSize).round()
+    );
+
     setUpLayerVisibilityToggles();
     setUpMapSizeButtons();
+
+    updateSelectedSpriteCanvas();
+  }
+
+  shouldComponentUpdate(Map nextProps, Map nextState) {
+    // TODO: perhaps move to componentShouldUpdate and stop update if true
+    if(previousSelectedTool != MapEditor.selectedTool) {
+      selectTool(MapEditor.selectedTool);
+      return false;
+    }
+
+    return true;
+  }
+
+  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+    updateSelectedSpriteCanvas();
+  }
+
+  void updateSelectedSpriteCanvas() {
+    mapEditorSelectedSpriteCanvasContext.fillStyle = "#ff00ff";
+    mapEditorSelectedSpriteCanvasContext.fillRect(0, 0, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
+    MapEditor.renderStaticSprite(mapEditorSelectedSpriteCanvasContext, MapEditor.selectedTile, 0, 0);
+  }
+
+  void update() {
+    setState({});
+  }
+
+  void selectTool(String newTool) {
+    if(newTool == "erase") {
+      MapEditor.previousSelectedTile = MapEditor.selectedTile;
+      MapEditor.selectedTile = -1;
+    } else {
+      MapEditor.selectedTile = MapEditor.previousSelectedTile;
+      MapEditor.selectedTile = MapEditor.selectedTile;
+    }
+
+    if(MapEditor.selectedTool == "select" && newTool != "select") {
+      MapEditor.tileInfo.style.display = "none";
+      MapEditor.updateMap();
+    }
+
+    MapEditor.selectedTool = newTool;
+
+    MapEditor.lastChangeX = -1;
+    MapEditor.lastChangeY = -1;
+
+    previousSelectedTool = MapEditor.selectedTool;
+
+    update();
   }
 
   render() {
     return
       div({'id': 'tiles_tab', 'className': 'tab'}, [
-        div({'id': 'tool_selector_select', 'className': 'tool_selector'}, "Select"),
-        div({'id': 'tool_selector_brush', 'className': 'tool_selector'}, "Brush"),
-        div({'id': 'tool_selector_erase', 'className': 'tool_selector'}, "Erase"),
-        div({'id': 'tool_selector_fill', 'className': 'tool_selector'}, "Fill"),
-        div({'id': 'tool_selector_stamp', 'className': 'tool_selector'}, "Stamp"),
-        div({'id': 'stamp_tool_size'}, [
+        div({
+          'id': 'tool_selector_select',
+          'className': 'tool_selector ' + (MapEditor.selectedTool == "select" ? 'selected' : ''),
+          'onClick': (MouseEvent e) { selectTool("select"); }
+        }, "Select"),
+        div({
+          'id': 'tool_selector_brush',
+          'className': 'tool_selector ' + (MapEditor.selectedTool == "brush" ? 'selected' : ''),
+          'onClick': (MouseEvent e) { selectTool("brush"); }
+        }, "Brush"),
+        div({
+          'id': 'tool_selector_erase',
+          'className': 'tool_selector ' + (MapEditor.selectedTool == "erase" ? 'selected' : ''),
+          'onClick': (MouseEvent e) { selectTool("erase"); }
+        }, "Erase"),
+        div({
+          'id': 'tool_selector_fill',
+          'className': 'tool_selector ' + (MapEditor.selectedTool == "fill" ? 'selected' : ''),
+          'onClick': (MouseEvent e) { selectTool("fill"); }
+        }, "Fill"),
+        div({
+          'id': 'tool_selector_stamp',
+          'className': 'tool_selector ' + (MapEditor.selectedTool == "stamp" ? 'selected' : ''),
+          'onClick': (MouseEvent e) { selectTool("stamp"); }
+        }, "Stamp"),
+        div({
+          'id': 'stamp_tool_size'}, [
           "Width: ", input({'id': 'stamp_tool_width', 'type': 'text', 'className': 'number'}),
           br({}),
           "Height: ", input({'id': 'stamp_tool_height', 'type': 'text', 'className': 'number'}),

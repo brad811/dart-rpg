@@ -6,7 +6,6 @@ import 'dart:js';
 import 'package:dart_rpg/src/event_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
-import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
@@ -16,10 +15,8 @@ import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:react/react.dart';
 
 class MapEditorEvents extends Component {
-  static Map<String, List<EventTile>> events = {};
-
   void trackColors(Map<String, Map<String, int>> colorTrackers) {
-    events[Main.world.curMap].forEach((EventTile eventTile) {
+    MapEditor.events[Main.world.curMap].forEach((EventTile eventTile) {
       int x = eventTile.sprite.posX.round();
       int y = eventTile.sprite.posY.round();
       String key = "${x},${y}";
@@ -38,7 +35,7 @@ class MapEditorEvents extends Component {
   }
 
   void shift(int xAmount, int yAmount) {
-    for(EventTile event in events[Main.world.curMap]) {
+    for(EventTile event in MapEditor.events[Main.world.curMap]) {
       if(event == null)
         continue;
       
@@ -60,7 +57,7 @@ class MapEditorEvents extends Component {
           event.sprite.posY < 0 ||
           event.sprite.posY >= Main.world.maps[Main.world.curMap].tiles.length) {
         // delete it
-        events[Main.world.curMap].remove(event);
+        MapEditor.events[Main.world.curMap].remove(event);
       }
     }
   }
@@ -68,44 +65,14 @@ class MapEditorEvents extends Component {
   void deleteEvent(int i) {
     bool confirm = window.confirm('Are you sure you would like to delete this event?');
     if(confirm) {
-      events[Main.world.curMap].removeAt(i);
+      MapEditor.events[Main.world.curMap].removeAt(i);
       props['update']();
     }
   }
 
-  getInitialState() {
-    for(int i=0; i<Main.world.maps.length; i++) {
-      String key = Main.world.maps.keys.elementAt(i);
-      List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
-      events[key] = [];
-      
-      for(var y=0; y<mapTiles.length; y++) {
-        for(var x=0; x<mapTiles[y].length; x++) {
-          for(int layer in World.layers) {
-            if(mapTiles[y][x][layer] is EventTile) {
-              EventTile mapEventTile = mapTiles[y][x][layer];
-              EventTile eventTile = new EventTile(
-                  mapEventTile.gameEventChain,
-                  mapEventTile.runOnce,
-                  new Sprite(
-                    mapEventTile.sprite.id,
-                    mapEventTile.sprite.posX,
-                    mapEventTile.sprite.posY
-                  )
-                );
-              events[key].add(eventTile);
-            }
-          }
-        }
-      }
-    }
-
-    return events;
-  }
-
   void addNewEvent(MouseEvent e) {
     if(World.gameEventChains.keys.length > 0) {
-      events[Main.world.curMap].add( new EventTile(World.gameEventChains.keys.first, false, new Sprite.int(0, 0, 0), false) );
+      MapEditor.events[Main.world.curMap].add( new EventTile(World.gameEventChains.keys.first, false, new Sprite.int(0, 0, 0), false) );
       props['update']();
     }
   }
@@ -116,9 +83,9 @@ class MapEditorEvents extends Component {
 
     Editor.enforceValueFormat(e);
     
-    for(int i=0; i<events[Main.world.curMap].length; i++) {
+    for(int i=0; i<MapEditor.events[Main.world.curMap].length; i++) {
       try {
-        events[Main.world.curMap][i] = new EventTile(
+        MapEditor.events[Main.world.curMap][i] = new EventTile(
           Editor.getSelectInputStringValue("#map_event_${i}_game_event_chain"),
           Editor.getCheckboxInputBoolValue("#map_event_${i}_run_once"),
           new Sprite(
@@ -149,7 +116,7 @@ class MapEditorEvents extends Component {
     ];
 
     // TODO: this is broken until "events" is populated!
-    for(int i=0; i<events[Main.world.curMap].length; i++) {
+    for(int i=0; i<MapEditor.events[Main.world.curMap].length; i++) {
       List<JsObject> options = [];
 
       World.gameEventChains.keys.forEach((String gameEventChain) {
@@ -166,7 +133,7 @@ class MapEditorEvents extends Component {
               'id': 'map_event_${i}_posx',
               'type': 'text',
               'className': 'number',
-              'value': events[Main.world.curMap][i].sprite.posX.round()
+              'value': MapEditor.events[Main.world.curMap][i].sprite.posX.round()
             })
           ),
           td({},
@@ -174,14 +141,14 @@ class MapEditorEvents extends Component {
               'id': 'map_event_${i}_posy',
               'type': 'text',
               'className': 'number',
-              'value': events[Main.world.curMap][i].sprite.posY.round()
+              'value': MapEditor.events[Main.world.curMap][i].sprite.posY.round()
             })
           ),
           td({},
-            select({'id': 'map_event_${i}_game_event_chain', 'value': events[Main.world.curMap][i].gameEventChain}, options)
+            select({'id': 'map_event_${i}_game_event_chain', 'value': MapEditor.events[Main.world.curMap][i].gameEventChain}, options)
           ),
           td({},
-            input({'id': 'map_event_${i}_run_once', 'type': 'checkbox', 'checked': events[Main.world.curMap][i].runOnce})
+            input({'id': 'map_event_${i}_run_once', 'type': 'checkbox', 'checked': MapEditor.events[Main.world.curMap][i].runOnce})
           ),
           td({},
             button({'id': 'delete_event_${i}', 'onClick': (e) { deleteEvent(i); }}, "Delete")
@@ -201,7 +168,7 @@ class MapEditorEvents extends Component {
   }
 
   static void export(List<List<List<Map>>> jsonMap, String key) {
-    for(EventTile event in events[key]) {
+    for(EventTile event in MapEditor.events[key]) {
       int
         x = event.sprite.posX.round(),
         y = event.sprite.posY.round();
