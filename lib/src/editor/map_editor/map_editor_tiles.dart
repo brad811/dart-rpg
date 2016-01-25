@@ -13,6 +13,8 @@ import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor_events.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor_signs.dart';
 
 import 'package:react/react.dart';
 
@@ -35,9 +37,6 @@ class MapEditorTiles extends Component {
       (Sprite.scaledSpriteSize).round(),
       (Sprite.scaledSpriteSize).round()
     );
-
-    setUpLayerVisibilityToggles();
-    setUpMapSizeButtons();
 
     updateSelectedSpriteCanvas();
   }
@@ -90,9 +89,13 @@ class MapEditorTiles extends Component {
     update();
   }
 
+  onSelectedLayerChange(Event e) {
+    MapEditor.selectedLayer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
+  }
+
   render() {
     return
-      div({'id': 'tiles_tab', 'className': 'tab'}, [
+      div({'id': 'tiles_tab', 'className': 'tab'},
         div({
           'id': 'tool_selector_select',
           'className': 'tool_selector ' + (MapEditor.selectedTool == "select" ? 'selected' : ''),
@@ -118,123 +121,163 @@ class MapEditorTiles extends Component {
           'className': 'tool_selector ' + (MapEditor.selectedTool == "stamp" ? 'selected' : ''),
           'onClick': (MouseEvent e) { selectTool("stamp"); }
         }, "Stamp"),
-        div({
-          'id': 'stamp_tool_size'}, [
+        div({'id': 'stamp_tool_size'},
           "Width: ", input({'id': 'stamp_tool_width', 'type': 'text', 'className': 'number'}),
           br({}),
-          "Height: ", input({'id': 'stamp_tool_height', 'type': 'text', 'className': 'number'}),
-        ]),
+          "Height: ", input({'id': 'stamp_tool_height', 'type': 'text', 'className': 'number'})
+        ),
         br({'className': 'breaker'}),
 
-        table({'className': 'editor_table'}, tbody({}, [
-          tr({}, [
+        table({'className': 'editor_table'}, tbody({},
+          tr({},
             td({},
               canvas({'id': 'editor_selected_sprite_canvas', 'width': 32, 'height': 32})
             ),
-            td({}, [
-              input({'type': 'radio', 'name': 'layer', 'value': 3}, "Above"), br({}),
-              input({'type': 'radio', 'name': 'layer', 'value': 2}, "Player"), br({}),
-              input({'type': 'radio', 'name': 'layer', 'value': 1}, "Below"), br({}),
-              input({'type': 'radio', 'name': 'layer', 'value': 0}, "Ground"), br({})
-            ]),
-            td({}, [
+            td({},
+              input({
+                'type': 'radio',
+                'name': 'layer',
+                'value': 3,
+                'checked': MapEditor.selectedLayer == 3,
+                'onChange': onSelectedLayerChange
+              }, "Above"), br({}),
+              input({
+                'type': 'radio',
+                'name': 'layer',
+                'value': 2,
+                'checked': MapEditor.selectedLayer == 2,
+                'onChange': onSelectedLayerChange
+              }, "Player"), br({}),
+              input({
+                'type': 'radio',
+                'name': 'layer',
+                'value': 1,
+                'checked': MapEditor.selectedLayer == 1,
+                'onChange': onSelectedLayerChange
+              }, "Below"), br({}),
+              input({
+                'type': 'radio',
+                'name': 'layer',
+                'value': 0,
+                'checked': MapEditor.selectedLayer == 0,
+                'onChange': onSelectedLayerChange
+              }, "Ground"), br({})
+            ),
+            td({},
               input({'id': 'solid', 'type': 'checkbox'}, "Solid"),  br({}),
               input({'id': 'solid', 'type': 'checkbox'}, "Layered"), br({}),
               input({'id': 'solid', 'type': 'checkbox'}, "Encounter")
-            ])
-          ])
-        ])),
+            )
+          )
+        )),
 
-        div({'id': 'size_buttons_container'}, [
-          table({}, tbody({}, [
-            tr({}, [
+        div({'id': 'size_buttons_container'},
+          table({}, tbody({},
+            tr({},
               td({'colSpan': 2}),
               td({},
-                button({'id': 'size_y_up_button_pre'}, "+")
+                button({'id': 'size_y_up_button_pre', 'onClick': (MouseEvent e) { sizeUpTop(); }}, "+")
               ),
               td({'colSpan': 2})
-            ]),
-            tr({}, [
+            ),
+            tr({},
               td({'colSpan': 2}),
               td({},
-                button({'id': 'size_y_down_button_pre'}, "-")
+                button({'id': 'size_y_down_button_pre', 'onClick': (MouseEvent e) { sizeDownTop(); }}, "-")
               ),
               td({'colSpan': 2})
-            ]),
-            tr({}, [
+            ),
+            tr({},
               td({},
-                button({'id': 'size_x_up_button_pre'}, "+")
+                button({'id': 'size_x_up_button_pre', 'onClick': (MouseEvent e) { sizeUpLeft(); }}, "+")
               ),
               td({},
-                button({'id': 'size_x_down_button_pre'}, "-")
+                button({'id': 'size_x_down_button_pre', 'onClick': (MouseEvent e) { sizeDownLeft(); }}, "-")
               ),
-              td({'className': 'center'}, [
+              td({'className': 'center'},
                 "Resize Map",
                 div({'id': 'cur_map_size'})
-              ]),
-              td({},
-                button({'id': 'size_x_down_button'}, "-")
               ),
               td({},
-                button({'id': 'size_x_up_button'}, "+")
+                button({'id': 'size_x_down_button', 'onClick': (MouseEvent e) { sizeDownRight(); }}, "-")
+              ),
+              td({},
+                button({'id': 'size_x_up_button', 'onClick': (MouseEvent e) { sizeUpRight(); }}, "+")
               )
-            ]),
-            tr({}, [
+            ),
+            tr({},
               td({'colSpan': 2}),
-              td({}, [
-                button({'id': 'size_y_down_button'}, "-")
-              ]),
+              td({},
+                button({'id': 'size_y_down_button', 'onClick': (MouseEvent e) { sizeDownBottom(); }}, "-")
+              ),
               td({'colSpan': 2})
-            ]),
-            tr({}, [
+            ),
+            tr({},
               td({'colSpan': 2}),
-              td({}, [
-                button({'id': 'size_y_up_button'}, "+")
-              ]),
+              td({},
+                button({'id': 'size_y_up_button', 'onClick': (MouseEvent e) { sizeUpBottom(); }}, "+")
+              ),
               td({'colSpan': 2})
-            ])
-          ]))
-        ]),
+            )
+          ))
+        ),
 
-        div({'id': 'layer_visibility_toggles'}, [
+        div({'id': 'layer_visibility_toggles'},
           h4({}, "Layer Visibility"),
-          input({'id': 'layer_visible_above', 'type': 'checkbox', 'value': true}, "Above"), br({}),
-          input({'id': 'layer_visible_player', 'type': 'checkbox', 'value': true}, "Player"), br({}),
-          input({'id': 'layer_visible_below', 'type': 'checkbox', 'value': true}, "Below"), br({}),
-          input({'id': 'layer_visible_ground', 'type': 'checkbox', 'value': true}, "Ground"), br({}),
+          input({
+            'id': 'layer_visible_above',
+            'type': 'checkbox',
+            'checked': MapEditor.layerVisible[World.LAYER_ABOVE],
+            'onChange': (Event e) {
+              MapEditor.layerVisible[World.LAYER_ABOVE] = Editor.getCheckboxInputBoolValue("#layer_visible_above");
+              MapEditor.updateMap();
+              update();
+            }
+          }, "Above"), br({}),
+          input({
+            'id': 'layer_visible_player',
+            'type': 'checkbox',
+            'checked': MapEditor.layerVisible[World.LAYER_PLAYER],
+            'onChange': (Event e) {
+              MapEditor.layerVisible[World.LAYER_PLAYER] = Editor.getCheckboxInputBoolValue("#layer_visible_player");
+              MapEditor.updateMap();
+              update();
+            }
+          }, "Player"), br({}),
+          input({
+            'id': 'layer_visible_below',
+            'type': 'checkbox',
+            'checked': MapEditor.layerVisible[World.LAYER_BELOW],
+            'onChange': (Event e) {
+              MapEditor.layerVisible[World.LAYER_BELOW] = Editor.getCheckboxInputBoolValue("#layer_visible_below");
+              MapEditor.updateMap();
+              update();
+            }
+          }, "Below"), br({}),
+          input({
+            'id': 'layer_visible_ground',
+            'type': 'checkbox',
+            'checked': MapEditor.layerVisible[World.LAYER_GROUND],
+            'onChange': (Event e) {
+              MapEditor.layerVisible[World.LAYER_GROUND] = Editor.getCheckboxInputBoolValue("#layer_visible_ground");
+              MapEditor.updateMap();
+              update();
+            }
+          }, "Ground"), br({}),
           br({}),
-          input({'id': 'layer_visible_special', 'type': 'checkbox', 'value': true}, "Highlight Special Tiles"),
+          input({
+            'id': 'layer_visible_special',
+            'type': 'checkbox',
+            'checked': Editor.highlightSpecialTiles,
+            'onChange': (Event e) {
+              Editor.highlightSpecialTiles = Editor.getCheckboxInputBoolValue("#layer_visible_special");
+              MapEditor.updateMap();
+              update();
+            }
+          }, "Highlight Special Tiles"),
           br({})
-        ])
-      ]);
-  }
-
-  void setUpLayerVisibilityToggles() {
-    Editor.attachInputListeners("layer_visible",
-      ["above", "player", "below", "ground", "special"],
-      (_) {
-        MapEditor.layerVisible[World.LAYER_ABOVE] = Editor.getCheckboxInputBoolValue("#layer_visible_above");
-        MapEditor.layerVisible[World.LAYER_PLAYER] = Editor.getCheckboxInputBoolValue("#layer_visible_player");
-        MapEditor.layerVisible[World.LAYER_BELOW] = Editor.getCheckboxInputBoolValue("#layer_visible_below");
-        MapEditor.layerVisible[World.LAYER_GROUND] = Editor.getCheckboxInputBoolValue("#layer_visible_ground");
-        
-        Editor.highlightSpecialTiles = Editor.getCheckboxInputBoolValue("#layer_visible_special");
-        
-        props['update']();
-      }
-    );
-  }
-
-  void setUpMapSizeButtons() {
-    Editor.attachButtonListener("#size_x_down_button", (_) { sizeDownRight(); });
-    Editor.attachButtonListener("#size_x_up_button", (_) { sizeUpRight(); });
-    Editor.attachButtonListener("#size_y_down_button", (_) { sizeDownBottom(); });
-    Editor.attachButtonListener("#size_y_up_button", (_) { sizeUpBottom(); });
-    
-    Editor.attachButtonListener("#size_x_down_button_pre", (_) { sizeDownLeft(); });
-    Editor.attachButtonListener("#size_x_up_button_pre", (_) { sizeUpLeft(); });
-    Editor.attachButtonListener("#size_y_down_button_pre", (_) { sizeDownTop(); });
-    Editor.attachButtonListener("#size_y_up_button_pre", (_) { sizeUpTop(); });
+        )
+      );
   }
 
   void shiftObjects(int xAmount, int yAmount) {
@@ -242,7 +285,10 @@ class MapEditorTiles extends Component {
       return;
     }
     
-    props['shift'](xAmount, yAmount);
+    // TODO
+    //ref('mapEditorMaps').shift(xAmount, yAmount);
+    MapEditorSigns.shift(xAmount, yAmount);
+    MapEditorEvents.shift(xAmount, yAmount);
 
     // shift characters
     World.characters.forEach((String characterLabel, Character character) {
@@ -286,7 +332,8 @@ class MapEditorTiles extends Component {
     
     shiftObjects(0, 0);
     
-    props['update']();
+    MapEditor.updateMap(shouldExport: true);
+    update();
   }
   
   void sizeUpRight() {
@@ -302,7 +349,8 @@ class MapEditorTiles extends Component {
       mapTiles[y].add(array);
     }
     
-    props['update']();
+    MapEditor.updateMap(shouldExport: true);
+    update();
   }
   
   void sizeDownBottom() {
@@ -314,7 +362,8 @@ class MapEditorTiles extends Component {
     
     shiftObjects(0, 0);
     
-    props['update']();
+    MapEditor.updateMap(shouldExport: true);
+    update();
   }
   
   void sizeUpBottom() {
@@ -331,7 +380,8 @@ class MapEditorTiles extends Component {
     
     mapTiles.add(rowArray);
     
-    props['update']();
+    MapEditor.updateMap(shouldExport: true);
+    update();
   }
   
   void sizeDownLeft() {
@@ -353,7 +403,8 @@ class MapEditorTiles extends Component {
     
     shiftObjects(-1, 0);
     
-    props['update']();
+    MapEditor.updateMap(shouldExport: true);
+    update();
   }
   
   void sizeUpLeft() {
@@ -383,7 +434,8 @@ class MapEditorTiles extends Component {
     
     shiftObjects(1, 0);
     
-    props['update']();
+    MapEditor.updateMap(shouldExport: true);
+    update();
   }
   
   void sizeDownTop() {
@@ -405,7 +457,8 @@ class MapEditorTiles extends Component {
     
     shiftObjects(0, -1);
     
-    props['update']();
+    MapEditor.updateMap(shouldExport: true);
+    update();
   }
   
   void sizeUpTop() {
@@ -434,6 +487,7 @@ class MapEditorTiles extends Component {
     
     shiftObjects(0, 1);
     
-    props['update']();
+    MapEditor.updateMap(shouldExport: true);
+    update();
   }
 }

@@ -45,7 +45,7 @@ class Editor extends Component {
     Main.world = new World(() {
       Main.world.loadGame(() {
         this.setState({'gameLoaded': true});
-        this.export();
+        Editor.export();
       });
     });
   }
@@ -150,11 +150,11 @@ class Editor extends Component {
     this.setState({});
 
     if(shouldExport) {
-      this.export();
+      Editor.export();
     }
   }
   
-  void export() {
+  static void export() {
     print("Exporting...");
 
     Map<String, Map<String, Map<String, Object>>> exportJson = {};

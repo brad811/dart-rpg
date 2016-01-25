@@ -66,6 +66,7 @@ class MapEditor extends Component {
 
   static String selectedTool = "select";
   static int selectedTile = -1, previousSelectedTile = -1;
+  static int selectedLayer = 0;
 
   static Map<String, List<WarpTile>> warps = {};
   static Map<String, List<Sign>> signs = {};
@@ -298,13 +299,6 @@ class MapEditor extends Component {
         )
       );
   }
-
-  void shift(int xAmount, int yAmount) {
-    // TODO
-    ref('mapEditorMaps').shift(xAmount, yAmount);
-    ref('mapEditorSigns').shift(xAmount, yAmount);
-    ref('mapEditorEvents').shift(xAmount, yAmount);
-  }
   
   void setUpSpritePicker() {
     mapEditorSpriteSelectorCanvasContext.fillStyle = "#ff00ff";
@@ -438,8 +432,6 @@ class MapEditor extends Component {
           // render the tile as it would appear with the selected tile applied to the selected layer
           mapEditorCanvasContext.fillStyle = "#ff00ff";
           mapEditorCanvasContext.fillRect(Sprite.scaledSpriteSize * (x+i), Sprite.scaledSpriteSize * (y+j), Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
-          
-          int selectedLayer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
           
           for(int layer=0; layer<World.layers.length; layer++) {
             if(selectedLayer == layer) {
@@ -730,8 +722,7 @@ class MapEditor extends Component {
     renderColoredTiles();
     
     if(shouldExport) {
-      // TODO
-      //Editor.export();
+      Editor.export();
     }
   }
   

@@ -131,7 +131,7 @@ class MapEditorSigns extends Component {
     }
   }
   
-  void shift(int xAmount, int yAmount) {
+  static void shift(int xAmount, int yAmount) {
     for(Sign sign in MapEditor.signs[Main.world.curMap]) {
       if(sign == null)
         continue;

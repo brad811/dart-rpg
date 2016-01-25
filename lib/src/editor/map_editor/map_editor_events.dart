@@ -34,7 +34,7 @@ class MapEditorEvents extends Component {
     });
   }
 
-  void shift(int xAmount, int yAmount) {
+  static void shift(int xAmount, int yAmount) {
     for(EventTile event in MapEditor.events[Main.world.curMap]) {
       if(event == null)
         continue;
