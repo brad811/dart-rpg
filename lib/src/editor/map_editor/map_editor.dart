@@ -215,7 +215,7 @@ class MapEditor extends Component {
   render() {
     JsObject selectedTab;
     if(state['selectedTab'] == "maps") {
-      selectedTab = mapEditorMaps({'update': props['update']});
+      selectedTab = mapEditorMaps({'update': props['update'], 'debounceUpdate': props['debounceUpdate']});
     } else if(state['selectedTab'] == "tiles") {
       selectedTab = mapEditorTiles({'selectedTile': state['selectedTile']});
     } else if(state['selectedTab'] == "map_characters") {

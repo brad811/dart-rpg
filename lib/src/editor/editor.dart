@@ -73,7 +73,7 @@ class Editor extends Component {
 
     JsObject selectedTab;
     if(state['selectedTab'] == 'mapEditor') {
-      selectedTab = mapEditor({'update': update});
+      selectedTab = mapEditor({'update': update, 'debounceUpdate': debounceUpdate});
     } else if(state['selectedTab'] == 'objectEditor') {
       selectedTab = objectEditor({'update': update});
     } else if(state['selectedTab'] == 'screenEditor') {
@@ -128,23 +128,22 @@ class Editor extends Component {
     });
   }
   
-  /*
   static Timer debounceTimer;
   static Duration debounceDelay = new Duration(milliseconds: 250);
 
-  void debounceUpdate({Function callback, bool immediate: false}) {
+  void debounceUpdate({Function callback}) {
     if(debounceTimer != null) {
       debounceTimer.cancel();
     }
 
-    debounceTimer = new Timer(immediate ? new Duration(seconds: 0) : debounceDelay, () {
+    debounceTimer = new Timer(debounceDelay, () {
       update();
+      Editor.export();
       if(callback != null) {
         callback();
       }
     });
   }
-  */
   
   void update({bool shouldExport: false}) {
     this.setState({});

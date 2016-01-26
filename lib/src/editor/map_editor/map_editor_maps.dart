@@ -21,6 +21,10 @@ import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 import 'package:react/react.dart';
 
 class MapEditorMaps extends Component {
+  void update() {
+    setState({});
+  }
+
   render() {
     List<JsObject> tableRows = [
       tr({}, [
@@ -214,7 +218,8 @@ class MapEditorMaps extends Component {
     });
     
     if(nameChange) {
-      Editor.updateAndRetainValue(e, props['update']);
+      props['debounceUpdate']();
+      update();
     } else {
       MapEditor.updateMap(shouldExport: true);
     }
