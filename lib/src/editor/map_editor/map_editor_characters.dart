@@ -8,6 +8,7 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 
 import 'package:react/react.dart';
 
@@ -38,27 +39,16 @@ class MapEditorCharacters extends Component {
       }
     });
     
-    this.setState({});
-    Editor.updateAndRetainValue(e, props['update']);
-  }
-
-  componentDidMount(a) {
     update();
+    MapEditor.updateMap(shouldExport: true);
   }
 
-  componentDidUpdate(a, b, c) {
+  componentDidMount(Element rootNode) {
     update();
   }
 
   void update() {
-    List<String> attrs = ["map_x", "map_y", "layer", "direction", "solid"];
-    
-    for(int i=0; i<World.characters.keys.length; i++) {
-      if(World.characters.values.elementAt(i).map != Main.world.curMap)
-        continue;
-      
-      Editor.attachInputListeners("map_character_${i}", attrs, onInputChange);
-    }
+    setState({});
   }
 
   render() {
@@ -104,19 +94,44 @@ class MapEditorCharacters extends Component {
           td({}, i),
           td({}, key),
           td({},
-            input({'id': 'map_character_${i}_map_x', 'type': 'text', 'className': 'number', 'value': character.mapX})
+            input({
+              'id': 'map_character_${i}_map_x',
+              'type': 'text',
+              'className': 'number',
+              'value': character.mapX,
+              'onChange': onInputChange
+            })
           ),
           td({},
-            input({'id': 'map_character_${i}_map_y', 'type': 'text', 'className': 'number', 'value': character.mapY})
+            input({
+              'id': 'map_character_${i}_map_y',
+              'type': 'text',
+              'className': 'number',
+              'value': character.mapY,
+              'onChange': onInputChange
+            })
           ),
           td({},
-            select({'id': 'map_character_${i}_layer'}, layerOptions)
+            select({
+              'id': 'map_character_${i}_layer',
+              'value': character.layer,
+              'onChange': onInputChange
+            }, layerOptions)
           ),
           td({},
-            select({'id': 'map_character_${i}_direction'}, directionOptions)
+            select({
+              'id': 'map_character_${i}_direction',
+              'value': character.direction,
+              'onChange': onInputChange
+            }, directionOptions)
           ),
           td({},
-            input({'id': 'map_character_${i}_solid', 'type': 'checkbox', 'checked': character.solid})
+            input({
+              'id': 'map_character_${i}_solid',
+              'type': 'checkbox',
+              'checked': character.solid,
+              'onChange': onInputChange
+            })
           )
         ])
       );
