@@ -29,7 +29,7 @@ class EncounterTile extends Tile {
     }
     
     double chance = rand.nextDouble();
-    if(chance < 0.15) {
+    if(chance < 0.15 && Main.world.maps[Main.world.curMap].battlerChances.length > 0) {
       chance = rand.nextDouble();
       
       double curWeight = 0.0;

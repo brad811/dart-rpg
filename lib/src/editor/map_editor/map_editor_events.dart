@@ -15,6 +15,10 @@ import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:react/react.dart';
 
 class MapEditorEvents extends Component {
+  void update() {
+    setState({});
+  }
+
   void trackColors(Map<String, Map<String, int>> colorTrackers) {
     MapEditor.events[Main.world.curMap].forEach((EventTile eventTile) {
       int x = eventTile.sprite.posX.round();
@@ -78,9 +82,6 @@ class MapEditorEvents extends Component {
   }
 
   void onInputChange(Event e) {
-    // TODO: implement!
-    print("MapEditorEventsComponent.onInputChange not yet implemented!");
-
     Editor.enforceValueFormat(e);
     
     for(int i=0; i<MapEditor.events[Main.world.curMap].length; i++) {
@@ -100,6 +101,7 @@ class MapEditorEvents extends Component {
     }
     
     //Editor.updateAndRetainValue(e);
+    update();
     MapEditor.updateMap(shouldExport: true);
   }
 
@@ -133,7 +135,8 @@ class MapEditorEvents extends Component {
               'id': 'map_event_${i}_posx',
               'type': 'text',
               'className': 'number',
-              'value': MapEditor.events[Main.world.curMap][i].sprite.posX.round()
+              'value': MapEditor.events[Main.world.curMap][i].sprite.posX.round(),
+              'onChange': onInputChange
             })
           ),
           td({},
@@ -141,17 +144,30 @@ class MapEditorEvents extends Component {
               'id': 'map_event_${i}_posy',
               'type': 'text',
               'className': 'number',
-              'value': MapEditor.events[Main.world.curMap][i].sprite.posY.round()
+              'value': MapEditor.events[Main.world.curMap][i].sprite.posY.round(),
+              'onChange': onInputChange
             })
           ),
           td({},
-            select({'id': 'map_event_${i}_game_event_chain', 'value': MapEditor.events[Main.world.curMap][i].gameEventChain}, options)
+            select({
+              'id': 'map_event_${i}_game_event_chain',
+              'value': MapEditor.events[Main.world.curMap][i].gameEventChain,
+              'onChange': onInputChange
+            }, options)
           ),
           td({},
-            input({'id': 'map_event_${i}_run_once', 'type': 'checkbox', 'checked': MapEditor.events[Main.world.curMap][i].runOnce})
+            input({
+              'id': 'map_event_${i}_run_once',
+              'type': 'checkbox',
+              'checked': MapEditor.events[Main.world.curMap][i].runOnce,
+              'onChange': onInputChange
+            })
           ),
           td({},
-            button({'id': 'delete_event_${i}', 'onClick': (e) { deleteEvent(i); }}, "Delete")
+            button({
+              'id': 'delete_event_${i}',
+              'onClick': (e) { deleteEvent(i); }
+            }, "Delete")
           )
         )
       );

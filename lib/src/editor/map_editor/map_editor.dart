@@ -67,6 +67,10 @@ class MapEditor extends Component {
   static String selectedTool = "select";
   static int selectedTile = -1, previousSelectedTile = -1;
   static int selectedLayer = 0;
+  static bool
+    brushSolid = false,
+    brushLayered = false,
+    brushEncounter = false;
 
   static Map<String, List<WarpTile>> warps = {};
   static Map<String, List<Sign>> signs = {};
@@ -477,13 +481,12 @@ class MapEditor extends Component {
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
 
-    // TODO: maybe save these and change them onInputChange
-    int layer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
-    bool solid = Editor.getCheckboxInputBoolValue("#solid");
-    bool layered = Editor.getCheckboxInputBoolValue("#layered");
-    bool encounter = Editor.getCheckboxInputBoolValue("#encounter");
-
-    changeTile(x, y, layer, solid, layered, encounter);
+    changeTile(
+      x, y, MapEditor.selectedLayer,
+      MapEditor.brushSolid,
+      MapEditor.brushLayered,
+      MapEditor.brushEncounter
+    );
   }
   
   void showTileInfo(int x, int y) {

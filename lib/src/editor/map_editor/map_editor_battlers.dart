@@ -14,16 +14,8 @@ import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:react/react.dart';
 
 class MapEditorBattlers extends Component {
-  Map getInitialState() {
-    return {
-      'battlerChances': Main.world.maps[Main.world.curMap].battlerChances
-    };
-  }
-
-  void updateState() {
-    this.setState({
-        'battlerChances': Main.world.maps[Main.world.curMap].battlerChances
-    });
+  void update() {
+    this.setState({});
   }
 
   void onInputChange(Event e) {
@@ -52,7 +44,8 @@ class MapEditorBattlers extends Component {
     }
     
     //Editor.updateAndRetainValue(e);
-    updateState();
+    update();
+    Editor.debounceExport();
   }
 
   void addNewBattler(MouseEvent e) {
@@ -63,20 +56,18 @@ class MapEditorBattlers extends Component {
       )
     );
     
-    updateState();
-    //Editor.update();
+    update();
   }
 
   void deleteBattler(int battlerNum) {
     Main.world.maps[Main.world.curMap].battlerChances.removeAt(battlerNum);
-    updateState();
-    //Editor.update();
+    update();
   }
 
   void render() {
     double totalChance = 0.0;
-    for(int i=0; i<this.state['battlerChances'].length; i++) {
-      totalChance += this.state['battlerChances'][i].chance;
+    for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {
+      totalChance += Main.world.maps[Main.world.curMap].battlerChances[i].chance;
     }
 
     List<JsObject> battlerTableRows = [];
@@ -91,16 +82,16 @@ class MapEditorBattlers extends Component {
       ])
     );
 
-    for(int i=0; i<this.state['battlerChances'].length; i++) {
+    for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {
       int percentChance = 0;
       if(totalChance != 0) {
-        percentChance = (this.state['battlerChances'][i].chance / totalChance * 100).round();
+        percentChance = (Main.world.maps[Main.world.curMap].battlerChances[i].chance / totalChance * 100).round();
       }
 
       List<JsObject> battlerTypeOptions = [];
       World.battlerTypes.forEach((String name, BattlerType battlerType) {
         battlerTypeOptions.add(
-          option({'defaultValue': battlerType.name}, battlerType.name)
+          option({'value': battlerType.name}, battlerType.name)
         );
       });
 
@@ -112,7 +103,7 @@ class MapEditorBattlers extends Component {
               {
                 'id': 'map_battler_${i}_type',
                 'onChange': onInputChange,
-                'defaultValue': this.state['battlerChances'][i].battler.name
+                'value': Main.world.maps[Main.world.curMap].battlerChances[i].battler.name
               },
               battlerTypeOptions
             )
@@ -123,7 +114,7 @@ class MapEditorBattlers extends Component {
               'type': 'text',
               'className': 'number',
               'onChange': onInputChange,
-              'defaultValue': this.state['battlerChances'][i].battler.level
+              'value': Main.world.maps[Main.world.curMap].battlerChances[i].battler.level
             })
           ]),
           td({}, [
@@ -132,7 +123,7 @@ class MapEditorBattlers extends Component {
               'type': 'text',
               'className': 'number decimal',
               'onChange': onInputChange,
-              'defaultValue': this.state['battlerChances'][i].chance
+              'value': Main.world.maps[Main.world.curMap].battlerChances[i].chance
             }),
             span({'id': 'map_battler_${i}_percent_chance'}, " ${percentChance}%")
           ]),

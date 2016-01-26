@@ -128,8 +128,9 @@ class Editor extends Component {
     });
   }
   
-  static Timer debounceTimer;
+  static Timer debounceTimer, debounceExportTimer;
   static Duration debounceDelay = new Duration(milliseconds: 250);
+  static Duration debounceExportDelay = new Duration(milliseconds: 500);
 
   void debounceUpdate({Function callback}) {
     if(debounceTimer != null) {
@@ -142,6 +143,16 @@ class Editor extends Component {
       if(callback != null) {
         callback();
       }
+    });
+  }
+
+  static void debounceExport() {
+    if(debounceExportTimer != null) {
+      debounceExportTimer.cancel();
+    }
+
+    debounceExportTimer = new Timer(debounceExportDelay, () {
+      Editor.export();
     });
   }
   

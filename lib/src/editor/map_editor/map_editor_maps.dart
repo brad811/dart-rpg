@@ -75,7 +75,7 @@ class MapEditorMaps extends Component {
                   }
                   
                   Main.world.curMap = Main.world.maps.keys.first;
-                  props['update'](shouldExport: false);
+                  props['update'](shouldExport: true);
                 })
             }, "Delete")
           )

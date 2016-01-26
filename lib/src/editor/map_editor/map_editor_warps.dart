@@ -21,6 +21,10 @@ class MapEditorWarps extends Component {
     }
   }
 
+  void update() {
+    setState({});
+  }
+
   render() {
     List<JsObject> tableRows = [
       tr({}, [
@@ -50,7 +54,8 @@ class MapEditorWarps extends Component {
               'id': 'warp_${i}_posx',
               'type': 'text',
               'className':'number',
-              'value': MapEditor.warps[Main.world.curMap][i].sprite.posX.round()
+              'value': MapEditor.warps[Main.world.curMap][i].sprite.posX.round(),
+              'onChange': onInputChange
             })
           ),
           td({},
@@ -58,18 +63,23 @@ class MapEditorWarps extends Component {
               'id': 'warp_${i}_posy',
               'type': 'text',
               'className':'number',
-              'value': MapEditor.warps[Main.world.curMap][i].sprite.posY.round()
+              'value': MapEditor.warps[Main.world.curMap][i].sprite.posY.round(),
+              'onChange': onInputChange
             })
           ),
           td({},
-            select({'id': 'warp_${i}_dest_map'}, destMapOptions)
+            select({
+              'id': 'warp_${i}_dest_map',
+              'onChange': onInputChange
+            }, destMapOptions)
           ),
           td({},
             input({
               'id': 'warp_${i}_dest_x',
               'type': 'text',
               'className':'number',
-              'value': MapEditor.warps[Main.world.curMap][i].destX
+              'value': MapEditor.warps[Main.world.curMap][i].destX,
+              'onChange': onInputChange
             })
           ),
           td({},
@@ -77,7 +87,8 @@ class MapEditorWarps extends Component {
               'id': 'warp_${i}_dest_y',
               'type': 'text',
               'className':'number',
-              'value': MapEditor.warps[Main.world.curMap][i].destY
+              'value': MapEditor.warps[Main.world.curMap][i].destY,
+              'onChange': onInputChange
             })
           ),
           td({},
@@ -124,6 +135,7 @@ class MapEditorWarps extends Component {
       }
     }
     
+    update();
     MapEditor.updateMap(shouldExport: true);
   }
   
@@ -139,7 +151,7 @@ class MapEditorWarps extends Component {
     }
   }
   
-  void shift(int xAmount, int yAmount) {
+  static void shift(int xAmount, int yAmount) {
     MapEditor.warps.forEach((String mapName, List<WarpTile> warpTiles) {
       warpTiles.forEach((WarpTile warpTile) {
         if(warpTile == null)

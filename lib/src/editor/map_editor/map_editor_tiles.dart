@@ -15,6 +15,7 @@ import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 import 'package:dart_rpg/src/editor/map_editor/map_editor_events.dart';
 import 'package:dart_rpg/src/editor/map_editor/map_editor_signs.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor_warps.dart';
 
 import 'package:react/react.dart';
 
@@ -91,6 +92,14 @@ class MapEditorTiles extends Component {
 
   onSelectedLayerChange(Event e) {
     MapEditor.selectedLayer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
+    update();
+  }
+
+  onTileBrushAttributeChange(Event e) {
+    MapEditor.brushSolid = Editor.getCheckboxInputBoolValue("#brushSolid");
+    MapEditor.brushLayered = Editor.getCheckboxInputBoolValue("#brushLayered");
+    MapEditor.brushEncounter = Editor.getCheckboxInputBoolValue("#brushEncounter");
+    update();
   }
 
   render() {
@@ -164,9 +173,24 @@ class MapEditorTiles extends Component {
               }, "Ground"), br({})
             ),
             td({},
-              input({'id': 'solid', 'type': 'checkbox'}, "Solid"),  br({}),
-              input({'id': 'solid', 'type': 'checkbox'}, "Layered"), br({}),
-              input({'id': 'solid', 'type': 'checkbox'}, "Encounter")
+              input({
+                'id': 'brushSolid',
+                'type': 'checkbox',
+                'value': MapEditor.brushSolid,
+                'onChange': onTileBrushAttributeChange
+              }, "Solid"),  br({}),
+              input({
+                'id': 'brushLayered',
+                'type': 'checkbox',
+                'value': MapEditor.brushLayered,
+                'onChange': onTileBrushAttributeChange
+              }, "Layered"), br({}),
+              input({
+                'id': 'brushEncounter',
+                'type': 'checkbox',
+                'value': MapEditor.brushEncounter,
+                'onChange': onTileBrushAttributeChange
+              }, "Encounter")
             )
           )
         )),
@@ -287,6 +311,7 @@ class MapEditorTiles extends Component {
     
     // TODO
     //ref('mapEditorMaps').shift(xAmount, yAmount);
+    MapEditorWarps.shift(xAmount, yAmount);
     MapEditorSigns.shift(xAmount, yAmount);
     MapEditorEvents.shift(xAmount, yAmount);
 

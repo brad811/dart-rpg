@@ -13,21 +13,8 @@ import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 import 'package:react/react.dart';
 
 class MapEditorSigns extends Component {
-  attachListeners() {
-    setSignDeleteButtonListeners();
-    
-    for(int i=0; i<MapEditor.signs[Main.world.curMap].length; i++) {
-      Editor.attachInputListeners("sign_${i}", ["posx", "posy", "pic", "text"], onInputChange);
-    }
-  }
-
-  componentDidMount(Element rootNode) {
-    Editor.attachButtonListener("#add_sign_button", addNewSign);
-    attachListeners();
-  }
-
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
-    attachListeners();
+  update() {
+    setState({});
   }
 
   render() {
@@ -51,7 +38,8 @@ class MapEditorSigns extends Component {
               'id': 'sign_${i}_posx',
               'type': 'text',
               'className': 'number',
-              'value': MapEditor.signs[Main.world.curMap][i].sprite.posX.round()
+              'value': MapEditor.signs[Main.world.curMap][i].sprite.posX.round(),
+              'onChange': onInputChange
             })
           ),
           td({},
@@ -59,7 +47,8 @@ class MapEditorSigns extends Component {
               'id': 'sign_${i}_posy',
               'type': 'text',
               'className': 'number',
-              'value': MapEditor.signs[Main.world.curMap][i].sprite.posY.round()
+              'value': MapEditor.signs[Main.world.curMap][i].sprite.posY.round(),
+              'onChange': onInputChange
             })
           ),
           td({},
@@ -67,14 +56,24 @@ class MapEditorSigns extends Component {
               'id': 'sign_${i}_pic',
               'type': 'text',
               'className': 'number',
-              'value': MapEditor.signs[Main.world.curMap][i].textEvent.pictureSpriteId
+              'value': MapEditor.signs[Main.world.curMap][i].textEvent.pictureSpriteId,
+              'onChange': onInputChange
             })
           ),
           td({},
-            textarea({'id': 'sign_${i}_text', 'value': MapEditor.signs[Main.world.curMap][i].textEvent.text})
+            textarea({
+              'id': 'sign_${i}_text',
+              'value': MapEditor.signs[Main.world.curMap][i].textEvent.text,
+              'onChange': onInputChange
+            })
           ),
           td({},
-            button({'id': 'delete_sign_${i}'}, "Delete")
+            button({
+              'id': 'delete_sign_${i}',
+              'onClick': Editor.generateConfirmDeleteFunction(
+                MapEditor.signs[Main.world.curMap], i, "sign", update
+              )
+            }, "Delete")
           )
         ])
       );
@@ -116,19 +115,8 @@ class MapEditorSigns extends Component {
       }
     }
     
+    update();
     MapEditor.updateMap(shouldExport: true);
-  }
-  
-  void setSignDeleteButtonListeners() {
-    for(int i=0; i<MapEditor.signs[Main.world.curMap].length; i++) {
-      Editor.attachButtonListener("#delete_sign_${i}", (MouseEvent e) {
-        bool confirm = window.confirm('Are you sure you would like to delete this sign?');
-        if(confirm) {
-          MapEditor.signs[Main.world.curMap].removeAt(i);
-          props['update']();
-        }
-      });
-    }
   }
   
   static void shift(int xAmount, int yAmount) {
