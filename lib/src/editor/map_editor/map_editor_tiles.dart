@@ -220,7 +220,9 @@ class MapEditorTiles extends Component {
               ),
               td({'className': 'center'},
                 "Resize Map",
-                div({'id': 'cur_map_size'})
+                div({
+                  'id': 'cur_map_size'
+                }, "${Main.world.maps[Main.world.curMap].tiles[0].length} x ${Main.world.maps[Main.world.curMap].tiles.length}")
               ),
               td({},
                 button({'id': 'size_x_down_button', 'onClick': (MouseEvent e) { sizeDownRight(); }}, "-")
