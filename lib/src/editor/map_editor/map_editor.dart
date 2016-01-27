@@ -46,8 +46,6 @@ class MapEditor extends Component {
     mapEditorCanvasContext,
     mapEditorSpriteSelectorCanvasContext;
   
-  static List<String> mapEditorTabs = ["maps", "tiles", "map_characters", "warps", "signs", "battlers", "events"];
-  
   static int
     mapEditorCanvasWidth = 100,
     mapEditorCanvasHeight = 100,
@@ -75,6 +73,7 @@ class MapEditor extends Component {
   static Map<String, List<WarpTile>> warps = {};
   static Map<String, List<Sign>> signs = {};
   static Map<String, List<EventTile>> events = {};
+  static bool specialTilesLoaded = false;
 
   StreamSubscription resizeListener;
 
@@ -83,17 +82,22 @@ class MapEditor extends Component {
   };
 
   componentWillMount() {
-    // build list of warps
+    if(specialTilesLoaded) {
+      return;
+    }
+
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
       List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
+
       warps[key] = [];
+      signs[key] = [];
+      events[key] = [];
       
       for(var y=0; y<mapTiles.length; y++) {
         for(var x=0; x<mapTiles[y].length; x++) {
           for(int layer in World.layers) {
             if(mapTiles[y][x][layer] is WarpTile) {
-              // make a copy of the warp tile
               WarpTile mapWarpTile = mapTiles[y][x][layer];
               WarpTile warpTile = new WarpTile(
                   mapWarpTile.solid,
@@ -107,22 +111,7 @@ class MapEditor extends Component {
                   mapWarpTile.destY
                 );
               warps[key].add(warpTile);
-            }
-          }
-        }
-      }
-    }
-
-    // build list of signs
-    for(int i=0; i<Main.world.maps.length; i++) {
-      String key = Main.world.maps.keys.elementAt(i);
-      List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
-      signs[key] = [];
-      
-      for(var y=0; y<mapTiles.length; y++) {
-        for(var x=0; x<mapTiles[y].length; x++) {
-          for(int layer in World.layers) {
-            if(mapTiles[y][x][layer] is Sign) {
+            } else if(mapTiles[y][x][layer] is Sign) {
               Sign mapSignTile = mapTiles[y][x][layer];
               Sign signTile = new Sign(
                   mapSignTile.solid,
@@ -135,22 +124,7 @@ class MapEditor extends Component {
                   mapSignTile.textEvent.text
                 );
               signs[key].add(signTile);
-            }
-          }
-        }
-      }
-    }
-
-    // build list of events
-    for(int i=0; i<Main.world.maps.length; i++) {
-      String key = Main.world.maps.keys.elementAt(i);
-      List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
-      events[key] = [];
-      
-      for(var y=0; y<mapTiles.length; y++) {
-        for(var x=0; x<mapTiles[y].length; x++) {
-          for(int layer in World.layers) {
-            if(mapTiles[y][x][layer] is EventTile) {
+            } else if(mapTiles[y][x][layer] is EventTile) {
               EventTile mapEventTile = mapTiles[y][x][layer];
               EventTile eventTile = new EventTile(
                   mapEventTile.gameEventChain,
@@ -167,6 +141,8 @@ class MapEditor extends Component {
         }
       }
     }
+
+    specialTilesLoaded = true;
   }
 
   componentDidMount(Element rootNode) {
