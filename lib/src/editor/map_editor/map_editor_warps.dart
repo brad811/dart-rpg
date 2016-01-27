@@ -122,11 +122,11 @@ class MapEditorWarps extends Component {
     
     for(int i=0; i<MapEditor.warps[Main.world.curMap].length; i++) {
       try {
-        MapEditor.warps[Main.world.curMap][i].sprite.posX = double.parse((querySelector('#warp_${i}_posx') as InputElement).value);
-        MapEditor.warps[Main.world.curMap][i].sprite.posY = double.parse((querySelector('#warp_${i}_posy') as InputElement).value);
-        MapEditor.warps[Main.world.curMap][i].destMap = (querySelector('#warp_${i}_dest_map') as SelectElement).value;
-        MapEditor.warps[Main.world.curMap][i].destX = int.parse((querySelector('#warp_${i}_dest_x') as InputElement).value);
-        MapEditor.warps[Main.world.curMap][i].destY = int.parse((querySelector('#warp_${i}_dest_y') as InputElement).value);
+        MapEditor.warps[Main.world.curMap][i].sprite.posX = Editor.getTextInputDoubleValue('#warp_${i}_posx', 0.0);
+        MapEditor.warps[Main.world.curMap][i].sprite.posY = Editor.getTextInputDoubleValue('#warp_${i}_posy', 0.0);
+        MapEditor.warps[Main.world.curMap][i].destMap = Editor.getSelectInputStringValue('#warp_${i}_dest_map');
+        MapEditor.warps[Main.world.curMap][i].destX = Editor.getTextInputIntValue('#warp_${i}_dest_x', 0);
+        MapEditor.warps[Main.world.curMap][i].destY = Editor.getTextInputIntValue('#warp_${i}_dest_y', 0);
       } catch(e) {
         // could not update this warp
         print("Error while updating warp: ${e}");
