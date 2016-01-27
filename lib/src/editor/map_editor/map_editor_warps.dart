@@ -13,16 +13,10 @@ import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 import 'package:react/react.dart';
 
 class MapEditorWarps extends Component {
-  componentDidMount(a) {
-    setWarpDeleteButtonListeners();
-    
-    for(int i=0; i<MapEditor.warps[Main.world.curMap].length; i++) {
-      Editor.attachInputListeners("warp_${i}", ["posx", "posy", "dest_map", "dest_x", "dest_y"], onInputChange);
-    }
-  }
-
   void update() {
     setState({});
+    MapEditor.updateMap();
+    Editor.debounceExport();
   }
 
   render() {
@@ -92,7 +86,10 @@ class MapEditorWarps extends Component {
             })
           ),
           td({},
-            button({'id': 'delete_warp_${i}'}, 'Delete')
+            button({
+              'id': 'delete_warp_${i}',
+              'onClick': Editor.generateConfirmDeleteFunction(MapEditor.warps, i, "warp", update)
+            }, 'Delete')
           )
         ])
       );
@@ -117,7 +114,7 @@ class MapEditorWarps extends Component {
       )
     );
     
-    props['update']();
+    update();
   }
   
   void onInputChange(Event e) {
@@ -132,23 +129,11 @@ class MapEditorWarps extends Component {
         MapEditor.warps[Main.world.curMap][i].destY = int.parse((querySelector('#warp_${i}_dest_y') as InputElement).value);
       } catch(e) {
         // could not update this warp
+        print("Error while updating warp: ${e}");
       }
     }
     
     update();
-    MapEditor.updateMap(shouldExport: true);
-  }
-  
-  void setWarpDeleteButtonListeners() {
-    for(int i=0; i<MapEditor.warps[Main.world.curMap].length; i++) {
-      Editor.attachButtonListener("#delete_warp_${i}", (MouseEvent e) {
-        bool confirm = window.confirm('Are you sure you would like to delete this warp?');
-        if(confirm) {
-          MapEditor.warps[Main.world.curMap].removeAt(i);
-          props['update']();
-        }
-      });
-    }
   }
   
   static void shift(int xAmount, int yAmount) {

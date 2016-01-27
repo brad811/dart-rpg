@@ -16,6 +16,7 @@ import 'package:react/react.dart';
 class MapEditorBattlers extends Component {
   void update() {
     this.setState({});
+    Editor.debounceExport();
   }
 
   void onInputChange(Event e) {
@@ -45,7 +46,6 @@ class MapEditorBattlers extends Component {
     
     //Editor.updateAndRetainValue(e);
     update();
-    Editor.debounceExport();
   }
 
   void addNewBattler(MouseEvent e) {
@@ -59,11 +59,6 @@ class MapEditorBattlers extends Component {
     update();
   }
 
-  void deleteBattler(int battlerNum) {
-    Main.world.maps[Main.world.curMap].battlerChances.removeAt(battlerNum);
-    update();
-  }
-
   void render() {
     double totalChance = 0.0;
     for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {
@@ -73,13 +68,13 @@ class MapEditorBattlers extends Component {
     List<JsObject> battlerTableRows = [];
 
     battlerTableRows.add(
-      tr({}, [
+      tr({},
         td({}, "#"),
         td({}, "Battler Type"),
         td({}, "Level"),
         td({}, "Chance"),
         td({}, "")
-      ])
+      )
     );
 
     for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {
@@ -96,53 +91,49 @@ class MapEditorBattlers extends Component {
       });
 
       battlerTableRows.add(
-        tr({}, [
+        tr({},
           td({}, i),
-          td({}, [
-            select(
-              {
-                'id': 'map_battler_${i}_type',
-                'onChange': onInputChange,
-                'value': Main.world.maps[Main.world.curMap].battlerChances[i].battler.name
-              },
-              battlerTypeOptions
-            )
-          ]),
-          td({}, [
+          td({},
+            select({
+              'id': 'map_battler_${i}_type',
+              'value': Main.world.maps[Main.world.curMap].battlerChances[i].battler.name,
+              'onChange': onInputChange
+            }, battlerTypeOptions)
+          ),
+          td({},
             input({
               'id': 'map_battler_${i}_level',
               'type': 'text',
               'className': 'number',
-              'onChange': onInputChange,
-              'value': Main.world.maps[Main.world.curMap].battlerChances[i].battler.level
+              'value': Main.world.maps[Main.world.curMap].battlerChances[i].battler.level,
+              'onChange': onInputChange
             })
-          ]),
-          td({}, [
+          ),
+          td({},
             input({
               'id': 'map_battler_${i}_chance',
               'type': 'text',
               'className': 'number decimal',
-              'onChange': onInputChange,
-              'value': Main.world.maps[Main.world.curMap].battlerChances[i].chance
+              'value': Main.world.maps[Main.world.curMap].battlerChances[i].chance,
+              'onChange': onInputChange
             }),
             span({'id': 'map_battler_${i}_percent_chance'}, " ${percentChance}%")
-          ]),
-          td({}, [
-            button(
-              {
-                'id': 'delete_map_battler_${i}',
-                'onClick': (MouseEvent e) { deleteBattler(i); }
-              },
-              'Delete'
-            )
-          ])
-        ])
+          ),
+          td({},
+            button({
+              'id': 'delete_map_battler_${i}',
+              'onClick': Editor.generateConfirmDeleteFunction(
+                Main.world.maps[Main.world.curMap].battlerChances, i, "battler", update
+              )
+            }, 'Delete')
+          )
+        )
       );
     }
 
     return
-      div({'id': 'battlers_tab', 'className': 'tab'}, [
-        div({'id': 'battlers_container'}, [
+      div({'id': 'battlers_tab', 'className': 'tab'},
+        div({'id': 'battlers_container'},
           button({'id': 'add_battler_button', 'onClick': addNewBattler}, "Add new battler"),
           hr({}),
           div({'id': 'battlers_container'},
@@ -151,8 +142,8 @@ class MapEditorBattlers extends Component {
               tbody({}, battlerTableRows)
             )
           )
-        ])
-      ]);
+        )
+      );
   }
 
   static void export(Map jsonMap, String key) {

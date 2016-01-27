@@ -17,6 +17,8 @@ import 'package:react/react.dart';
 class MapEditorEvents extends Component {
   void update() {
     setState({});
+    MapEditor.updateMap();
+    Editor.debounceExport();
   }
 
   void trackColors(Map<String, Map<String, int>> colorTrackers) {
@@ -66,18 +68,12 @@ class MapEditorEvents extends Component {
     }
   }
 
-  void deleteEvent(int i) {
-    bool confirm = window.confirm('Are you sure you would like to delete this event?');
-    if(confirm) {
-      MapEditor.events[Main.world.curMap].removeAt(i);
-      props['update']();
-    }
-  }
-
   void addNewEvent(MouseEvent e) {
     if(World.gameEventChains.keys.length > 0) {
-      MapEditor.events[Main.world.curMap].add( new EventTile(World.gameEventChains.keys.first, false, new Sprite.int(0, 0, 0), false) );
-      props['update']();
+      MapEditor.events[Main.world.curMap].add(
+        new EventTile(World.gameEventChains.keys.first, false, new Sprite.int(0, 0, 0), false)
+      );
+      update();
     }
   }
 
@@ -97,13 +93,12 @@ class MapEditorEvents extends Component {
         );
       } catch(e) {
         // could not update this event
+        print("Error while updating event: ${e}");
       }
     }
     
     //Editor.updateAndRetainValue(e);
     update();
-    MapEditor.updateMap();
-    Editor.debounceExport();
   }
 
   render() {
@@ -167,7 +162,7 @@ class MapEditorEvents extends Component {
           td({},
             button({
               'id': 'delete_event_${i}',
-              'onClick': (e) { deleteEvent(i); }
+              'onClick': Editor.generateConfirmDeleteFunction(MapEditor.events, i, "event", update)
             }, "Delete")
           )
         )

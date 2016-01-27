@@ -15,6 +15,8 @@ import 'package:react/react.dart';
 class MapEditorSigns extends Component {
   update() {
     setState({});
+    MapEditor.updateMap();
+    Editor.debounceExport();
   }
 
   render() {
@@ -31,7 +33,7 @@ class MapEditorSigns extends Component {
 
     for(int i=0; i<MapEditor.signs[Main.world.curMap].length; i++) {
       tableRows.add(
-        tr({}, [
+        tr({},
           td({}, i),
           td({},
             input({
@@ -75,18 +77,18 @@ class MapEditorSigns extends Component {
               )
             }, "Delete")
           )
-        ])
+        )
       );
     }
 
     return
-      div({'id': 'signs_tab', 'className': 'tab'}, [
+      div({'id': 'signs_tab', 'className': 'tab'},
         button({'id': 'add_sign_button', 'onClick': addNewSign}, "Add new sign"),
         hr({}),
-        div({'id': 'signs_container'}, [
+        div({'id': 'signs_container'},
           table({'className': 'editor_table'}, tbody({}, tableRows))
-        ])
-      ]);
+        )
+      );
   }
   
   void addNewSign(MouseEvent e) {
@@ -116,7 +118,6 @@ class MapEditorSigns extends Component {
     }
     
     update();
-    MapEditor.updateMap(shouldExport: true);
   }
   
   static void shift(int xAmount, int yAmount) {

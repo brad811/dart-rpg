@@ -14,7 +14,6 @@ import 'package:react/react.dart';
 
 class MapEditorCharacters extends Component {
   void onInputChange(Event e) {
-    // TODO: implement!
     Editor.enforceValueFormat(e);
     
     int i = -1;
@@ -40,29 +39,26 @@ class MapEditorCharacters extends Component {
     });
     
     update();
-    MapEditor.updateMap(shouldExport: true);
-  }
-
-  componentDidMount(Element rootNode) {
-    update();
   }
 
   void update() {
     setState({});
+    MapEditor.updateMap();
+    Editor.debounceExport();
   }
 
   render() {
     List<JsObject> tableRows = [
-    tr({}, [
-      td({}, "Num"),
-      td({}, "Label"),
-      td({}, "X"),
-      td({}, "Y"),
-      td({}, "Layer"),
-      td({}, "Direction"),
-      td({}, "Solid"),
-      td({})
-    ])
+      tr({},
+        td({}, "Num"),
+        td({}, "Label"),
+        td({}, "X"),
+        td({}, "Y"),
+        td({}, "Layer"),
+        td({}, "Direction"),
+        td({}, "Solid"),
+        td({})
+      )
     ];
 
     int i = -1;
@@ -90,7 +86,7 @@ class MapEditorCharacters extends Component {
       }
 
       tableRows.add(
-        tr({}, [
+        tr({},
           td({}, i),
           td({}, key),
           td({},
@@ -133,7 +129,7 @@ class MapEditorCharacters extends Component {
               'onChange': onInputChange
             })
           )
-        ])
+        )
       );
     });
 

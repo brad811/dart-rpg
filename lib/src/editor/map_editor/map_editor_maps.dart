@@ -27,13 +27,13 @@ class MapEditorMaps extends Component {
 
   render() {
     List<JsObject> tableRows = [
-      tr({}, [
+      tr({},
         td({}, "Num"),
         td({}, "Name"),
         td({}, "X Size"),
         td({}, "Y Size"),
         td({})
-      ])
+      )
     ];
 
     for(int i=0; i<Main.world.maps.length; i++) {
@@ -53,7 +53,7 @@ class MapEditorMaps extends Component {
       }
 
       tableRows.add(
-        tr({}, [
+        tr({},
           mapButton,
           td({},
             input({
@@ -79,18 +79,18 @@ class MapEditorMaps extends Component {
                 })
             }, "Delete")
           )
-        ])
+        )
       );
     }
 
     return
-      div({'id': 'maps_tab', 'className': 'tab'}, [
+      div({'id': 'maps_tab', 'className': 'tab'},
         button({'id': 'add_map_button', 'onClick': addNewMap}, "Add new map"),
-        div({'id': 'maps_container'}, [
+        div({'id': 'maps_container'},
           hr({}),
           table({'className': 'editor_table'}, tbody({}, tableRows))
-        ])
-      ]);
+        )
+      );
   }
   
   void addNewMap(MouseEvent e) {

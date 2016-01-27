@@ -37,27 +37,27 @@ class MapEditorTileInfo extends Component {
       if(mapTiles[y][x][i] != null) {
         tileRows.addAll([
           hr({}),
-          table({}, tbody({}, [
-            tr({}, [
+          table({}, tbody({},
+            tr({},
               td({'className': 'tile_info_layer_name'}, layerNames[i]),
               td({'className': 'tile_info_delete'},
                 button({'id': 'delete_tile_info_layer_${i}'}, "Delete")
               )
-            ]),
-            tr({}, [
+            ),
+            tr({},
               td({},
                 Editor.generateSpritePickerHtml("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id)
               ),
-              td({'className': 'tile_info_checkboxes'}, [
+              td({'className': 'tile_info_checkboxes'},
                 input({'id': 'tile_info_layer_${i}_solid', 'type': 'checkbox', 'value': mapTiles[y][x][i].solid}, "Solid"),
                 br({}),
                 input({'id': 'tile_info_layer_${i}_layered', 'type': 'checkbox', 'value': mapTiles[y][x][i].layered}, "Layered"),
                 br({}),
                 input({'id': 'tile_info_layer_${i}_encounter', 'type': 'checkbox', 'value': mapTiles[y][x][i] is EncounterTile}, "Encounter"),
                 br({})
-              ])
-            ])
-          ]))
+              )
+            )
+          ))
         ]);
       }
     }
