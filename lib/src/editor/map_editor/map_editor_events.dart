@@ -102,7 +102,8 @@ class MapEditorEvents extends Component {
     
     //Editor.updateAndRetainValue(e);
     update();
-    MapEditor.updateMap(shouldExport: true);
+    MapEditor.updateMap();
+    Editor.debounceExport();
   }
 
   render() {
