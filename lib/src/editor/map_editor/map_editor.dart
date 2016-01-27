@@ -192,6 +192,24 @@ class MapEditor extends Component {
     querySelector('#left_half').style.height = "${window.innerHeight - 60}px";
   }
 
+  static Timer debounceTimer, debounceExportTimer;
+  static Duration debounceDelay = new Duration(milliseconds: 250);
+  static Duration debounceExportDelay = new Duration(milliseconds: 500);
+
+  void debounceUpdate({Function callback}) {
+    if(debounceTimer != null) {
+      debounceTimer.cancel();
+    }
+
+    debounceTimer = new Timer(debounceDelay, () {
+      update();
+      Editor.export();
+      if(callback != null) {
+        callback();
+      }
+    });
+  }
+
   render() {
     JsObject selectedTab;
     if(state['selectedTab'] == "maps") {
@@ -312,8 +330,8 @@ class MapEditor extends Component {
     mapEditorCanvas.onMouseMove.listen(hoverTile);
     
     mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
-      lastHoverX = -1;
-      lastHoverY = -1;
+      //lastHoverX = -1;
+      //lastHoverY = -1;
       tooltip.style.display = "none";
 
       if(selectedTool != "select") {
@@ -390,12 +408,9 @@ class MapEditor extends Component {
       return;
     }
     
-    lastHoverX = x;
-    lastHoverY = y;
-    
     // TODO: only update tiles that have been drawn on instead of entire map
-    MapEditor.updateMap();
-    
+    MapEditor.updateMap(oldPoint: new Point(lastHoverX, lastHoverY), newPoint: new Point(x, y));
+
     int
       width = 1,
       height = 1;
@@ -435,6 +450,10 @@ class MapEditor extends Component {
     }
     
     outlineSelectedTiles(x, y, width, height);
+
+    lastHoverX = x;
+    lastHoverY = y;
+    //MapEditor.updateMap();
   }
 
   static void outlineSelectedTiles(x, y, width, height) {
@@ -650,7 +669,7 @@ class MapEditor extends Component {
     */
   }
   
-  static void updateMap({bool shouldExport: false}) {
+  static void updateMap({Point oldPoint, Point newPoint, bool shouldExport: false}) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     
     List<Character> characters = [];
@@ -673,10 +692,6 @@ class MapEditor extends Component {
     
     updateMapCanvasSize();
     
-    // Draw pink background
-    mapEditorCanvasContext.fillStyle = "#ff00ff";
-    mapEditorCanvasContext.fillRect(0, 0, mapEditorCanvasWidth, mapEditorCanvasHeight);
-    
     renderList = [];
     for(int i=0; i<World.layers.length; i++) {
       renderList.add([]);
@@ -688,17 +703,44 @@ class MapEditor extends Component {
     for(Character character in characters) {
       character.render(renderList);
     }
+
+    // Draw pink background
+    if(oldPoint == null && newPoint == null) {
+      mapEditorCanvasContext.fillStyle = "#ff00ff";
+      mapEditorCanvasContext.fillRect(0, 0, mapEditorCanvasWidth, mapEditorCanvasHeight);
+    } else {
+      mapEditorCanvasContext.fillStyle = "#ff00ff";
+      mapEditorCanvasContext.fillRect(
+        (oldPoint.x-1) * Sprite.scaledSpriteSize, (oldPoint.y-1) * Sprite.scaledSpriteSize,
+        Sprite.scaledSpriteSize*3, Sprite.scaledSpriteSize*3);
+      mapEditorCanvasContext.fillRect(
+        (newPoint.x-1) * Sprite.scaledSpriteSize, (newPoint.y-1) * Sprite.scaledSpriteSize,
+        Sprite.scaledSpriteSize*3, Sprite.scaledSpriteSize*3);
+    }
     
     for(List<Tile> layer in renderList) {
       for(Tile tile in layer) {
-        renderStaticSprite(
-          mapEditorCanvasContext, tile.sprite.id,
-          tile.sprite.posX.round(), tile.sprite.posY.round()
-        );
+        if(
+          (oldPoint == null && newPoint == null) ||
+          (
+            oldPoint != null &&
+            tile.sprite.posX.round() >= oldPoint.x - 1 && tile.sprite.posX.round() <= oldPoint.x + 1 &&
+            tile.sprite.posY.round() >= oldPoint.y - 1 && tile.sprite.posY.round() <= oldPoint.y + 1
+          ) || (
+            newPoint != null &&
+            tile.sprite.posX.round() >= newPoint.x - 1 && tile.sprite.posX.round() <= newPoint.x + 1 &&
+            tile.sprite.posY.round() >= newPoint.y - 1 && tile.sprite.posY.round() <= newPoint.y + 1
+          )
+        ) {
+          renderStaticSprite(
+            mapEditorCanvasContext, tile.sprite.id,
+            tile.sprite.posX.round(), tile.sprite.posY.round()
+          );
+        }
       }
     }
     
-    renderColoredTiles();
+    MapEditor.renderColoredTiles(oldPoint: oldPoint, newPoint: newPoint);
     
     if(shouldExport) {
       Editor.export();
@@ -721,7 +763,7 @@ class MapEditor extends Component {
     };
   }
   
-  static void renderColoredTiles() {
+  static void renderColoredTiles({Point oldPoint, Point newPoint}) {
     if(!Editor.highlightSpecialTiles)
       return;
     
@@ -829,7 +871,20 @@ class MapEditor extends Component {
     for(int y=0; y<Main.world.maps[Main.world.curMap].tiles.length; y++) {
       for(int x=0; x<Main.world.maps[Main.world.curMap].tiles.first.length; x++) {
         String key = "${x},${y}";
-                
+
+        if(
+          (oldPoint != null && newPoint != null) &&
+          !((
+            x >= oldPoint.x - 1 && x <= oldPoint.x + 1 &&
+            y >= oldPoint.y - 1 && y <= oldPoint.y + 1
+          ) || (
+            x >= newPoint.x - 1 && x <= newPoint.x + 1 &&
+            y >= newPoint.y - 1 && y <= newPoint.y + 1
+          ))
+        ) {
+          continue;
+        }
+
         Map<String, int> colorTracker = colorTrackers[key];
         
         if(colorTracker == null)
