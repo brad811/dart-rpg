@@ -60,38 +60,68 @@ class ObjectEditorBattlerTypes extends Component {
           tr({},
             td({}, "Health"),
             td({},
-              input({'id': 'battler_type_${i}_health', 'type': 'text', 'className': 'number', 'value': battlerType.baseHealth})
+              input({
+                'id': 'battler_type_${i}_health',
+                'type': 'text',
+                'className': 'number',
+                'value': battlerType.baseHealth
+              })
             )
           ),
 
           tr({},
             td({}, "Physical Attack"),
             td({},
-              input({'id': 'battler_type_${i}_physical_attack', 'type': 'text', 'className': 'number', 'value': battlerType.basePhysicalAttack})
+              input({
+                'id': 'battler_type_${i}_physical_attack',
+                'type': 'text',
+                'className': 'number',
+                'value': battlerType.basePhysicalAttack
+              })
             )
           ),
           tr({},
             td({}, "Physical Defense"),
             td({},
-              input({'id': 'battler_type_${i}_physical_defense', 'type': 'text', 'className': 'number', 'value': battlerType.basePhysicalDefense})
+              input({
+                'id': 'battler_type_${i}_physical_defense',
+                'type': 'text',
+                'className': 'number',
+                'value': battlerType.basePhysicalDefense
+              })
             )
           ),
           tr({},
             td({}, "Magical Attack"),
             td({},
-              input({'id': 'battler_type_${i}_magical_attack', 'type': 'text', 'className': 'number', 'value': battlerType.baseMagicalAttack})
+              input({
+                'id': 'battler_type_${i}_magical_attack',
+                'type': 'text',
+                'className': 'number',
+                'value': battlerType.baseMagicalAttack
+              })
             )
           ),
           tr({},
             td({}, "Magicl Defense"),
             td({},
-              input({'id': 'battler_type_${i}_magical_defense', 'type': 'text', 'className': 'number', 'value': battlerType.baseMagicalDefense})
+              input({
+                'id': 'battler_type_${i}_magical_defense',
+                'type': 'text',
+                'className': 'number',
+                'value': battlerType.baseMagicalDefense
+              })
             )
           ),
           tr({},
             td({}, "Speed"),
             td({},
-              input({'id': 'battler_type_${i}_speed', 'type': 'text', 'className': 'number', 'value': battlerType.baseSpeed})
+              input({
+                'id': 'battler_type_${i}_speed',
+                'type': 'text',
+                'className': 'number',
+                'value': battlerType.baseSpeed
+              })
             )
           )
         ))

@@ -49,11 +49,23 @@ class MapEditorTileInfo extends Component {
                 Editor.generateSpritePickerHtml("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id)
               ),
               td({'className': 'tile_info_checkboxes'},
-                input({'id': 'tile_info_layer_${i}_solid', 'type': 'checkbox', 'value': mapTiles[y][x][i].solid}, "Solid"),
+                input({
+                  'id': 'tile_info_layer_${i}_solid',
+                  'type': 'checkbox',
+                  'value': mapTiles[y][x][i].solid
+                }, "Solid"),
                 br({}),
-                input({'id': 'tile_info_layer_${i}_layered', 'type': 'checkbox', 'value': mapTiles[y][x][i].layered}, "Layered"),
+                input({
+                  'id': 'tile_info_layer_${i}_layered',
+                  'type': 'checkbox',
+                  'value': mapTiles[y][x][i].layered
+                }, "Layered"),
                 br({}),
-                input({'id': 'tile_info_layer_${i}_encounter', 'type': 'checkbox', 'value': mapTiles[y][x][i] is EncounterTile}, "Encounter"),
+                input({
+                  'id': 'tile_info_layer_${i}_encounter',
+                  'type': 'checkbox',
+                  'value': mapTiles[y][x][i] is EncounterTile
+                }, "Encounter"),
                 br({})
               )
             )

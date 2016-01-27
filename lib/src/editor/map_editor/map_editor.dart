@@ -159,7 +159,11 @@ class MapEditor extends Component {
       ElementList<Element> canvasElements = querySelectorAll("canvas");
       
       for(int i=0; i<canvasElements.length; i++) {
-        Main.fixImageSmoothing(canvasElements[i], (canvasElements[i] as CanvasElement).width, (canvasElements[i] as CanvasElement).height);
+        Main.fixImageSmoothing(
+          canvasElements[i],
+          (canvasElements[i] as CanvasElement).width,
+          (canvasElements[i] as CanvasElement).height
+        );
       }
     }
     
@@ -426,7 +430,10 @@ class MapEditor extends Component {
         for(int j=0; j<height; j++) {
           // render the tile as it would appear with the selected tile applied to the selected layer
           mapEditorCanvasContext.fillStyle = "#ff00ff";
-          mapEditorCanvasContext.fillRect(Sprite.scaledSpriteSize * (x+i), Sprite.scaledSpriteSize * (y+j), Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
+          mapEditorCanvasContext.fillRect(
+            Sprite.scaledSpriteSize * (x+i), Sprite.scaledSpriteSize * (y+j),
+            Sprite.scaledSpriteSize, Sprite.scaledSpriteSize
+          );
           
           for(int layer=0; layer<World.layers.length; layer++) {
             if(selectedLayer == layer) {
@@ -1050,7 +1057,9 @@ class MapEditor extends Component {
       mapEditorCanvasContext.lineTo(x + Sprite.scaledSpriteSize, y + Sprite.scaledSpriteSize / 2);
       
       mapEditorCanvasContext.setFillColorRgb(r, g, b, a);
-      mapEditorCanvasContext.fillRect(x + Sprite.scaledSpriteSize / 2, y + Sprite.scaledSpriteSize / 2, Sprite.scaledSpriteSize / 2, Sprite.scaledSpriteSize / 2);
+      mapEditorCanvasContext.fillRect(
+        x + Sprite.scaledSpriteSize / 2, y + Sprite.scaledSpriteSize / 2,
+        Sprite.scaledSpriteSize / 2, Sprite.scaledSpriteSize / 2);
     }
     
     // draw the strokes around the tiles
