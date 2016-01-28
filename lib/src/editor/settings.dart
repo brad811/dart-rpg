@@ -1,5 +1,6 @@
 library dart_rpg.settings;
 
+import 'dart:async';
 import 'dart:html';
 
 import 'package:dart_rpg/src/main.dart';
@@ -7,7 +8,6 @@ import 'package:dart_rpg/src/sprite.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
-import 'package:dart_rpg/src/editor/object_editor/object_editor.dart';
 
 import 'package:react/react.dart';
 
@@ -20,11 +20,88 @@ class Settings extends Component {
   static Map<String, DivElement> tabDivs = {};
   static Map<String, DivElement> tabHeaderDivs = {};
 
+  componentDidMount(Element rootNode) {
+    settingsCanvas = querySelector("#editor_sprite_settings_canvas");
+    ctx = settingsCanvas.getContext("2d");
+    setUpSpriteCanvas();
+  }
+
+  static Timer debounceTimer;
+  static Duration debounceDelay = new Duration(milliseconds: 500);
+
+  void debounceUpdateCanvas({Function callback}) {
+    if(debounceTimer != null) {
+      debounceTimer.cancel();
+    }
+
+    debounceTimer = new Timer(debounceDelay, () {
+      updateCanvas();
+      Editor.export();
+      if(callback != null) {
+        callback();
+      }
+    });
+  }
+
+  void update() {
+    setState({});
+    debounceUpdateCanvas();
+  }
+
   render() {
     return
       tr({'id': 'settings_tab'}, [
         td({'id': 'settings_container_left'},
-          div({'id': 'settings_main_tab'})
+          div({'id': 'settings_main_tab', 'className': 'tab'},
+            table({}, tbody({},
+              tr({},
+                td({}, "Sprite sheet location: "),
+                td({},
+                  textarea({
+                    'id': 'sprite_sheet_location',
+                    'value': Main.spritesImageLocation,
+                    'onChange': onInputChange
+                  })
+                )
+              ),
+              tr({},
+                td({}, "Pixels per sprite: "),
+                td({},
+                  input({
+                    'id': 'sprite_sheet_pixels_per_sprite',
+                    'type': 'text',
+                    'className': 'number',
+                    'value': Sprite.pixelsPerSprite,
+                    'onChange': onInputChange
+                  })
+                )
+              ),
+              tr({},
+                td({}, "Sprite scale: "),
+                td({},
+                  input({
+                    'id': 'sprite_sheet_scale',
+                    'type': 'text',
+                    'className': 'number',
+                    'value': Sprite.spriteScale,
+                    'onChange': onInputChange
+                  })
+                )
+              ),
+              tr({},
+                td({}, "Frames per second: "),
+                td({},
+                  input({
+                    'id': 'settings_frames_per_second',
+                    'type': 'text',
+                    'className': 'number',
+                    'value': Main.framesPerSecond,
+                    'onChange': onInputChange
+                  })
+                )
+              )
+            ))
+          )
         ),
         td({},
           div({'id': 'settings_container_right'},
@@ -32,57 +109,6 @@ class Settings extends Component {
           )
         )
       ]);
-  }
-  
-  static void init() {
-    settingsCanvas = querySelector("#editor_sprite_settings_canvas");
-    ctx = settingsCanvas.getContext("2d");
-  }
-  
-  static void setUp() {
-    setUpSpriteCanvas();
-  }
-  
-  void update() {
-    buildMainHtml();
-    
-    // attach listener to save button
-    querySelector("#settings_save_button").onClick.listen((MouseEvent e) {
-      save();
-    });
-  }
-  
-  static void buildMainHtml() {
-    String html = "";
-    
-    html += "NOTE: You must click save for your changes on this tab to take effect!<hr />";
-    html += "<button id='settings_save_button'>Save</button><hr />";
-    
-    html += "<table>";
-    
-    html += "<tr>";
-    html += "<td>Sprite sheet location:&nbsp;</td>";
-    html += "<td>&nbsp;<textarea id='sprite_sheet_location'>${ Main.spritesImageLocation }</textarea></td>";
-    html += "</tr>";
-    
-    html += "<tr>";
-    html += "<td>Pixels per sprite:&nbsp;</td>";
-    html += "<td>&nbsp;<input id='sprite_sheet_pixels_per_sprite' type='text' class='number' value='${ Sprite.pixelsPerSprite }' /></td>";
-    html += "</tr>";
-    
-    html += "<tr>";
-    html += "<td>Sprite scale:&nbsp;</td>";
-    html += "<td>&nbsp;<input id='sprite_sheet_scale' type='text' class='number' value='${ Sprite.spriteScale }' /></td>";
-    html += "</tr>";
-    
-    html += "<tr>";
-    html += "<td>Frames per second:&nbsp;</td>";
-    html += "<td>&nbsp;<input id='settings_frames_per_second' type='text' class='number' value='${ Main.framesPerSecond }' /></td>";
-    html += "</tr>";
-    
-    html += "</table>";
-    
-    querySelector("#settings_main_tab").setInnerHtml(html);
   }
   
   static void setUpSpriteCanvas() {
@@ -165,8 +191,10 @@ class Settings extends Component {
     tooltip.style.top = "${e.page.y - 10}px";
     tooltip.text = "x: ${x}, y: ${y}, id: ${ (y*Sprite.spriteSheetWidth) + x }";
   }
-  
-  void save() {
+
+  void onInputChange(Event e) {
+    Editor.enforceValueFormat(e);
+    
     Main.spritesImageLocation = Editor.getTextAreaStringValue("#sprite_sheet_location");
     
     Sprite.pixelsPerSprite = Editor.getTextInputIntValue("#sprite_sheet_pixels_per_sprite", 16);
@@ -176,17 +204,23 @@ class Settings extends Component {
     
     Main.framesPerSecond = Editor.getTextInputIntValue("#settings_frames_per_second", 40);
     
+    update();
+  }
+  
+  void updateCanvas() {
     Main.spritesImage = new ImageElement(src:Main.spritesImageLocation);
     Main.spritesImage.onLoad.listen((e) {
       Sprite.spriteSheetWidth = (Main.spritesImage.width / Sprite.pixelsPerSprite).round();
       Sprite.spriteSheetHeight = (Main.spritesImage.height / Sprite.pixelsPerSprite).round();
       
       //MapEditor.setUp();
-      ObjectEditor.setUp();
-      Settings.setUp();
+      //ObjectEditor.setUp();
+      //Settings.setUp();
       
-      props['update']();
+      // TODO: necessary?
+      //props['update']();
       
+      /*
       Main.fixImageSmoothing(
         MapEditor.mapEditorSpriteSelectorCanvas,
         Sprite.spriteSheetWidth * Sprite.scaledSpriteSize,
@@ -198,6 +232,7 @@ class Settings extends Component {
         Sprite.scaledSpriteSize,
         Sprite.scaledSpriteSize
       );
+      */
       
       Main.fixImageSmoothing(
         settingsCanvas,
