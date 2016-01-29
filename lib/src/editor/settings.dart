@@ -19,6 +19,7 @@ class Settings extends Component {
   static List<String> tabs = [];
   static Map<String, DivElement> tabDivs = {};
   static Map<String, DivElement> tabHeaderDivs = {};
+  static String previousImageLocation;
 
   componentDidMount(Element rootNode) {
     settingsCanvas = querySelector("#editor_sprite_settings_canvas");
@@ -208,31 +209,16 @@ class Settings extends Component {
   }
   
   void updateCanvas() {
+    if(previousImageLocation == Main.spritesImageLocation) {
+      return;
+    }
+
+    previousImageLocation = Main.spritesImageLocation;
+
     Main.spritesImage = new ImageElement(src:Main.spritesImageLocation);
     Main.spritesImage.onLoad.listen((e) {
       Sprite.spriteSheetWidth = (Main.spritesImage.width / Sprite.pixelsPerSprite).round();
       Sprite.spriteSheetHeight = (Main.spritesImage.height / Sprite.pixelsPerSprite).round();
-      
-      //MapEditor.setUp();
-      //ObjectEditor.setUp();
-      //Settings.setUp();
-      
-      // TODO: necessary?
-      //props['update']();
-      
-      /*
-      Main.fixImageSmoothing(
-        MapEditor.mapEditorSpriteSelectorCanvas,
-        Sprite.spriteSheetWidth * Sprite.scaledSpriteSize,
-        Sprite.spriteSheetHeight * Sprite.scaledSpriteSize
-      );
-      
-      Main.fixImageSmoothing(
-        MapEditor.mapEditorSelectedSpriteCanvas,
-        Sprite.scaledSpriteSize,
-        Sprite.scaledSpriteSize
-      );
-      */
       
       Main.fixImageSmoothing(
         settingsCanvas,
