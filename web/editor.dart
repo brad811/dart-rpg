@@ -1,7 +1,6 @@
 import 'dart:html';
 
 import 'package:dart_rpg/src/editor/editor.dart';
-import 'game_storage.dart';
 
 import 'package:react/react.dart';
 import 'package:react/react_client.dart' as reactClient;
@@ -12,5 +11,4 @@ void main() {
   reactClient.setClientConfiguration();
 
   render(editor({}), querySelector('#editor_container'));
-  //GameStorage.init();
 }

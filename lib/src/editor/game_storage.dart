@@ -1,43 +1,43 @@
 import 'dart:async';
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 
-class GameStorage {
-  static void init() {
-    GameStorage.update();
+import 'package:react/react.dart';
+
+class GameStorage extends Component {
+  static Timer fadeTimer;
+
+  void update() {
+    setState({});
   }
-  
-  static void update() {
-    String html = "";
-    
-    html += "<div id='game_storage_message'></div>&nbsp;&nbsp;";
-    
-    html += "Game Name: <input id='save_local_game_name' type='text' />&nbsp;";
-    html += "<button id='save_local_game_button'>Save Game</button>";
-    html += "&nbsp;&nbsp;&nbsp;&nbsp;";
-    
-    html += "<select id='load_local_game_name'>";
+
+  render() {
+    List<JsObject> options = [];
     window.localStorage.keys.forEach((String key) {
       if(key.startsWith("saved_game_")) {
-        html += "<option>${key.substring("saved_game_".length)}</option>";
+        options.add(
+          option({'value': key.substring("saved_game_".length)}, key.substring("saved_game_".length))
+        );
       }
     });
-    html += "</select>&nbsp;";
-    html += "<button id='load_local_game_button'>Load Game</button>";
-    
-    querySelector("#game_storage_container").setInnerHtml(html);
-    
-    querySelector("#save_local_game_button").onClick.listen((MouseEvent e) {
-      saveLocally();
-    });
-    
-    querySelector("#load_local_game_button").onClick.listen((MouseEvent e) {
-      loadLocally(e);
-    });
+
+    return
+      div({},
+        div({'id': 'game_storage_message'}),
+        "  Game Name: ",
+        input({'id': 'save_local_game_name', 'type': 'text'}),
+        " ",
+        button({'id': 'save_local_game_button', 'onClick': saveLocally}, "Save Game"),
+        "    ",
+        select({'id': 'load_local_game_name'}, options),
+        " ",
+        button({'id': 'load_local_game_button', 'onClick': loadLocally}, "Load Game")
+      );
   }
   
-  static void saveLocally() {
+  void saveLocally(MouseEvent e) {
     // get the game name
     TextInputElement gameNameInput = querySelector("#save_local_game_name");
     String gameName = gameNameInput.value.replaceAll(new RegExp(r'[^a-zA-Z0-9\._\ ,~!@#$%^&*()_+`\-=\[\]\\{}\|;:,./<>?]'), "_");
@@ -53,13 +53,13 @@ class GameStorage {
     // save the game locally
     window.localStorage["saved_game_${gameName}"] = (querySelector("#export_json") as TextAreaElement).value;
     
-    GameStorage.update();
+    update();
     querySelector("#game_storage_message").text = "Game saved!";
     querySelector("#game_storage_message").style.opacity = "1.0";
     new Timer(new Duration(seconds: 5), () => fadeMessage());
   }
   
-  static void loadLocally(MouseEvent e) {
+  void loadLocally(MouseEvent e) {
     // get the selected game name
     String gameName = Editor.getSelectInputStringValue("#load_local_game_name");
     
@@ -70,12 +70,17 @@ class GameStorage {
     (querySelector("#export_json") as TextAreaElement).value = gameJson;
     
     // reload the editor
-    Editor.loadGame(e);
-    
-    GameStorage.update();
-    querySelector("#game_storage_message").text = "Game loaded!";
-    querySelector("#game_storage_message").style.opacity = "1.0";
-    new Timer(new Duration(seconds: 5), () => fadeMessage());
+    Editor.loadGame(() {
+      props['update']();
+      querySelector("#game_storage_message").text = "Game loaded!";
+      querySelector("#game_storage_message").style.opacity = "1.0";
+
+      if(fadeTimer != null) {
+        fadeTimer.cancel();
+      }
+
+      fadeTimer = new Timer(new Duration(seconds: 5), () => GameStorage.fadeMessage());
+    });
   }
   
   static void fadeMessage() {
@@ -90,7 +95,7 @@ class GameStorage {
     querySelector("#game_storage_message").style.opacity = "${ opacity }";
     
     if(opacity > 0) {
-      new Timer(new Duration(milliseconds: 10), () => fadeMessage());
+      fadeTimer = new Timer(new Duration(milliseconds: 10), () => fadeMessage());
     }
   }
 }

@@ -10,6 +10,7 @@ import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/world.dart';
 
+import 'package:dart_rpg/src/editor/game_storage.dart';
 import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 import 'package:dart_rpg/src/editor/object_editor/object_editor.dart';
 import 'package:dart_rpg/src/editor/screen_editor.dart';
@@ -23,6 +24,7 @@ var mapEditor = registerComponent(() => new MapEditor());
 var objectEditor = registerComponent(() => new ObjectEditor());
 var screenEditor = registerComponent(() => new ScreenEditor());
 var settings = registerComponent(() => new Settings());
+var gameStorage = registerComponent(() => new GameStorage());
 
 class Editor extends Component {
   static List<String> editorTabs = ["map_editor", "object_editor", "screen_editor", "settings"];
@@ -109,7 +111,9 @@ class Editor extends Component {
               }, "Settings"),
 
               // TODO: make this a component
-              div({'id': 'game_storage_container'}, "Loading...")
+              div({'id': 'game_storage_container'},
+                gameStorage({'update': update})
+              )
             )
           ),
           selectedTab
