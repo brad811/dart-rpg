@@ -25,7 +25,6 @@ class MapEditorTiles extends Component {
   CanvasElement mapEditorSelectedSpriteCanvas;
   CanvasRenderingContext2D mapEditorSelectedSpriteCanvasContext;
 
-  static String previousSelectedTool;
   static List<String> availableTools = ["select", "brush", "erase", "fill", "stamp"];
 
   componentDidMount(Element rootNode) {
@@ -43,14 +42,17 @@ class MapEditorTiles extends Component {
   }
 
   shouldComponentUpdate(Map nextProps, Map nextState) {
-    // TODO: perhaps move to componentShouldUpdate and stop update if true
-    if(previousSelectedTool != MapEditor.selectedTool) {
+    if(MapEditor.previousSelectedTool != MapEditor.selectedTool) {
       MapEditor.selectTool(MapEditor.selectedTool);
       update();
       return false;
     }
 
     return true;
+  }
+
+  void update() {
+    setState({});
   }
 
   componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
@@ -61,10 +63,6 @@ class MapEditorTiles extends Component {
     mapEditorSelectedSpriteCanvasContext.fillStyle = "#ff00ff";
     mapEditorSelectedSpriteCanvasContext.fillRect(0, 0, Sprite.scaledSpriteSize, Sprite.scaledSpriteSize);
     MapEditor.renderStaticSprite(mapEditorSelectedSpriteCanvasContext, MapEditor.selectedTile, 0, 0);
-  }
-
-  void update() {
-    setState({});
   }
 
   onSelectedLayerChange(Event e) {
