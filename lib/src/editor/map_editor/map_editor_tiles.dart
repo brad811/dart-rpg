@@ -45,7 +45,8 @@ class MapEditorTiles extends Component {
   shouldComponentUpdate(Map nextProps, Map nextState) {
     // TODO: perhaps move to componentShouldUpdate and stop update if true
     if(previousSelectedTool != MapEditor.selectedTool) {
-      selectTool(MapEditor.selectedTool);
+      MapEditor.selectTool(MapEditor.selectedTool);
+      update();
       return false;
     }
 
@@ -66,30 +67,6 @@ class MapEditorTiles extends Component {
     setState({});
   }
 
-  void selectTool(String newTool) {
-    if(newTool == "erase") {
-      MapEditor.previousSelectedTile = MapEditor.selectedTile;
-      MapEditor.selectedTile = -1;
-    } else {
-      MapEditor.selectedTile = MapEditor.previousSelectedTile;
-      MapEditor.selectedTile = MapEditor.selectedTile;
-    }
-
-    if(MapEditor.selectedTool == "select" && newTool != "select") {
-      MapEditor.tileInfo.style.display = "none";
-      MapEditor.updateMap();
-    }
-
-    MapEditor.selectedTool = newTool;
-
-    MapEditor.lastChangeX = -1;
-    MapEditor.lastChangeY = -1;
-
-    previousSelectedTool = MapEditor.selectedTool;
-
-    update();
-  }
-
   onSelectedLayerChange(Event e) {
     MapEditor.selectedLayer = Editor.getRadioInputIntValue("[name='layer']:checked", 0);
     update();
@@ -108,27 +85,27 @@ class MapEditorTiles extends Component {
         div({
           'id': 'tool_selector_select',
           'className': 'tool_selector ' + (MapEditor.selectedTool == "select" ? 'selected' : ''),
-          'onClick': (MouseEvent e) { selectTool("select"); }
+          'onClick': (MouseEvent e) { MapEditor.selectTool("select"); update(); }
         }, "Select"),
         div({
           'id': 'tool_selector_brush',
           'className': 'tool_selector ' + (MapEditor.selectedTool == "brush" ? 'selected' : ''),
-          'onClick': (MouseEvent e) { selectTool("brush"); }
+          'onClick': (MouseEvent e) { MapEditor.selectTool("brush"); update(); }
         }, "Brush"),
         div({
           'id': 'tool_selector_erase',
           'className': 'tool_selector ' + (MapEditor.selectedTool == "erase" ? 'selected' : ''),
-          'onClick': (MouseEvent e) { selectTool("erase"); }
+          'onClick': (MouseEvent e) { MapEditor.selectTool("erase"); update(); }
         }, "Erase"),
         div({
           'id': 'tool_selector_fill',
           'className': 'tool_selector ' + (MapEditor.selectedTool == "fill" ? 'selected' : ''),
-          'onClick': (MouseEvent e) { selectTool("fill"); }
+          'onClick': (MouseEvent e) { MapEditor.selectTool("fill"); update(); }
         }, "Fill"),
         div({
           'id': 'tool_selector_stamp',
           'className': 'tool_selector ' + (MapEditor.selectedTool == "stamp" ? 'selected' : ''),
-          'onClick': (MouseEvent e) { selectTool("stamp"); }
+          'onClick': (MouseEvent e) { MapEditor.selectTool("stamp"); update(); }
         }, "Stamp"),
         div({'id': 'stamp_tool_size'},
           "Width: ", input({'id': 'stamp_tool_width', 'type': 'text', 'className': 'number'}),

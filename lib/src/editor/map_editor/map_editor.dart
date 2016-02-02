@@ -62,7 +62,7 @@ class MapEditor extends Component {
   
   static DivElement tooltip, tileInfo;
 
-  static String selectedTool = "select";
+  static String selectedTool = "select", previousSelectedTool;
   static int selectedTile = -1, previousSelectedTile = -1;
   static int selectedLayer = 0;
   static bool
@@ -380,11 +380,33 @@ class MapEditor extends Component {
       previousSelectedTile = y*Sprite.spriteSheetWidth + x;
 
       if(selectedTool == "select" || selectedTool == "erase") {
-        selectedTool = "brush";
+        MapEditor.selectTool("brush");
       }
 
       update();
     });
+  }
+
+  static void selectTool(String newTool) {
+    if(newTool == "erase") {
+      MapEditor.previousSelectedTile = MapEditor.selectedTile;
+      MapEditor.selectedTile = -1;
+    } else {
+      MapEditor.selectedTile = MapEditor.previousSelectedTile;
+      MapEditor.selectedTile = MapEditor.selectedTile;
+    }
+
+    if(MapEditor.selectedTool == "select" && newTool != "select") {
+      MapEditor.tileInfo.style.display = "none";
+      MapEditor.updateMap();
+    }
+
+    MapEditor.selectedTool = newTool;
+
+    MapEditor.lastChangeX = -1;
+    MapEditor.lastChangeY = -1;
+
+    previousSelectedTool = MapEditor.selectedTool;
   }
   
   static void hoverTile(MouseEvent e) {
@@ -613,7 +635,8 @@ class MapEditor extends Component {
       }
     }
 
-    MapEditor.updateMap(shouldExport: true);
+    MapEditor.updateMap();
+    Editor.debounceExport();
     
     if(selectedTool == "select") {
       outlineSelectedTiles(x, y, 1, 1);
