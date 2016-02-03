@@ -192,8 +192,11 @@ class MapEditor extends Component {
   }
 
   void handleResize(Event e) {
-    querySelector('#left_half').style.width = "${window.innerWidth - 562}px";
-    querySelector('#left_half').style.height = "${window.innerHeight - 60}px";
+    Element leftHalf = querySelector('#left_half');
+    if(leftHalf != null) {
+      leftHalf.style.width = "${window.innerWidth - 562}px";
+      leftHalf.style.height = "${window.innerHeight - 60}px";
+    }
   }
 
   static Timer debounceTimer, debounceExportTimer;
