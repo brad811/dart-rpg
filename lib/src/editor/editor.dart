@@ -40,7 +40,9 @@ class Editor extends Component {
   getInitialState() => {
     'gameLoaded': false,
     'doneSettingUp': false,
-    'selectedTab': 'mapEditor'
+    'selectedTab': 'mapEditor',
+    'selectedSubTab': '',
+    'selectedSubItemNumber': -1
   };
 
   componentDidMount(Element rootNode) {
@@ -68,6 +70,14 @@ class Editor extends Component {
     querySelector('#container').style.height = "${window.innerHeight - 10}px";
   }
 
+  void goToEditObject(String subTab, int number) {
+    this.setState({
+      'selectedTab': 'objectEditor',
+      'selectedSubTab': subTab,
+      'selectedSubItemNumber': number
+    });
+  }
+
   render() {
     if(!this.state['gameLoaded']) {
       return div({}, "Loading game...");
@@ -75,9 +85,9 @@ class Editor extends Component {
 
     JsObject selectedTab;
     if(state['selectedTab'] == 'mapEditor') {
-      selectedTab = mapEditor({'update': update, 'debounceUpdate': debounceUpdate});
+      selectedTab = mapEditor({'ref': 'mapEditor', 'update': update, 'debounceUpdate': debounceUpdate, 'goToEditObject': goToEditObject});
     } else if(state['selectedTab'] == 'objectEditor') {
-      selectedTab = objectEditor({'update': update});
+      selectedTab = objectEditor({'ref': 'objectEditor', 'update': update, 'selectedSubTab': state['selectedSubTab'], 'selectedSubItemNumber': state['selectedSubItemNumber']});
     } else if(state['selectedTab'] == 'screenEditor') {
       selectedTab = screenEditor({'update': update});
     } else if(state['selectedTab'] == 'settings') {

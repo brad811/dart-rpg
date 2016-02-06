@@ -47,6 +47,12 @@ class MapEditorCharacters extends Component {
     Editor.debounceExport();
   }
 
+  Function goToEditCharacterFunction(int i) {
+    return (MouseEvent e) {
+      props['goToEditObject']('characters', i);
+    };
+  }
+
   render() {
     List<JsObject> tableRows = [
       tr({},
@@ -128,6 +134,9 @@ class MapEditorCharacters extends Component {
               'checked': character.solid,
               'onChange': onInputChange
             })
+          ),
+          td({},
+            span({'onClick': goToEditCharacterFunction(i)}, "Edit character")
           )
         )
       );

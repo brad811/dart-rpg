@@ -21,24 +21,44 @@ var objectEditorGameEvents = registerComponent(() => new ObjectEditorGameEvents(
 
 class ObjectEditor extends Component {
   getInitialState() => {
-    'selectedTab': 'attacks'
+    'selectedTab': 'attacks',
+    'selectedItemNumber': -1
   };
+
+  componentWillMount() {
+    Map newState = {};
+    bool shouldUpdate = false;
+
+    if(props['selectedSubTab'] != null && props['selectedSubTab'] != '') {
+      newState['selectedTab'] = props['selectedSubTab'];
+      shouldUpdate = true;
+    }
+
+    if(props['selectedSubItemNumber'] != null && props['selectedSubItemNumber'] != '') {
+      newState['selectedItemNumber'] = props['selectedSubItemNumber'];
+      shouldUpdate = true;
+    }
+
+    if(shouldUpdate) {
+      setState(newState);
+    }
+  }
 
   render() {
     JsObject selectedTab;
 
     if(state['selectedTab'] == "attacks") {
-      selectedTab = objectEditorAttacks({});
+      selectedTab = objectEditorAttacks({'selectedItemNumber': state['selectedItemNumber']});
     } else if(state['selectedTab'] == "types") {
-      selectedTab = objectEditorTypes({});
+      selectedTab = objectEditorTypes({'selectedItemNumber': state['selectedItemNumber']});
     } else if(state['selectedTab'] == "battler_types") {
-      selectedTab = objectEditorBattlerTypes({});
+      selectedTab = objectEditorBattlerTypes({'selectedItemNumber': state['selectedItemNumber']});
     } else if(state['selectedTab'] == "characters") {
-      selectedTab = objectEditorCharacters({});
+      selectedTab = objectEditorCharacters({'selectedItemNumber': state['selectedItemNumber']});
     } else if(state['selectedTab'] == "items") {
-      selectedTab = objectEditorItems({});
+      selectedTab = objectEditorItems({'selectedItemNumber': state['selectedItemNumber']});
     } else if(state['selectedTab'] == "game_event_chains") {
-      selectedTab = objectEditorGameEvents({});
+      selectedTab = objectEditorGameEvents({'selectedItemNumber': state['selectedItemNumber']});
     }
 
     List<JsObject> tabHeaders = [];

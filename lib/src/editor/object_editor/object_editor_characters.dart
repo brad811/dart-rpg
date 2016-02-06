@@ -27,6 +27,11 @@ class ObjectEditorCharacters extends Component {
 
   componentDidMount(Element rootNode) {
     initSpritePickers();
+
+    if(props['selectedItemNumber'] != null && props['selectedItemNumber'] != '') {
+      setState({'selected': props['selectedItemNumber']});
+      querySelector('#character_row_${props['selectedItemNumber']}').scrollIntoView();
+    }
   }
 
   componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
