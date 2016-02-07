@@ -70,6 +70,8 @@ class MapEditor extends Component {
     brushLayered = false,
     brushEncounter = false;
 
+  static int stampWidth = 1, stampHeight = 1;
+
   static Map<String, List<WarpTile>> warps = {};
   static Map<String, List<Sign>> signs = {};
   static Map<String, List<EventTile>> events = {};
@@ -178,6 +180,23 @@ class MapEditor extends Component {
       (Main.spritesImage.height * Sprite.spriteScale).round()
     );
     
+    renderSpriteSelector();
+    
+    tooltip = querySelector('#tooltip');
+    tileInfo = querySelector('#tile_info');
+
+    updateMap();
+  }
+
+  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+    updateMap();
+  }
+
+  void update() {
+    setState({});
+  }
+
+  void renderSpriteSelector() {
     // draw background of sprite picker
     mapEditorSpriteSelectorCanvasContext.fillStyle = "#ff00ff";
     mapEditorSpriteSelectorCanvasContext.fillRect(
@@ -185,8 +204,7 @@ class MapEditor extends Component {
       Sprite.scaledSpriteSize*Sprite.spriteSheetWidth,
       Sprite.scaledSpriteSize*Sprite.spriteSheetHeight
     );
-    
-    // render sprite picker
+
     int
       maxCol = Sprite.spriteSheetWidth,
       col = 0,
@@ -201,19 +219,6 @@ class MapEditor extends Component {
         }
       }
     }
-    
-    tooltip = querySelector('#tooltip');
-    tileInfo = querySelector('#tile_info');
-
-    updateMap();
-  }
-
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
-    updateMap();
-  }
-
-  void update() {
-    setState({});
   }
 
   void handleResize(Event e) {
@@ -242,135 +247,90 @@ class MapEditor extends Component {
     });
   }
 
-  render() {
-    JsObject selectedTab;
-    if(state['selectedTab'] == "maps") {
-      selectedTab = mapEditorMaps({'update': props['update'], 'debounceUpdate': props['debounceUpdate']});
-    } else if(state['selectedTab'] == "tiles") {
-      selectedTab = mapEditorTiles({'selectedTile': state['selectedTile']});
-    } else if(state['selectedTab'] == "map_characters") {
-      selectedTab = mapEditorCharacters({'update': props['update'], 'goToEditObject': props['goToEditObject']});
-    } else if(state['selectedTab'] == "warps") {
-      selectedTab = mapEditorWarps({'update': props['update']});
-    } else if(state['selectedTab'] == "signs") {
-      selectedTab = mapEditorSigns({'update': props['update']});
-    } else if(state['selectedTab'] == "battlers") {
-      selectedTab = mapEditorBattlers({'update': props['update']});
-    } else if(state['selectedTab'] == "events") {
-      selectedTab = mapEditorEvents({'update': props['update']});
-    }
-
-    return
-      tr({'id': 'map_editor_tab'},
-        td({'id': 'left_half'},
-          div({'style': {'position': 'relative', 'width': 0, 'height': 0}},
-            mapEditorTileInfo({
-              'ref': 'tileInfo',
-              'update': props['update'],
-              'showTileInfo': showTileInfo,
-              'changeTile': changeTile
-            })
-          ),
-          canvas({
-            'id': 'editor_main_canvas',
-            'width': 640,
-            'height': 512,
-            'onClick': handleTileClickOrDrag,
-            'onMouseMove': hoverTile,
-            'onMouseLeave': (MouseEvent e) {
-              //lastHoverX = -1;
-              //lastHoverY = -1;
-              tooltip.style.display = "none";
-
-              if(selectedTool != "select") {
-                MapEditor.updateMap();
-              }
-            },
-            'onMouseDown': handleMainCanvasMouseDown
-          })
-        ),
-        td({'id': 'right_half'},
-          table({'id': 'right_half_container'}, tbody({},
-            tr({},
-              td({'className': 'sprite_picker_container'},
-                canvas({
-                  'id': 'editor_sprite_canvas',
-                  'width': 256,
-                  'height': 256,
-                  'onClick': handleSpriteSelectorClick
-                })
-              )
-            ),
-            tr({},
-              td({'className': 'tab_headers'},
-                div({
-                  'id': 'maps_tab_header',
-                  'className': 'tab_header ' + (state['selectedTab'] == "maps" ? 'selected' : ''),
-                  'onClick': (MouseEvent e) { setState({'selectedTab': 'maps'}); }
-                  }, "Maps"),
-                div({
-                  'id': 'tiles_tab_header',
-                  'className': 'tab_header ' + (state['selectedTab'] == "tiles" ? 'selected' : ''),
-                  'onClick': (MouseEvent e) { setState({'selectedTab': 'tiles'}); }
-                }, "Tiles"),
-                div({
-                  'id': 'map_characters_tab_header',
-                  'className': 'tab_header ' + (state['selectedTab'] == "map_characters" ? 'selected' : ''),
-                  'onClick': (MouseEvent e) { setState({'selectedTab': 'map_characters'}); }
-                }, "Characters"),
-                div({
-                  'id': 'warps_tab_header',
-                  'className': 'tab_header ' + (state['selectedTab'] == "warps" ? 'selected' : ''),
-                  'onClick': (MouseEvent e) { setState({'selectedTab': 'warps'}); }
-                }, "Warps"),
-                div({
-                  'id': 'signs_tab_header',
-                  'className': 'tab_header ' + (state['selectedTab'] == "signs" ? 'selected' : ''),
-                  'onClick': (MouseEvent e) { setState({'selectedTab': 'signs'}); }
-                }, "Signs"),
-                div({
-                  'id': 'battlers_tab_header',
-                  'className': 'tab_header ' + (state['selectedTab'] == "battlers" ? 'selected' : ''),
-                  'onClick': (MouseEvent e) { setState({'selectedTab': 'battlers'}); }
-                }, "Battlers"),
-                div({
-                  'id': 'events_tab_header',
-                  'className': 'tab_header ' + (state['selectedTab'] == "events" ? 'selected' : ''),
-                  'onClick': (MouseEvent e) { setState({'selectedTab': 'events'}); }
-                }, "Events")
-              )
-            ),
-            tr({},
-              td({'id': 'editor_tabs_container'},
-                selectedTab
-              )
-            ),
-            tr({},
-              td({'className': 'export_json_container'},
-                textarea({'id': 'export_json', 'value': Editor.exportJsonString, 'onChange': ''}),
-                button({'id': 'load_game_button', 'onClick': (e) { Editor.loadGame(props['update']); }}, "Load")
-              )
-            )
-          ))
-        )
-      );
-  }
-
-  void handleSpriteSelectorClick(MouseEvent e) {
-    if(e is SyntheticMouseEvent) {
-      e = (e as SyntheticMouseEvent).nativeEvent;
-    }
+  void handleSpriteSelectorCanvasMouseDown(SyntheticMouseEvent se) {
+    MouseEvent e = se.nativeEvent;
 
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-    selectedTile = y*Sprite.spriteSheetWidth + x;
-    previousSelectedTile = y*Sprite.spriteSheetWidth + x;
 
-    if(selectedTool == "select" || selectedTool == "erase") {
-      MapEditor.selectTool("brush");
-    }
+    int startX = x;
+    int startY = y;
 
-    update();
+    int lastX = -1, lastY = -1;
+
+    int minX = x, minY = y, sizeX = 1, sizeY = 1;
+
+    StreamSubscription mouseMoveStream = mapEditorSpriteSelectorCanvas.onMouseMove.listen((MouseEvent e) {
+      e.preventDefault();
+
+      // add the tile and re-render
+      int newX = (e.offset.x/Sprite.scaledSpriteSize).floor();
+      int newY = (e.offset.y/Sprite.scaledSpriteSize).floor();
+
+      if(newX == lastX && newY == lastY) {
+        return;
+      }
+
+      lastX = newX;
+      lastY = newY;
+
+      if(newX < startX) {
+        minX = newX;
+        sizeX = 1 + startX - newX;
+      } else if(newX > startX) {
+        minX = startX;
+        sizeX = 1 + newX - startX;
+      } else {
+        minX = startX;
+        sizeX = 1;
+      }
+
+      if(newY < startY) {
+        minY = newY;
+        sizeY = 1 + startY - newY;
+      } else if(newY > startY) {
+        minY = startY;
+        sizeY = 1 + newY - startY;
+      } else {
+        minY = startY;
+        sizeY = 1;
+      }
+
+      renderSpriteSelector();
+      outlineSelectedTiles(mapEditorSpriteSelectorCanvasContext, minX, minY, sizeX, sizeY);
+    });
+    
+    e.preventDefault();
+
+    StreamSubscription onMouseUpListener, onMouseLeaveListener;
+
+    Function finish = (MouseEvent e) {
+      mouseMoveStream.cancel();
+      onMouseUpListener.cancel();
+      onMouseLeaveListener.cancel();
+
+      selectedTile = minY*Sprite.spriteSheetWidth + minX;
+      previousSelectedTile = minY*Sprite.spriteSheetWidth + minX;
+
+      if(sizeX > 1 || sizeY > 1) {
+        MapEditor.selectTool("stamp");
+      } else if(selectedTool == "select" || selectedTool == "erase") {
+        MapEditor.selectTool("brush");
+      }
+
+      MapEditor.stampWidth = sizeX;
+      MapEditor.stampHeight = sizeY;
+
+      renderSpriteSelector();
+      outlineSelectedTiles(mapEditorSpriteSelectorCanvasContext, minX, minY, sizeX, sizeY);
+
+      if(state['selectedTab'] == 'tiles') {
+        update();
+      }
+    };
+
+    onMouseUpListener = mapEditorSpriteSelectorCanvas.onMouseUp.listen(finish);
+    onMouseLeaveListener = mapEditorSpriteSelectorCanvas.onMouseLeave.listen(finish);
   }
 
   static void selectTool(String newTool) {
@@ -421,9 +381,6 @@ class MapEditor extends Component {
     if(x == lastHoverX && y == lastHoverY) {
       return;
     }
-    
-    // TODO: only update tiles that have been drawn on instead of entire map
-    MapEditor.updateMap(oldPoint: new Point(lastHoverX, lastHoverY), newPoint: new Point(x, y));
 
     int
       width = 1,
@@ -431,9 +388,15 @@ class MapEditor extends Component {
     
     if(selectedTool == "stamp") {
       // TODO: only do this when these values change, not on every tile hover
-      width = Editor.getTextInputIntValue("#stamp_tool_width", 1);
-      height = Editor.getTextInputIntValue("#stamp_tool_height", 1);
+      width = MapEditor.stampWidth;
+      height = MapEditor.stampHeight;
     }
+
+    MapEditor.updateMap(
+      oldPoint: new Point(lastHoverX, lastHoverY),
+      newPoint: new Point(x, y),
+      size: new Point(width, height)
+    );
 
     if(selectedTool != "select") {
       for(int i=0; i<width; i++) {
@@ -487,40 +450,6 @@ class MapEditor extends Component {
       Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2,
       Sprite.scaledSpriteSize * width + 4, Sprite.scaledSpriteSize * height + 4
     );
-  }
-
-  void handleSpriteSelectorCanvasMouseDown(MouseEvent e) {
-    int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
-    int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-
-    int
-      minX = x, maxX = x,
-      minY = y, maxY = y;
-
-    StreamSubscription mouseMoveStream = mapEditorSpriteSelectorCanvas.onMouseMove.listen((MouseEvent e) {
-      e.preventDefault();
-
-      // add the tile and re-render
-      int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
-      int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-
-      if(x < minX) minX = x;
-      if(x > maxX) maxX = x;
-      if(y < minY) minY = y;
-      if(y > maxY) maxY = y;
-
-      outlineSelectedTiles(mapEditorSpriteSelectorCanvasContext, minX, minY, (maxX - minX), (maxY - minY));
-    });
-    
-    e.preventDefault();
-
-    mapEditorSpriteSelectorCanvas.onMouseUp.listen((MouseEvent e) {
-      mouseMoveStream.cancel();
-    });
-
-    mapEditorSpriteSelectorCanvas.onMouseLeave.listen((MouseEvent e) {
-      mouseMoveStream.cancel();
-    });
   }
 
   void handleMainCanvasMouseDown(MouseEvent e) {
@@ -622,11 +551,8 @@ class MapEditor extends Component {
         }
         floodFill(mapTiles, x, y, layer, tileBefore, solid, layered);
       } else if(selectedTool == "stamp") {
-        int height = Editor.getTextInputIntValue("#stamp_tool_height", 1);
-        int width = Editor.getTextInputIntValue("#stamp_tool_width", 1);
-        
-        for(int i=0; i<width; i++) {
-          for(int j=0; j<height; j++) {
+        for(int i=0; i<MapEditor.stampWidth; i++) {
+          for(int j=0; j<MapEditor.stampHeight; j++) {
             mapTiles[y+j][x+i][layer] = new Tile(
               solid,
               new Sprite.int(selectedTile + (j*Sprite.spriteSheetWidth) + i, x+i, y+j)
@@ -707,7 +633,7 @@ class MapEditor extends Component {
     */
   }
   
-  static void updateMap({Point oldPoint, Point newPoint, bool shouldExport: false}) {
+  static void updateMap({Point oldPoint, Point newPoint, Point size, bool shouldExport: false}) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     
     List<Character> characters = [];
@@ -748,12 +674,16 @@ class MapEditor extends Component {
       mapEditorCanvasContext.fillRect(0, 0, mapEditorCanvasWidth, mapEditorCanvasHeight);
     } else {
       mapEditorCanvasContext.fillStyle = "#ff00ff";
+
+      // blank out old point
       mapEditorCanvasContext.fillRect(
         (oldPoint.x-1) * Sprite.scaledSpriteSize, (oldPoint.y-1) * Sprite.scaledSpriteSize,
-        Sprite.scaledSpriteSize*3, Sprite.scaledSpriteSize*3);
+        Sprite.scaledSpriteSize*(3 + size.x), Sprite.scaledSpriteSize*(3 + size.y));
+
+      // blank out new point
       mapEditorCanvasContext.fillRect(
         (newPoint.x-1) * Sprite.scaledSpriteSize, (newPoint.y-1) * Sprite.scaledSpriteSize,
-        Sprite.scaledSpriteSize*3, Sprite.scaledSpriteSize*3);
+        Sprite.scaledSpriteSize*(3 + size.x), Sprite.scaledSpriteSize*(3 + size.y));
     }
     
     for(List<Tile> layer in renderList) {
@@ -762,12 +692,12 @@ class MapEditor extends Component {
           (oldPoint == null && newPoint == null) ||
           (
             oldPoint != null &&
-            tile.sprite.posX.round() >= oldPoint.x - 1 && tile.sprite.posX.round() <= oldPoint.x + 1 &&
-            tile.sprite.posY.round() >= oldPoint.y - 1 && tile.sprite.posY.round() <= oldPoint.y + 1
+            tile.sprite.posX.round() >= oldPoint.x - 1 && tile.sprite.posX.round() <= oldPoint.x + size.x + 1 &&
+            tile.sprite.posY.round() >= oldPoint.y - 1 && tile.sprite.posY.round() <= oldPoint.y + size.y + 1
           ) || (
             newPoint != null &&
-            tile.sprite.posX.round() >= newPoint.x - 1 && tile.sprite.posX.round() <= newPoint.x + 1 &&
-            tile.sprite.posY.round() >= newPoint.y - 1 && tile.sprite.posY.round() <= newPoint.y + 1
+            tile.sprite.posX.round() >= newPoint.x - 1 && tile.sprite.posX.round() <= newPoint.x + size.x + 1 &&
+            tile.sprite.posY.round() >= newPoint.y - 1 && tile.sprite.posY.round() <= newPoint.y + size.y + 1
           )
         ) {
           renderStaticSprite(
@@ -778,7 +708,7 @@ class MapEditor extends Component {
       }
     }
     
-    MapEditor.renderColoredTiles(oldPoint: oldPoint, newPoint: newPoint);
+    MapEditor.renderColoredTiles(oldPoint: oldPoint, newPoint: newPoint, size: size);
     
     if(shouldExport) {
       Editor.export();
@@ -801,7 +731,7 @@ class MapEditor extends Component {
     };
   }
   
-  static void renderColoredTiles({Point oldPoint, Point newPoint}) {
+  static void renderColoredTiles({Point oldPoint, Point newPoint, Point size}) {
     if(!Editor.highlightSpecialTiles)
       return;
     
@@ -913,11 +843,11 @@ class MapEditor extends Component {
         if(
           (oldPoint != null && newPoint != null) &&
           !((
-            x >= oldPoint.x - 1 && x <= oldPoint.x + 1 &&
-            y >= oldPoint.y - 1 && y <= oldPoint.y + 1
+            x >= oldPoint.x - 1 && x <= oldPoint.x + size.x + 1 &&
+            y >= oldPoint.y - 1 && y <= oldPoint.y + size.y + 1
           ) || (
-            x >= newPoint.x - 1 && x <= newPoint.x + 1 &&
-            y >= newPoint.y - 1 && y <= newPoint.y + 1
+            x >= newPoint.x - 1 && x <= newPoint.x + size.x + 1 &&
+            y >= newPoint.y - 1 && y <= newPoint.y + size.y + 1
           ))
         ) {
           continue;
@@ -1137,6 +1067,118 @@ class MapEditor extends Component {
         }
       }
     }
+  }
+
+  render() {
+    JsObject selectedTab;
+    if(state['selectedTab'] == "maps") {
+      selectedTab = mapEditorMaps({'update': props['update'], 'debounceUpdate': props['debounceUpdate']});
+    } else if(state['selectedTab'] == "tiles") {
+      selectedTab = mapEditorTiles({'selectedTile': state['selectedTile']});
+    } else if(state['selectedTab'] == "map_characters") {
+      selectedTab = mapEditorCharacters({'update': props['update'], 'goToEditObject': props['goToEditObject']});
+    } else if(state['selectedTab'] == "warps") {
+      selectedTab = mapEditorWarps({'update': props['update']});
+    } else if(state['selectedTab'] == "signs") {
+      selectedTab = mapEditorSigns({'update': props['update']});
+    } else if(state['selectedTab'] == "battlers") {
+      selectedTab = mapEditorBattlers({'update': props['update']});
+    } else if(state['selectedTab'] == "events") {
+      selectedTab = mapEditorEvents({'update': props['update']});
+    }
+
+    return
+      tr({'id': 'map_editor_tab'},
+        td({'id': 'left_half'},
+          div({'style': {'position': 'relative', 'width': 0, 'height': 0}},
+            mapEditorTileInfo({
+              'ref': 'tileInfo',
+              'update': props['update'],
+              'showTileInfo': showTileInfo,
+              'changeTile': changeTile
+            })
+          ),
+          canvas({
+            'id': 'editor_main_canvas',
+            'width': 640,
+            'height': 512,
+            'onClick': handleTileClickOrDrag,
+            'onMouseMove': hoverTile,
+            'onMouseLeave': (MouseEvent e) {
+              tooltip.style.display = "none";
+
+              if(selectedTool != "select") {
+                MapEditor.updateMap();
+              }
+            },
+            'onMouseDown': handleMainCanvasMouseDown
+          })
+        ),
+        td({'id': 'right_half'},
+          table({'id': 'right_half_container'}, tbody({},
+            tr({},
+              td({'className': 'sprite_picker_container'},
+                canvas({
+                  'id': 'editor_sprite_canvas',
+                  'width': 256,
+                  'height': 256,
+                  'onMouseDown': handleSpriteSelectorCanvasMouseDown
+                })
+              )
+            ),
+            tr({},
+              td({'className': 'tab_headers'},
+                div({
+                  'id': 'maps_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "maps" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'maps'}); }
+                  }, "Maps"),
+                div({
+                  'id': 'tiles_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "tiles" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'tiles'}); }
+                }, "Tiles"),
+                div({
+                  'id': 'map_characters_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "map_characters" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'map_characters'}); }
+                }, "Characters"),
+                div({
+                  'id': 'warps_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "warps" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'warps'}); }
+                }, "Warps"),
+                div({
+                  'id': 'signs_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "signs" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'signs'}); }
+                }, "Signs"),
+                div({
+                  'id': 'battlers_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "battlers" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'battlers'}); }
+                }, "Battlers"),
+                div({
+                  'id': 'events_tab_header',
+                  'className': 'tab_header ' + (state['selectedTab'] == "events" ? 'selected' : ''),
+                  'onClick': (MouseEvent e) { setState({'selectedTab': 'events'}); }
+                }, "Events")
+              )
+            ),
+            tr({},
+              td({'id': 'editor_tabs_container'},
+                selectedTab
+              )
+            ),
+            tr({},
+              td({'className': 'export_json_container'},
+                textarea({'id': 'export_json', 'value': Editor.exportJsonString, 'onChange': ''}),
+                button({'id': 'load_game_button', 'onClick': (e) { Editor.loadGame(props['update']); }}, "Load")
+              )
+            )
+          ))
+        )
+      );
   }
   
   static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {

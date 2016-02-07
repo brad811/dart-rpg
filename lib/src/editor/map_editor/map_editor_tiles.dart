@@ -106,9 +106,23 @@ class MapEditorTiles extends Component {
           'onClick': (MouseEvent e) { MapEditor.selectTool("stamp"); update(); }
         }, "Stamp"),
         div({'id': 'stamp_tool_size'},
-          "Width: ", input({'id': 'stamp_tool_width', 'type': 'text', 'className': 'number'}),
+          "Width: ",
+          input({
+            'id': 'stamp_tool_width',
+            'type': 'text',
+            'className': 'number',
+            'value': MapEditor.stampWidth,
+            'onChange': (Event e) { MapEditor.stampWidth = Editor.getTextInputIntValue("#stamp_tool_width", 1); }
+          }),
           br({}),
-          "Height: ", input({'id': 'stamp_tool_height', 'type': 'text', 'className': 'number'})
+          "Height: ",
+          input({
+            'id': 'stamp_tool_height',
+            'type': 'text',
+            'className': 'number',
+            'value': MapEditor.stampHeight,
+            'onChange': (Event e) { MapEditor.stampHeight = Editor.getTextInputIntValue("#stamp_tool_height", 1); }
+          })
         ),
         br({'className': 'breaker'}),
 
