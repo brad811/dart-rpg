@@ -136,7 +136,7 @@ class MapEditorCharacters extends Component {
             })
           ),
           td({},
-            span({'onClick': goToEditCharacterFunction(i)}, "Edit character")
+            button({'onClick': goToEditCharacterFunction(i)}, "Edit character")
           )
         )
       );
