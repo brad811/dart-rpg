@@ -34,7 +34,7 @@ class ObjectEditor extends Component {
       shouldUpdate = true;
     }
 
-    if(props['selectedSubItemNumber'] != null && props['selectedSubItemNumber'] != '') {
+    if(props['selectedSubItemNumber'] != -1) {
       newState['selectedItemNumber'] = props['selectedSubItemNumber'];
       shouldUpdate = true;
     }
