@@ -28,9 +28,9 @@ class ObjectEditorCharacters extends Component {
   componentDidMount(Element rootNode) {
     initSpritePickers();
 
-    if(props['selectedItemNumber'] != -1) {
-      setState({'selected': props['selectedItemNumber']});
-      querySelector('#character_row_${props['selectedItemNumber']}').scrollIntoView();
+    if(Editor.selectedSubTab == "characters" && Editor.selectedSubItemNumber != -1) {
+      setState({'selected': Editor.selectedSubItemNumber});
+      querySelector('#character_row_${Editor.selectedSubItemNumber}').scrollIntoView();
     }
   }
 

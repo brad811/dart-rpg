@@ -40,10 +40,11 @@ class Editor extends Component {
   getInitialState() => {
     'gameLoaded': false,
     'doneSettingUp': false,
-    'selectedTab': 'mapEditor',
-    'selectedSubTab': '',
-    'selectedSubItemNumber': -1
+    'selectedTab': 'mapEditor'
   };
+
+  static String selectedSubTab = "";
+  static int selectedSubItemNumber = -1;
 
   componentDidMount(Element rootNode) {
     Main.world = new World(() {
@@ -71,10 +72,11 @@ class Editor extends Component {
   }
 
   void goToEditObject(String subTab, int number) {
+    Editor.selectedSubTab = subTab;
+    Editor.selectedSubItemNumber = number;
+
     this.setState({
-      'selectedTab': 'objectEditor',
-      'selectedSubTab': subTab,
-      'selectedSubItemNumber': number
+      'selectedTab': 'objectEditor'
     });
   }
 
@@ -94,9 +96,7 @@ class Editor extends Component {
     } else if(state['selectedTab'] == 'objectEditor') {
       selectedTab = objectEditor({
         'ref': 'objectEditor',
-        'update': update,
-        'selectedSubTab': state['selectedSubTab'],
-        'selectedSubItemNumber': state['selectedSubItemNumber']
+        'update': update
       });
     } else if(state['selectedTab'] == 'screenEditor') {
       selectedTab = screenEditor({'update': update});
@@ -219,24 +219,6 @@ class Editor extends Component {
         callback();
       }
     };
-  }
-
-  @deprecated
-  static void confirmMapDelete(Map<Object, Object> target, Object key, String targetName, Function callback) {
-    bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
-    if(confirm) {
-      target.remove(key);
-      callback();
-    }
-  }
-
-  @deprecated
-  static void confirmListDelete(List<Object> target, int offset, String targetName, Function callback) {
-    bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
-    if(confirm) {
-      target.removeAt(offset);
-      callback();
-    }
   }
   
   static void setMapDeleteButtonListeners(Map<Object, Object> target, String targetName, Function callback) {

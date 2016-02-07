@@ -3,6 +3,7 @@ library dart_rpg.object_editor;
 import 'dart:html';
 import 'dart:js';
 
+import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/object_editor/object_editor_attacks.dart';
 import 'package:dart_rpg/src/editor/object_editor/object_editor_battler_types.dart';
 import 'package:dart_rpg/src/editor/object_editor/object_editor_characters.dart';
@@ -21,44 +22,37 @@ var objectEditorGameEvents = registerComponent(() => new ObjectEditorGameEvents(
 
 class ObjectEditor extends Component {
   getInitialState() => {
-    'selectedTab': 'attacks',
-    'selectedItemNumber': -1
+    'selectedTab': 'attacks'
   };
 
   componentWillMount() {
-    Map newState = {};
-    bool shouldUpdate = false;
-
-    if(props['selectedSubTab'] != null && props['selectedSubTab'] != '') {
-      newState['selectedTab'] = props['selectedSubTab'];
-      shouldUpdate = true;
+    if(Editor.selectedSubTab != '' || Editor.selectedSubItemNumber != -1) {
+      setState({
+        'selectedTab': Editor.selectedSubTab
+      });
     }
+  }
 
-    if(props['selectedSubItemNumber'] != -1) {
-      newState['selectedItemNumber'] = props['selectedSubItemNumber'];
-      shouldUpdate = true;
-    }
-
-    if(shouldUpdate) {
-      setState(newState);
-    }
+  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+    Editor.selectedSubTab = '';
+    Editor.selectedSubItemNumber = -1;
   }
 
   render() {
     JsObject selectedTab;
 
     if(state['selectedTab'] == "attacks") {
-      selectedTab = objectEditorAttacks({'selectedItemNumber': state['selectedItemNumber']});
+      selectedTab = objectEditorAttacks({});
     } else if(state['selectedTab'] == "types") {
-      selectedTab = objectEditorTypes({'selectedItemNumber': state['selectedItemNumber']});
+      selectedTab = objectEditorTypes({});
     } else if(state['selectedTab'] == "battler_types") {
-      selectedTab = objectEditorBattlerTypes({'selectedItemNumber': state['selectedItemNumber']});
+      selectedTab = objectEditorBattlerTypes({});
     } else if(state['selectedTab'] == "characters") {
-      selectedTab = objectEditorCharacters({'selectedItemNumber': state['selectedItemNumber']});
+      selectedTab = objectEditorCharacters({});
     } else if(state['selectedTab'] == "items") {
-      selectedTab = objectEditorItems({'selectedItemNumber': state['selectedItemNumber']});
+      selectedTab = objectEditorItems({});
     } else if(state['selectedTab'] == "game_event_chains") {
-      selectedTab = objectEditorGameEvents({'selectedItemNumber': state['selectedItemNumber']});
+      selectedTab = objectEditorGameEvents({});
     }
 
     List<JsObject> tabHeaders = [];
