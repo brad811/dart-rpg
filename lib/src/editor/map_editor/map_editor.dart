@@ -178,7 +178,32 @@ class MapEditor extends Component {
       (Main.spritesImage.height * Sprite.spriteScale).round()
     );
     
-    setUpSpritePicker();
+    // draw background of sprite picker
+    mapEditorSpriteSelectorCanvasContext.fillStyle = "#ff00ff";
+    mapEditorSpriteSelectorCanvasContext.fillRect(
+      0, 0,
+      Sprite.scaledSpriteSize*Sprite.spriteSheetWidth,
+      Sprite.scaledSpriteSize*Sprite.spriteSheetHeight
+    );
+    
+    // render sprite picker
+    int
+      maxCol = Sprite.spriteSheetWidth,
+      col = 0,
+      row = 0;
+    for(int y=0; y<Sprite.spriteSheetHeight; y++) {
+      for(int x=0; x<Sprite.spriteSheetWidth; x++) {
+        renderStaticSprite(mapEditorSpriteSelectorCanvasContext, y*Sprite.spriteSheetWidth + x, col, row);
+        col++;
+        if(col >= maxCol) {
+          row++;
+          col = 0;
+        }
+      }
+    }
+    
+    tooltip = querySelector('#tooltip');
+    tileInfo = querySelector('#tile_info');
 
     updateMap();
   }
@@ -239,15 +264,41 @@ class MapEditor extends Component {
       tr({'id': 'map_editor_tab'},
         td({'id': 'left_half'},
           div({'style': {'position': 'relative', 'width': 0, 'height': 0}},
-            mapEditorTileInfo({'ref': 'tileInfo', 'update': props['update']})
+            mapEditorTileInfo({
+              'ref': 'tileInfo',
+              'update': props['update'],
+              'showTileInfo': showTileInfo,
+              'changeTile': changeTile
+            })
           ),
-          canvas({'id': 'editor_main_canvas', 'width': 640, 'height': 512})
+          canvas({
+            'id': 'editor_main_canvas',
+            'width': 640,
+            'height': 512,
+            'onClick': handleTileClickOrDrag,
+            'onMouseMove': hoverTile,
+            'onMouseLeave': (MouseEvent e) {
+              //lastHoverX = -1;
+              //lastHoverY = -1;
+              tooltip.style.display = "none";
+
+              if(selectedTool != "select") {
+                MapEditor.updateMap();
+              }
+            },
+            'onMouseDown': handleMainCanvasMouseDown
+          })
         ),
         td({'id': 'right_half'},
           table({'id': 'right_half_container'}, tbody({},
             tr({},
               td({'className': 'sprite_picker_container'},
-                canvas({'id': 'editor_sprite_canvas', 'width': 256, 'height': 256})
+                canvas({
+                  'id': 'editor_sprite_canvas',
+                  'width': 256,
+                  'height': 256,
+                  'onClick': handleSpriteSelectorClick
+                })
               )
             ),
             tr({},
@@ -304,90 +355,22 @@ class MapEditor extends Component {
         )
       );
   }
-  
-  void setUpSpritePicker() {
-    mapEditorSpriteSelectorCanvasContext.fillStyle = "#ff00ff";
-    mapEditorSpriteSelectorCanvasContext.fillRect(
-      0, 0,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetWidth,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetHeight
-    );
-    
-    // render sprite picker
-    int
-      maxCol = Sprite.spriteSheetWidth,
-      col = 0,
-      row = 0;
-    for(int y=0; y<Sprite.spriteSheetHeight; y++) {
-      for(int x=0; x<Sprite.spriteSheetWidth; x++) {
-        renderStaticSprite(mapEditorSpriteSelectorCanvasContext, y*Sprite.spriteSheetWidth + x, col, row);
-        col++;
-        if(col >= maxCol) {
-          row++;
-          col = 0;
-        }
-      }
+
+  void handleSpriteSelectorClick(MouseEvent e) {
+    if(e is SyntheticMouseEvent) {
+      e = (e as SyntheticMouseEvent).nativeEvent;
     }
-    
-    mapEditorCanvas.onClick.listen(handleTileClickOrDrag);
-    
-    tooltip = querySelector('#tooltip');
-    tileInfo = querySelector('#tile_info');
-    /*StreamSubscription mouseMoveStream = */
-    mapEditorCanvas.onMouseMove.listen(hoverTile);
-    
-    mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
-      //lastHoverX = -1;
-      //lastHoverY = -1;
-      tooltip.style.display = "none";
 
-      if(selectedTool != "select") {
-        MapEditor.updateMap();
-      }
-    });
-    
-    mapEditorCanvas.onMouseDown.listen((MouseEvent e) {
-      if(selectedTool == "select") {
-        return;
-      }
+    int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+    int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+    selectedTile = y*Sprite.spriteSheetWidth + x;
+    previousSelectedTile = y*Sprite.spriteSheetWidth + x;
 
-      StreamSubscription mouseMoveStream = mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
-        e.preventDefault();
-        handleTileClickOrDrag(e);
-      });
-      
-      e.preventDefault();
+    if(selectedTool == "select" || selectedTool == "erase") {
+      MapEditor.selectTool("brush");
+    }
 
-      mapEditorCanvas.onMouseUp.listen((MouseEvent e) {
-        mouseMoveStream.cancel();
-        lastChangeX = -1;
-        lastChangeY = -1;
-      });
-      mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
-        EventTarget eventTarget = e.relatedTarget;
-        if(eventTarget is DivElement && eventTarget.id == "tooltip") {
-          // don't stop changing tiles, we just collided with the tooltip
-          return;
-        } else {
-          mouseMoveStream.cancel();
-          lastChangeX = -1;
-          lastChangeY = -1;
-        }
-      });
-    });
-    
-    mapEditorSpriteSelectorCanvas.onClick.listen((MouseEvent e) {
-      int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
-      int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-      selectedTile = y*Sprite.spriteSheetWidth + x;
-      previousSelectedTile = y*Sprite.spriteSheetWidth + x;
-
-      if(selectedTool == "select" || selectedTool == "erase") {
-        MapEditor.selectTool("brush");
-      }
-
-      update();
-    });
+    update();
   }
 
   static void selectTool(String newTool) {
@@ -412,7 +395,9 @@ class MapEditor extends Component {
     previousSelectedTool = MapEditor.selectedTool;
   }
   
-  static void hoverTile(MouseEvent e) {
+  static void hoverTile(SyntheticMouseEvent se) {
+    MouseEvent e = se.nativeEvent;
+
     // tileInfo.style.display != "none"
     if(tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
       return;
@@ -481,30 +466,99 @@ class MapEditor extends Component {
       }
     }
     
-    outlineSelectedTiles(x, y, width, height);
+    outlineSelectedTiles(mapEditorCanvasContext, x, y, width, height);
 
     lastHoverX = x;
     lastHoverY = y;
     //MapEditor.updateMap();
   }
 
-  static void outlineSelectedTiles(x, y, width, height) {
-    mapEditorCanvasContext.lineWidth = 4;
-    mapEditorCanvasContext.setStrokeColorRgb(255, 255, 255, 1.0);
-    mapEditorCanvasContext.strokeRect(
+  static void outlineSelectedTiles(CanvasRenderingContext2D context, int x, int y, int width, int height) {
+    context.lineWidth = 4;
+    context.setStrokeColorRgb(255, 255, 255, 1.0);
+    context.strokeRect(
       Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2,
       Sprite.scaledSpriteSize * width + 4, Sprite.scaledSpriteSize * height + 4
     );
     
-    mapEditorCanvasContext.lineWidth = 2;
-    mapEditorCanvasContext.setStrokeColorRgb(0, 0, 0, 1.0);
-    mapEditorCanvasContext.strokeRect(
+    context.lineWidth = 2;
+    context.setStrokeColorRgb(0, 0, 0, 1.0);
+    context.strokeRect(
       Sprite.scaledSpriteSize * x - 2, Sprite.scaledSpriteSize * y - 2,
       Sprite.scaledSpriteSize * width + 4, Sprite.scaledSpriteSize * height + 4
     );
   }
 
+  void handleSpriteSelectorCanvasMouseDown(MouseEvent e) {
+    int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+    int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+
+    int
+      minX = x, maxX = x,
+      minY = y, maxY = y;
+
+    StreamSubscription mouseMoveStream = mapEditorSpriteSelectorCanvas.onMouseMove.listen((MouseEvent e) {
+      e.preventDefault();
+
+      // add the tile and re-render
+      int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+      int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+
+      if(x < minX) minX = x;
+      if(x > maxX) maxX = x;
+      if(y < minY) minY = y;
+      if(y > maxY) maxY = y;
+
+      outlineSelectedTiles(mapEditorSpriteSelectorCanvasContext, minX, minY, (maxX - minX), (maxY - minY));
+    });
+    
+    e.preventDefault();
+
+    mapEditorSpriteSelectorCanvas.onMouseUp.listen((MouseEvent e) {
+      mouseMoveStream.cancel();
+    });
+
+    mapEditorSpriteSelectorCanvas.onMouseLeave.listen((MouseEvent e) {
+      mouseMoveStream.cancel();
+    });
+  }
+
+  void handleMainCanvasMouseDown(MouseEvent e) {
+    if(selectedTool == "select") {
+        return;
+      }
+
+      StreamSubscription mouseMoveStream = mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
+        e.preventDefault();
+        handleTileClickOrDrag(e);
+      });
+      
+      e.preventDefault();
+
+      mapEditorCanvas.onMouseUp.listen((MouseEvent e) {
+        mouseMoveStream.cancel();
+        lastChangeX = -1;
+        lastChangeY = -1;
+      });
+
+      mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
+        EventTarget eventTarget = e.relatedTarget;
+        if(eventTarget is DivElement && eventTarget.id == "tooltip") {
+          // don't stop changing tiles, we just collided with the tooltip
+          return;
+        } else {
+          mouseMoveStream.cancel();
+          lastChangeX = -1;
+          lastChangeY = -1;
+        }
+      });
+  }
+
   void handleTileClickOrDrag(MouseEvent e) {
+    if(e is SyntheticMouseEvent) {
+      e = (e as SyntheticMouseEvent).nativeEvent;
+    }
+
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
 
@@ -521,56 +575,6 @@ class MapEditor extends Component {
 
     // TODO: update tile_info
     ref('tileInfo').setTile(x, y);
-
-    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-    List<String> layerNames = ["Ground", "Below", "Player", "Above"];
-
-    for(int i=layerNames.length-1; i>=0; i--) {
-      if(mapTiles[y][x][i] != null) {
-        Function tileInfoInputChange = (Event e) {
-          mapTiles[y][x][i].sprite.id = Editor.getTextInputIntValue("#tile_info_layer_${i}_sprite_id", 0);
-
-          // TODO: this should be done more cleanly
-          selectedTool = "brush";
-          int selectedTileBefore = selectedTile;
-          selectedTile = mapTiles[y][x][i].sprite.id;
-
-          lastChangeX = -1;
-          lastChangeY = -1;
-
-          changeTile(
-            x, y, i,
-            Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_solid"),
-            Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_layered"),
-            Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_encounter")
-          );
-
-          MapEditor.updateMap();
-          outlineSelectedTiles(x, y, 1, 1);
-
-          showTileInfo(x, y);
-
-          selectedTool = "select";
-          selectedTile = selectedTileBefore;
-        };
-
-        Editor.initSpritePicker("tile_info_layer_${i}_sprite_id", mapTiles[y][x][i].sprite.id, 1, 1, tileInfoInputChange);
-
-        Editor.attachInputListeners("tile_info_layer_${i}", ["solid", "layered", "encounter"], tileInfoInputChange);
-
-        querySelector("#delete_tile_info_layer_${i}").onClick.listen((MouseEvent e) {
-          int selectedTileBefore = selectedTile;
-          selectedTile = -1;
-          lastChangeX = -1;
-          lastChangeY = -1;
-          changeTile(x, y, i, false, false, false);
-          selectedTile = selectedTileBefore;
-          MapEditor.updateMap();
-          outlineSelectedTiles(x, y, 1, 1);
-          showTileInfo(x, y);
-        });
-      }
-    }
 
     tileInfo.style.display = "block";
     tileInfo.style.left = "${(x+1) * Sprite.scaledSpriteSize + 5}px";
@@ -639,10 +643,11 @@ class MapEditor extends Component {
     }
 
     MapEditor.updateMap();
-    Editor.debounceExport();
     
     if(selectedTool == "select") {
-      outlineSelectedTiles(x, y, 1, 1);
+      outlineSelectedTiles(mapEditorCanvasContext, x, y, 1, 1);
+    } else {
+      Editor.debounceExport();
     }
   }
   

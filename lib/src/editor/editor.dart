@@ -85,9 +85,19 @@ class Editor extends Component {
 
     JsObject selectedTab;
     if(state['selectedTab'] == 'mapEditor') {
-      selectedTab = mapEditor({'ref': 'mapEditor', 'update': update, 'debounceUpdate': debounceUpdate, 'goToEditObject': goToEditObject});
+      selectedTab = mapEditor({
+        'ref': 'mapEditor',
+        'update': update,
+        'debounceUpdate': debounceUpdate,
+        'goToEditObject': goToEditObject
+      });
     } else if(state['selectedTab'] == 'objectEditor') {
-      selectedTab = objectEditor({'ref': 'objectEditor', 'update': update, 'selectedSubTab': state['selectedSubTab'], 'selectedSubItemNumber': state['selectedSubItemNumber']});
+      selectedTab = objectEditor({
+        'ref': 'objectEditor',
+        'update': update,
+        'selectedSubTab': state['selectedSubTab'],
+        'selectedSubItemNumber': state['selectedSubItemNumber']
+      });
     } else if(state['selectedTab'] == 'screenEditor') {
       selectedTab = screenEditor({'update': update});
     } else if(state['selectedTab'] == 'settings') {
@@ -270,7 +280,8 @@ class Editor extends Component {
         'type': 'text',
         'className': 'number',
         'value': value,
-        'readOnly': readOnly
+        'readOnly': readOnly,
+        'onChange': (Event e) {}
       })
     ];
 
