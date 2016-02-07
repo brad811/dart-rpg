@@ -124,21 +124,21 @@ class MapEditorTileInfo extends Component {
                 input({
                   'id': 'tile_info_layer_${i}_solid',
                   'type': 'checkbox',
-                  'value': mapTiles[y][x][i].solid,
+                  'checked': mapTiles[y][x][i].solid,
                   'onChange': onInputChange
                 }, "Solid"),
                 br({}),
                 input({
                   'id': 'tile_info_layer_${i}_layered',
                   'type': 'checkbox',
-                  'value': mapTiles[y][x][i].layered,
+                  'checked': mapTiles[y][x][i].layered,
                   'onChange': onInputChange
                 }, "Layered"),
                 br({}),
                 input({
                   'id': 'tile_info_layer_${i}_encounter',
                   'type': 'checkbox',
-                  'value': mapTiles[y][x][i] is EncounterTile,
+                  'checked': mapTiles[y][x][i] is EncounterTile,
                   'onChange': onInputChange
                 }, "Encounter"),
                 br({})

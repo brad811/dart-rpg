@@ -129,8 +129,7 @@ class Editor extends Component {
                 'className': 'tab_header ' + (state['selectedTab'] == 'settings' ? 'selected' : ''),
                 'onClick': (MouseEvent e) { setState({'selectedTab': 'settings'}); }
               }, "Settings"),
-
-              // TODO: make this a component
+              
               div({'id': 'game_storage_container'},
                 gameStorage({'update': update})
               )
