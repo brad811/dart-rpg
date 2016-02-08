@@ -54,7 +54,11 @@ class MapEditor extends Component {
     lastChangeX = -1,
     lastChangeY = -1,
     lastTileInfoX = -1,
-    lastTileInfoY = -1;
+    lastTileInfoY = -1,
+    lastTileInfoSizeX = -1,
+    lastTileInfoSizeY = -1;
+
+  static bool shouldHover = true;
   
   static List<bool> layerVisible = [];
   
@@ -250,6 +254,8 @@ class MapEditor extends Component {
   void handleSpriteSelectorCanvasMouseDown(SyntheticMouseEvent se) {
     MouseEvent e = se.nativeEvent;
 
+    e.preventDefault();
+
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
 
@@ -260,7 +266,12 @@ class MapEditor extends Component {
 
     int minX = x, minY = y, sizeX = 1, sizeY = 1;
 
-    StreamSubscription mouseMoveStream = mapEditorSpriteSelectorCanvas.onMouseMove.listen((MouseEvent e) {
+    StreamSubscription
+      mouseMoveStream,
+      onMouseUpListener,
+      onMouseLeaveListener;
+
+    mouseMoveStream = mapEditorSpriteSelectorCanvas.onMouseMove.listen((MouseEvent e) {
       e.preventDefault();
 
       // add the tile and re-render
@@ -299,10 +310,6 @@ class MapEditor extends Component {
       renderSpriteSelector();
       outlineSelectedTiles(mapEditorSpriteSelectorCanvasContext, minX, minY, sizeX, sizeY);
     });
-    
-    e.preventDefault();
-
-    StreamSubscription onMouseUpListener, onMouseLeaveListener;
 
     Function finish = (MouseEvent e) {
       mouseMoveStream.cancel();
@@ -333,29 +340,202 @@ class MapEditor extends Component {
     onMouseLeaveListener = mapEditorSpriteSelectorCanvas.onMouseLeave.listen(finish);
   }
 
-  static void selectTool(String newTool) {
-    if(newTool == "erase") {
-      MapEditor.previousSelectedTile = MapEditor.selectedTile;
-      MapEditor.selectedTile = -1;
-    } else {
-      MapEditor.selectedTile = MapEditor.previousSelectedTile;
-      MapEditor.selectedTile = MapEditor.selectedTile;
+  void handleMainCanvasMouseDown(SyntheticMouseEvent se) {
+    MouseEvent e = se.nativeEvent;
+
+    e.preventDefault();
+
+    if(selectedTool == "select") {
+      handleMainCanvasSelectMouseDown(e);
+      return;
     }
 
-    if(MapEditor.selectedTool == "select" && newTool != "select") {
-      MapEditor.tileInfo.style.display = "none";
-      MapEditor.updateMap();
-    }
+    int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+    int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
 
-    MapEditor.selectedTool = newTool;
+    changeTile(
+      x, y, MapEditor.selectedLayer,
+      MapEditor.brushSolid,
+      MapEditor.brushLayered,
+      MapEditor.brushEncounter
+    );
 
-    MapEditor.lastChangeX = -1;
-    MapEditor.lastChangeY = -1;
+    StreamSubscription
+      mouseMoveStream,
+      mouseUpStream,
+      mouseLeaveStream;
 
-    previousSelectedTool = MapEditor.selectedTool;
+    mouseMoveStream = mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
+      e.preventDefault();
+      
+      if(e is SyntheticMouseEvent) {
+        e = (e as SyntheticMouseEvent).nativeEvent;
+      }
+
+      int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+      int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+
+      changeTile(
+        x, y, MapEditor.selectedLayer,
+        MapEditor.brushSolid,
+        MapEditor.brushLayered,
+        MapEditor.brushEncounter
+      );
+    });
+
+    mouseUpStream = mapEditorCanvas.onMouseUp.listen((MouseEvent e) {
+      mouseMoveStream.cancel();
+      mouseUpStream.cancel();
+      mouseLeaveStream.cancel();
+      lastChangeX = -1;
+      lastChangeY = -1;
+    });
+
+    mouseLeaveStream = mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
+      EventTarget eventTarget = e.relatedTarget;
+      if(eventTarget is DivElement && eventTarget.id == "tooltip") {
+        // don't stop changing tiles, we just collided with the tooltip
+        return;
+      } else {
+        mouseMoveStream.cancel();
+        mouseUpStream.cancel();
+        mouseLeaveStream.cancel();
+        lastChangeX = -1;
+        lastChangeY = -1;
+      }
+    });
   }
-  
+
+  void handleMainCanvasSelectMouseDown(MouseEvent e) {
+    shouldHover = false;
+
+    int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+    int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+
+    int startX = x;
+    int startY = y;
+
+    int lastX = -1, lastY = -1;
+
+    int minX = x, minY = y, sizeX = 1, sizeY = 1;
+
+    MapEditor.updateMap(
+      oldPoint: new Point(lastTileInfoX, lastTileInfoY),
+      newPoint: new Point(lastTileInfoX, lastTileInfoY),
+      size: new Point(lastTileInfoSizeX, lastTileInfoSizeY)
+    );
+
+    StreamSubscription
+      onMouseMoveStream,
+      onMouseUpListener,
+      onMouseLeaveListener;
+
+    onMouseMoveStream = mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
+      e.preventDefault();
+
+      // add the tile and re-render
+      int newX = (e.offset.x/Sprite.scaledSpriteSize).floor();
+      int newY = (e.offset.y/Sprite.scaledSpriteSize).floor();
+
+      if(newX == lastX && newY == lastY) {
+        return;
+      }
+
+      // update with old size
+      MapEditor.updateMap(
+        oldPoint: new Point(minX, minY),
+        newPoint: new Point(newX, newY),
+        size: new Point(sizeX, sizeY)
+      );
+
+      if(newX < startX) {
+        minX = newX;
+        sizeX = 1 + startX - newX;
+      } else if(newX > startX) {
+        minX = startX;
+        sizeX = 1 + newX - startX;
+      } else {
+        minX = startX;
+        sizeX = 1;
+      }
+
+      if(newY < startY) {
+        minY = newY;
+        sizeY = 1 + startY - newY;
+      } else if(newY > startY) {
+        minY = startY;
+        sizeY = 1 + newY - startY;
+      } else {
+        minY = startY;
+        sizeY = 1;
+      }
+
+      // update with new size
+      MapEditor.updateMap(
+        oldPoint: new Point(minX, minY),
+        newPoint: new Point(newX, newY),
+        size: new Point(sizeX, sizeY)
+      );
+
+      lastX = newX;
+      lastY = newY;
+
+      lastTileInfoSizeX = sizeX;
+      lastTileInfoSizeY = sizeY;
+      lastTileInfoX = minX;
+      lastTileInfoY = minY;
+
+      outlineSelectedTiles(mapEditorCanvasContext, minX, minY, sizeX, sizeY);
+    });
+
+    Function finish = (MouseEvent e) {
+      shouldHover = true;
+
+      onMouseMoveStream.cancel();
+      onMouseUpListener.cancel();
+      onMouseLeaveListener.cancel();
+
+      // update map?
+
+      // check if we're unselecting by clicking the currently selected region
+      if(
+        sizeX == 1 && sizeY == 1 &&
+        (lastTileInfoX <= minX && minX <= lastTileInfoX + lastTileInfoSizeX - 1) &&
+        (lastTileInfoY <= minY && minY <= lastTileInfoY + lastTileInfoSizeY - 1)
+      ) {
+        lastTileInfoX = -1;
+        lastTileInfoY = -1;
+        lastTileInfoSizeX = -1;
+        lastTileInfoSizeY = -1;
+
+        tileInfo.style.display = "none";
+        updateMap();
+      } else {
+        updateMap(
+          oldPoint: new Point(lastTileInfoX, lastTileInfoY),
+          newPoint: new Point(minX, minY),
+          size: new Point(lastTileInfoSizeX, lastTileInfoSizeY)
+        );
+
+        lastTileInfoSizeX = sizeX;
+        lastTileInfoSizeY = sizeY;
+        lastTileInfoX = minX;
+        lastTileInfoY = minY;
+
+        outlineSelectedTiles(mapEditorCanvasContext, minX, minY, sizeX, sizeY);
+        showTileInfo(minX, minY, sizeX, sizeY);
+      }
+    };
+
+    onMouseUpListener = mapEditorCanvas.onMouseUp.listen(finish);
+    onMouseLeaveListener = mapEditorCanvas.onMouseLeave.listen(finish);
+  }
+
   static void hoverTile(SyntheticMouseEvent se) {
+    if(!shouldHover) {
+      return;
+    }
+
     MouseEvent e = se.nativeEvent;
 
     // tileInfo.style.display != "none"
@@ -436,6 +616,28 @@ class MapEditor extends Component {
     //MapEditor.updateMap();
   }
 
+  static void selectTool(String newTool) {
+    if(newTool == "erase") {
+      MapEditor.previousSelectedTile = MapEditor.selectedTile;
+      MapEditor.selectedTile = -1;
+    } else {
+      MapEditor.selectedTile = MapEditor.previousSelectedTile;
+      MapEditor.selectedTile = MapEditor.selectedTile;
+    }
+
+    if(MapEditor.selectedTool == "select" && newTool != "select") {
+      MapEditor.tileInfo.style.display = "none";
+      MapEditor.updateMap();
+    }
+
+    MapEditor.selectedTool = newTool;
+
+    MapEditor.lastChangeX = -1;
+    MapEditor.lastChangeY = -1;
+
+    previousSelectedTool = MapEditor.selectedTool;
+  }
+
   static void outlineSelectedTiles(CanvasRenderingContext2D context, int x, int y, int width, int height) {
     context.lineWidth = 4;
     context.setStrokeColorRgb(255, 255, 255, 1.0);
@@ -452,63 +654,23 @@ class MapEditor extends Component {
     );
   }
 
-  void handleMainCanvasMouseDown(MouseEvent e) {
-    if(selectedTool == "select") {
-        return;
-      }
-
-      StreamSubscription mouseMoveStream = mapEditorCanvas.onMouseMove.listen((MouseEvent e) {
-        e.preventDefault();
-        handleTileClickOrDrag(e);
-      });
-      
-      e.preventDefault();
-
-      mapEditorCanvas.onMouseUp.listen((MouseEvent e) {
-        mouseMoveStream.cancel();
-        lastChangeX = -1;
-        lastChangeY = -1;
-      });
-
-      mapEditorCanvas.onMouseLeave.listen((MouseEvent e) {
-        EventTarget eventTarget = e.relatedTarget;
-        if(eventTarget is DivElement && eventTarget.id == "tooltip") {
-          // don't stop changing tiles, we just collided with the tooltip
-          return;
-        } else {
-          mouseMoveStream.cancel();
-          lastChangeX = -1;
-          lastChangeY = -1;
-        }
-      });
-  }
-
-  void handleTileClickOrDrag(MouseEvent e) {
-    if(e is SyntheticMouseEvent) {
-      e = (e as SyntheticMouseEvent).nativeEvent;
-    }
-
-    int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
-    int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-
-    changeTile(
-      x, y, MapEditor.selectedLayer,
-      MapEditor.brushSolid,
-      MapEditor.brushLayered,
-      MapEditor.brushEncounter
-    );
+  void changeMap(String newMap) {
+    ref('tileInfo').setTile(0, 0, 0, 0);
+    tileInfo.style.display = "none";
+    Main.world.curMap = newMap;
+    props['update']();
   }
   
-  void showTileInfo(int x, int y) {
+  void showTileInfo(int x, int y, int sizeX, int sizeY) {
     tooltip.style.display = "none";
 
     // TODO: update tile_info
-    ref('tileInfo').setTile(x, y);
+    ref('tileInfo').setTile(x, y, sizeX, sizeY);
 
     tileInfo.style.display = "block";
-    tileInfo.style.left = "${(x+1) * Sprite.scaledSpriteSize + 5}px";
+    tileInfo.style.left = "${(x + sizeX) * Sprite.scaledSpriteSize + 5}px";
     tileInfo.style.top = "${(y) * Sprite.scaledSpriteSize}px";
-    tileInfo.style.width = "200px";
+    tileInfo.style.width = "${150 + sizeX*Sprite.scaledSpriteSize}px";
   }
 
   void changeTile(int x, int y, int layer, bool solid, bool layered, bool encounter) {
@@ -1072,7 +1234,7 @@ class MapEditor extends Component {
   render() {
     JsObject selectedTab;
     if(state['selectedTab'] == "maps") {
-      selectedTab = mapEditorMaps({'update': props['update'], 'debounceUpdate': props['debounceUpdate']});
+      selectedTab = mapEditorMaps({'update': props['update'], 'debounceUpdate': props['debounceUpdate'], 'changeMap': changeMap});
     } else if(state['selectedTab'] == "tiles") {
       selectedTab = mapEditorTiles({'selectedTile': state['selectedTile']});
     } else if(state['selectedTab'] == "map_characters") {
@@ -1102,7 +1264,7 @@ class MapEditor extends Component {
             'id': 'editor_main_canvas',
             'width': 640,
             'height': 512,
-            'onClick': handleTileClickOrDrag,
+            'onMouseDown': handleMainCanvasMouseDown,
             'onMouseMove': hoverTile,
             'onMouseLeave': (MouseEvent e) {
               tooltip.style.display = "none";
@@ -1110,8 +1272,7 @@ class MapEditor extends Component {
               if(selectedTool != "select") {
                 MapEditor.updateMap();
               }
-            },
-            'onMouseDown': handleMainCanvasMouseDown
+            }
           })
         ),
         td({'id': 'right_half'},

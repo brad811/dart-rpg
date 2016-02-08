@@ -45,7 +45,7 @@ class MapEditorMaps extends Component {
           td({},
             button({
               'id': 'map_select_${i}',
-              'onClick': (MouseEvent e) { Main.world.curMap = key; props['update'](); }
+              'onClick': (MouseEvent e) { props['changeMap'](key); }
             }, i)
           );
       } else {
@@ -74,7 +74,7 @@ class MapEditorMaps extends Component {
                     addNewMap(null);
                   }
                   
-                  Main.world.curMap = Main.world.maps.keys.first;
+                  props['changeMap'](Main.world.maps.keys.first);
                   props['update'](shouldExport: true);
                 })
             }, "Delete")

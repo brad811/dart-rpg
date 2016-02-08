@@ -293,6 +293,42 @@ class Editor extends Component {
       });
     }
   }
+
+  static void initMapSpritePicker(
+    String prefix, int minX, int minY, int layer, int sizeX, int sizeY, Function onInputChange, { bool readOnly: false }
+  ) {
+    Main.fixImageSmoothing(
+      querySelector("#${prefix}_canvas"),
+      Sprite.scaledSpriteSize * sizeX,
+      Sprite.scaledSpriteSize * sizeY
+    );
+
+    CanvasElement canvas = querySelector("#${prefix}_canvas");
+    CanvasRenderingContext2D ctx = canvas.context2D;
+
+    ctx.fillStyle = "#ff00ff";
+    ctx.fillRect(0, 0, Sprite.scaledSpriteSize * sizeX, Sprite.scaledSpriteSize * sizeY);
+    
+    for(int x=minX; x<minX+sizeX; x++) {
+      for(int y=minY; y<minY+sizeY; y++) {
+        if(Main.world.maps[Main.world.curMap].tiles[y][x] == null || Main.world.maps[Main.world.curMap].tiles[y][x][layer] == null)
+          continue;
+
+        MapEditor.renderStaticSprite(
+          ctx, Main.world.maps[Main.world.curMap].tiles[y][x][layer].sprite.id, x - minX, y - minY
+        );
+      }
+    }
+    
+    if(!readOnly) {
+      querySelector("#${prefix}_edit_button").onClick.listen((MouseEvent e) {
+        Editor.showPopupSpriteSelector(sizeX, sizeY, (int spriteId) {
+          (querySelector("#${prefix}") as TextInputElement).value = spriteId.toString();
+          onInputChange(null);
+        });
+      });
+    }
+  }
   
   static void renderSprite(String id, int spriteId, int sizeX, int sizeY) {
     CanvasElement canvas = querySelector(id);
