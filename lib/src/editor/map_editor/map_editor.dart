@@ -687,12 +687,13 @@ class MapEditor extends Component {
     lastChangeY = y;
     
     if(selectedTool == "select") {
+      // TODO: check if this conditional ever gets called
       if(lastTileInfoX == x && lastTileInfoY == y && tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
         tileInfo.style.display = "none";
       } else {
         lastTileInfoX = x;
         lastTileInfoY = y;
-        showTileInfo(x, y);
+        //showTileInfo(x, y);
       }
     } else if(selectedTile == -1) {
       mapTiles[y][x][layer] = null;
@@ -730,7 +731,11 @@ class MapEditor extends Component {
       }
     }
 
-    MapEditor.updateMap(newPoint: new Point(x, y));
+    if(MapEditor.selectedTool == "fill") {
+      MapEditor.updateMap();
+    } else {
+      MapEditor.updateMap(newPoint: new Point(x, y));
+    }
     
     if(selectedTool == "select") {
       outlineSelectedTiles(mapEditorCanvasContext, x, y, 1, 1);
