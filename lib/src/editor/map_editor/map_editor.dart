@@ -730,7 +730,7 @@ class MapEditor extends Component {
       }
     }
 
-    MapEditor.updateMap();
+    MapEditor.updateMap(newPoint: new Point(x, y));
     
     if(selectedTool == "select") {
       outlineSelectedTiles(mapEditorCanvasContext, x, y, 1, 1);
@@ -837,15 +837,23 @@ class MapEditor extends Component {
     } else {
       mapEditorCanvasContext.fillStyle = "#ff00ff";
 
-      // blank out old point
-      mapEditorCanvasContext.fillRect(
-        (oldPoint.x-1) * Sprite.scaledSpriteSize, (oldPoint.y-1) * Sprite.scaledSpriteSize,
-        Sprite.scaledSpriteSize*(3 + size.x), Sprite.scaledSpriteSize*(3 + size.y));
+      if(size == null) {
+        size = new Point(1, 1);
+      }
 
-      // blank out new point
-      mapEditorCanvasContext.fillRect(
-        (newPoint.x-1) * Sprite.scaledSpriteSize, (newPoint.y-1) * Sprite.scaledSpriteSize,
-        Sprite.scaledSpriteSize*(3 + size.x), Sprite.scaledSpriteSize*(3 + size.y));
+      // blank out old point
+      if(oldPoint != null) {
+        mapEditorCanvasContext.fillRect(
+          (oldPoint.x-1) * Sprite.scaledSpriteSize, (oldPoint.y-1) * Sprite.scaledSpriteSize,
+          Sprite.scaledSpriteSize*(3 + size.x), Sprite.scaledSpriteSize*(3 + size.y));
+      }
+
+      if(newPoint != null) {
+        // blank out new point
+        mapEditorCanvasContext.fillRect(
+          (newPoint.x-1) * Sprite.scaledSpriteSize, (newPoint.y-1) * Sprite.scaledSpriteSize,
+          Sprite.scaledSpriteSize*(3 + size.x), Sprite.scaledSpriteSize*(3 + size.y));
+      }
     }
     
     for(List<Tile> layer in renderList) {
@@ -1002,16 +1010,34 @@ class MapEditor extends Component {
       for(int x=0; x<Main.world.maps[Main.world.curMap].tiles.first.length; x++) {
         String key = "${x},${y}";
 
-        if(
-          (oldPoint != null && newPoint != null) &&
-          !((
+        if(size == null) {
+          size = new Point(1, 1);
+        }
+
+        bool shouldDo = false;
+
+        // if no points were provided, do the whole map
+        if(oldPoint == null && newPoint == null) {
+          shouldDo = true;
+        }
+
+        if(oldPoint != null && (
             x >= oldPoint.x - 1 && x <= oldPoint.x + size.x + 1 &&
             y >= oldPoint.y - 1 && y <= oldPoint.y + size.y + 1
-          ) || (
+          )
+        ) {
+          shouldDo = true;
+        }
+
+        if(newPoint != null && (
             x >= newPoint.x - 1 && x <= newPoint.x + size.x + 1 &&
             y >= newPoint.y - 1 && y <= newPoint.y + size.y + 1
-          ))
+          )
         ) {
+          shouldDo = true;
+        }
+
+        if(!shouldDo) {
           continue;
         }
 

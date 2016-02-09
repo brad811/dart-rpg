@@ -61,11 +61,17 @@ class MapEditorTileInfo extends Component {
       MapEditor.selectedTile = -1;
       MapEditor.lastChangeX = -1;
       MapEditor.lastChangeY = -1;
-      props['changeTile'](x, y, layer, false, false, false);
+
+      for(int y2=y; y2<y+sizeY; y2++) {
+        for(int x2=x; x2<x+sizeX; x2++) {
+          props['changeTile'](x2, y2, layer, false, false, false);
+        }
+      }
+
       MapEditor.selectedTool = selectedToolBefore;
       MapEditor.selectedTile = selectedTileBefore;
-      MapEditor.updateMap();
-      MapEditor.outlineSelectedTiles(MapEditor.mapEditorCanvasContext, x, y, 1, 1);
+      
+      MapEditor.outlineSelectedTiles(MapEditor.mapEditorCanvasContext, x, y, sizeX, sizeY);
       props['showTileInfo'](x, y, sizeX, sizeY);
     };
   }
@@ -80,31 +86,58 @@ class MapEditorTileInfo extends Component {
       sizeY = this.state['sizeY'];
     int selectedTileBefore = MapEditor.selectedTile;
 
-    if(sizeX > 1 || sizeY > 1)
-      return;
-
     for(int i=layerNames.length-1; i>=0; i--) {
-      if(mapTiles[y][x][i] != null && sizeX == 1 && sizeY == 1) {
-        mapTiles[y][x][i].sprite.id = Editor.getTextInputIntValue("#tile_info_layer_${i}_sprite_id", 0);
+      for(int y2=y; y2<y+sizeY; y2++) {
+        for(int x2=x; x2<x+sizeX; x2++) {
+          if(mapTiles[y2][x2][i] != null) {
+            if(sizeX == 1 && sizeY == 1) {
+              mapTiles[y2][x2][i].sprite.id = Editor.getTextInputIntValue("#tile_info_layer_${i}_sprite_id", 0);
+            }
 
-        // TODO: this should be done more cleanly
-        MapEditor.selectedTool = "brush";
-        MapEditor.selectedTile = mapTiles[y][x][i].sprite.id;
+            // TODO: this should be done more cleanly
+            MapEditor.selectedTool = "brush";
+            MapEditor.selectedTile = mapTiles[y2][x2][i].sprite.id;
 
-        MapEditor.lastChangeX = -1;
-        MapEditor.lastChangeY = -1;
+            MapEditor.lastChangeX = -1;
+            MapEditor.lastChangeY = -1;
 
-        props['changeTile'](
-          x, y, i,
-          Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_solid"),
-          Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_layered"),
-          Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_encounter")
-        );
+            bool solid = (
+              sizeX == 1 && sizeY == 1
+                ? Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_solid")
+                : (
+                  (e.target as Element).id == "tile_info_layer_${i}_solid"
+                    ? Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_solid")
+                    : mapTiles[y2][x2][i].solid
+                )
+            );
+
+            bool layered = (
+              sizeX == 1 && sizeY == 1
+                ? Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_layered")
+                : (
+                  (e.target as Element).id == "tile_info_layer_${i}_layered"
+                    ? Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_layered")
+                    : mapTiles[y2][x2][i].layered
+                )
+            );
+
+            bool encounter = (
+              sizeX == 1 && sizeY == 1
+                ? Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_encounter")
+                : (
+                  (e.target as Element).id == "tile_info_layer_${i}_encounter"
+                    ? Editor.getCheckboxInputBoolValue("#tile_info_layer_${i}_encounter")
+                    : mapTiles[y2][x2][i] is EncounterTile
+                )
+            );
+
+            props['changeTile'](x2, y2, i, solid, layered, encounter);
+          }
+        }
       }
     }
 
-    MapEditor.updateMap();
-    MapEditor.outlineSelectedTiles(MapEditor.mapEditorCanvasContext, x, y, 1, 1);
+    MapEditor.outlineSelectedTiles(MapEditor.mapEditorCanvasContext, x, y, sizeX, sizeY);
 
     props['showTileInfo'](x, y, sizeX, sizeY);
 
@@ -125,22 +158,29 @@ class MapEditorTileInfo extends Component {
     List<JsObject> tileRows = [];
 
     for(int i=layerNames.length-1; i>=0; i--) {
-      bool shouldDoLayer = false;
-      int x2 = x, y2 = y;
+      bool
+        shouldDoLayer = false,
+        allSolid = true,
+        allLayered = true,
+        allEncounter = true;
 
       // find any non-null tiles in this area on this layer
-      if(mapTiles[y][x][i] == null) {
-        for(y2=y; y2<y+sizeY && !shouldDoLayer; y2++) {
-          for(x2=x; x2<x+sizeX && !shouldDoLayer; x2++) {
-            if(mapTiles[y2][x2][i] != null) {
-              shouldDoLayer = true;
-              x2--;
-              y2--;
-            }
+      for(int y2=y; y2<y+sizeY; y2++) {
+        for(int x2=x; x2<x+sizeX; x2++) {
+          if(mapTiles[y2][x2][i] != null) {
+            // there is at least one non-null tile here
+            shouldDoLayer = true;
+
+            if(!mapTiles[y2][x2][i].solid)
+              allSolid = false;
+
+            if(!mapTiles[y2][x2][i].layered)
+              allLayered = false;
+
+            if(!(mapTiles[y2][x2][i] is EncounterTile))
+              allEncounter = false;
           }
         }
-      } else {
-        shouldDoLayer = true;
       }
 
       if(shouldDoLayer) {
@@ -152,38 +192,34 @@ class MapEditorTileInfo extends Component {
               td({'className': 'tile_info_delete'},
                 button({
                   'id': 'delete_tile_info_layer_${i}',
-                  'onClick': deleteLayer(i),
-                  'disabled': (sizeX > 1 || sizeY > 1)
+                  'onClick': deleteLayer(i)
                 }, "Delete")
               )
             ),
             tr({},
               td({},
-                Editor.generateSpritePickerHtml("tile_info_layer_${i}_sprite_id", mapTiles[y2][x2][i].sprite.id)
+                Editor.generateSpritePickerHtml("tile_info_layer_${i}_sprite_id", sizeX == 1 && sizeY == 1 ? mapTiles[y][x][i].sprite.id : 0)
               ),
               td({'className': 'tile_info_checkboxes'},
                 input({
                   'id': 'tile_info_layer_${i}_solid',
                   'type': 'checkbox',
-                  'checked': mapTiles[y2][x2][i].solid,
-                  'onChange': onInputChange,
-                  'disabled': (sizeX != 1 || sizeY != 1)
+                  'checked': allSolid,
+                  'onChange': onInputChange
                 }, "Solid"),
                 br({}),
                 input({
                   'id': 'tile_info_layer_${i}_layered',
                   'type': 'checkbox',
-                  'checked': mapTiles[y2][x2][i].layered,
-                  'onChange': onInputChange,
-                  'disabled': (sizeX != 1 || sizeY != 1)
+                  'checked': allLayered,
+                  'onChange': onInputChange
                 }, "Layered"),
                 br({}),
                 input({
                   'id': 'tile_info_layer_${i}_encounter',
                   'type': 'checkbox',
-                  'checked': mapTiles[y2][x2][i] is EncounterTile,
-                  'onChange': onInputChange,
-                  'disabled': (sizeX != 1 || sizeY != 1)
+                  'checked': allEncounter,
+                  'onChange': onInputChange
                 }, "Encounter"),
                 br({})
               )
