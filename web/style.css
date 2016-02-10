@@ -298,6 +298,14 @@ textarea {
  * Object Editor
  */
 
+#editor_loading_screen {
+	position: absolute;
+	top: 40%;
+	width: 100%;
+	text-align: center;
+	font-size: 60px;
+}
+
 #object_editor_inner_main_area {
 	height: 100%;
 }

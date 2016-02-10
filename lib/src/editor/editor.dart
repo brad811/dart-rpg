@@ -82,7 +82,7 @@ class Editor extends Component {
 
   render() {
     if(!this.state['gameLoaded']) {
-      return div({}, "Loading game...");
+      return div({'id': 'editor_loading_screen'}, "Loading game...");
     }
 
     JsObject selectedTab;
