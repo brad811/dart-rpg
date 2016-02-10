@@ -88,7 +88,7 @@ class MapEditorWarps extends Component {
           td({},
             button({
               'id': 'delete_warp_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(MapEditor.warps, i, "warp", update)
+              'onClick': Editor.generateConfirmDeleteFunction(MapEditor.warps[Main.world.curMap], i, "warp", update)
             }, 'Delete')
           )
         ])
