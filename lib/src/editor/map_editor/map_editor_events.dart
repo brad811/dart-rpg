@@ -162,7 +162,7 @@ class MapEditorEvents extends Component {
           td({},
             button({
               'id': 'delete_event_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(MapEditor.events, i, "event", update)
+              'onClick': Editor.generateConfirmDeleteFunction(MapEditor.events[Main.world.curMap], i, "event", update)
             }, "Delete")
           )
         )
