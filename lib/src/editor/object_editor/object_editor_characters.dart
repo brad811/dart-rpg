@@ -34,14 +34,22 @@ class ObjectEditorCharacters extends Component {
     }
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
-    initSpritePickers();
-    callCallbacks();
+  componentWillUpdate(Map newProps, Map newState) {
     if(state['selected'] > World.characters.length - 1) {
       setState({
         'selected': World.characters.length - 1
       });
     }
+
+    // handle player character being deleted
+    if(World.characters[Main.player.character.label] == null) {
+      Main.player.character = World.characters[World.characters.keys.first];
+    }
+  }
+
+  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+    initSpritePickers();
+    callCallbacks();
   }
 
   void callCallbacks() {
@@ -165,7 +173,7 @@ class ObjectEditorCharacters extends Component {
           td({},
             button({
               'id': 'delete_character_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(World.characters, key, "character", update)
+              'onClick': Editor.generateConfirmDeleteFunction(World.characters, key, "character", update, atLeastOneRequired: true)
             }, "Delete")
           )
         )

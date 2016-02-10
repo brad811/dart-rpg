@@ -50,7 +50,7 @@ class ObjectEditorTypes extends Component {
           td({},
             button({
               'id': 'delete_type_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(World.types, gameType.name, "type", update)
+              'onClick': Editor.generateConfirmDeleteFunction(World.types, gameType.name, "type", update, atLeastOneRequired: true)
             }, "Delete")
           )
         ])

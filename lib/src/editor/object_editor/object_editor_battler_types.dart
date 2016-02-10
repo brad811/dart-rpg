@@ -132,7 +132,7 @@ class ObjectEditorBattlerTypes extends Component {
   }
 
   getAttacksTab() {
-    if(state['selected'] == -1) {
+    if(state['selected'] == -1 || World.battlerTypes.values.length == 0) {
       return div({});
     }
 
@@ -285,7 +285,7 @@ class ObjectEditorBattlerTypes extends Component {
           td({},
             button({
               'id': 'delete_battler_type_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(World.battlerTypes, key, "battler type", update),
+              'onClick': Editor.generateConfirmDeleteFunction(World.battlerTypes, key, "battler type", update, atLeastOneRequired: true),
             }, "Delete battler")
           )
         )

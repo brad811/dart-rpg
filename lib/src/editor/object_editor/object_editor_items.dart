@@ -55,6 +55,8 @@ class ObjectEditorItems extends Component {
   }
 
   render() {
+    callbacks = [];
+    
     List<JsObject> tableRows = [
       tr({}, [
         td({}, "Num"),
@@ -150,7 +152,7 @@ class ObjectEditorItems extends Component {
   }
 
   getGameEventTab() {
-    if(state['selected'] == -1) {
+    if(state['selected'] == -1 || World.items.values.length == 0) {
       return div({});
     }
 
@@ -171,8 +173,6 @@ class ObjectEditorItems extends Component {
     }
 
     List<JsObject> tableRows = [];
-
-    callbacks = [];
 
     if(item.gameEventChain != null && item.gameEventChain != ""
         && World.gameEventChains[item.gameEventChain] != null) {

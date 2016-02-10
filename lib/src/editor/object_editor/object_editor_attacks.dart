@@ -77,7 +77,7 @@ class ObjectEditorAttacks extends Component {
           td({},
             button({
               'id': 'delete_attack_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(World.attacks, key, "attack", update)
+              'onClick': Editor.generateConfirmDeleteFunction(World.attacks, key, "attack", update, atLeastOneRequired: true)
             }, "Delete")
           )
         )

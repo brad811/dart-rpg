@@ -828,6 +828,9 @@ class World {
   }
   
   bool isInteractable(int x, int y) {
+    if(maps[curMap].tiles.length <= y) return false;
+    if(maps[curMap].tiles[y].length <= x) return false;
+
     for(int layer in layers) {
       if(maps[curMap].tiles[y][x][layer] is InteractableTile) {
         return true;

@@ -204,8 +204,20 @@ class Editor extends Component {
     }
   }
 
-  static Function generateConfirmDeleteFunction(Object target, Object key, String targetName, Function callback) {
+  static Function generateConfirmDeleteFunction(
+    Object target, Object key, String targetName, Function callback, {bool atLeastOneRequired: false}
+  ) {
     return (MouseEvent e) {
+      if(atLeastOneRequired) {
+        if(
+          (target is Map && target.keys.length == 1) ||
+          (target is List && target.length == 1)
+        ) {
+          window.alert("There must be at least one ${targetName}.");
+          return;
+        }
+      }
+
       bool confirm = window.confirm('Are you sure you would like to delete this ${targetName}?');
       if(confirm) {
         if(target is Map)
@@ -215,6 +227,7 @@ class Editor extends Component {
         else
           print("Warning: invalid target passed to generateConfirmDeleteFunction!");
 
+        Editor.debounceExport();
         callback();
       }
     };
