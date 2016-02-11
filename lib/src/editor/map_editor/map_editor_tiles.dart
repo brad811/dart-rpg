@@ -348,7 +348,8 @@ class MapEditorTiles extends Component {
     
     shiftObjects(0, 0);
     
-    MapEditor.updateMap(shouldExport: true);
+    MapEditor.updateMap();
+    Editor.debounceExport();
     update();
   }
   
@@ -365,7 +366,8 @@ class MapEditorTiles extends Component {
       mapTiles[y].add(array);
     }
     
-    MapEditor.updateMap(shouldExport: true);
+    MapEditor.updateMap();
+    Editor.debounceExport();
     update();
   }
   
@@ -378,7 +380,8 @@ class MapEditorTiles extends Component {
     
     shiftObjects(0, 0);
     
-    MapEditor.updateMap(shouldExport: true);
+    MapEditor.updateMap();
+    Editor.debounceExport();
     update();
   }
   
@@ -396,7 +399,8 @@ class MapEditorTiles extends Component {
     
     mapTiles.add(rowArray);
     
-    MapEditor.updateMap(shouldExport: true);
+    MapEditor.updateMap();
+    Editor.debounceExport();
     update();
   }
   
@@ -419,7 +423,8 @@ class MapEditorTiles extends Component {
     
     shiftObjects(-1, 0);
     
-    MapEditor.updateMap(shouldExport: true);
+    MapEditor.updateMap();
+    Editor.debounceExport();
     update();
   }
   
@@ -450,7 +455,8 @@ class MapEditorTiles extends Component {
     
     shiftObjects(1, 0);
     
-    MapEditor.updateMap(shouldExport: true);
+    MapEditor.updateMap();
+    Editor.debounceExport();
     update();
   }
   
@@ -473,7 +479,8 @@ class MapEditorTiles extends Component {
     
     shiftObjects(0, -1);
     
-    MapEditor.updateMap(shouldExport: true);
+    MapEditor.updateMap();
+    Editor.debounceExport();
     update();
   }
   
@@ -503,7 +510,8 @@ class MapEditorTiles extends Component {
     
     shiftObjects(0, 1);
     
-    MapEditor.updateMap(shouldExport: true);
+    MapEditor.updateMap();
+    Editor.debounceExport();
     update();
   }
 }
