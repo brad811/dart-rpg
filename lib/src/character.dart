@@ -265,9 +265,9 @@ class Character extends Interactable {
   }
   
   void render(List<List<Tile>> renderList) {
-    int higherLayer = layer+1;
+    int higherLayer = layer+2;
     if(higherLayer >= World.layers.last) {
-      higherLayer = layer;
+      higherLayer = World.layers.last;
     }
     
     int curLayer = higherLayer;
