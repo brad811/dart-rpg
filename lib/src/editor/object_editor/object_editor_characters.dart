@@ -60,7 +60,7 @@ class ObjectEditorCharacters extends Component {
     }
   }
 
-  initSpritePickers() {
+  void initSpritePickers() {
     for(int i=0; i<World.characters.keys.length; i++) {
       Character character = World.characters.values.elementAt(i);
 
@@ -229,7 +229,7 @@ class ObjectEditorCharacters extends Component {
       );
   }
 
-  getInventoryTab() {
+  JsObject getInventoryTab() {
     if(state['selected'] == -1) {
       return div({});
     }
@@ -317,7 +317,7 @@ class ObjectEditorCharacters extends Component {
     return div({'className': state['selectedAdvancedTab'] == 'inventory' ? '' : 'hidden'}, inventoryContainers);
   }
 
-  getGameEventTab() {
+  JsObject getGameEventTab() {
     if(state['selected'] == -1) {
       return div({});
     }
@@ -388,7 +388,7 @@ class ObjectEditorCharacters extends Component {
     return div({'className': state['selectedAdvancedTab'] == 'game_event' ? '' : 'hidden'}, gameEventContainers);
   }
 
-  getBattleTab() {
+  JsObject getBattleTab() {
     if(state['selected'] == -1) {
       return div({});
     }

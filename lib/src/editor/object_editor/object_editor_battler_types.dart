@@ -4,8 +4,12 @@ import 'dart:html';
 import 'dart:js';
 
 import 'package:dart_rpg/src/attack.dart';
+import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/battler_type.dart';
+import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/game_type.dart';
+import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
@@ -35,7 +39,7 @@ class ObjectEditorBattlerTypes extends Component {
     }
   }
 
-  initSpritePickers() {
+  void initSpritePickers() {
     for(int i=0; i<World.battlerTypes.keys.length; i++) {
       Editor.initSpritePicker("battler_type_${i}_sprite_id", World.battlerTypes.values.elementAt(i).spriteId, 3, 3, onInputChange);
     }
@@ -43,6 +47,25 @@ class ObjectEditorBattlerTypes extends Component {
 
   void update() {
     this.setState({});
+  }
+
+  void removeDeleted() {
+    // remove references to deleted battler types from characters, replace with first battler type
+    for(Character character in World.characters.values) {
+      if(!World.battlerTypes.containsKey(character.battler.battlerType.name)) {
+        BattlerType battlerType = World.battlerTypes.values.first;
+        character.battler = new Battler(
+          battlerType.name, battlerType, character.battler.level, battlerType.getAttacksForLevel(character.battler.level)
+        );
+      }
+    }
+
+    // remove battler chances from maps if the battler type no longer exists
+    for(GameMap map in Main.world.maps.values) {
+      map.battlerChances.removeWhere((battlerChance) => !World.battlerTypes.containsKey(battlerChance.battler.battlerType.name));
+    }
+
+    update();
   }
 
   JsObject getStatsTab() {
@@ -131,7 +154,7 @@ class ObjectEditorBattlerTypes extends Component {
     return div({'className': state['selectedAdvancedTab'] == 'stats' ? '' : 'hidden'}, tables);
   }
 
-  getAttacksTab() {
+  JsObject getAttacksTab() {
     if(state['selected'] == -1 || World.battlerTypes.values.length == 0) {
       return div({});
     }
@@ -285,7 +308,9 @@ class ObjectEditorBattlerTypes extends Component {
           td({},
             button({
               'id': 'delete_battler_type_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(World.battlerTypes, key, "battler type", update, atLeastOneRequired: true),
+              'onClick': Editor.generateConfirmDeleteFunction(
+                World.battlerTypes, key, "battler type", removeDeleted, atLeastOneRequired: true
+              ),
             }, "Delete battler")
           )
         )
