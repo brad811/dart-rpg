@@ -87,7 +87,8 @@ class ObjectEditorBattlerTypes extends Component {
                 'id': 'battler_type_${i}_health',
                 'type': 'text',
                 'className': 'number',
-                'value': battlerType.baseHealth
+                'value': battlerType.baseHealth,
+                'onChange': onInputChange
               })
             )
           ),
@@ -99,7 +100,8 @@ class ObjectEditorBattlerTypes extends Component {
                 'id': 'battler_type_${i}_physical_attack',
                 'type': 'text',
                 'className': 'number',
-                'value': battlerType.basePhysicalAttack
+                'value': battlerType.basePhysicalAttack,
+                'onChange': onInputChange
               })
             )
           ),
@@ -110,7 +112,8 @@ class ObjectEditorBattlerTypes extends Component {
                 'id': 'battler_type_${i}_physical_defense',
                 'type': 'text',
                 'className': 'number',
-                'value': battlerType.basePhysicalDefense
+                'value': battlerType.basePhysicalDefense,
+                'onChange': onInputChange
               })
             )
           ),
@@ -121,7 +124,8 @@ class ObjectEditorBattlerTypes extends Component {
                 'id': 'battler_type_${i}_magical_attack',
                 'type': 'text',
                 'className': 'number',
-                'value': battlerType.baseMagicalAttack
+                'value': battlerType.baseMagicalAttack,
+                'onChange': onInputChange
               })
             )
           ),
@@ -132,7 +136,8 @@ class ObjectEditorBattlerTypes extends Component {
                 'id': 'battler_type_${i}_magical_defense',
                 'type': 'text',
                 'className': 'number',
-                'value': battlerType.baseMagicalDefense
+                'value': battlerType.baseMagicalDefense,
+                'onChange': onInputChange
               })
             )
           ),
@@ -143,7 +148,8 @@ class ObjectEditorBattlerTypes extends Component {
                 'id': 'battler_type_${i}_speed',
                 'type': 'text',
                 'className': 'number',
-                'value': battlerType.baseSpeed
+                'value': battlerType.baseSpeed,
+                'onChange': onInputChange
               })
             )
           )
