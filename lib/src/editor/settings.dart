@@ -226,8 +226,8 @@ class Settings extends Component {
         Sprite.spriteSheetHeight * Sprite.scaledSpriteSize
       );
       
-      MapEditor.mapEditorSpriteSelectorCanvasContext.fillStyle = "#ff00ff";
-      MapEditor.mapEditorSpriteSelectorCanvasContext.fillRect(
+      ctx.fillStyle = "#ff00ff";
+      ctx.fillRect(
         0, 0,
         Sprite.scaledSpriteSize*Sprite.spriteSheetWidth,
         Sprite.scaledSpriteSize*Sprite.spriteSheetHeight
@@ -240,7 +240,7 @@ class Settings extends Component {
         row = 0;
       for(int y=0; y<Sprite.spriteSheetHeight; y++) {
         for(int x=0; x<Sprite.spriteSheetWidth; x++) {
-          MapEditor.renderStaticSprite(MapEditor.mapEditorSpriteSelectorCanvasContext, y*Sprite.spriteSheetWidth + x, col, row);
+          MapEditor.renderStaticSprite(ctx, y*Sprite.spriteSheetWidth + x, col, row);
           col++;
           if(col >= maxCol) {
             row++;
