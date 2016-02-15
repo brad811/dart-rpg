@@ -561,6 +561,8 @@ class ObjectEditorCharacters extends Component {
     World.characters = newCharacters;
     
     update();
+
+    Editor.debounceExport();
   }
   
   static void export(Map<String, Object> exportJson) {

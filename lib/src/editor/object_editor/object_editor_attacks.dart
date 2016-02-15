@@ -158,6 +158,8 @@ class ObjectEditorAttacks extends Component {
     }
     
     update();
+
+    Editor.debounceExport();
   }
   
   static void export(Map<String, Object> exportJson) {

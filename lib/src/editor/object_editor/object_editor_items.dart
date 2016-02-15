@@ -240,6 +240,8 @@ class ObjectEditorItems extends Component {
     World.items = newItems;
     
     update();
+
+    Editor.debounceExport();
   }
   
   static void export(Map<String, Object> exportJson) {

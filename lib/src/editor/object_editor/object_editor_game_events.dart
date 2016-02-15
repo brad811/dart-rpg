@@ -221,6 +221,8 @@ class ObjectEditorGameEvents extends Component {
     World.gameEventChains = newGameEventChains;
     
     update();
+
+    Editor.debounceExport();
   }
   
   static void export(Map<String, Object> exportJson) {
