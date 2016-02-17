@@ -19,6 +19,23 @@ class ObjectEditorAttacks extends Component {
     this.setState({});
   }
 
+  void removeDeleted() {
+    // remove references to deleted attacks
+    for(BattlerType battlerType in World.battlerTypes.values) {
+      List<int> levels = battlerType.levelAttacks.keys;
+      for(int level in levels) {
+        List<Attack> attacks = battlerType.levelAttacks[level].toList();
+        for(Attack attack in attacks) {
+          if(!World.attacks.values.contains(attack)) {
+            battlerType.levelAttacks[level].remove(attack);
+          }
+        }
+      }
+    }
+
+    update();
+  }
+
   render() {
     List<JsObject> tableRows = [
       tr({},
@@ -77,7 +94,7 @@ class ObjectEditorAttacks extends Component {
           td({},
             button({
               'id': 'delete_attack_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(World.attacks, key, "attack", update, atLeastOneRequired: true)
+              'onClick': Editor.generateConfirmDeleteFunction(World.attacks, key, "attack", removeDeleted, atLeastOneRequired: true)
             }, "Delete")
           )
         )
