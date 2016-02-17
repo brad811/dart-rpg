@@ -25,6 +25,26 @@ class MapEditorMaps extends Component {
     setState({});
   }
 
+  void removeDeleted() {
+    // remove references to deleted maps
+    if(Main.world.maps.length == 0) {
+      addNewMap(null);
+    }
+
+    // move characters away from maps that don't exist anymore
+    World.characters.forEach((String label, Character character) {
+      if(!Main.world.maps.containsValue(character.map)) {
+        character.map = Main.world.maps.keys.first;
+      }
+    });
+    
+    props['changeMap'](Main.world.maps.keys.first);
+    props['update'](shouldExport: true);
+
+    // TODO: this might not be necessary because of the above update
+    update();
+  }
+
   render() {
     List<JsObject> tableRows = [
       tr({},
@@ -68,15 +88,7 @@ class MapEditorMaps extends Component {
           td({},
             button({
               'id': 'delete_map_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(
-                Main.world.maps, key, "map", () {
-                  if(Main.world.maps.length == 0) {
-                    addNewMap(null);
-                  }
-                  
-                  props['changeMap'](Main.world.maps.keys.first);
-                  props['update'](shouldExport: true);
-                })
+              'onClick': Editor.generateConfirmDeleteFunction(Main.world.maps, key, "map", removeDeleted)
             }, "Delete")
           )
         )
