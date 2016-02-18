@@ -33,8 +33,16 @@ class MapEditorMaps extends Component {
 
     // move characters away from maps that don't exist anymore
     World.characters.forEach((String label, Character character) {
+      if(!Main.world.maps.containsValue(character.startMap)) {
+        character.startMap = Main.world.maps.keys.first;
+        character.startX = 0;
+        character.startY = 0;
+      }
+
       if(!Main.world.maps.containsValue(character.map)) {
         character.map = Main.world.maps.keys.first;
+        character.mapX = 0;
+        character.mapY = 0;
       }
     });
     
