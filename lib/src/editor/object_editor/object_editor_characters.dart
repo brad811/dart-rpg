@@ -10,6 +10,10 @@ import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
 
+import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/heal_game_event.dart';
+import 'package:dart_rpg/src/game_event/warp_game_event.dart';
+
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/object_editor/object_editor_game_events.dart';
 
@@ -82,6 +86,21 @@ class ObjectEditorCharacters extends Component {
 
   void update() {
     setState({});
+  }
+
+  void removeDeleted() {
+    // remove references to deleted characters
+    World.gameEventChains.forEach((String label, List<GameEvent> gameEvents) {
+      gameEvents.forEach((GameEvent gameEvent) {
+        if(gameEvent is HealGameEvent && !World.characters.containsValue(gameEvent.character)) {
+          gameEvent.character = World.characters.values.first;
+        } else if(gameEvent is WarpGameEvent) {
+          gameEvent.characterLabel = World.characters.keys.first;
+        }
+      });
+    });
+    
+    update();
   }
 
   render() {
@@ -173,7 +192,7 @@ class ObjectEditorCharacters extends Component {
           td({},
             button({
               'id': 'delete_character_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(World.characters, key, "character", update, atLeastOneRequired: true)
+              'onClick': Editor.generateConfirmDeleteFunction(World.characters, key, "character", removeDeleted, atLeastOneRequired: true)
             }, "Delete")
           )
         )
