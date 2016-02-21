@@ -3,6 +3,7 @@ library dart_rpg.object_editor_game_events;
 import 'dart:html';
 import 'dart:js';
 
+import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -42,6 +43,19 @@ class ObjectEditorGameEvents extends Component {
         callback();
       }
     }
+  }
+
+  void removeDeleted() {
+    // remove references to deleted game events
+    World.characters.forEach((String label, Character character) {
+      if(!World.gameEventChains.containsKey(character.getGameEventChain())) {
+        character.setGameEventChain(null, 0);
+      }
+    });
+
+    // TODO: event tiles
+    
+    update();
   }
 
   void render() {
