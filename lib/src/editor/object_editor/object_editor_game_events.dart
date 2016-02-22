@@ -4,12 +4,14 @@ import 'dart:html';
 import 'dart:js';
 
 import 'package:dart_rpg/src/character.dart';
+import 'package:dart_rpg/src/event_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
+import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 
 import 'package:react/react.dart';
 
@@ -47,13 +49,22 @@ class ObjectEditorGameEvents extends Component {
 
   void removeDeleted() {
     // remove references to deleted game events
+
+    // characters
     World.characters.forEach((String label, Character character) {
       if(!World.gameEventChains.containsKey(character.getGameEventChain())) {
         character.setGameEventChain(null, 0);
       }
     });
 
-    // TODO: event tiles
+    // event tiles
+    MapEditor.events.forEach((String mapName, List<EventTile> eventTiles) {
+      for(EventTile eventTile in eventTiles.toList()) {
+        if(!World.gameEventChains.containsKey(eventTile.gameEventChain)) {
+          eventTiles.remove(eventTile);
+        }
+      }
+    });
     
     update();
   }
@@ -93,7 +104,7 @@ class ObjectEditorGameEvents extends Component {
           td({},
             button({
               'id': 'delete_game_event_chain_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(World.gameEventChains, key, "game event chain", update)
+              'onClick': Editor.generateConfirmDeleteFunction(World.gameEventChains, key, "game event chain", removeDeleted)
             }, "Delete")
           )
         ])
