@@ -8,6 +8,7 @@ import 'package:dart_rpg/src/event_tile.dart';
 import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
+import 'package:dart_rpg/src/game_event/chain_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
@@ -62,6 +63,17 @@ class ObjectEditorGameEvents extends Component {
       for(EventTile eventTile in eventTiles.toList()) {
         if(!World.gameEventChains.containsKey(eventTile.gameEventChain)) {
           eventTiles.remove(eventTile);
+        }
+      }
+    });
+
+    // chain game events
+    World.gameEventChains.forEach((String name, List<GameEvent> gameEvents) {
+      for(GameEvent gameEvent in gameEvents.toList()) {
+        if(gameEvent is ChainGameEvent) {
+          if(!World.gameEventChains.containsKey(gameEvent.gameEventChain)) {
+            gameEvent.gameEventChain = World.gameEventChains.keys.first;
+          }
         }
       }
     });
