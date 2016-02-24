@@ -457,8 +457,9 @@ class ObjectEditorCharacters extends Component {
   }
   
   void addNewCharacter(MouseEvent e) {
+    String name = Editor.getUniqueName("New Character", World.characters);
     Character newCharacter = new Character(
-      "New Character",
+      name,
       0, 0, 0, 0,
       layer: World.LAYER_BELOW,
       sizeX: 1, sizeY: 2,
@@ -469,7 +470,7 @@ class ObjectEditorCharacters extends Component {
     
     newCharacter.battler = new Battler(battlerType.name, battlerType, 2, battlerType.getAttacksForLevel(2));
     
-    World.characters["New Character"] = newCharacter;
+    World.characters[name] = newCharacter;
     
     shouldScrollIntoView = true;
     setState({

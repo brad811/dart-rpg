@@ -211,7 +211,8 @@ class ObjectEditorItems extends Component {
   }
   
   void addNewItem(MouseEvent e) {
-    World.items["Item"] = new Item();
+    String name = Editor.getUniqueName("New Item", World.items);
+    World.items[name] = new Item(0, name, 100, "Description");
 
     shouldScrollIntoView = true;
     this.setState({

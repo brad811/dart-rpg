@@ -154,7 +154,8 @@ class ObjectEditorAttacks extends Component {
   }
 
   void addNewAttack(MouseEvent e) {
-    World.attacks["New Attack"] = new Attack("New Attack", Attack.CATEGORY_PHYSICAL, World.types.keys.first, 0);
+    String name = Editor.getUniqueName("New Attack", World.attacks);
+    World.attacks[name] = new Attack(name, Attack.CATEGORY_PHYSICAL, World.types.keys.first, 0);
     
     shouldScrollIntoView = true;
     this.setState({

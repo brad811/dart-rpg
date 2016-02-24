@@ -18,7 +18,8 @@ class ObjectEditorTypes extends Component {
   };
   
   void addNewType(MouseEvent e) {
-    World.types["New Type"] = new GameType("New Type");
+    String name = Editor.getUniqueName("New Type", World.types);
+    World.types[name] = new GameType(name);
 
     shouldScrollIntoView = true;
     this.setState({

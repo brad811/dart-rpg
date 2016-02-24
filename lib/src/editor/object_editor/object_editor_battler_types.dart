@@ -373,8 +373,9 @@ class ObjectEditorBattlerTypes extends Component {
   }
 
   void addNewBattlerType(MouseEvent e) {
-    World.battlerTypes["New Battler Type"] = new BattlerType(
-        0, "New Battler", World.types.keys.first,
+    String name = Editor.getUniqueName("New Battler Type", World.battlerTypes);
+    World.battlerTypes[name] = new BattlerType(
+        0, name, World.types.keys.first,
         0, 0, 0, 0, 0, 0,
         {}, 1.0
       );

@@ -465,13 +465,21 @@ class Editor extends Component {
     if(e.target is InputElement) {
       InputElement target = e.target;
       
-      if(target.id.contains(match) && objects.keys.contains(target.value)) {
-        // avoid name collisions
-        int i = 0;
-        for(; objects.keys.contains(target.value + "_${i}"); i++) {}
-        target.value += "_${i}";
+      if(target.id.contains(match)) {
+        target.value = getUniqueName(target.value, objects);
       }
     }
+  }
+
+  static String getUniqueName(String value, Map<String, Object> objects) {
+    if(objects.keys.contains(value)) {
+      // avoid name collisions
+      int i = 0;
+      for(; objects.keys.contains(value + "_${i}"); i++) {}
+      value += "_${i}";
+    }
+
+    return value;
   }
   
   static void enforceValueFormat(Event e) {

@@ -211,8 +211,8 @@ class ObjectEditorGameEvents extends Component {
   }
 
   void addNewGameEventChain(MouseEvent e) {
-    if(World.gameEventChains["new game event chain"] == null)
-      World.gameEventChains["new game event chain"] = [new TextGameEvent(1, "Text")];
+    String name = Editor.getUniqueName("New Game Event Chain", World.gameEventChains);
+    World.gameEventChains[name] = [new TextGameEvent(1, "Text")];
     
     shouldScrollIntoView = true;
     this.setState({
