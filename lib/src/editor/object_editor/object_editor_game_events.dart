@@ -23,6 +23,7 @@ import 'package:react/react.dart';
 
 class ObjectEditorGameEvents extends Component {
   List<Function> callbacks = [];
+  bool shouldScrollIntoView = false;
 
   getInitialState() => {
     'selected': -1
@@ -37,6 +38,11 @@ class ObjectEditorGameEvents extends Component {
       setState({
         'selected': World.gameEventChains.length - 1
       });
+    }
+
+    if(shouldScrollIntoView) {
+      shouldScrollIntoView = false;
+      querySelector('#game_event_chain_row_${state['selected']}').scrollIntoView();
     }
   }
 
@@ -208,7 +214,10 @@ class ObjectEditorGameEvents extends Component {
     if(World.gameEventChains["new game event chain"] == null)
       World.gameEventChains["new game event chain"] = [new TextGameEvent(1, "Text")];
     
-    update();
+    shouldScrollIntoView = true;
+    this.setState({
+      'selected': World.gameEventChains.keys.length - 1
+    });
   }
   
   void addGameEvent(MouseEvent e) {

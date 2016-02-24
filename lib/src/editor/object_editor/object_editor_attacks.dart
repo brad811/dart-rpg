@@ -15,8 +15,27 @@ import 'package:react/react.dart';
 // TODO: make sure all these update everywhere when renamed: battler type, game event, character
 
 class ObjectEditorAttacks extends Component {
+  bool shouldScrollIntoView = false;
+
+  getInitialState() => {
+    'selected': -1
+  };
+
   void update() {
     this.setState({});
+  }
+
+  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+    if(state['selected'] > World.attacks.keys.length - 1) {
+      setState({
+        'selected': World.attacks.keys.length - 1
+      });
+    }
+
+    if(shouldScrollIntoView) {
+      shouldScrollIntoView = false;
+      querySelector('#attack_row_${state['selected']}').scrollIntoView();
+    }
   }
 
   void removeDeleted() {
@@ -59,7 +78,11 @@ class ObjectEditorAttacks extends Component {
       }
 
       tableRows.add(
-        tr({},
+        tr({
+          'id': 'attack_row_${i}',
+          'className': state['selected'] == i ? 'selected' : '',
+          'onClick': (MouseEvent e) { setState({'selected': i}); }
+        },
           td({}, i),
           td({},
             input({
@@ -132,7 +155,11 @@ class ObjectEditorAttacks extends Component {
 
   void addNewAttack(MouseEvent e) {
     World.attacks["New Attack"] = new Attack("New Attack", Attack.CATEGORY_PHYSICAL, World.types.keys.first, 0);
-    update();
+    
+    shouldScrollIntoView = true;
+    this.setState({
+      'selected': World.attacks.keys.length - 1
+    });
   }
   
   void onInputChange(Event e) {

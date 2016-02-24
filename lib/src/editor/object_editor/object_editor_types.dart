@@ -11,17 +11,36 @@ import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:react/react.dart';
 
 class ObjectEditorTypes extends Component {
+  bool shouldScrollIntoView = false;
+
   getInitialState() => {
     'selected': -1
   };
   
   void addNewType(MouseEvent e) {
     World.types["New Type"] = new GameType("New Type");
-    update();
+
+    shouldScrollIntoView = true;
+    this.setState({
+      'selected': World.types.keys.length - 1
+    });
   }
   
   void update() {
     setState({});
+  }
+
+  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+    if(state['selected'] > World.types.keys.length - 1) {
+      setState({
+        'selected': World.types.keys.length - 1
+      });
+    }
+
+    if(shouldScrollIntoView) {
+      shouldScrollIntoView = false;
+      querySelector('#type_row_${state['selected']}').scrollIntoView();
+    }
   }
 
   render() {

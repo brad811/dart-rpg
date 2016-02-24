@@ -17,6 +17,7 @@ import 'package:react/react.dart';
 
 class ObjectEditorItems extends Component {
   List<Function> callbacks = [];
+  bool shouldScrollIntoView = false;
 
   getInitialState() => {
     'selected': -1
@@ -29,6 +30,11 @@ class ObjectEditorItems extends Component {
   componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
     initSpritePickers();
     callCallbacks();
+
+    if(shouldScrollIntoView) {
+      shouldScrollIntoView = false;
+      querySelector('#item_row_${state['selected']}').scrollIntoView();
+    }
   }
 
   initSpritePickers() {
@@ -206,7 +212,11 @@ class ObjectEditorItems extends Component {
   
   void addNewItem(MouseEvent e) {
     World.items["Item"] = new Item();
-    update();
+
+    shouldScrollIntoView = true;
+    this.setState({
+      'selected': World.items.keys.length - 1
+    });
   }
   
   void onInputChange(Event e) {

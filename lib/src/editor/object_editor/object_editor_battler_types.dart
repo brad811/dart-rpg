@@ -20,6 +20,7 @@ class ObjectEditorBattlerTypes extends Component {
   // TODO: give battler types a display name and a unique name
   //   so people can name them stuff like "end_boss_1"
   //   but still have a pretty display name like "Bob"
+  bool shouldScrollIntoView = false;
 
   getInitialState() => {
     'selected': -1,
@@ -36,6 +37,11 @@ class ObjectEditorBattlerTypes extends Component {
       setState({
         'selected': World.battlerTypes.length - 1
       });
+    }
+
+    if(shouldScrollIntoView) {
+      shouldScrollIntoView = false;
+      querySelector('#battler_type_row_${state['selected']}').scrollIntoView();
     }
   }
 
@@ -373,7 +379,10 @@ class ObjectEditorBattlerTypes extends Component {
         {}, 1.0
       );
 
-    update();
+    shouldScrollIntoView = true;
+    this.setState({
+      'selected': World.battlerTypes.keys.length - 1
+    });
   }
 
   void addLevel(MouseEvent e) {
