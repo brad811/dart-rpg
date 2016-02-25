@@ -46,6 +46,8 @@ class Editor extends Component {
   static String selectedSubTab = "";
   static int selectedSubItemNumber = -1;
 
+  static int gameLoadedTimestamp = 0;
+
   componentDidMount(Element rootNode) {
     Main.world = new World(() {
       Main.world.loadGame(() {
@@ -105,7 +107,7 @@ class Editor extends Component {
     }
 
     return
-      div({},
+      div({'key': gameLoadedTimestamp},
         table({'id': 'container'}, tbody({},
           tr({},
             td({'id': 'editor_tabs', 'colSpan': 2},
@@ -147,6 +149,7 @@ class Editor extends Component {
   
   static void loadGame(Function callback) {
     Main.world.parseGame(Editor.getTextAreaStringValue("#export_json"), () {
+      gameLoadedTimestamp = new DateTime.now().millisecondsSinceEpoch;
       callback();
     });
   }

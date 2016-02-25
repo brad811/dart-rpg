@@ -38,6 +38,20 @@ canvas {
 	float: left;
 }
 
+#new_game_button {
+	margin-left: 10px;
+}
+
+#new_game_button, #save_local_game_name, #save_local_game_button, #load_local_game_name {
+	margin-right: 10px;
+}
+
+.vertical_divider {
+	width: 1px;
+	border-left: 1px solid #ccc;
+	margin-right: 10px;
+}
+
 #game_loader {
 	padding: 10px;
 	text-align: center;

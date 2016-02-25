@@ -92,6 +92,10 @@ class MapEditor extends Component {
       return;
     }
 
+    warps = {};
+    signs = {};
+    events = {};
+
     for(int i=0; i<Main.world.maps.length; i++) {
       String key = Main.world.maps.keys.elementAt(i);
       List<List<List<Tile>>> mapTiles = Main.world.maps[key].tiles;
