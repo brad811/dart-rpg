@@ -45,7 +45,7 @@ class GameStorage extends Component {
 
     if(confirm) {
       // replace the json in the export box
-      (querySelector("#export_json") as TextAreaElement).value = "";
+      Editor.exportJsonString = "";
       
       // reload the editor
       Editor.loadGame(() {
@@ -61,6 +61,8 @@ class GameStorage extends Component {
         }
 
         fadeTimer = new Timer(new Duration(seconds: 5), () => GameStorage.fadeMessage());
+
+        Editor.export();
       });
     }
   }

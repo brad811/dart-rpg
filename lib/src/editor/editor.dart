@@ -148,7 +148,11 @@ class Editor extends Component {
   }
   
   static void loadGame(Function callback) {
-    Main.world.parseGame(Editor.getTextAreaStringValue("#export_json"), () {
+    if(querySelector("#export_json") != null) {
+      (querySelector("#export_json") as TextAreaElement).value = "";
+    }
+
+    Main.world.parseGame(exportJsonString, () {
       gameLoadedTimestamp = new DateTime.now().millisecondsSinceEpoch;
       callback();
     });

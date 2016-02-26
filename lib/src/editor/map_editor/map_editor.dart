@@ -1368,8 +1368,15 @@ class MapEditor extends Component {
             ),
             tr({},
               td({'className': 'export_json_container'},
-                textarea({'id': 'export_json', 'value': Editor.exportJsonString, 'onChange': ''}),
-                button({'id': 'load_game_button', 'onClick': (e) { Editor.loadGame(props['update']); }}, "Load")
+                textarea({'id': 'export_json', 'defaultValue': Editor.exportJsonString}),
+                button({
+                  'id': 'load_game_button',
+                  'onClick': (e) {
+                    Editor.exportJsonString = Editor.getTextAreaStringValue("#export_json");
+                    specialTilesLoaded = false;
+                    Editor.loadGame(props['update']);
+                  }
+                }, "Load")
               )
             )
           ))
