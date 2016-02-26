@@ -616,6 +616,20 @@ class World {
     characters = {};
     
     if(charactersObject == null) {
+      Character character = new Character(
+        "player",
+        0, 0, 0, 0,
+        layer: 0,
+        sizeX: 1,
+        sizeY: 2,
+        solid: true
+      );
+
+      character.name = "Player";
+      character.battler = new Battler(null, World.battlerTypes.values.first, 1, []);
+
+      characters["player"] = character;
+
       return;
     }
     
