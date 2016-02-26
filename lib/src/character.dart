@@ -265,7 +265,7 @@ class Character extends Interactable {
   }
   
   void render(List<List<Tile>> renderList) {
-    int higherLayer = layer+2;
+    int higherLayer = layer + 1;
     if(higherLayer >= World.layers.last) {
       higherLayer = World.layers.last;
     }
@@ -288,6 +288,7 @@ class Character extends Interactable {
           )
         );
       }
+
     }
   }
   
