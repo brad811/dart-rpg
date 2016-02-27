@@ -121,11 +121,11 @@ class Editor extends Component {
                 'className': 'tab_header ' + (state['selectedTab'] == 'objectEditor' ? 'selected' : ''),
                 'onClick': (MouseEvent e) { setState({'selectedTab': 'objectEditor'}); }
               }, "Object Editor"),
-              div({
+              /*div({
                 'id': 'screen_editor_tab_header',
                 'className': 'tab_header ' + (state['selectedTab'] == 'screenEditor' ? 'selected' : ''),
                 'onClick': (MouseEvent e) { setState({'selectedTab': 'screenEditor'}); }
-              }, "Screen Editor"),
+              }, "Screen Editor"),*/
               div({
                 'id': 'settings_tab_header',
                 'className': 'tab_header ' + (state['selectedTab'] == 'settings' ? 'selected' : ''),
