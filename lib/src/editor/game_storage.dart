@@ -63,6 +63,9 @@ class GameStorage extends Component {
         fadeTimer = new Timer(new Duration(seconds: 5), () => GameStorage.fadeMessage());
 
         Editor.export();
+
+        // stops the container from going to 0px height
+        Editor.handleResize(null);
       });
     }
   }

@@ -88,10 +88,12 @@ class MapEditor extends Component {
   };
 
   componentWillMount() {
-    if(specialTilesLoaded) {
-      return;
+    if(!specialTilesLoaded) {
+      loadSpecialTiles();
     }
+  }
 
+  static void loadSpecialTiles() {
     warps = {};
     signs = {};
     events = {};

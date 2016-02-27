@@ -69,7 +69,7 @@ class Editor extends Component {
     }
   }
 
-  void handleResize(Event e) {
+  static void handleResize(Event e) {
     querySelector('#container').style.height = "${window.innerHeight - 10}px";
   }
 
@@ -153,6 +153,7 @@ class Editor extends Component {
     }
 
     Main.world.parseGame(exportJsonString, () {
+      MapEditor.loadSpecialTiles();
       gameLoadedTimestamp = new DateTime.now().millisecondsSinceEpoch;
       callback();
     });
