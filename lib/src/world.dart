@@ -627,6 +627,7 @@ class World {
 
       character.name = "Player";
       character.battler = new Battler(null, World.battlerTypes.values.first, 1, []);
+      character.map = Main.world.maps.keys.first;
 
       characters["player"] = character;
 
