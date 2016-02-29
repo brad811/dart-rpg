@@ -283,6 +283,25 @@ h4 {
 	clear: left;
 }
 
+#layer_container div, #layer_container input {
+	float: left;
+}
+
+.layer_visiblity_toggle {
+	width: 16px;
+	height: 16px;
+	margin-top: 2px;
+	background-image: url("images/sprites.png");
+}
+
+.layer_visiblity_toggle.enabled {
+	background-position: 0 0;
+}
+
+.layer_visiblity_toggle.disabled {
+	background-position: 16px 0;
+}
+
 textarea {
 	width: 160px;
 	height: 60px;

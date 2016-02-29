@@ -131,35 +131,72 @@ class MapEditorTiles extends Component {
             td({},
               canvas({'id': 'editor_selected_sprite_canvas', 'width': 32, 'height': 32})
             ),
-            td({},
+            td({'id': 'layer_container'},
+
+              div({
+                'className': 'layer_visiblity_toggle ${ MapEditor.layerVisible[World.LAYER_ABOVE] ? 'enabled' : 'disabled' }',
+                'onClick': (Event e) {
+                  MapEditor.layerVisible[World.LAYER_ABOVE] = !MapEditor.layerVisible[World.LAYER_ABOVE];
+                  MapEditor.updateMap();
+                  update();
+                }
+              }),
               input({
                 'type': 'radio',
                 'name': 'layer',
-                'value': 3,
-                'checked': MapEditor.selectedLayer == 3,
+                'value': World.LAYER_ABOVE,
+                'checked': MapEditor.selectedLayer == World.LAYER_ABOVE,
                 'onChange': onSelectedLayerChange
-              }, "Above"), br({}),
+              }, "Above"), br({'className': 'breaker'}),
+
+              div({
+                'className': 'layer_visiblity_toggle  ${ MapEditor.layerVisible[World.LAYER_PLAYER] ? 'enabled' : 'disabled' }',
+                'onClick': (Event e) {
+                  MapEditor.layerVisible[World.LAYER_PLAYER] = !MapEditor.layerVisible[World.LAYER_PLAYER];
+                  MapEditor.updateMap();
+                  update();
+                }
+              }),
               input({
                 'type': 'radio',
                 'name': 'layer',
-                'value': 2,
-                'checked': MapEditor.selectedLayer == 2,
+                'value': World.LAYER_PLAYER,
+                'checked': MapEditor.selectedLayer == World.LAYER_PLAYER,
                 'onChange': onSelectedLayerChange
-              }, "Player"), br({}),
+              }, "Player"), br({'className': 'breaker'}),
+
+              div({
+                'className': 'layer_visiblity_toggle  ${ MapEditor.layerVisible[World.LAYER_BELOW] ? 'enabled' : 'disabled' }',
+                'onClick': (Event e) {
+                  MapEditor.layerVisible[World.LAYER_BELOW] = !MapEditor.layerVisible[World.LAYER_BELOW];
+                  MapEditor.updateMap();
+                  update();
+                }
+              }),
               input({
                 'type': 'radio',
                 'name': 'layer',
-                'value': 1,
-                'checked': MapEditor.selectedLayer == 1,
+                'value': World.LAYER_BELOW,
+                'checked': MapEditor.selectedLayer == World.LAYER_BELOW,
                 'onChange': onSelectedLayerChange
-              }, "Below"), br({}),
+              }, "Below"), br({'className': 'breaker'}),
+
+              div({
+                'className': 'layer_visiblity_toggle  ${ MapEditor.layerVisible[World.LAYER_GROUND] ? 'enabled' : 'disabled' }',
+                'onClick': (Event e) {
+                  MapEditor.layerVisible[World.LAYER_GROUND] = !MapEditor.layerVisible[World.LAYER_GROUND];
+                  MapEditor.updateMap();
+                  update();
+                }
+              }),
               input({
                 'type': 'radio',
                 'name': 'layer',
-                'value': 0,
-                'checked': MapEditor.selectedLayer == 0,
+                'value': World.LAYER_GROUND,
+                'checked': MapEditor.selectedLayer == World.LAYER_GROUND,
                 'onChange': onSelectedLayerChange
-              }, "Ground"), br({})
+              }, "Ground"), br({'className': 'breaker'})
+
             ),
             td({},
               input({
@@ -238,48 +275,6 @@ class MapEditorTiles extends Component {
         ),
 
         div({'id': 'layer_visibility_toggles'},
-          h4({}, "Layer Visibility"),
-          input({
-            'id': 'layer_visible_above',
-            'type': 'checkbox',
-            'checked': MapEditor.layerVisible[World.LAYER_ABOVE],
-            'onChange': (Event e) {
-              MapEditor.layerVisible[World.LAYER_ABOVE] = Editor.getCheckboxInputBoolValue("#layer_visible_above");
-              MapEditor.updateMap();
-              update();
-            }
-          }, "Above"), br({}),
-          input({
-            'id': 'layer_visible_player',
-            'type': 'checkbox',
-            'checked': MapEditor.layerVisible[World.LAYER_PLAYER],
-            'onChange': (Event e) {
-              MapEditor.layerVisible[World.LAYER_PLAYER] = Editor.getCheckboxInputBoolValue("#layer_visible_player");
-              MapEditor.updateMap();
-              update();
-            }
-          }, "Player"), br({}),
-          input({
-            'id': 'layer_visible_below',
-            'type': 'checkbox',
-            'checked': MapEditor.layerVisible[World.LAYER_BELOW],
-            'onChange': (Event e) {
-              MapEditor.layerVisible[World.LAYER_BELOW] = Editor.getCheckboxInputBoolValue("#layer_visible_below");
-              MapEditor.updateMap();
-              update();
-            }
-          }, "Below"), br({}),
-          input({
-            'id': 'layer_visible_ground',
-            'type': 'checkbox',
-            'checked': MapEditor.layerVisible[World.LAYER_GROUND],
-            'onChange': (Event e) {
-              MapEditor.layerVisible[World.LAYER_GROUND] = Editor.getCheckboxInputBoolValue("#layer_visible_ground");
-              MapEditor.updateMap();
-              update();
-            }
-          }, "Ground"), br({}),
-          br({}),
           input({
             'id': 'layer_visible_special',
             'type': 'checkbox',
