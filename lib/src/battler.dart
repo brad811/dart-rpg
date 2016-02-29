@@ -239,19 +239,21 @@ class Battler {
           Interactable.chainGameEvents(Main.player.character, World.gameEventChains["____tmp_forget_move"]).trigger(Main.player.character);
         } else {
           // find the lowest level attack this battler still knows and replace it
-          for(Attack attack in this.battlerType.levelAttacks.values) {
-            if(this.attacks.keys.contains(attack)) {
-              // forget the old attack
-              attacks.remove(attack.name);
-              
-              // learn the new attack
-              attacks[newAttacks[0].name] = newAttacks[0];
-              
-              if(newAttacks.length > 1) {
-                learnNewAttacks(newAttacks.sublist(1), callback);
+          for(List<Attack> curLevelAttacks in this.battlerType.levelAttacks.values) {
+            for(Attack attack in curLevelAttacks) {
+              if(this.attacks.keys.contains(attack)) {
+                // forget the old attack
+                curLevelAttacks.remove(attack.name);
+                
+                // learn the new attack
+                attacks[newAttacks[0].name] = newAttacks[0];
+                
+                if(newAttacks.length > 1) {
+                  learnNewAttacks(newAttacks.sublist(1), callback);
+                }
+                
+                return;
               }
-              
-              return;
             }
           }
           
