@@ -890,6 +890,14 @@ class MapEditor extends Component {
     }
     
     MapEditor.renderColoredTiles(oldPoint: oldPoint, newPoint: newPoint, size: size);
+
+    if(selectedTool == "select" && oldPoint == null && newPoint == null) {
+      outlineSelectedTiles(
+        mapEditorCanvasContext,
+        lastTileInfoX, lastTileInfoY,
+        lastTileInfoSizeX, lastTileInfoSizeY
+      );
+    }
     
     if(shouldExport) {
       Editor.export();
