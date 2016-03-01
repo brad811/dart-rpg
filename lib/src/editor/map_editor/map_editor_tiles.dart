@@ -1,6 +1,7 @@
 library dart_rpg.map_editor_tiles;
 
 import 'dart:html';
+import 'dart:js';
 
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -78,6 +79,28 @@ class MapEditorTiles extends Component {
   }
 
   render() {
+    List<String> layers = ["Ground", "Below", "Player", "Above"];
+    List<JsObject> layerRows = [];
+    for(int i=layers.length-1; i>=0; i--) {
+      layerRows.addAll([
+        div({
+          'className': 'layer_visiblity_toggle ${ MapEditor.layerVisible[i] ? 'enabled' : 'disabled' }',
+          'onClick': (Event e) {
+            MapEditor.layerVisible[i] = !MapEditor.layerVisible[i];
+            MapEditor.updateMap();
+            update();
+          }
+        }),
+        input({
+          'type': 'radio',
+          'name': 'layer',
+          'value': i,
+          'checked': MapEditor.selectedLayer == i,
+          'onChange': onSelectedLayerChange
+        }, layers[i]), br({'className': 'breaker'})
+      ]);
+    }
+
     return
       div({'id': 'tiles_tab', 'className': 'tab'},
         div({
@@ -131,73 +154,7 @@ class MapEditorTiles extends Component {
             td({},
               canvas({'id': 'editor_selected_sprite_canvas', 'width': 32, 'height': 32})
             ),
-            td({'id': 'layer_container'},
-
-              div({
-                'className': 'layer_visiblity_toggle ${ MapEditor.layerVisible[World.LAYER_ABOVE] ? 'enabled' : 'disabled' }',
-                'onClick': (Event e) {
-                  MapEditor.layerVisible[World.LAYER_ABOVE] = !MapEditor.layerVisible[World.LAYER_ABOVE];
-                  MapEditor.updateMap();
-                  update();
-                }
-              }),
-              input({
-                'type': 'radio',
-                'name': 'layer',
-                'value': World.LAYER_ABOVE,
-                'checked': MapEditor.selectedLayer == World.LAYER_ABOVE,
-                'onChange': onSelectedLayerChange
-              }, "Above"), br({'className': 'breaker'}),
-
-              div({
-                'className': 'layer_visiblity_toggle  ${ MapEditor.layerVisible[World.LAYER_PLAYER] ? 'enabled' : 'disabled' }',
-                'onClick': (Event e) {
-                  MapEditor.layerVisible[World.LAYER_PLAYER] = !MapEditor.layerVisible[World.LAYER_PLAYER];
-                  MapEditor.updateMap();
-                  update();
-                }
-              }),
-              input({
-                'type': 'radio',
-                'name': 'layer',
-                'value': World.LAYER_PLAYER,
-                'checked': MapEditor.selectedLayer == World.LAYER_PLAYER,
-                'onChange': onSelectedLayerChange
-              }, "Player"), br({'className': 'breaker'}),
-
-              div({
-                'className': 'layer_visiblity_toggle  ${ MapEditor.layerVisible[World.LAYER_BELOW] ? 'enabled' : 'disabled' }',
-                'onClick': (Event e) {
-                  MapEditor.layerVisible[World.LAYER_BELOW] = !MapEditor.layerVisible[World.LAYER_BELOW];
-                  MapEditor.updateMap();
-                  update();
-                }
-              }),
-              input({
-                'type': 'radio',
-                'name': 'layer',
-                'value': World.LAYER_BELOW,
-                'checked': MapEditor.selectedLayer == World.LAYER_BELOW,
-                'onChange': onSelectedLayerChange
-              }, "Below"), br({'className': 'breaker'}),
-
-              div({
-                'className': 'layer_visiblity_toggle  ${ MapEditor.layerVisible[World.LAYER_GROUND] ? 'enabled' : 'disabled' }',
-                'onClick': (Event e) {
-                  MapEditor.layerVisible[World.LAYER_GROUND] = !MapEditor.layerVisible[World.LAYER_GROUND];
-                  MapEditor.updateMap();
-                  update();
-                }
-              }),
-              input({
-                'type': 'radio',
-                'name': 'layer',
-                'value': World.LAYER_GROUND,
-                'checked': MapEditor.selectedLayer == World.LAYER_GROUND,
-                'onChange': onSelectedLayerChange
-              }, "Ground"), br({'className': 'breaker'})
-
-            ),
+            td({'id': 'layer_container'}, layerRows),
             td({},
               input({
                 'id': 'brushSolid',
