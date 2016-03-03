@@ -84,7 +84,7 @@ class MapEditorTiles extends Component {
     for(int i=layers.length-1; i>=0; i--) {
       layerRows.addAll([
         div({
-          'className': 'layer_visiblity_toggle ${ MapEditor.layerVisible[i] ? 'enabled' : 'disabled' }',
+          'className': 'layer_visiblity_toggle fa ${ MapEditor.layerVisible[i] ? 'fa-eye' : 'fa-eye-slash' }',
           'onClick': (Event e) {
             MapEditor.layerVisible[i] = !MapEditor.layerVisible[i];
             MapEditor.updateMap();
@@ -183,23 +183,23 @@ class MapEditorTiles extends Component {
             tr({},
               td({'colSpan': 2}),
               td({},
-                button({'id': 'size_y_up_button_pre', 'onClick': (MouseEvent e) { sizeUpTop(); }}, "+")
+                button({'id': 'size_y_up_button_pre', 'onClick': (MouseEvent e) { sizeUpTop(); }, 'className': 'fa fa-plus'})
               ),
               td({'colSpan': 2})
             ),
             tr({},
               td({'colSpan': 2}),
               td({},
-                button({'id': 'size_y_down_button_pre', 'onClick': (MouseEvent e) { sizeDownTop(); }}, "-")
+                button({'id': 'size_y_down_button_pre', 'onClick': (MouseEvent e) { sizeDownTop(); }, 'className': 'fa fa-minus'})
               ),
               td({'colSpan': 2})
             ),
             tr({},
               td({},
-                button({'id': 'size_x_up_button_pre', 'onClick': (MouseEvent e) { sizeUpLeft(); }}, "+")
+                button({'id': 'size_x_up_button_pre', 'onClick': (MouseEvent e) { sizeUpLeft(); }, 'className': 'fa fa-plus'})
               ),
               td({},
-                button({'id': 'size_x_down_button_pre', 'onClick': (MouseEvent e) { sizeDownLeft(); }}, "-")
+                button({'id': 'size_x_down_button_pre', 'onClick': (MouseEvent e) { sizeDownLeft(); }, 'className': 'fa fa-minus'})
               ),
               td({'className': 'center'},
                 "Resize Map",
@@ -208,23 +208,23 @@ class MapEditorTiles extends Component {
                 }, "${Main.world.maps[Main.world.curMap].tiles[0].length} x ${Main.world.maps[Main.world.curMap].tiles.length}")
               ),
               td({},
-                button({'id': 'size_x_down_button', 'onClick': (MouseEvent e) { sizeDownRight(); }}, "-")
+                button({'id': 'size_x_down_button', 'onClick': (MouseEvent e) { sizeDownRight(); }, 'className': 'fa fa-minus'})
               ),
               td({},
-                button({'id': 'size_x_up_button', 'onClick': (MouseEvent e) { sizeUpRight(); }}, "+")
+                button({'id': 'size_x_up_button', 'onClick': (MouseEvent e) { sizeUpRight(); }, 'className': 'fa fa-plus'})
               )
             ),
             tr({},
               td({'colSpan': 2}),
               td({},
-                button({'id': 'size_y_down_button', 'onClick': (MouseEvent e) { sizeDownBottom(); }}, "-")
+                button({'id': 'size_y_down_button', 'onClick': (MouseEvent e) { sizeDownBottom(); }, 'className': 'fa fa-minus'})
               ),
               td({'colSpan': 2})
             ),
             tr({},
               td({'colSpan': 2}),
               td({},
-                button({'id': 'size_y_up_button', 'onClick': (MouseEvent e) { sizeUpBottom(); }}, "+")
+                button({'id': 'size_y_up_button', 'onClick': (MouseEvent e) { sizeUpBottom(); }, 'className': 'fa fa-plus'})
               ),
               td({'colSpan': 2})
             )

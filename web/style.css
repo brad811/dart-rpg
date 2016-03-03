@@ -258,14 +258,14 @@ h4 {
 
 #size_x_up_button_pre, #size_x_down_button_pre,
 #size_x_up_button, #size_x_down_button {
-	width: 20px;
+	width: 24px;
 	height: 100px;
 }
 
 #size_y_up_button_pre, #size_y_down_button_pre,
 #size_y_up_button, #size_y_down_button {
 	width: 100px;
-	height: 20px;
+	height: 24px;
 }
 
 #size_x_up_button_pre, #size_x_up_button,
@@ -291,15 +291,6 @@ h4 {
 	width: 16px;
 	height: 16px;
 	margin-top: 2px;
-	background-image: url("images/sprites.png");
-}
-
-.layer_visiblity_toggle.enabled {
-	background-position: 0 0;
-}
-
-.layer_visiblity_toggle.disabled {
-	background-position: 16px 0;
 }
 
 textarea {
@@ -453,7 +444,7 @@ textarea {
 	float: left;
 	margin-bottom: 10px;
 	text-align: center;
-	vertical-align: center;
+	vertical-align: middle;
 	margin-right: 10px;
 	line-height: 50px;
 	cursor: pointer;
