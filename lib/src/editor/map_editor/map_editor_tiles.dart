@@ -232,6 +232,7 @@ class MapEditorTiles extends Component {
         ),
 
         div({'id': 'layer_visibility_toggles'},
+          br({}),
           input({
             'id': 'layer_visible_special',
             'type': 'checkbox',
@@ -242,6 +243,17 @@ class MapEditorTiles extends Component {
               update();
             }
           }, "Highlight Special Tiles"),
+          br({}),
+          br({}),
+          input({
+            'id': 'should_show_tooltip',
+            'type': 'checkbox',
+            'checked': Editor.shouldShowTooltip,
+            'onChange': (Event e) {
+              Editor.shouldShowTooltip = Editor.getCheckboxInputBoolValue("#should_show_tooltip");
+              update();
+            }
+          }, "Show Tooltip"),
           br({})
         )
       );

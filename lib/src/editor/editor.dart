@@ -30,6 +30,7 @@ class Editor extends Component {
   static List<String> editorTabs = ["map_editor", "object_editor", "screen_editor", "settings"];
   
   static bool highlightSpecialTiles = true;
+  static bool shouldShowTooltip = true;
   
   static StreamSubscription resizeListener;
   static Map<String, StreamSubscription> listeners = new Map<String, StreamSubscription>();

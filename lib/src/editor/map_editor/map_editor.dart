@@ -556,7 +556,7 @@ class MapEditor extends Component {
       return;
     }
     
-    if(selectedTool != "select") {
+    if(selectedTool != "select" && Editor.shouldShowTooltip) {
       // update the tooltip
       tooltip.style.display = "block";
       tooltip.style.left = "${e.page.x + 30}px";
