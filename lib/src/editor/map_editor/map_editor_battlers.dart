@@ -69,7 +69,7 @@ class MapEditorBattlers extends Component {
 
     battlerTableRows.add(
       tr({},
-        td({}, "#"),
+        td({}, "Num"),
         td({}, "Battler Type"),
         td({}, "Level"),
         td({}, "Chance"),
@@ -125,7 +125,7 @@ class MapEditorBattlers extends Component {
               'onClick': Editor.generateConfirmDeleteFunction(
                 Main.world.maps[Main.world.curMap].battlerChances, i, "battler", update
               )
-            }, 'Delete')
+            }, span({'className': 'fa fa-trash'}), " Delete")
           )
         )
       );
@@ -134,7 +134,7 @@ class MapEditorBattlers extends Component {
     return
       div({'id': 'battlers_tab', 'className': 'tab'},
         div({'id': 'battlers_container'},
-          button({'id': 'add_battler_button', 'onClick': addNewBattler}, "Add new battler"),
+          button({'id': 'add_battler_button', 'onClick': addNewBattler}, span({'className': 'fa fa-plus-circle'}), " Add new battler"),
           hr({}),
           div({'id': 'battlers_container'},
             table(

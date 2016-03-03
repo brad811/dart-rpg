@@ -163,7 +163,7 @@ class MapEditorEvents extends Component {
             button({
               'id': 'delete_event_${i}',
               'onClick': Editor.generateConfirmDeleteFunction(MapEditor.events[Main.world.curMap], i, "event", update)
-            }, "Delete")
+            }, span({'className': 'fa fa-trash'}), " Delete")
           )
         )
       );
@@ -172,7 +172,7 @@ class MapEditorEvents extends Component {
     return
       div({'id': 'events_tab', 'className': 'tab'},
         div({'id': 'events_container'}, [
-          button({'id': 'add_event_button', 'onClick': this.addNewEvent}, "Add new event"),
+          button({'id': 'add_event_button', 'onClick': this.addNewEvent}, span({'className': 'fa fa-plus-circle'}), " Add new event"),
           hr({}),
           table({'className': 'editor_table'}, tbody({}, tableRows))
         ])

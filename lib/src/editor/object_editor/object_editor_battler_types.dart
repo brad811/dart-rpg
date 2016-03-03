@@ -177,7 +177,7 @@ class ObjectEditorBattlerTypes extends Component {
 
     elements.addAll([
       input({'id': 'battler_type_level', 'type': 'text', 'className': 'number'}),
-      button({'id': 'add_battler_type_level_button', 'onClick': addLevel}, "Add level"),
+      button({'id': 'add_battler_type_level_button', 'onClick': addLevel}, span({'className': 'fa fa-plus-circle'}), " Add level"),
       hr({})
     ]);
     
@@ -222,7 +222,7 @@ class ObjectEditorBattlerTypes extends Component {
               World.battlerTypes.values.elementAt(state['selected']).levelAttacks[level],
               j, "level attack", update
             )
-          }, "Delete"),
+          }, span({'className': 'fa fa-trash'}), " Delete"),
           br({})
         ]);
 
@@ -233,7 +233,7 @@ class ObjectEditorBattlerTypes extends Component {
         button({
           'id': 'add_battler_type_${state['selected']}_level_${level}_attack',
           'onClick': (MouseEvent e) { addAttack(state['selected'], level); }
-        }, "Add level ${level} attack")
+        }, span({'className': 'fa fa-plus-circle'}), " Add level ${level} attack")
       );
 
       tableRows.add(
@@ -247,7 +247,7 @@ class ObjectEditorBattlerTypes extends Component {
                 World.battlerTypes.values.elementAt(state['selected']).levelAttacks,
                 level, "level", update
               )
-            }, "Delete level")
+            }, span({'className': 'fa fa-trash'}), " Delete level")
           )
         )
       );
@@ -323,7 +323,7 @@ class ObjectEditorBattlerTypes extends Component {
               'onClick': Editor.generateConfirmDeleteFunction(
                 World.battlerTypes, key, "battler type", removeDeleted, atLeastOneRequired: true
               ),
-            }, "Delete battler")
+            }, span({'className': 'fa fa-trash'}), " Delete battler")
           )
         )
       );
@@ -361,7 +361,7 @@ class ObjectEditorBattlerTypes extends Component {
 
         div({'id': 'object_editor_battler_types_tab', 'className': 'tab object_editor_tab'},
           div({'className': 'object_editor_inner_tab'}, [
-            button({'id': 'add_battler_type_button', 'onClick': addNewBattlerType}, "Add new battler type"),
+            button({'id': 'add_battler_type_button', 'onClick': addNewBattlerType}, span({'className': 'fa fa-plus-circle'}), " Add new battler type"),
             hr({}),
             div({'id': 'battler_types_container'}, [
               table({'className': 'editor_table'}, tbody({}, tableRows))

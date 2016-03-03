@@ -89,7 +89,7 @@ class MapEditorWarps extends Component {
             button({
               'id': 'delete_warp_${i}',
               'onClick': Editor.generateConfirmDeleteFunction(MapEditor.warps[Main.world.curMap], i, "warp", update)
-            }, 'Delete')
+            }, span({'className': 'fa fa-trash'}), " Delete")
           )
         ])
       );
@@ -97,7 +97,7 @@ class MapEditorWarps extends Component {
 
     return
       div({'id': 'warps_tab', 'className': 'tab'}, [
-        button({'id': 'add_warp_button', 'onClick': addNewWarp}, "Add new warp"),
+        button({'id': 'add_warp_button', 'onClick': addNewWarp}, span({'className': 'fa fa-plus-circle'}), " Add new warp"),
         hr({}),
         div({'id': 'warps_container'}, [
           table({'className': 'editor_table'}, tbody({}, tableRows))

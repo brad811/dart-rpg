@@ -193,7 +193,7 @@ class MapEditorTileInfo extends Component {
                 button({
                   'id': 'delete_tile_info_layer_${i}',
                   'onClick': deleteLayer(i)
-                }, "Delete")
+                }, span({'className': 'fa fa-trash'}), " Delete")
               )
             ),
             tr({},

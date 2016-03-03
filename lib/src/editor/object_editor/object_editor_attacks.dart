@@ -118,7 +118,7 @@ class ObjectEditorAttacks extends Component {
             button({
               'id': 'delete_attack_${i}',
               'onClick': Editor.generateConfirmDeleteFunction(World.attacks, key, "attack", removeDeleted, atLeastOneRequired: true)
-            }, "Delete")
+            }, span({'className': 'fa fa-trash'}), " Delete")
           )
         )
       );
@@ -142,7 +142,7 @@ class ObjectEditorAttacks extends Component {
 
         div({'id': 'object_editor_attacks_tab', 'className': 'tab object_editor_tab'},
           div({'className': 'object_editor_inner_tab'},
-            button({'id': 'add_attack_button', 'onClick': addNewAttack}, "Add new attack"),
+            button({'id': 'add_attack_button', 'onClick': addNewAttack}, span({'className': 'fa fa-plus-circle'}), " Add new attack"),
             hr({}),
             div({'id': 'attacks_container'},
               table({'className': 'editor_table'}, tbody({}, tableRows))

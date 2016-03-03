@@ -1386,7 +1386,7 @@ class MapEditor extends Component {
                     specialTilesLoaded = false;
                     Editor.loadGame(props['update']);
                   }
-                }, "Load")
+                }, span({'className': 'fa fa-folder-open-o'}), " Load")
               )
             )
           ))

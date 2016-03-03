@@ -115,7 +115,7 @@ class ObjectEditorItems extends Component {
             button({
               'id': 'delete_item_${i}',
               'onClick': Editor.generateConfirmDeleteFunction(World.items, item.name, "item", update)
-            }, "Delete")
+            }, span({'className': 'fa fa-trash'}), " Delete")
           )
         )
       );
@@ -146,7 +146,7 @@ class ObjectEditorItems extends Component {
 
         div({'id': 'object_editor_items_tab', 'className': 'tab object_editor_tab'},
           div({'className': 'object_editor_inner_tab'}, [
-            button({'id': 'add_item_button', 'onClick': addNewItem}, "Add new item"),
+            button({'id': 'add_item_button', 'onClick': addNewItem}, span({'className': 'fa fa-plus-circle'}), " Add new item"),
             hr({}),
             div({'id': 'battler_types_container'}, [
               table({'className': 'editor_table'}, tbody({}, tableRows))

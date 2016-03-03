@@ -97,7 +97,7 @@ class MapEditorMaps extends Component {
             button({
               'id': 'delete_map_${i}',
               'onClick': Editor.generateConfirmDeleteFunction(Main.world.maps, key, "map", removeDeleted)
-            }, "Delete")
+            }, span({'className': 'fa fa-trash'}), " Delete")
           )
         )
       );
@@ -105,7 +105,7 @@ class MapEditorMaps extends Component {
 
     return
       div({'id': 'maps_tab', 'className': 'tab'},
-        button({'id': 'add_map_button', 'onClick': addNewMap}, "Add new map"),
+        button({'id': 'add_map_button', 'onClick': addNewMap}, span({'className': 'fa fa-plus-circle'}), " Add new map"),
         div({'id': 'maps_container'},
           hr({}),
           table({'className': 'editor_table'}, tbody({}, tableRows))

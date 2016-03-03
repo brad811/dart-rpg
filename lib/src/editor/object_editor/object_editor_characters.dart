@@ -199,7 +199,7 @@ class ObjectEditorCharacters extends Component {
             button({
               'id': 'delete_character_${i}',
               'onClick': Editor.generateConfirmDeleteFunction(World.characters, key, "character", removeDeleted, atLeastOneRequired: true)
-            }, "Delete")
+            }, span({'className': 'fa fa-trash'}), " Delete")
           )
         )
       );
@@ -243,7 +243,7 @@ class ObjectEditorCharacters extends Component {
 
         div({'id': 'object_editor_characters_tab', 'className': 'tab object_editor_tab'},
           div({'className': 'object_editor_inner_tab'},
-            button({'id': 'add_character_button', 'onClick': addNewCharacter}, "Add new character"),
+            button({'id': 'add_character_button', 'onClick': addNewCharacter}, span({'className': 'fa fa-plus-circle'}), " Add new character"),
             hr({}),
             div({'id': 'battler_types_container'},
               table({'className': 'editor_table'}, tbody({}, tableRows))
@@ -313,7 +313,7 @@ class ObjectEditorCharacters extends Component {
             button({
               'id': 'delete_character_${state['selected']}_item_${j}',
               'onClick': Editor.generateConfirmDeleteFunction(World.characters.values.elementAt(state['selected']), curItemName, "inventory item", update)
-            }, "Delete")
+            }, span({'className': 'fa fa-trash'}), " Delete")
           )
         )
       );
@@ -324,7 +324,7 @@ class ObjectEditorCharacters extends Component {
         button({
           'id': 'add_inventory_item_button',
           'onClick': addInventoryItem
-        }, "Add new inventory item"),
+        }, span({'className': 'fa fa-plus-circle'}), " Add new inventory item"),
         hr({}),
         "Money: ",
         input({

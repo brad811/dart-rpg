@@ -71,7 +71,7 @@ class ObjectEditorTypes extends Component {
             button({
               'id': 'delete_type_${i}',
               'onClick': Editor.generateConfirmDeleteFunction(World.types, gameType.name, "type", update, atLeastOneRequired: true)
-            }, "Delete")
+            }, span({'className': 'fa fa-trash'}), " Delete")
           )
         ])
       );
@@ -102,7 +102,7 @@ class ObjectEditorTypes extends Component {
 
         div({'id': 'object_editor_types_tab', 'className': 'tab object_editor_tab'},
           div({'className': 'object_editor_inner_tab'}, [
-            button({'id': 'add_type_button', 'onClick': addNewType}, "Add new type"),
+            button({'id': 'add_type_button', 'onClick': addNewType}, span({'className': 'fa fa-plus-circle'}), " Add new type"),
             hr({}),
             div({'id': 'types_container'}, [
               table({'className': 'editor_table'}, tbody({}, tableRows))

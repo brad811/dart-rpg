@@ -123,7 +123,7 @@ class ObjectEditorGameEvents extends Component {
             button({
               'id': 'delete_game_event_chain_${i}',
               'onClick': Editor.generateConfirmDeleteFunction(World.gameEventChains, key, "game event chain", removeDeleted)
-            }, "Delete")
+            }, span({'className': 'fa fa-trash'}), " Delete")
           )
         ])
       );
@@ -150,7 +150,7 @@ class ObjectEditorGameEvents extends Component {
                   button({
                     'id': 'add_game_event_button',
                     'onClick': addGameEvent
-                  }, "Add new game event"),
+                  }, span({'className': 'fa fa-plus-circle'}), " Add new game event"),
                   hr({}),
                   div({'id': 'game_event_chain_game_events_container'}, getGameEventsTab())
                 )
@@ -164,7 +164,7 @@ class ObjectEditorGameEvents extends Component {
             button({
               'id': 'add_game_event_chain_button',
               'onClick': addNewGameEventChain
-            }, "Add new game event chain"),
+            }, span({'className': 'fa fa-plus-circle'}), " Add new game event chain"),
             hr({}),
             div({'id': 'battler_types_container'},
               table({'className': 'editor_table'}, tbody({}, tableRows))
@@ -326,7 +326,7 @@ class ObjectEditorGameEvents extends Component {
           'onClick': Editor.generateConfirmDeleteFunction(
             World.gameEventChains.values.elementAt(state['selected']), number, "game event", update
           )
-        }, "Delete")
+        }, span({'className': 'fa fa-trash'}), " Delete")
       )
     ]);
   }

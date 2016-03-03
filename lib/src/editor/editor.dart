@@ -290,7 +290,7 @@ class Editor extends Component {
 
     if(!readOnly) {
       elements.add(
-        button({'id': '${prefix}_edit_button'}, "Edit")
+        button({'id': '${prefix}_edit_button'}, span({'className': 'fa fa-pencil-square-o'}), " Edit")
       );
     }
     

@@ -75,7 +75,7 @@ class MapEditorSigns extends Component {
               'onClick': Editor.generateConfirmDeleteFunction(
                 MapEditor.signs[Main.world.curMap], i, "sign", update
               )
-            }, "Delete")
+            }, span({'className': 'fa fa-trash'}), " Delete")
           )
         )
       );
@@ -83,7 +83,7 @@ class MapEditorSigns extends Component {
 
     return
       div({'id': 'signs_tab', 'className': 'tab'},
-        button({'id': 'add_sign_button', 'onClick': addNewSign}, "Add new sign"),
+        button({'id': 'add_sign_button', 'onClick': addNewSign}, span({'className': 'fa fa-plus-circle'}), " Add new sign"),
         hr({}),
         div({'id': 'signs_container'},
           table({'className': 'editor_table'}, tbody({}, tableRows))

@@ -136,7 +136,10 @@ class MapEditorCharacters extends Component {
             })
           ),
           td({},
-            button({'onClick': goToEditCharacterFunction(i)}, "Edit character")
+            button({'onClick': goToEditCharacterFunction(i)},
+              span({'className': 'fa fa-pencil-square-o'}),
+              " Edit Character"
+            )
           )
         )
       );
