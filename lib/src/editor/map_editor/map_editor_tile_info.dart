@@ -76,6 +76,39 @@ class MapEditorTileInfo extends Component {
     };
   }
 
+  Function copyLayer(int layer) {
+    return (MouseEvent e) {
+      List<List<List<Tile>>> tiles = Main.world.maps[Main.world.curMap].tiles;
+
+      MapEditor.stampTiles = [];
+
+      while(MapEditor.stampTiles.length <= layer) {
+        MapEditor.stampTiles.add([]);
+      }
+
+      for(int y=0; y<this.state["sizeY"]; y++) {
+        MapEditor.stampTiles[layer].add([]);
+        for(int x=0; x<this.state["sizeX"]; x++) {
+          if(
+            tiles[this.state["y"] + y] != null &&
+            tiles[this.state["y"] + y][this.state["x"] + x] != null &&
+            tiles[this.state["y"] + y][this.state["x"] + x][layer] != null &&
+            tiles[this.state["y"] + y][this.state["x"] + x][layer].sprite != null
+          ) {
+            MapEditor.stampTiles[layer][y].add(
+              tiles[this.state["y"] + y][this.state["x"] + x][layer].sprite.id
+            );
+          } else {
+            MapEditor.stampTiles[layer][y].add(null);
+          }
+        }
+      }
+
+      MapEditor.selectedLayer = layer;
+      MapEditor.selectTool("stamp");
+    };
+  }
+
   void onInputChange(Event e) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     List<String> layerNames = ["Ground", "Below", "Player", "Above"];
@@ -191,7 +224,10 @@ class MapEditorTileInfo extends Component {
               td({'className': 'tile_info_layer_name'}, layerNames[i]),
               td({'className': 'tile_info_delete'},
                 button({
-                  'id': 'delete_tile_info_layer_${i}',
+                  'onClick': copyLayer(i)
+                }, span({'className': 'fa fa-files-o'}), " Copy"),
+                " ",
+                button({
                   'onClick': deleteLayer(i)
                 }, span({'className': 'fa fa-trash'}), " Delete")
               )

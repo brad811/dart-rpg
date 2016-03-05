@@ -74,7 +74,7 @@ class MapEditor extends Component {
     brushLayered = false,
     brushEncounter = false;
 
-  static int stampWidth = 1, stampHeight = 1;
+  static List<List<List<int>>> stampTiles = [];
 
   static Map<String, List<WarpTile>> warps = {};
   static Map<String, List<Sign>> signs = {};
@@ -331,11 +331,23 @@ class MapEditor extends Component {
         MapEditor.selectTool("brush");
       }
 
-      MapEditor.stampWidth = sizeX;
-      MapEditor.stampHeight = sizeY;
-
       renderSpriteSelector();
       outlineSelectedTiles(mapEditorSpriteSelectorCanvasContext, minX, minY, sizeX, sizeY);
+
+      // populate the stamp tiles with tiles from the sprite sheet
+      MapEditor.stampTiles = [];
+      while(MapEditor.stampTiles.length <= selectedLayer) {
+        MapEditor.stampTiles.add([]);
+      }
+
+      for(int y=0; y<sizeY; y++) {
+        MapEditor.stampTiles[selectedLayer].add([]);
+        for(int x=0; x<sizeX; x++) {
+          MapEditor.stampTiles[selectedLayer][y].add(
+            selectedTile + y * Sprite.spriteSheetWidth + x
+          );
+        }
+      }
 
       if(state['selectedTab'] == 'tiles') {
         update();
@@ -574,8 +586,8 @@ class MapEditor extends Component {
     
     if(selectedTool == "stamp") {
       // TODO: only do this when these values change, not on every tile hover
-      width = MapEditor.stampWidth;
-      height = MapEditor.stampHeight;
+      width = MapEditor.stampTiles[selectedLayer][0].length;
+      height = MapEditor.stampTiles[selectedLayer].length;
     }
 
     MapEditor.updateMap(
@@ -596,7 +608,15 @@ class MapEditor extends Component {
           
           for(int layer=0; layer<World.layers.length; layer++) {
             if(selectedLayer == layer) {
-              renderStaticSprite(mapEditorCanvasContext, selectedTile + j*Sprite.spriteSheetWidth + i, x+i, y+j);
+              if(selectedTool == "stamp") {
+                if(
+                    MapEditor.stampTiles.length > layer &&
+                    MapEditor.stampTiles[layer][j][i] != null) {
+                  renderStaticSprite(mapEditorCanvasContext, MapEditor.stampTiles[layer][j][i], x+i, y+j);
+                }
+              } else {
+                renderStaticSprite(mapEditorCanvasContext, selectedTile + j*Sprite.spriteSheetWidth + i, x+i, y+j);
+              }
             } else {
               if(y+j >= Main.world.maps[Main.world.curMap].tiles.length ||
                   x+i >= Main.world.maps[Main.world.curMap].tiles[y+j].length) {
@@ -606,7 +626,7 @@ class MapEditor extends Component {
               Tile tile = Main.world.maps[Main.world.curMap].tiles[y+j][x+i][layer];
               
               if(tile != null) {
-                int id = Main.world.maps[Main.world.curMap].tiles[y+j][x+i][layer].sprite.id;
+                int id = tile.sprite.id;
                 renderStaticSprite(mapEditorCanvasContext, id, x+i, y+j);
               }
             }
@@ -691,7 +711,7 @@ class MapEditor extends Component {
     
     lastChangeX = x;
     lastChangeY = y;
-    
+
     if(selectedTool == "select") {
       // TODO: check if this conditional ever gets called
       if(lastTileInfoX == x && lastTileInfoY == y && tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
@@ -701,7 +721,7 @@ class MapEditor extends Component {
         lastTileInfoY = y;
         //showTileInfo(x, y);
       }
-    } else if(selectedTile == -1) {
+    } else if(selectedTile == -1 && selectedTool != "stamp") {
       mapTiles[y][x][layer] = null;
     } else if(encounter) {
       // TODO: fill
@@ -720,11 +740,14 @@ class MapEditor extends Component {
         }
         floodFill(mapTiles, x, y, layer, tileBefore, solid, layered);
       } else if(selectedTool == "stamp") {
-        for(int i=0; i<MapEditor.stampWidth; i++) {
-          for(int j=0; j<MapEditor.stampHeight; j++) {
+        for(int j=0; j<MapEditor.stampTiles[layer].length; j++) {
+          for(int i=0; i<MapEditor.stampTiles[layer][j].length; i++) {
+            // MapEditor.stampTiles[k][j][i]
             mapTiles[y+j][x+i][layer] = new Tile(
               solid,
-              new Sprite.int(selectedTile + (j*Sprite.spriteSheetWidth) + i, x+i, y+j)
+              new Sprite.int(
+                MapEditor.stampTiles[layer][j][i], x+i, y+j
+              )
             );
           }
         }
