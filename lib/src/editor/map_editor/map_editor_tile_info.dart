@@ -80,14 +80,10 @@ class MapEditorTileInfo extends Component {
     return (MouseEvent e) {
       List<List<List<Tile>>> tiles = Main.world.maps[Main.world.curMap].tiles;
 
-      MapEditor.stampTiles = [];
-
-      while(MapEditor.stampTiles.length <= layer) {
-        MapEditor.stampTiles.add([]);
-      }
+      MapEditor.stampTiles = [[]];
 
       for(int y=0; y<this.state["sizeY"]; y++) {
-        MapEditor.stampTiles[layer].add([]);
+        MapEditor.stampTiles[0].add([]);
         for(int x=0; x<this.state["sizeX"]; x++) {
           if(
             tiles[this.state["y"] + y] != null &&
@@ -95,11 +91,11 @@ class MapEditorTileInfo extends Component {
             tiles[this.state["y"] + y][this.state["x"] + x][layer] != null &&
             tiles[this.state["y"] + y][this.state["x"] + x][layer].sprite != null
           ) {
-            MapEditor.stampTiles[layer][y].add(
+            MapEditor.stampTiles[0][y].add(
               tiles[this.state["y"] + y][this.state["x"] + x][layer].sprite.id
             );
           } else {
-            MapEditor.stampTiles[layer][y].add(null);
+            MapEditor.stampTiles[0][y].add(null);
           }
         }
       }
