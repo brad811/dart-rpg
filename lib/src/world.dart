@@ -832,7 +832,7 @@ class World {
     }
   }
   
-  bool isSolid(int x, int y) {
+  bool isSolid(int x, int y, [Character ignoredCharacter]) {
     if(
         x < 0 || x >= Main.world.maps[Main.world.curMap].tiles[0].length ||
         y < 0 || y >= Main.world.maps[Main.world.curMap].tiles.length) {
@@ -846,14 +846,15 @@ class World {
     }
     
     for(Character character in World.characters.values) {
-      // TODO: account for character size
-      if(character.map == Main.world.curMap && character.mapX == x && character.mapY == y && character.solid) {
+      if(
+        character != ignoredCharacter &&
+        character.map == Main.world.curMap &&
+        character.solid &&
+        x >= character.mapX && x <= character.mapX + character.sizeX - 1 &&
+        y >= character.mapY && y <= character.mapY + (character.sizeY/2).floor() - 1
+      ) {
         return true;
       }
-    }
-    
-    if(Main.player.character.mapX == x && Main.player.character.mapY == y) {
-      return true;
     }
     
     return false;
