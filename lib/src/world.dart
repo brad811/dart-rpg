@@ -31,6 +31,7 @@ import 'package:dart_rpg/src/game_event/fade_game_event.dart';
 import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/store_game_event.dart';
+import 'package:dart_rpg/src/game_event/switch_player_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 
@@ -796,6 +797,12 @@ class World {
             );
           
           gameEventChain.add(warpGameEvent);
+        } else if(gameEvents[i]["type"] == "switch_player") {
+          SwitchPlayerGameEvent switchPlayerGameEvent = new SwitchPlayerGameEvent(
+            gameEvents[i]["character"]
+          );
+
+          gameEventChain.add(switchPlayerGameEvent);
         }
         
         World.gameEventChains[key] = gameEventChain;

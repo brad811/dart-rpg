@@ -13,6 +13,7 @@ import 'package:dart_rpg/src/game_event/fade_game_event.dart';
 import 'package:dart_rpg/src/game_event/heal_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/store_game_event.dart';
+import 'package:dart_rpg/src/game_event/switch_player_game_event.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 
@@ -21,7 +22,7 @@ class GameEvent implements InputHandler {
   Function function, callback;
   
   static final List<String> gameEventTypes =
-      ["text", "move", "delay", "fade", "heal", "store", "battle", "chain", "choice", "warp"];
+      ["text", "move", "delay", "fade", "heal", "store", "battle", "chain", "choice", "warp", "switch_player"];
   
   GameEvent([this.function, this.callback]);
   
@@ -58,6 +59,8 @@ class GameEvent implements InputHandler {
       return MoveGameEvent.buildGameEvent(prefix);
     } else if(type == StoreGameEvent.type) {
       return StoreGameEvent.buildGameEvent(prefix);
+    } else if(type == SwitchPlayerGameEvent.type) {
+      return SwitchPlayerGameEvent.buildGameEvent(prefix);
     } else if(type == TextGameEvent.type) {
       return TextGameEvent.buildGameEvent(prefix);
     } else if(type == WarpGameEvent.type) {
