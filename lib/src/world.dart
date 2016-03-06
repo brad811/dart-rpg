@@ -245,6 +245,12 @@ class World {
       
       if(character.sizeY != originalCharacterJson["sizeY"])
         characterJson["sizeY"] = character.sizeY;
+
+      if(character.walkSpeed != originalCharacterJson["walkSpeed"])
+        characterJson["walkSpeed"] = character.walkSpeed;
+
+      if(character.runSpeed != originalCharacterJson["runSpeed"])
+        characterJson["runSpeed"] = character.runSpeed;
       
       if(character.map != originalCharacterJson["map"])
         characterJson["map"] = character.map;
@@ -619,11 +625,15 @@ class World {
       Character character = new Character(
         "player",
         0, 0, 0, 0,
+        2, 4,
         layer: 0,
         sizeX: 1,
         sizeY: 2,
         solid: true
       );
+
+      character.walkSpeed = 2;
+      character.runSpeed = 4;
 
       character.name = "Player";
       character.battler = new Battler(null, World.battlerTypes.values.first, 1, []);
@@ -647,11 +657,16 @@ class World {
       charactersObject[characterLabel]["pictureId"] as int,
       charactersObject[characterLabel]["mapX"],
       charactersObject[characterLabel]["mapY"],
+      charactersObject[characterLabel]["walkSpeed"],
+      charactersObject[characterLabel]["runSpeed"],
       layer: charactersObject[characterLabel]["layer"],
       sizeX: charactersObject[characterLabel]["sizeX"] as int,
       sizeY: charactersObject[characterLabel]["sizeY"] as int,
       solid: charactersObject[characterLabel]["solid"]
     );
+
+    character.walkSpeed = charactersObject[characterLabel]["walkSpeed"];
+    character.runSpeed = charactersObject[characterLabel]["runSpeed"];
     
     character.name = charactersObject[characterLabel]["name"];
     
@@ -721,7 +736,8 @@ class World {
           MoveGameEvent moveGameEvent = new MoveGameEvent(
               gameEvents[i]["character"],
               gameEvents[i]["direction"] as int,
-              gameEvents[i]["distance"] as int
+              gameEvents[i]["distance"] as int,
+              gameEvents[i]["run"] as bool
             );
           
           gameEventChain.add(moveGameEvent);

@@ -20,8 +20,9 @@ class MoveGameEvent implements GameEvent {
   String characterLabel;
   int direction;
   int distance;
+  bool run;
   
-  MoveGameEvent(this.characterLabel, this.direction, this.distance, [this.callback]);
+  MoveGameEvent(this.characterLabel, this.direction, this.distance, this.run, [this.callback]);
   
   @override
   void trigger(Interactable interactable, [Function function]) {
@@ -36,17 +37,23 @@ class MoveGameEvent implements GameEvent {
     int traveled = 0;
     
     Main.player.inputEnabled = false;
-    chainCharacterMovement(character, traveled);
+    chainCharacterMovement(character, traveled, character.curSpeed);
   }
   
-  void chainCharacterMovement(Character character, int traveled) {
+  void chainCharacterMovement(Character character, int traveled, int previousSpeed) {
     if(traveled >= distance) {
+      character.curSpeed = previousSpeed;
       Main.player.inputEnabled = true;
       callback();
     } else {
+      if(run) {
+        character.curSpeed = character.runSpeed;
+      } else {
+        character.curSpeed = character.walkSpeed;
+      }
       character.move(direction);
       character.motionCallback = () {
-        chainCharacterMovement(character, traveled + 1);
+        chainCharacterMovement(character, traveled + 1, previousSpeed);
       };
     }
   }
@@ -88,7 +95,8 @@ class MoveGameEvent implements GameEvent {
       tr({},
         td({}, "Character"),
         td({}, "Direction"),
-        td({}, "Distance")
+        td({}, "Distance"),
+        td({}, "Run")
       ),
       tr({},
         td({},
@@ -116,6 +124,15 @@ class MoveGameEvent implements GameEvent {
             'readOnly': readOnly,
             'onChange': onInputChange
           })
+        ),
+        td({},
+          input({
+            'id': '${prefix}_run',
+            'type': 'checkbox',
+            'checked': run,
+            'readOnly': readOnly,
+            'onChange': onInputChange
+          })
         )
       )
     ));
@@ -125,7 +142,8 @@ class MoveGameEvent implements GameEvent {
     MoveGameEvent moveGameEvent = new MoveGameEvent(
         Editor.getSelectInputStringValue("#${prefix}_character"),
         Editor.getSelectInputIntValue("#${prefix}_direction", Character.DOWN),
-        Editor.getTextInputIntValue("#${prefix}_distance", 1)
+        Editor.getTextInputIntValue("#${prefix}_distance", 1),
+        Editor.getCheckboxInputBoolValue("#${prefix}_run")
       );
     
     if(moveGameEvent.characterLabel == "") {
@@ -143,6 +161,7 @@ class MoveGameEvent implements GameEvent {
     gameEventJson["character"] = characterLabel;
     gameEventJson["direction"] = direction;
     gameEventJson["distance"] = distance;
+    gameEventJson["run"] = run;
     
     return gameEventJson;
   }

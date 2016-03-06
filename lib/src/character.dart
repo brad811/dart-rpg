@@ -18,12 +18,9 @@ class Character extends Interactable {
     RIGHT = 1,
     UP = 2,
     LEFT = 3;
-  
-  final int
-    walkSpeed = 2 * Sprite.spriteScale,
-    runSpeed = 4 * Sprite.spriteScale,
     
-    // how far the character moves with each step, in pixels
+  // how far the character moves with each step, in pixels
+  final int
     motionAmount = Sprite.pixelsPerSprite * Sprite.spriteScale,
     directionCooldownAmount = 2;
   
@@ -32,6 +29,7 @@ class Character extends Interactable {
     pictureId,
     layer,
     sizeX, sizeY,
+    walkSpeed, runSpeed,
     
     // how far the character has left to move, in pixels
     motionX = 0,
@@ -62,6 +60,7 @@ class Character extends Interactable {
   
   Character(this.label, this.spriteId, this.pictureId,
       this.mapX, this.mapY,
+      this.walkSpeed, this.runSpeed,
       {this.layer: World.LAYER_PLAYER, this.sizeX: 1, this.sizeY: 2, this.solid: true}) {
     curSpeed = walkSpeed;
     
@@ -165,7 +164,7 @@ class Character extends Interactable {
     }
     
     if(motionX < 0) {
-      movementAmount = math.min(motionX.abs(), curSpeed);
+      movementAmount = math.min(motionX.abs(), curSpeed * Sprite.spriteScale);
       motionX += movementAmount;
       
       if(!Main.world.isSolid(mapX-1, mapY)) {
@@ -185,7 +184,7 @@ class Character extends Interactable {
       else if(motionX == 0 && motionStep == 2)
         motionStep = 1;
     } else if(motionX > 0) {
-      movementAmount = math.min(motionX.abs(), curSpeed);
+      movementAmount = math.min(motionX.abs(), curSpeed * Sprite.spriteScale);
       motionX -= movementAmount;
       
       if(!Main.world.isSolid(mapX+1, mapY)) {
@@ -205,7 +204,7 @@ class Character extends Interactable {
       else if(motionX == 0 && motionStep == 2)
         motionStep = 1;
     } else if(motionY < 0) {
-      movementAmount = math.min(motionY.abs(), curSpeed);
+      movementAmount = math.min(motionY.abs(), curSpeed * Sprite.spriteScale);
       motionY += movementAmount;
       
       if(!Main.world.isSolid(mapX, mapY-1)) {
@@ -225,7 +224,7 @@ class Character extends Interactable {
       else if(motionY == 0 && motionStep == 2)
         motionStep = 1;
     } else if(motionY > 0) {
-      movementAmount = math.min(motionY.abs(), curSpeed);
+      movementAmount = math.min(motionY.abs(), curSpeed * Sprite.spriteScale);
       motionY -= movementAmount;
       
       if(!Main.world.isSolid(mapX, mapY+1)) {

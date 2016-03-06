@@ -190,6 +190,28 @@ class ObjectEditorCharacters extends Component {
               'className': 'number',
               'value': World.characters[key].sizeY,
               'onChange': onInputChange
+            }),
+
+            br({}),
+            br({}),
+            "Speed",
+            br({}),
+            "Walk: ",
+            input({
+              'id': 'character_${i}_walk_speed',
+              'type': 'text',
+              'className': 'number',
+              'value': World.characters[key].walkSpeed,
+              'onChange': onInputChange
+            }),
+            br({}),
+            "Run: ",
+            input({
+              'id': 'character_${i}_run_speed',
+              'type': 'text',
+              'className': 'number',
+              'value': World.characters[key].runSpeed,
+              'onChange': onInputChange
             })
           ),
           td({},
@@ -461,6 +483,7 @@ class ObjectEditorCharacters extends Component {
     Character newCharacter = new Character(
       name,
       0, 0, 0, 0,
+      2, 4,
       layer: World.LAYER_BELOW,
       sizeX: 1, sizeY: 2,
       solid: true
@@ -535,6 +558,8 @@ class ObjectEditorCharacters extends Component {
             Editor.getTextInputIntValue('#character_${i}_sprite_id', 1),
             Editor.getTextInputIntValue('#character_${i}_picture_id', 1),
             mapX, mapY,
+            Editor.getTextInputIntValue('#character_${i}_walk_speed', 2),
+            Editor.getTextInputIntValue('#character_${i}_run_speed', 4),
             layer: layer,
             sizeX: Editor.getTextInputIntValue('#character_${i}_size_x', 1),
             sizeY: Editor.getTextInputIntValue('#character_${i}_size_y', 2),
@@ -602,6 +627,8 @@ class ObjectEditorCharacters extends Component {
       characterJson["pictureId"] = character.pictureId;
       characterJson["sizeX"] = character.sizeX;
       characterJson["sizeY"] = character.sizeY;
+      characterJson["walkSpeed"] = character.walkSpeed;
+      characterJson["runSpeed"] = character.runSpeed;
       characterJson["map"] = character.map;
       characterJson["name"] = character.name;
       
