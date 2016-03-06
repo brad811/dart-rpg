@@ -282,7 +282,7 @@ class Character extends Interactable {
           new Tile(
             solid,
             new Sprite(
-              spriteId + i + (direction * sizeX) + motionSpriteOffset + (Sprite.spriteSheetWidth * j),
+              spriteId + i + (direction * sizeX) + (motionSpriteOffset * sizeX) + (Sprite.spriteSheetWidth * j),
               (x/motionAmount) + i, (y/motionAmount) - (sizeY - j - 1)
             )
           )
