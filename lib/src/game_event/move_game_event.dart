@@ -5,6 +5,7 @@ import 'dart:js';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
+import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 
@@ -16,30 +17,36 @@ class MoveGameEvent implements GameEvent {
   static final String type = "move";
   Function function, callback;
   
-  Character character;
+  String characterLabel;
   int direction;
   int distance;
   
-  MoveGameEvent(this.direction, this.distance, [this.callback]);
+  MoveGameEvent(this.characterLabel, this.direction, this.distance, [this.callback]);
   
   @override
   void trigger(Interactable interactable, [Function function]) {
-    character = interactable as Character;
+    Character character;
+    
+    if(characterLabel == "____player") {
+      character = Main.player.character;
+    } else {
+      character = World.characters[characterLabel];
+    }
     
     int traveled = 0;
     
     Main.player.inputEnabled = false;
-    chainCharacterMovement(traveled);
+    chainCharacterMovement(character, traveled);
   }
   
-  void chainCharacterMovement(int traveled) {
+  void chainCharacterMovement(Character character, int traveled) {
     if(traveled >= distance) {
       Main.player.inputEnabled = true;
       callback();
     } else {
       character.move(direction);
       character.motionCallback = () {
-        chainCharacterMovement(traveled + 1);
+        chainCharacterMovement(character, traveled + 1);
       };
     }
   }
@@ -59,27 +66,46 @@ class MoveGameEvent implements GameEvent {
   
   @override
   JsObject buildHtml(String prefix, bool readOnly, List<Function> callbacks, Function onInputChange, Function update) {
+    List<JsObject> characterOptions = [];
+    characterOptions.add(
+      option({'value': '____player'}, "Player")
+    );
+    World.characters.forEach((String curCharacterLabel, Character character) {
+      characterOptions.add(
+        option({'value': curCharacterLabel}, curCharacterLabel)
+      );
+    });
+
     List<String> directions = ["Down", "Right", "Up", "Left"];
-    List<JsObject> options = [];
+    List<JsObject> direction_options = [];
     for(int dir=0; dir<directions.length; dir++) {
-      options.add(
+      direction_options.add(
         option({'value': dir}, directions[dir])
       );
     }
 
     return table({}, tbody({},
       tr({},
+        td({}, "Character"),
         td({}, "Direction"),
         td({}, "Distance")
       ),
       tr({},
         td({},
           select({
+            'id': '${prefix}_character',
+            'disabled': readOnly,
+            'value': characterLabel,
+            'onChange': onInputChange
+          }, characterOptions)
+        ),
+        td({},
+          select({
             'id': '${prefix}_direction',
             'disabled': readOnly,
             'value': direction,
             'onChange': onInputChange
-          }, options)
+          }, direction_options)
         ),
         td({},
           input({
@@ -97,6 +123,7 @@ class MoveGameEvent implements GameEvent {
   
   static GameEvent buildGameEvent(String prefix) {
     MoveGameEvent moveGameEvent = new MoveGameEvent(
+        Editor.getSelectInputStringValue("#${prefix}_character"),
         Editor.getSelectInputIntValue("#${prefix}_direction", Character.DOWN),
         Editor.getTextInputIntValue("#${prefix}_distance", 1)
       );
@@ -109,6 +136,7 @@ class MoveGameEvent implements GameEvent {
     Map<String, Object> gameEventJson = {};
     
     gameEventJson["type"] = type;
+    gameEventJson["character"] = characterLabel;
     gameEventJson["direction"] = direction;
     gameEventJson["distance"] = distance;
     

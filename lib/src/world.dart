@@ -719,6 +719,7 @@ class World {
           gameEventChain.add(textGameEvent);
         } else if(gameEvents[i]["type"] == "move") {
           MoveGameEvent moveGameEvent = new MoveGameEvent(
+              gameEvents[i]["character"],
               gameEvents[i]["direction"] as int,
               gameEvents[i]["distance"] as int
             );
