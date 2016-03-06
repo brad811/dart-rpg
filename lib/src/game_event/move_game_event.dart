@@ -128,6 +128,10 @@ class MoveGameEvent implements GameEvent {
         Editor.getTextInputIntValue("#${prefix}_distance", 1)
       );
     
+    if(moveGameEvent.characterLabel == "") {
+      moveGameEvent.characterLabel = "____player";
+    }
+
     return moveGameEvent;
   }
   
