@@ -270,6 +270,31 @@ class ObjectEditorGameEvents extends Component {
 
     Editor.debounceExport();
   }
+
+  void reorderGameEvent(int oldNumber, int newNumber) {
+    List<GameEvent> gameEventChain = World.gameEventChains.values.elementAt(this.state["selected"]);
+
+    List<GameEvent> newOrder = [];
+    for(int i=0; i< gameEventChain.length; i++) {
+      if(i == oldNumber)
+        continue;
+
+      if(i == newNumber && newNumber < oldNumber) {
+        newOrder.add(gameEventChain[oldNumber]);
+      }
+
+      newOrder.add(gameEventChain[i]);
+
+      if(i == newNumber && newNumber > oldNumber) {
+        newOrder.add(gameEventChain[oldNumber]);
+      }
+    }
+
+    World.gameEventChains[World.gameEventChains.keys.elementAt(this.state["selected"])] = newOrder;
+
+    this.update();
+    Editor.debounceExport();
+  }
   
   static void export(Map<String, Object> exportJson) {
     Map<String, Object> gameEventChainsJson = {};
@@ -311,7 +336,17 @@ class ObjectEditorGameEvents extends Component {
     }
     
     return tr({}, [
-      td({}, number),
+      td({},
+        span({
+          'className': 'fa fa-caret-up fa-lg',
+          'onClick': (MouseEvent e) { reorderGameEvent(number, number - 1); }
+        }),
+        br({}), number, br({}),
+        span({
+          'className': 'fa fa-caret-down fa-lg',
+          'onClick': (MouseEvent e) { reorderGameEvent(number, number + 1); }
+        })
+      ),
       td({},
         select({
           'id': '${prefix}_type',
