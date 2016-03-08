@@ -36,7 +36,7 @@ class MapEditorSigns extends Component {
         tr({},
           td({}, i),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'sign_${i}_posx',
               'type': 'text',
               'className': 'number',
@@ -45,7 +45,7 @@ class MapEditorSigns extends Component {
             })
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'sign_${i}_posy',
               'type': 'text',
               'className': 'number',
@@ -54,7 +54,7 @@ class MapEditorSigns extends Component {
             })
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'sign_${i}_pic',
               'type': 'text',
               'className': 'number',

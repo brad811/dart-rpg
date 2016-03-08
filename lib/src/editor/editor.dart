@@ -278,7 +278,7 @@ class Editor extends Component {
     List<JsObject> elements = [
       canvas({'id': '${prefix}_canvas'}),
       br({}),
-      input({
+      Editor.generateInput({
         'id': prefix,
         'type': 'text',
         'className': 'number',
@@ -515,6 +515,56 @@ class Editor extends Component {
       
       inputElement.setSelectionRange(position, position);
     }
+  }
+
+  static String getValueBefore(e) {
+    if(e == null) {
+      return "";
+    }
+    
+    if(e.target is TextInputElement) {
+      if(e.target.getAttribute("type") == "checkbox") {
+        return "";
+      }
+
+      return e.target.value;
+    } else if(e.target is TextAreaElement) {
+      return e.target.value;
+    }
+
+    return "";
+  }
+
+  static String lastElementId, lastValue;
+  static JsObject generateInput(Map obj) {
+    String valueFieldName = 'value';
+    if(obj['type'] == 'checkbox') {
+      valueFieldName = 'checked';
+    }
+
+    return input({
+      'id': obj['id'],
+      'type': obj['type'],
+      'className': obj['className'],
+      valueFieldName: Editor.lastElementId == obj['id'] ? Editor.lastValue : obj[valueFieldName],
+      'onChange': (e) {
+        Editor.enforceValueFormat(e);
+        Editor.lastElementId = (e.target as HtmlElement).id;
+        Editor.lastValue = Editor.getValueBefore(e);
+        obj['onChange'](e);
+      },
+      'onFocus': (_) { lastElementId = obj['id']; lastValue = obj[valueFieldName]; },
+      'onBlur': (_) {
+        // trigger the parent component's update function
+        obj['onChange'](null);
+
+        // handle clicking an element that does not set lastElementId
+        if(lastElementId == obj['id']) {
+          lastElementId = null;
+          lastValue = null;
+        }
+      }
+    });
   }
   
   static void updateAndRetainValue(Event e, Function callback) {

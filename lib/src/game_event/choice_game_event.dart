@@ -208,7 +208,7 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
       tableRows.add(
         tr({},
           td({},
-            input({
+            Editor.generateInput({
               'type': 'text',
               'id': '${prefix}_choice_name_${i}',
               'value': choiceName,

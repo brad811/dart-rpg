@@ -111,7 +111,7 @@ class ObjectEditorGameEvents extends Component {
         }, [
           td({}, i),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'game_event_chain_${i}_label',
               'type': 'text',
               'value': key,

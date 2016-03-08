@@ -84,7 +84,7 @@ class MapEditorMaps extends Component {
         tr({},
           mapButton,
           td({},
-            input({
+            Editor.generateInput({
               'id': 'map_${i}_name',
               'type': 'text',
               'value': Main.world.maps[key].name,

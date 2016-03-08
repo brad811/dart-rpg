@@ -88,7 +88,7 @@ class ObjectEditorItems extends Component {
             Editor.generateSpritePickerHtml("item_${i}_picture_id", item.pictureId)
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'item_${i}_name',
               'type': 'text',
               'value': item.name,
@@ -96,7 +96,7 @@ class ObjectEditorItems extends Component {
             })
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'item_${i}_base_price',
               'type': 'text',
               'className': 'number',

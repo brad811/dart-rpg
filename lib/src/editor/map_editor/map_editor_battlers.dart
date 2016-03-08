@@ -101,7 +101,7 @@ class MapEditorBattlers extends Component {
             }, battlerTypeOptions)
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'map_battler_${i}_level',
               'type': 'text',
               'className': 'number',
@@ -110,7 +110,7 @@ class MapEditorBattlers extends Component {
             })
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'map_battler_${i}_chance',
               'type': 'text',
               'className': 'number decimal',

@@ -145,21 +145,21 @@ class ObjectEditorCharacters extends Component {
           td({}, i),
           td({},
             "Label", br({}),
-            input({
+            Editor.generateInput({
               'id': 'character_${i}_label',
               'type': 'text',
               'value': key,
               'onChange': onInputChange
             }), br({}),
             "Name", br({}),
-            input({
+            Editor.generateInput({
               'id': 'character_${i}_name',
               'type': 'text',
               'value': World.characters[key].name,
               'onChange': onInputChange
             }), br({}),
             br({}),
-            input({
+            Editor.generateInput({
               'id': 'character_${i}_player',
               'type': 'checkbox',
               'checked': Main.player.character.label == World.characters.keys.elementAt(i),
@@ -175,7 +175,7 @@ class ObjectEditorCharacters extends Component {
           ),
           td({},
             "X: ",
-            input({
+            Editor.generateInput({
               'id': 'character_${i}_size_x',
               'type': 'text',
               'className': 'number',
@@ -184,7 +184,7 @@ class ObjectEditorCharacters extends Component {
             }),
             br({}),
             "Y: ",
-            input({
+            Editor.generateInput({
               'id': 'character_${i}_size_y',
               'type': 'text',
               'className': 'number',
@@ -197,7 +197,7 @@ class ObjectEditorCharacters extends Component {
             "Speed",
             br({}),
             "Walk: ",
-            input({
+            Editor.generateInput({
               'id': 'character_${i}_walk_speed',
               'type': 'text',
               'className': 'number',
@@ -206,7 +206,7 @@ class ObjectEditorCharacters extends Component {
             }),
             br({}),
             "Run: ",
-            input({
+            Editor.generateInput({
               'id': 'character_${i}_run_speed',
               'type': 'text',
               'className': 'number',
@@ -323,7 +323,7 @@ class ObjectEditorCharacters extends Component {
             }, options)
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'character_${state['selected']}_inventory_${j}_quantity',
               'type': 'text',
               'className': 'number',
@@ -349,7 +349,7 @@ class ObjectEditorCharacters extends Component {
         }, span({'className': 'fa fa-plus-circle'}), " Add new inventory item"),
         hr({}),
         "Money: ",
-        input({
+        Editor.generateInput({
           'id': 'character_${state['selected']}_money',
           'type': 'text',
           'className': 'number',
@@ -420,7 +420,7 @@ class ObjectEditorCharacters extends Component {
         }, options),
         hr({}),
         "Sight distance: ",
-        input({
+        Editor.generateInput({
           'id': 'character_${state['selected']}_sight_distance',
           'type': 'text',
           'className': 'number',
@@ -465,7 +465,7 @@ class ObjectEditorCharacters extends Component {
             }, options)
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'character_${state['selected']}_battler_level',
               'type': 'text',
               'className': 'number',

@@ -127,7 +127,7 @@ class MapEditorEvents extends Component {
         tr({},
           td({}, i),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'map_event_${i}_posx',
               'type': 'text',
               'className': 'number',
@@ -136,7 +136,7 @@ class MapEditorEvents extends Component {
             })
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'map_event_${i}_posy',
               'type': 'text',
               'className': 'number',
@@ -152,7 +152,7 @@ class MapEditorEvents extends Component {
             }, options)
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'map_event_${i}_run_once',
               'type': 'checkbox',
               'checked': MapEditor.events[Main.world.curMap][i].runOnce,

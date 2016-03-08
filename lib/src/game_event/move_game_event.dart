@@ -116,7 +116,7 @@ class MoveGameEvent implements GameEvent {
           }, direction_options)
         ),
         td({},
-          input({
+          Editor.generateInput({
             'id': '${prefix}_distance',
             'type': 'text',
             'className': 'number',
@@ -126,7 +126,7 @@ class MoveGameEvent implements GameEvent {
           })
         ),
         td({},
-          input({
+          Editor.generateInput({
             'id': '${prefix}_run',
             'type': 'checkbox',
             'checked': run,

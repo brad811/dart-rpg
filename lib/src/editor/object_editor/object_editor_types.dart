@@ -65,7 +65,7 @@ class ObjectEditorTypes extends Component {
         }, [
           td({}, i),
           td({},
-            input({'id': 'type_${i}_name', 'type': 'text', 'value': gameType.name, 'onChange': onInputChange})
+            Editor.generateInput({'id': 'type_${i}_name', 'type': 'text', 'value': gameType.name, 'onChange': onInputChange})
           ),
           td({},
             button({
@@ -135,7 +135,7 @@ class ObjectEditorTypes extends Component {
             td({}, j),
             td({}, defendingGameType.name),
             td({},
-              input({
+              Editor.generateInput({
                 'id': 'type_${i}_effectiveness_${j}',
                 'type': 'text',
                 'className': 'number decimal',

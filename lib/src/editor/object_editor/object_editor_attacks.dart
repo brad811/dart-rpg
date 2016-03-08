@@ -85,7 +85,7 @@ class ObjectEditorAttacks extends Component {
         },
           td({}, i),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'attack_${i}_name',
               'type': 'text',
               'value': World.attacks[key].name,
@@ -106,7 +106,7 @@ class ObjectEditorAttacks extends Component {
             )
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'attack_${i}_power',
               'type': 'text',
               'className': 'number',

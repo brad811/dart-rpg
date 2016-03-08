@@ -68,7 +68,7 @@ class Settings extends Component {
               tr({},
                 td({}, "Pixels per sprite: "),
                 td({},
-                  input({
+                  Editor.generateInput({
                     'id': 'sprite_sheet_pixels_per_sprite',
                     'type': 'text',
                     'className': 'number',
@@ -80,7 +80,7 @@ class Settings extends Component {
               tr({},
                 td({}, "Sprite scale: "),
                 td({},
-                  input({
+                  Editor.generateInput({
                     'id': 'sprite_sheet_scale',
                     'type': 'text',
                     'className': 'number',
@@ -92,7 +92,7 @@ class Settings extends Component {
               tr({},
                 td({}, "Frames per second: "),
                 td({},
-                  input({
+                  Editor.generateInput({
                     'id': 'settings_frames_per_second',
                     'type': 'text',
                     'className': 'number',

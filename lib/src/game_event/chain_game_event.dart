@@ -81,7 +81,7 @@ class ChainGameEvent implements GameEvent {
           )
         ),
         td({},
-          input({
+          Editor.generateInput({
             'id': '${prefix}_make_default',
             'type': 'checkbox',
             'checked': makeDefault,

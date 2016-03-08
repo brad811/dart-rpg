@@ -30,7 +30,7 @@ class GameStorage extends Component {
         button({'id': 'new_game_button', 'onClick': newGame}, span({'className': 'fa fa-file-o'}), " New Game"),
         span({'className': 'vertical_divider'}),
         "Game Name: ",
-        input({'id': 'save_local_game_name', 'type': 'text'}),
+        Editor.generateInput({'id': 'save_local_game_name', 'type': 'text'}),
         button({'id': 'save_local_game_button', 'onClick': saveLocally}, span({'className': 'fa fa-floppy-o'}), " Save Game"),
         span({'className': 'vertical_divider'}),
         select({'id': 'load_local_game_name'}, options),

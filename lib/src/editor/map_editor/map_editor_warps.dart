@@ -44,7 +44,7 @@ class MapEditorWarps extends Component {
         tr({}, [
           td({}, i),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'warp_${i}_posx',
               'type': 'text',
               'className':'number',
@@ -53,7 +53,7 @@ class MapEditorWarps extends Component {
             })
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'warp_${i}_posy',
               'type': 'text',
               'className':'number',
@@ -68,7 +68,7 @@ class MapEditorWarps extends Component {
             }, destMapOptions)
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'warp_${i}_dest_x',
               'type': 'text',
               'className':'number',
@@ -77,7 +77,7 @@ class MapEditorWarps extends Component {
             })
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'warp_${i}_dest_y',
               'type': 'text',
               'className':'number',

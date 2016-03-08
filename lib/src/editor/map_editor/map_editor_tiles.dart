@@ -91,13 +91,13 @@ class MapEditorTiles extends Component {
             update();
           }
         }),
-        input({
+        Editor.generateInput({
           'type': 'radio',
           'name': 'layer',
           'value': i,
           'checked': MapEditor.selectedLayer == i,
           'onChange': onSelectedLayerChange
-        }, layers[i]), br({'className': 'breaker'})
+        }), layers[i], br({'className': 'breaker'})
       ]);
     }
 
@@ -137,24 +137,24 @@ class MapEditorTiles extends Component {
             ),
             td({'id': 'layer_container'}, layerRows),
             td({},
-              input({
+              Editor.generateInput({
                 'id': 'brushSolid',
                 'type': 'checkbox',
                 'value': MapEditor.brushSolid,
                 'onChange': onTileBrushAttributeChange
-              }, "Solid"),  br({}),
-              input({
+              }), "Solid",  br({}),
+              Editor.generateInput({
                 'id': 'brushLayered',
                 'type': 'checkbox',
                 'value': MapEditor.brushLayered,
                 'onChange': onTileBrushAttributeChange
-              }, "Layered"), br({}),
-              input({
+              }), "Layered", br({}),
+              Editor.generateInput({
                 'id': 'brushEncounter',
                 'type': 'checkbox',
                 'value': MapEditor.brushEncounter,
                 'onChange': onTileBrushAttributeChange
-              }, "Encounter")
+              }), "Encounter"
             )
           )
         )),
@@ -214,7 +214,7 @@ class MapEditorTiles extends Component {
 
         div({'id': 'layer_visibility_toggles'},
           br({}),
-          input({
+          Editor.generateInput({
             'id': 'layer_visible_special',
             'type': 'checkbox',
             'checked': Editor.highlightSpecialTiles,
@@ -223,10 +223,10 @@ class MapEditorTiles extends Component {
               MapEditor.updateMap();
               update();
             }
-          }, "Highlight Special Tiles"),
+          }), "Highlight Special Tiles",
           br({}),
           br({}),
-          input({
+          Editor.generateInput({
             'id': 'should_show_tooltip',
             'type': 'checkbox',
             'checked': Editor.shouldShowTooltip,
@@ -234,7 +234,7 @@ class MapEditorTiles extends Component {
               Editor.shouldShowTooltip = Editor.getCheckboxInputBoolValue("#should_show_tooltip");
               update();
             }
-          }, "Show Tooltip"),
+          }), "Show Tooltip",
           br({})
         )
       );

@@ -89,7 +89,7 @@ class ObjectEditorBattlerTypes extends Component {
           tr({},
             td({}, "Health"),
             td({},
-              input({
+              Editor.generateInput({
                 'id': 'battler_type_${i}_health',
                 'type': 'text',
                 'className': 'number',
@@ -102,7 +102,7 @@ class ObjectEditorBattlerTypes extends Component {
           tr({},
             td({}, "Physical Attack"),
             td({},
-              input({
+              Editor.generateInput({
                 'id': 'battler_type_${i}_physical_attack',
                 'type': 'text',
                 'className': 'number',
@@ -114,7 +114,7 @@ class ObjectEditorBattlerTypes extends Component {
           tr({},
             td({}, "Physical Defense"),
             td({},
-              input({
+              Editor.generateInput({
                 'id': 'battler_type_${i}_physical_defense',
                 'type': 'text',
                 'className': 'number',
@@ -126,7 +126,7 @@ class ObjectEditorBattlerTypes extends Component {
           tr({},
             td({}, "Magical Attack"),
             td({},
-              input({
+              Editor.generateInput({
                 'id': 'battler_type_${i}_magical_attack',
                 'type': 'text',
                 'className': 'number',
@@ -138,7 +138,7 @@ class ObjectEditorBattlerTypes extends Component {
           tr({},
             td({}, "Magicl Defense"),
             td({},
-              input({
+              Editor.generateInput({
                 'id': 'battler_type_${i}_magical_defense',
                 'type': 'text',
                 'className': 'number',
@@ -150,7 +150,7 @@ class ObjectEditorBattlerTypes extends Component {
           tr({},
             td({}, "Speed"),
             td({},
-              input({
+              Editor.generateInput({
                 'id': 'battler_type_${i}_speed',
                 'type': 'text',
                 'className': 'number',
@@ -176,7 +176,7 @@ class ObjectEditorBattlerTypes extends Component {
     List<JsObject> elements = [];
 
     elements.addAll([
-      input({'id': 'battler_type_level', 'type': 'text', 'className': 'number'}),
+      Editor.generateInput({'id': 'battler_type_level', 'type': 'text', 'className': 'number'}),
       button({'id': 'add_battler_type_level_button', 'onClick': addLevel}, span({'className': 'fa fa-plus-circle'}), " Add level"),
       hr({})
     ]);
@@ -298,7 +298,7 @@ class ObjectEditorBattlerTypes extends Component {
           td({}, i),
           td({}, Editor.generateSpritePickerHtml("battler_type_${i}_sprite_id", World.battlerTypes[key].spriteId)),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'battler_type_${i}_name',
               'type': 'text',
               'value': World.battlerTypes[key].name,
@@ -309,7 +309,7 @@ class ObjectEditorBattlerTypes extends Component {
             select({'id': 'battler_type_${i}_type', 'value': World.battlerTypes[key].type, 'onChange': onInputChange}, options)
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'battler_type_${i}_rarity',
               'type': 'text',
               'className': 'number decimal',

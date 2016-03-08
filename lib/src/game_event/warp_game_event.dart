@@ -126,7 +126,7 @@ class WarpGameEvent extends GameEvent {
         ),
         tr({},
           td({},
-            input({
+            Editor.generateInput({
               'id': '${prefix}_x',
               'type': 'text',
               'className': 'number',
@@ -136,7 +136,7 @@ class WarpGameEvent extends GameEvent {
             })
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': '${prefix}_y',
               'type': 'text',
               'className': 'number',

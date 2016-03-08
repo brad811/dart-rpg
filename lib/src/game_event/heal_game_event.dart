@@ -74,7 +74,7 @@ class HealGameEvent implements GameEvent {
           }, options)
         ),
         td({},
-          input({
+          Editor.generateInput({
             'id': '${prefix}_amount',
             'type': 'text',
             'className': 'number',

@@ -51,7 +51,7 @@ class DelayGameEvent implements GameEvent {
       ),
       tr({},
         td({},
-          input({
+          Editor.generateInput({
             'type': 'text',
             'className': 'number',
             'id': '${prefix}_milliseconds',

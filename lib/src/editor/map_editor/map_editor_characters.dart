@@ -96,7 +96,7 @@ class MapEditorCharacters extends Component {
           td({}, i),
           td({}, key),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'map_character_${i}_map_x',
               'type': 'text',
               'className': 'number',
@@ -105,7 +105,7 @@ class MapEditorCharacters extends Component {
             })
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'map_character_${i}_map_y',
               'type': 'text',
               'className': 'number',
@@ -128,7 +128,7 @@ class MapEditorCharacters extends Component {
             }, directionOptions)
           ),
           td({},
-            input({
+            Editor.generateInput({
               'id': 'map_character_${i}_solid',
               'type': 'checkbox',
               'checked': character.solid,
