@@ -159,7 +159,7 @@ class ObjectEditorCharacters extends Component {
               'onChange': onInputChange
             }), br({}),
             br({}),
-            Editor.generateInput({
+            input({
               'id': 'character_${i}_player',
               'type': 'checkbox',
               'checked': Main.player.character.label == World.characters.keys.elementAt(i),

@@ -152,7 +152,7 @@ class MapEditorEvents extends Component {
             }, options)
           ),
           td({},
-            Editor.generateInput({
+            input({
               'id': 'map_event_${i}_run_once',
               'type': 'checkbox',
               'checked': MapEditor.events[Main.world.curMap][i].runOnce,

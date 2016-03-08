@@ -91,7 +91,7 @@ class MapEditorTiles extends Component {
             update();
           }
         }),
-        Editor.generateInput({
+        input({
           'type': 'radio',
           'name': 'layer',
           'value': i,
@@ -137,19 +137,19 @@ class MapEditorTiles extends Component {
             ),
             td({'id': 'layer_container'}, layerRows),
             td({},
-              Editor.generateInput({
+              input({
                 'id': 'brushSolid',
                 'type': 'checkbox',
                 'value': MapEditor.brushSolid,
                 'onChange': onTileBrushAttributeChange
               }), "Solid",  br({}),
-              Editor.generateInput({
+              input({
                 'id': 'brushLayered',
                 'type': 'checkbox',
                 'value': MapEditor.brushLayered,
                 'onChange': onTileBrushAttributeChange
               }), "Layered", br({}),
-              Editor.generateInput({
+              input({
                 'id': 'brushEncounter',
                 'type': 'checkbox',
                 'value': MapEditor.brushEncounter,
@@ -214,7 +214,7 @@ class MapEditorTiles extends Component {
 
         div({'id': 'layer_visibility_toggles'},
           br({}),
-          Editor.generateInput({
+          input({
             'id': 'layer_visible_special',
             'type': 'checkbox',
             'checked': Editor.highlightSpecialTiles,
@@ -226,7 +226,7 @@ class MapEditorTiles extends Component {
           }), "Highlight Special Tiles",
           br({}),
           br({}),
-          Editor.generateInput({
+          input({
             'id': 'should_show_tooltip',
             'type': 'checkbox',
             'checked': Editor.shouldShowTooltip,

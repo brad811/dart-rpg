@@ -126,7 +126,7 @@ class MoveGameEvent implements GameEvent {
           })
         ),
         td({},
-          Editor.generateInput({
+          input({
             'id': '${prefix}_run',
             'type': 'checkbox',
             'checked': run,

@@ -128,7 +128,7 @@ class MapEditorCharacters extends Component {
             }, directionOptions)
           ),
           td({},
-            Editor.generateInput({
+            input({
               'id': 'map_character_${i}_solid',
               'type': 'checkbox',
               'checked': character.solid,
