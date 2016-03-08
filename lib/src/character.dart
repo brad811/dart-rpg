@@ -61,7 +61,7 @@ class Character extends Interactable {
   Character(this.label, this.spriteId, this.pictureId,
       this.mapX, this.mapY,
       this.walkSpeed, this.runSpeed,
-      {this.layer: World.LAYER_PLAYER, this.sizeX: 1, this.sizeY: 2, this.solid: true}) {
+      {this.layer: 0, this.sizeX: 1, this.sizeY: 2, this.solid: true}) {
     curSpeed = walkSpeed;
     
     startX = mapX;
@@ -110,16 +110,16 @@ class Character extends Interactable {
       try {
         if(motionDirection == Character.LEFT) {
           motionX = -motionAmount;
-          tile = Main.world.maps[Main.world.curMap].tiles[mapY][mapX-1][World.LAYER_GROUND];
+          tile = Main.world.maps[Main.world.curMap].tiles[mapY][mapX-1][0];
         } else if(motionDirection == Character.RIGHT) {
           motionX = motionAmount;
-          tile = Main.world.maps[Main.world.curMap].tiles[mapY][mapX+1][World.LAYER_GROUND];
+          tile = Main.world.maps[Main.world.curMap].tiles[mapY][mapX+1][0];
         } else if(motionDirection == Character.UP) {
           motionY = -motionAmount;
-          tile = Main.world.maps[Main.world.curMap].tiles[mapY-1][mapX][World.LAYER_GROUND];
+          tile = Main.world.maps[Main.world.curMap].tiles[mapY-1][mapX][0];
         } else if(motionDirection == Character.DOWN) {
           motionY = motionAmount;
-          tile = Main.world.maps[Main.world.curMap].tiles[mapY+1][mapX][World.LAYER_GROUND];
+          tile = Main.world.maps[Main.world.curMap].tiles[mapY+1][mapX][0];
         }
       } catch(e) {
         
@@ -265,8 +265,8 @@ class Character extends Interactable {
   
   void render(List<List<Tile>> renderList) {
     int higherLayer = layer + 1;
-    if(higherLayer >= World.layers.last) {
-      higherLayer = World.layers.last;
+    if(higherLayer >= World.layers.length - 1) {
+      higherLayer = World.layers.length - 1;
     }
     
     int curLayer = higherLayer;
@@ -292,6 +292,9 @@ class Character extends Interactable {
   }
   
   void interact() {
+    if(getGameEventChain() == "")
+      return;
+
     List<GameEvent> gameEvents = World.gameEventChains[getGameEventChain()].sublist(getGameEventChainOffset());
     if(gameEvents != null && gameEvents.length > 0) {
       Main.focusObject = null;

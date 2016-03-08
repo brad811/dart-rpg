@@ -49,10 +49,10 @@ class Tile extends Interactable {
           )
       ) {
         Main.world.maps[Main.world.curMap]
-          .tiles[topSprite.posY.round()][topSprite.posX.round()][World.LAYER_ABOVE] = topTile;
+          .tiles[topSprite.posY.round()][topSprite.posX.round()][World.layers.length-1] = topTile;
       } else {
         Main.world.maps[Main.world.curMap]
-          .tiles[topSprite.posY.round()][topSprite.posX.round()][World.LAYER_ABOVE] = null;
+          .tiles[topSprite.posY.round()][topSprite.posX.round()][World.layers.length-1] = null;
       }
     }
   }

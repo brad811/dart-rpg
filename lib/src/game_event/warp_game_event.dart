@@ -75,11 +75,10 @@ class WarpGameEvent extends GameEvent {
       );
     });
     
-    List<String> layers = ["Ground", "Below", "Player", "Above"];
     List<JsObject> layerOptions = [];
-    for(int curLayer=0; curLayer<layers.length; curLayer++) {
+    for(int curLayer=0; curLayer<World.layers.length; curLayer++) {
       layerOptions.add(
-        option({'value': curLayer}, layers[curLayer])
+        option({'value': curLayer}, World.layers[curLayer])
       );
     }
 
@@ -172,7 +171,7 @@ class WarpGameEvent extends GameEvent {
         Editor.getSelectInputStringValue("#${prefix}_new_map"),
         Editor.getTextInputIntValue("#${prefix}_x", 0),
         Editor.getTextInputIntValue("#${prefix}_y", 0),
-        Editor.getSelectInputIntValue("#${prefix}_layer", World.LAYER_BELOW),
+        Editor.getSelectInputIntValue("#${prefix}_layer", 0),
         Editor.getSelectInputIntValue("#${prefix}_direction", Character.DOWN)
       );
     

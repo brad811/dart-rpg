@@ -10,7 +10,6 @@ import 'package:dart_rpg/src/gui_items_menu.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
-import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
 import 'package:dart_rpg/src/game_event/choice_game_event.dart';
@@ -206,7 +205,10 @@ class Battle extends Interactable {
         Gui.clear();
         Main.world.curMap = Main.player.character.startMap;
         Main.player.character.warp(
-          Main.player.character.startMap, Main.player.character.startX, Main.player.character.startY, World.LAYER_PLAYER, Character.DOWN);
+          Main.player.character.startMap,
+          Main.player.character.startX, Main.player.character.startY, Main.player.character.layer,
+          Character.DOWN
+        );
         Main.focusObject = Main.player;
       }).trigger(Main.player.character);
     });

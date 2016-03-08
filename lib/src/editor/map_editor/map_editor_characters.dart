@@ -26,7 +26,7 @@ class MapEditorCharacters extends Component {
       try {
         character.mapX = Editor.getTextInputIntValue("#map_character_${i}_map_x", 0);
         character.mapY = Editor.getTextInputIntValue("#map_character_${i}_map_y", 0);
-        character.layer = Editor.getSelectInputIntValue("#map_character_${i}_layer", World.LAYER_BELOW);
+        character.layer = Editor.getSelectInputIntValue("#map_character_${i}_layer", 0);
         character.direction = Editor.getSelectInputIntValue("#map_character_${i}_direction", Character.DOWN);
         character.solid = Editor.getCheckboxInputBoolValue("#map_character_${i}_solid");
         
@@ -75,11 +75,10 @@ class MapEditorCharacters extends Component {
       if(character.map != Main.world.curMap)
         return;
 
-      List<String> layers = ["Ground", "Below", "Player", "Above"];
       List<JsObject> layerOptions = [];
-      for(int layer=0; layer<layers.length; layer++) {
+      for(int layer=0; layer<World.layers.length; layer++) {
         layerOptions.add(
-          option({'value': layer}, layers[layer])
+          option({'value': layer}, World.layers[layer])
         );
       }
 

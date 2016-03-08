@@ -91,7 +91,7 @@ class Player implements InputHandler {
     Main.player.inputEnabled = false;
     
     Tile target = Main.world.maps[Main.world.curMap]
-        .tiles[otherCharacter.mapY - otherCharacter.sizeY][otherCharacter.mapX][World.LAYER_ABOVE];
+        .tiles[otherCharacter.mapY - otherCharacter.sizeY][otherCharacter.mapX][World.layers.length-1];
     
     Tile before = null;
     if(target != null)
@@ -102,13 +102,13 @@ class Player implements InputHandler {
         Main.timeScale = 0.0;
         // TODO: give this icon an assigned location on the sprite sheet
         Main.world.maps[Main.world.curMap]
-          .tiles[otherCharacter.mapY - otherCharacter.sizeY][otherCharacter.mapX][World.LAYER_ABOVE] =
+          .tiles[otherCharacter.mapY - otherCharacter.sizeY][otherCharacter.mapX][World.layers.length-1] =
             new Tile(false, new Sprite.int(99, otherCharacter.mapX, otherCharacter.mapY - otherCharacter.sizeY));
       }),
       new DelayedGameEvent(500, () {
         Main.timeScale = 1.0;
         Main.world.maps[Main.world.curMap]
-          .tiles[otherCharacter.mapY - otherCharacter.sizeY][otherCharacter.mapX][World.LAYER_ABOVE] = before;
+          .tiles[otherCharacter.mapY - otherCharacter.sizeY][otherCharacter.mapX][World.layers.length-1] = before;
         
         List<GameEvent> characterGameEvents = [];
         characterGameEvents.add(new GameEvent((callback) {

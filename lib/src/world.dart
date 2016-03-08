@@ -36,17 +36,11 @@ import 'package:dart_rpg/src/game_event/text_game_event.dart';
 import 'package:dart_rpg/src/game_event/warp_game_event.dart';
 
 class World {
-  static const int
-    LAYER_GROUND = 0,
-    LAYER_BELOW = 1,
-    LAYER_PLAYER = 2,
-    LAYER_ABOVE = 3;
-  
-  static final List<int> layers = [
-    LAYER_GROUND,
-    LAYER_BELOW,
-    LAYER_PLAYER,
-    LAYER_ABOVE
+  static List<String> layers = [
+    "Ground",
+    "Below",
+    "Player",
+    "Above"
   ];
   
   Map<String, GameMap> maps = {};
@@ -846,7 +840,7 @@ class World {
       return true;
     }
     
-    for(int layer in layers) {
+    for(int layer = 0; layer < World.layers.length; layer++) {
       if(maps[curMap].tiles[y][x][layer] is Tile && maps[curMap].tiles[y][x][layer].solid) {
         return true;
       }
@@ -871,7 +865,7 @@ class World {
     if(maps[curMap].tiles.length <= y) return false;
     if(maps[curMap].tiles[y].length <= x) return false;
 
-    for(int layer in layers) {
+    for(int layer = 0; layer < World.layers.length; layer++) {
       if(maps[curMap].tiles[y][x][layer] is InteractableTile) {
         return true;
       }
@@ -887,7 +881,7 @@ class World {
   }
   
   void interact(int x, int y) {
-    for(int layer in layers) {
+    for(int layer = 0; layer < World.layers.length; layer++) {
       if(maps[curMap].tiles[y][x][layer] is InteractableTile) {
         InteractableTile tile = maps[curMap].tiles[y][x][layer] as InteractableTile;
         tile.interact();
@@ -915,7 +909,7 @@ class World {
           var x=math.max(Main.player.character.mapX-(viewXSize/2).round(), 0);
           x<Main.player.character.mapX+(viewXSize/2+2).round() && x<maps[curMap].tiles[y].length;
           x++) {
-        for(int layer in layers) {
+        for(int layer = 0; layer < World.layers.length; layer++) {
           if(maps[curMap].tiles[y][x][layer] is Tile) {
             renderList[layer].add(
               maps[curMap].tiles[y][x][layer]

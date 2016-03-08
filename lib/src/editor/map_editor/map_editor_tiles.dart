@@ -79,9 +79,8 @@ class MapEditorTiles extends Component {
   }
 
   render() {
-    List<String> layers = ["Ground", "Below", "Player", "Above"];
     List<JsObject> layerRows = [];
-    for(int i=layers.length-1; i>=0; i--) {
+    for(int i=World.layers.length-1; i>=0; i--) {
       layerRows.addAll([
         div({
           'className': 'layer_visiblity_toggle fa ${ MapEditor.layerVisible[i] ? 'fa-eye' : 'fa-eye-slash' }',
@@ -97,7 +96,7 @@ class MapEditorTiles extends Component {
           'value': i,
           'checked': MapEditor.selectedLayer == i,
           'onChange': onSelectedLayerChange
-        }), layers[i], br({'className': 'breaker'})
+        }), World.layers[i], br({'className': 'breaker'})
       ]);
     }
 

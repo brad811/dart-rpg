@@ -108,7 +108,7 @@ class MapEditor extends Component {
       
       for(var y=0; y<mapTiles.length; y++) {
         for(var x=0; x<mapTiles[y].length; x++) {
-          for(int layer in World.layers) {
+          for(int layer = 0; layer < World.layers.length; layer++) {
             if(mapTiles[y][x][layer] is WarpTile) {
               WarpTile mapWarpTile = mapTiles[y][x][layer];
               WarpTile warpTile = new WarpTile(
@@ -1280,7 +1280,7 @@ class MapEditor extends Component {
     
     for(var y=0; y<mapTiles.length; y++) {
       for(var x=0; x<mapTiles[y].length; x++) {
-        for(int layer in World.layers) {
+        for(int layer = 0; layer < World.layers.length; layer++) {
           if(!layerVisible[layer])
             continue;
           

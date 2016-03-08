@@ -5,7 +5,6 @@ import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/tile.dart';
-import 'package:dart_rpg/src/world.dart';
 
 class WarpTile extends Tile {
   String destMap;
@@ -26,7 +25,7 @@ class WarpTile extends Tile {
       Main.player.inputEnabled = true;
 
       try {
-        Main.world.maps[destMap].tiles[destY][destX][World.LAYER_GROUND].enter(character);
+        Main.world.maps[destMap].tiles[destY][destX][0].enter(character);
       } on RangeError catch(_) {
         // do nothing
       }

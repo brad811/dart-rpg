@@ -6,6 +6,7 @@ import 'dart:js';
 import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/tile.dart';
+import 'package:dart_rpg/src/world.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
@@ -30,15 +31,13 @@ class MapEditorTileInfo extends Component {
   }
 
   componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
-    List<String> layerNames = ["Ground", "Below", "Player", "Above"];
-
     int
       x = state['x'],
       y = state['y'],
       sizeX = this.state['sizeX'],
       sizeY = this.state['sizeY'];
 
-    for(int i=layerNames.length-1; i>=0; i--) {
+    for(int i=World.layers.length-1; i>=0; i--) {
       if(querySelector("#tile_info_layer_${i}_sprite_id_canvas") != null) {
         Editor.initMapSpritePicker(
           "tile_info_layer_${i}_sprite_id", x, y, i, sizeX, sizeY, onInputChange, readOnly: (sizeX != 1 || sizeY != 1)
@@ -107,7 +106,6 @@ class MapEditorTileInfo extends Component {
 
   void onInputChange(Event e) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-    List<String> layerNames = ["Ground", "Below", "Player", "Above"];
     int
       x = state['x'],
       y = state['y'],
@@ -115,7 +113,7 @@ class MapEditorTileInfo extends Component {
       sizeY = this.state['sizeY'];
     int selectedTileBefore = MapEditor.selectedTile;
 
-    for(int i=layerNames.length-1; i>=0; i--) {
+    for(int i=World.layers.length-1; i>=0; i--) {
       for(int y2=y; y2<y+sizeY; y2++) {
         for(int x2=x; x2<x+sizeX; x2++) {
           if(mapTiles[y2][x2][i] != null) {
@@ -177,7 +175,6 @@ class MapEditorTileInfo extends Component {
   render() {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
 
-    List<String> layerNames = ["Ground", "Below", "Player", "Above"];
     int
       x = state['x'],
       y = state['y'],
@@ -186,7 +183,7 @@ class MapEditorTileInfo extends Component {
 
     List<JsObject> tileRows = [];
 
-    for(int i=layerNames.length-1; i>=0; i--) {
+    for(int i=World.layers.length-1; i>=0; i--) {
       bool
         shouldDoLayer = false,
         allSolid = true,
@@ -217,7 +214,7 @@ class MapEditorTileInfo extends Component {
           hr({}),
           table({}, tbody({},
             tr({},
-              td({'className': 'tile_info_layer_name'}, layerNames[i]),
+              td({'className': 'tile_info_layer_name'}, World.layers[i]),
               td({'className': 'tile_info_delete'},
                 button({
                   'onClick': copyLayer(i)
