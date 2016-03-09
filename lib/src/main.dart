@@ -93,6 +93,7 @@ class Main {
     ButtonElement loadGameButton = querySelector("#load_game_button");
     loadGameButton.onClick.listen((MouseEvent e) {
       // TODO: cancel any running game events
+      Gui.fadeOutLevel = Gui.FADE_NORMAL;
       Main.inBattle = false;
       Gui.clear();
       createWorld();
