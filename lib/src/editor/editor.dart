@@ -473,6 +473,10 @@ class Editor extends Component {
     
     if(e.target is InputElement) {
       InputElement target = e.target;
+
+      if(target.value == "") {
+        target.value = "no_name";
+      }
       
       if(target.id.contains(match)) {
         target.value = getUniqueName(target.value, objects);
@@ -553,17 +557,7 @@ class Editor extends Component {
         Editor.lastValue = Editor.getValueBefore(e);
         obj['onChange'](e);
       },
-      'onFocus': (_) { lastElementId = obj['id']; lastValue = obj[valueFieldName]; },
-      'onBlur': (_) {
-        // trigger the parent component's update function
-        obj['onChange'](null);
-
-        // handle clicking an element that does not set lastElementId
-        if(lastElementId == obj['id']) {
-          lastElementId = null;
-          lastValue = null;
-        }
-      }
+      'onFocus': (_) { lastElementId = obj['id']; lastValue = obj[valueFieldName]; }
     });
   }
   
