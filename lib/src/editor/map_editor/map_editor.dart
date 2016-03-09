@@ -1038,9 +1038,22 @@ class MapEditor extends Component {
       }
       
       Map<String, int> colorTracker = colorTrackers[key];
-      
       colorTracker["colorCount"] += 1;
       colorTracker["character"] = 1;
+
+      for(int j=y; j<y+(character.sizeY/2).floor(); j++) {
+        for(int i=x; i<x+character.sizeX; i++) {
+          String key = "${i},${j}";
+
+          if(colorTrackers[key] == null) {
+            colorTrackers[key] = newColorTracker(i, j);
+          }
+          
+          Map<String, int> colorTracker = colorTrackers[key];
+          colorTracker["colorCount"] += 1;
+          colorTracker["solid"] = 1;
+        }
+      }
     });
     
     for(int y=0; y<Main.world.maps[Main.world.curMap].tiles.length; y++) {

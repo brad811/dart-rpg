@@ -279,7 +279,7 @@ class Character extends Interactable {
       for(int i=0; i<sizeX; i++) {
         renderList[curLayer].add(
           new Tile(
-            solid,
+            false,
             new Sprite(
               spriteId + i + (direction * sizeX) + (motionSpriteOffset * sizeX) + (Sprite.spriteSheetWidth * j),
               (x/motionAmount) + i, (y/motionAmount) - (sizeY - j - 1)

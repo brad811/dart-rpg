@@ -38,8 +38,6 @@ A browser-based 2d rpg and game editor
 - in game save / load options
 
 ### Known Issues
-- character heads should not be marked as solid
 - exp gains get really slow at higher levels
-- characters on above layer should not be solid on ground layer
 
 Copyright 2015-2016 Brad Jewell
