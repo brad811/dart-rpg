@@ -24,7 +24,7 @@ A browser-based 2d rpg and game editor
 - lots more game event types
 - option to allow capturing wild monsters
 - equippable items
-- more tools for map editor (copy/paste, brush sizes)
+- more tools for map editor (brush sizes)
 - touch/mouse controls (for mobile and non-keyboard playing)
 - gamepad support (waiting on Dart: https://github.com/dart-lang/sdk/issues/23494)
 - make xp/leveling optional
@@ -34,10 +34,6 @@ A browser-based 2d rpg and game editor
 - undo/redo
 - interpolation when dragging fast
 - option to allow characters as party members
-- option to allow controlling other characters
 - in game save / load options
-
-### Known Issues
-- exp gains get really slow at higher levels
 
 Copyright 2015-2016 Brad Jewell
