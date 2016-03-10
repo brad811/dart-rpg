@@ -738,12 +738,16 @@ class MapEditor extends Component {
         for(int j=0; j<MapEditor.stampTiles[0].length; j++) {
           for(int i=0; i<MapEditor.stampTiles[0][j].length; i++) {
             // MapEditor.stampTiles[k][j][i]
-            mapTiles[y+j][x+i][layer] = new Tile(
-              solid,
-              new Sprite.int(
-                MapEditor.stampTiles[0][j][i], x+i, y+j
-              )
-            );
+            if(MapEditor.stampTiles[0][j][i] == null) {
+              mapTiles[y+j][x+i][layer] = null;
+            } else {
+              mapTiles[y+j][x+i][layer] = new Tile(
+                solid,
+                new Sprite.int(
+                  MapEditor.stampTiles[0][j][i], x+i, y+j
+                )
+              );
+            }
           }
         }
       } else {
