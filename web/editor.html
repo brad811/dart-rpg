@@ -2,17 +2,19 @@
 <html>
   <head>
     <title>Dart RPG Editor</title>
+
     <link rel='stylesheet' href='style.css' type='text/css' />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+    <script src="packages/react/react.js"></script>
+    <script src="packages/react/react_dom.js"></script>
+    <script type="text/javascript" src="image_smoothing_fix.js"></script>
+    <script type="application/dart" src="editor.dart"></script>
+    <script src="packages/browser/dart.js"></script>
   </head>
   <body>
     <div id='editor_container'>
       <div id='editor_loading_screen'>Loading editor...</div>
     </div>
-    
-    <script async src="packages/react/react.js"></script>
-    <script type="text/javascript" src="image_smoothing_fix.js"></script>
-    <script type="application/dart" src="editor.dart"></script>
-    <script src="packages/browser/dart.js"></script>
   </body>
 </html>
