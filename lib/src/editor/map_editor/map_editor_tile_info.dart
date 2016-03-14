@@ -258,12 +258,12 @@ class MapEditorTileInfo extends Component {
       }
     }
 
-    return div({'id': 'tile_info', 'className': MapEditor.selectedTool == "select" ? '' : 'hidden'}, [
+    return div({'id': 'tile_info', 'className': MapEditor.selectedTool == "select" ? '' : 'hidden'},
       "Tile Info", br({}),
       hr({}),
       "X: ${x}", br({}),
       "Y: ${y}", br({}),
-      tileRows
-    ]);
+      new JsArray.from(tileRows)
+    );
   }
 }
