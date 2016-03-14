@@ -127,7 +127,7 @@ class ObjectEditorAttacks extends Component {
     return
       div({'id': 'object_editor_attacks_container', 'className': 'object_editor_tab_container'},
 
-        table({'id': 'object_editor_attacks_advanced', 'className': 'object_editor_advanced_tab'},
+        table({'id': 'object_editor_attacks_advanced', 'className': 'object_editor_advanced_tab'}, tbody({},
           tr({},
             td({'className': 'tab_headers'},
               div({'className': 'tab_header'}, "")
@@ -138,7 +138,7 @@ class ObjectEditorAttacks extends Component {
               div({'className': 'tab'})
             )
           )
-        ),
+        )),
 
         div({'id': 'object_editor_attacks_tab', 'className': 'tab object_editor_tab'},
           div({'className': 'object_editor_inner_tab'},
