@@ -107,6 +107,36 @@ canvas {
 	padding: 0;
 }
 
+.game_event_chain_table {
+	border-collapse: collapse;
+}
+
+.game_event_chain_table tr {
+	background-color: #bbd;
+}
+
+.game_event_chain_table tr.spacer {
+	height: 10px;
+	background-color: none;
+}
+
+.game_event_chain_table > tbody > tr > td:first-child {
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
+.game_event_chain_table > tbody > tr > td {
+	vertical-align: middle !important;
+	padding: 10px !important;
+	box-shadow: 0 0 0 2px #55a;
+}
+
+.game_event_chain_table > tbody > tr > td:last-child {
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-right-width: 0px;
+}
+
 .editor_table td {
 	padding: 5px !important;
 }
