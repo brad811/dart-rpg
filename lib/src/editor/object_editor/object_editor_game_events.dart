@@ -195,6 +195,10 @@ class ObjectEditorGameEvents extends Component {
 
     for(int j=0; j<gameEventChain.length; j++) {
       tableRows.add(
+        tr({'className': 'spacer'})
+      );
+
+      tableRows.add(
         buildGameEventTableRowHtml(
           gameEventChain[j], "game_event_chain_${state['selected']}_game_event_${j}", j, callbacks
         )
@@ -204,8 +208,12 @@ class ObjectEditorGameEvents extends Component {
     this.callbacks = callbacks;
 
     return
-      table({
-        'id': 'game_event_chain_${state['selected']}_game_event_table'}, tbody({},
+      table(
+        {
+          'id': 'game_event_chain_${state['selected']}_game_event_table',
+          'className': 'game_event_chain_table'
+        },
+        tbody({},
         tableRows
       ));
   }
