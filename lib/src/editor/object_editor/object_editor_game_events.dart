@@ -282,6 +282,10 @@ class ObjectEditorGameEvents extends Component {
   void reorderGameEvent(int oldNumber, int newNumber) {
     List<GameEvent> gameEventChain = World.gameEventChains.values.elementAt(this.state["selected"]);
 
+    if(newNumber < 0 || newNumber >= gameEventChain.length) {
+      return;
+    }
+
     List<GameEvent> newOrder = [];
     for(int i=0; i< gameEventChain.length; i++) {
       if(i == oldNumber)
@@ -343,7 +347,7 @@ class ObjectEditorGameEvents extends Component {
       }
     }
     
-    return tr({}, [
+    return tr({},
       td({},
         span({
           'className': 'fa fa-caret-up fa-lg',
@@ -371,7 +375,7 @@ class ObjectEditorGameEvents extends Component {
           )
         }, span({'className': 'fa fa-trash'}), " Delete")
       )
-    ]);
+    );
   }
   
   static JsObject buildReadOnlyGameEventTableRowHtml(GameEvent gameEvent, String prefix, int number, List<Function> callbacks) {
