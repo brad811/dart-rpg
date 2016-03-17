@@ -52,6 +52,15 @@ class GameStorage extends Component {
         // make sure list of warps, signs, and events gets reset
         MapEditor.specialTilesLoaded = false;
 
+        MapEditor.lastHoverX = -1;
+        MapEditor.lastHoverY = -1;
+        MapEditor.lastChangeX = -1;
+        MapEditor.lastChangeY = -1;
+        MapEditor.lastTileInfoX = -1;
+        MapEditor.lastTileInfoY = -1;
+        MapEditor.lastTileInfoSizeX = -1;
+        MapEditor.lastTileInfoSizeY = -1;
+
         props['update']();
         querySelector("#game_storage_message").text = "New game started!";
         querySelector("#game_storage_message").style.opacity = "1.0";
