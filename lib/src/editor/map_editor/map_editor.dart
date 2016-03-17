@@ -422,6 +422,18 @@ class MapEditor extends Component {
   }
 
   void handleMainCanvasSelectMouseDown(MouseEvent e) {
+
+    if(tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
+      // user clicked away from selected tiles, so hide tile info
+      tileInfo.style.display = "none";
+      MapEditor.updateMap(
+        oldPoint: new Point(lastTileInfoX, lastTileInfoY),
+        newPoint: new Point(lastTileInfoX, lastTileInfoY),
+        size: new Point(lastTileInfoSizeX, lastTileInfoSizeY)
+      );
+      return;
+    }
+
     shouldHover = false;
 
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
