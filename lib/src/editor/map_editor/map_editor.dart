@@ -422,10 +422,13 @@ class MapEditor extends Component {
   }
 
   void handleMainCanvasSelectMouseDown(MouseEvent e) {
-
     if(tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
       // user clicked away from selected tiles, so hide tile info
       tileInfo.style.display = "none";
+
+      lastTileInfoX = -1;
+      lastTileInfoY = -1;
+
       MapEditor.updateMap(
         oldPoint: new Point(lastTileInfoX, lastTileInfoY),
         newPoint: new Point(lastTileInfoX, lastTileInfoY),
@@ -660,6 +663,8 @@ class MapEditor extends Component {
 
     if(MapEditor.selectedTool == "select" && newTool != "select") {
       MapEditor.tileInfo.style.display = "none";
+      lastTileInfoX = -1;
+      lastTileInfoY = -1;
       MapEditor.updateMap();
     }
 
@@ -690,6 +695,8 @@ class MapEditor extends Component {
   void changeMap(String newMap) {
     ref('tileInfo').setTile(0, 0, 0, 0);
     tileInfo.style.display = "none";
+    lastTileInfoX = -1;
+    lastTileInfoY = -1;
     Main.world.curMap = newMap;
     props['update']();
   }
