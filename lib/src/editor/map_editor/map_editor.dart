@@ -727,69 +727,94 @@ class MapEditor extends Component {
     lastChangeY = y;
 
     if(selectedTool == "select") {
-      // TODO: check if this conditional ever gets called
-      if(lastTileInfoX == x && lastTileInfoY == y && tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
-        tileInfo.style.display = "none";
-      } else {
-        lastTileInfoX = x;
-        lastTileInfoY = y;
-        //showTileInfo(x, y);
-      }
+      selectTile(x, y);
     } else if(selectedTile == -1 && selectedTool != "stamp") {
-      mapTiles[y][x][layer] = null;
+      eraseTile(x, y, layer);
+    } if(selectedTool == "fill") {
+      fillTile(x, y, layer, solid, layered, encounter);
+    } else if(selectedTool == "stamp") {
+      stampTile(x, y, layer, solid);
     } else {
-      if(selectedTool == "fill") {
-        List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
-        int tileBefore;
-        if(mapTiles[y][x][layer] != null) {
-          tileBefore = mapTiles[y][x][layer].sprite.id;
+      brushTile(x, y, layer, solid, layered, encounter);
+    }
+  }
+
+  void selectTile(int x, int y) {
+    // TODO: check if this conditional ever gets called
+    if(lastTileInfoX == x && lastTileInfoY == y && tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
+      tileInfo.style.display = "none";
+    } else {
+      lastTileInfoX = x;
+      lastTileInfoY = y;
+      //showTileInfo(x, y);
+    }
+
+    MapEditor.updateMap(newPoint: new Point(x, y));
+    outlineSelectedTiles(mapEditorCanvasContext, x, y, 1, 1);
+  }
+
+  void eraseTile(int x, int y, int layer) {
+    Main.world.maps[Main.world.curMap].tiles[y][x][layer] = null;
+    MapEditor.updateMap(newPoint: new Point(x, y));
+    Editor.debounceExport();
+  }
+
+  void fillTile(int x, int y, int layer, bool solid, bool layered, bool encounter) {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+    int tileBefore;
+    if(mapTiles[y][x][layer] != null) {
+      tileBefore = mapTiles[y][x][layer].sprite.id;
+    } else {
+      tileBefore = -1;
+    }
+
+    floodFill(mapTiles, x, y, layer, tileBefore, solid, layered, encounter);
+
+    MapEditor.updateMap();
+    Editor.debounceExport();
+  }
+
+  void stampTile(int x, int y, int layer, bool solid) {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+
+    for(int j=0; j<MapEditor.stampTiles[0].length; j++) {
+      for(int i=0; i<MapEditor.stampTiles[0][j].length; i++) {
+        // MapEditor.stampTiles[k][j][i]
+        if(MapEditor.stampTiles[0][j][i] == null) {
+          mapTiles[y+j][x+i][layer] = null;
         } else {
-          tileBefore = -1;
-        }
-        floodFill(mapTiles, x, y, layer, tileBefore, solid, layered, encounter);
-      } else if(selectedTool == "stamp") {
-        for(int j=0; j<MapEditor.stampTiles[0].length; j++) {
-          for(int i=0; i<MapEditor.stampTiles[0][j].length; i++) {
-            // MapEditor.stampTiles[k][j][i]
-            if(MapEditor.stampTiles[0][j][i] == null) {
-              mapTiles[y+j][x+i][layer] = null;
-            } else {
-              mapTiles[y+j][x+i][layer] = new Tile(
-                solid,
-                new Sprite.int(
-                  MapEditor.stampTiles[0][j][i], x+i, y+j
-                )
-              );
-            }
-          }
-        }
-      } else {
-        if(encounter) {
-          mapTiles[y][x][layer] = new EncounterTile(
-            new Sprite.int(selectedTile, x, y),
-            layered
-          );
-        } else {
-          mapTiles[y][x][layer] = new Tile(
+          mapTiles[y+j][x+i][layer] = new Tile(
             solid,
-            new Sprite.int(selectedTile, x, y),
-            layered
+            new Sprite.int(
+              MapEditor.stampTiles[0][j][i], x+i, y+j
+            )
           );
         }
       }
     }
 
-    if(MapEditor.selectedTool == "fill") {
-      MapEditor.updateMap();
+    MapEditor.updateMap(newPoint: new Point(x, y));
+    Editor.debounceExport();
+  }
+
+  void brushTile(int x, int y, int layer, bool solid, bool layered, bool encounter) {
+    List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
+
+    if(encounter) {
+      mapTiles[y][x][layer] = new EncounterTile(
+        new Sprite.int(selectedTile, x, y),
+        layered
+      );
     } else {
-      MapEditor.updateMap(newPoint: new Point(x, y));
+      mapTiles[y][x][layer] = new Tile(
+        solid,
+        new Sprite.int(selectedTile, x, y),
+        layered
+      );
     }
-    
-    if(selectedTool == "select") {
-      outlineSelectedTiles(mapEditorCanvasContext, x, y, 1, 1);
-    } else {
-      Editor.debounceExport();
-    }
+
+    MapEditor.updateMap(newPoint: new Point(x, y));
+    Editor.debounceExport();
   }
   
   static void floodFill(List<List<List<Tile>>> mapTiles, int x, int y, int layer, int tileBefore, bool solid, bool layered, bool encounter) {
