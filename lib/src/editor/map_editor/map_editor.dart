@@ -369,6 +369,7 @@ class MapEditor extends Component {
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
 
     changeTile(
+      selectedTile,
       x, y, MapEditor.selectedLayer,
       MapEditor.brushSolid,
       MapEditor.brushLayered,
@@ -391,6 +392,7 @@ class MapEditor extends Component {
       int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
 
       changeTile(
+        selectedTile,
         x, y, MapEditor.selectedLayer,
         MapEditor.brushSolid,
         MapEditor.brushLayered,
@@ -713,7 +715,7 @@ class MapEditor extends Component {
     tileInfo.style.width = "${150 + sizeX*Sprite.scaledSpriteSize}px";
   }
 
-  void changeTile(int x, int y, int layer, bool solid, bool layered, bool encounter) {
+  static void changeTile(int spriteId, int x, int y, int layer, bool solid, bool layered, bool encounter) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     
     if(y >= mapTiles.length || x >= mapTiles[0].length)
@@ -731,15 +733,15 @@ class MapEditor extends Component {
     } else if(selectedTile == -1 && selectedTool != "stamp") {
       eraseTile(x, y, layer);
     } if(selectedTool == "fill") {
-      fillTile(x, y, layer, solid, layered, encounter);
+      fillTile(spriteId, x, y, layer, solid, layered, encounter);
     } else if(selectedTool == "stamp") {
       stampTile(x, y, layer, solid);
     } else {
-      brushTile(x, y, layer, solid, layered, encounter);
+      brushTile(spriteId, x, y, layer, solid, layered, encounter);
     }
   }
 
-  void selectTile(int x, int y) {
+  static void selectTile(int x, int y) {
     // TODO: check if this conditional ever gets called
     if(lastTileInfoX == x && lastTileInfoY == y && tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
       tileInfo.style.display = "none";
@@ -753,13 +755,13 @@ class MapEditor extends Component {
     outlineSelectedTiles(mapEditorCanvasContext, x, y, 1, 1);
   }
 
-  void eraseTile(int x, int y, int layer) {
+  static void eraseTile(int x, int y, int layer) {
     Main.world.maps[Main.world.curMap].tiles[y][x][layer] = null;
     MapEditor.updateMap(newPoint: new Point(x, y));
     Editor.debounceExport();
   }
 
-  void fillTile(int x, int y, int layer, bool solid, bool layered, bool encounter) {
+  static void fillTile(int spriteId, int x, int y, int layer, bool solid, bool layered, bool encounter) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
     int tileBefore;
     if(mapTiles[y][x][layer] != null) {
@@ -768,13 +770,13 @@ class MapEditor extends Component {
       tileBefore = -1;
     }
 
-    floodFill(mapTiles, x, y, layer, tileBefore, solid, layered, encounter);
+    floodFill(mapTiles, spriteId, x, y, layer, tileBefore, solid, layered, encounter);
 
     MapEditor.updateMap();
     Editor.debounceExport();
   }
 
-  void stampTile(int x, int y, int layer, bool solid) {
+  static void stampTile(int x, int y, int layer, bool solid) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
 
     for(int j=0; j<MapEditor.stampTiles[0].length; j++) {
@@ -797,18 +799,18 @@ class MapEditor extends Component {
     Editor.debounceExport();
   }
 
-  void brushTile(int x, int y, int layer, bool solid, bool layered, bool encounter) {
+  static void brushTile(int spriteId, int x, int y, int layer, bool solid, bool layered, bool encounter) {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
 
     if(encounter) {
       mapTiles[y][x][layer] = new EncounterTile(
-        new Sprite.int(selectedTile, x, y),
+        new Sprite.int(spriteId, x, y),
         layered
       );
     } else {
       mapTiles[y][x][layer] = new Tile(
         solid,
-        new Sprite.int(selectedTile, x, y),
+        new Sprite.int(spriteId, x, y),
         layered
       );
     }
@@ -817,8 +819,8 @@ class MapEditor extends Component {
     Editor.debounceExport();
   }
   
-  static void floodFill(List<List<List<Tile>>> mapTiles, int x, int y, int layer, int tileBefore, bool solid, bool layered, bool encounter) {
-    if(selectedTile == tileBefore) {
+  static void floodFill(List<List<List<Tile>>> mapTiles, int spriteId, int x, int y, int layer, int tileBefore, bool solid, bool layered, bool encounter) {
+    if(spriteId == tileBefore) {
       return;
     } else if(mapTiles[y][x][layer] != null && mapTiles[y][x][layer].sprite.id != tileBefore) {
       return;
@@ -828,35 +830,35 @@ class MapEditor extends Component {
     
     if(encounter) {
       mapTiles[y][x][layer] = new EncounterTile(
-        new Sprite.int(selectedTile, x, y),
+        new Sprite.int(spriteId, x, y),
         layered
       );
     } else {
       mapTiles[y][x][layer] = new Tile(
         solid,
-        new Sprite.int(selectedTile, x, y),
+        new Sprite.int(spriteId, x, y),
         layered
       );
     }
     
     // north
     if(y > 0) {
-      floodFill(mapTiles, x, y-1, layer, tileBefore, solid, layered, encounter);
+      floodFill(mapTiles, spriteId, x, y-1, layer, tileBefore, solid, layered, encounter);
     }
     
     // south
     if(y < mapTiles.length-1) {
-      floodFill(mapTiles, x, y+1, layer, tileBefore, solid, layered, encounter);
+      floodFill(mapTiles, spriteId, x, y+1, layer, tileBefore, solid, layered, encounter);
     }
     
     // east
     if(x < mapTiles[y].length-1) {
-      floodFill(mapTiles, x+1, y, layer, tileBefore, solid, layered, encounter);
+      floodFill(mapTiles, spriteId, x+1, y, layer, tileBefore, solid, layered, encounter);
     }
     
     // west
     if(x > 0) {
-      floodFill(mapTiles, x-1, y, layer, tileBefore, solid, layered, encounter);
+      floodFill(mapTiles, spriteId, x-1, y, layer, tileBefore, solid, layered, encounter);
     }
   }
   
@@ -1383,8 +1385,7 @@ class MapEditor extends Component {
             mapEditorTileInfo({
               'ref': 'tileInfo',
               'update': props['update'],
-              'showTileInfo': showTileInfo,
-              'changeTile': changeTile
+              'showTileInfo': showTileInfo
             })
           ),
           canvas({
