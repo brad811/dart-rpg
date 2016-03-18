@@ -54,21 +54,11 @@ class MapEditorTileInfo extends Component {
         sizeX = this.state['sizeX'],
         sizeY = this.state['sizeY'];
 
-      String selectedToolBefore = MapEditor.selectedTool;
-      int selectedTileBefore = MapEditor.selectedTile;
-      MapEditor.selectedTool = "brush";
-      MapEditor.selectedTile = -1;
-      MapEditor.lastChangeX = -1;
-      MapEditor.lastChangeY = -1;
-
       for(int y2=y; y2<y+sizeY; y2++) {
         for(int x2=x; x2<x+sizeX; x2++) {
-          props['changeTile'](x2, y2, layer, false, false, false);
+          MapEditor.eraseTile(x2, y2, layer);
         }
       }
-
-      MapEditor.selectedTool = selectedToolBefore;
-      MapEditor.selectedTile = selectedTileBefore;
       
       MapEditor.outlineSelectedTiles(MapEditor.mapEditorCanvasContext, x, y, sizeX, sizeY);
       props['showTileInfo'](x, y, sizeX, sizeY);
