@@ -737,12 +737,6 @@ class MapEditor extends Component {
       }
     } else if(selectedTile == -1 && selectedTool != "stamp") {
       mapTiles[y][x][layer] = null;
-    } else if(encounter) {
-      // TODO: fill
-      mapTiles[y][x][layer] = new EncounterTile(
-        new Sprite.int(selectedTile, x, y),
-        layered
-      );
     } else {
       if(selectedTool == "fill") {
         List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
@@ -752,7 +746,7 @@ class MapEditor extends Component {
         } else {
           tileBefore = -1;
         }
-        floodFill(mapTiles, x, y, layer, tileBefore, solid, layered);
+        floodFill(mapTiles, x, y, layer, tileBefore, solid, layered, encounter);
       } else if(selectedTool == "stamp") {
         for(int j=0; j<MapEditor.stampTiles[0].length; j++) {
           for(int i=0; i<MapEditor.stampTiles[0][j].length; i++) {
@@ -770,11 +764,18 @@ class MapEditor extends Component {
           }
         }
       } else {
-        mapTiles[y][x][layer] = new Tile(
-          solid,
-          new Sprite.int(selectedTile, x, y),
-          layered
-        );
+        if(encounter) {
+          mapTiles[y][x][layer] = new EncounterTile(
+            new Sprite.int(selectedTile, x, y),
+            layered
+          );
+        } else {
+          mapTiles[y][x][layer] = new Tile(
+            solid,
+            new Sprite.int(selectedTile, x, y),
+            layered
+          );
+        }
       }
     }
 
@@ -791,7 +792,7 @@ class MapEditor extends Component {
     }
   }
   
-  static void floodFill(List<List<List<Tile>>> mapTiles, int x, int y, int layer, int tileBefore, bool solid, bool layered) {
+  static void floodFill(List<List<List<Tile>>> mapTiles, int x, int y, int layer, int tileBefore, bool solid, bool layered, bool encounter) {
     if(selectedTile == tileBefore) {
       return;
     } else if(mapTiles[y][x][layer] != null && mapTiles[y][x][layer].sprite.id != tileBefore) {
@@ -800,35 +801,37 @@ class MapEditor extends Component {
       return;
     }
     
-    // TODO: fill with attributes like solid and layered and encounter?
-    if(mapTiles[y][x][layer] == null) {
+    if(encounter) {
+      mapTiles[y][x][layer] = new EncounterTile(
+        new Sprite.int(selectedTile, x, y),
+        layered
+      );
+    } else {
       mapTiles[y][x][layer] = new Tile(
         solid,
         new Sprite.int(selectedTile, x, y),
         layered
       );
-    } else {
-      mapTiles[y][x][layer].sprite.id = selectedTile;
     }
     
     // north
     if(y > 0) {
-      floodFill(mapTiles, x, y-1, layer, tileBefore, solid, layered);
+      floodFill(mapTiles, x, y-1, layer, tileBefore, solid, layered, encounter);
     }
     
     // south
     if(y < mapTiles.length-1) {
-      floodFill(mapTiles, x, y+1, layer, tileBefore, solid, layered);
+      floodFill(mapTiles, x, y+1, layer, tileBefore, solid, layered, encounter);
     }
     
     // east
     if(x < mapTiles[y].length-1) {
-      floodFill(mapTiles, x+1, y, layer, tileBefore, solid, layered);
+      floodFill(mapTiles, x+1, y, layer, tileBefore, solid, layered, encounter);
     }
     
     // west
     if(x > 0) {
-      floodFill(mapTiles, x-1, y, layer, tileBefore, solid, layered);
+      floodFill(mapTiles, x-1, y, layer, tileBefore, solid, layered, encounter);
     }
   }
   
