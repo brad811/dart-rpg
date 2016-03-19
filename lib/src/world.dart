@@ -29,6 +29,7 @@ import 'package:dart_rpg/src/game_event/choice_game_event.dart';
 import 'package:dart_rpg/src/game_event/delay_game_event.dart';
 import 'package:dart_rpg/src/game_event/fade_game_event.dart';
 import 'package:dart_rpg/src/game_event/heal_game_event.dart';
+import 'package:dart_rpg/src/game_event/inventory_game_event.dart';
 import 'package:dart_rpg/src/game_event/move_game_event.dart';
 import 'package:dart_rpg/src/game_event/store_game_event.dart';
 import 'package:dart_rpg/src/game_event/switch_player_game_event.dart';
@@ -797,6 +798,14 @@ class World {
           );
 
           gameEventChain.add(switchPlayerGameEvent);
+        } else if(gameEvents[i]["type"] == "inventory") {
+          InventoryGameEvent inventoryGameEvent = new InventoryGameEvent(
+            gameEvents[i]["character"],
+            gameEvents[i]["item"],
+            gameEvents[i]["quantity"] as int
+          );
+
+          gameEventChain.add(inventoryGameEvent);
         }
         
         World.gameEventChains[key] = gameEventChain;
