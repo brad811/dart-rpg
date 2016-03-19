@@ -35,7 +35,12 @@ class InventoryGameEvent implements GameEvent {
       character = World.characters[characterLabel];
     }
 
-    character.inventory.addItem(World.items[itemLabel], quantity);
+    if(quantity >= 0) {
+      character.inventory.addItem(World.items[itemLabel], quantity);
+    } else {
+      character.inventory.removeItem(itemLabel, quantity);
+    }
+    
     callback();
   }
   
