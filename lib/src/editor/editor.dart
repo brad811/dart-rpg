@@ -508,13 +508,26 @@ class Editor extends Component {
       }
       
       int position = inputElement.selectionStart;
-      
-      if(inputElement.classes.contains("decimal")) {
-        inputElement.value = inputElement.value.replaceAll(new RegExp(r'[^0-9\.]'), "");
-      } else if(inputElement.classes.contains("number")) {
-        inputElement.value = inputElement.value.replaceAll(new RegExp(r'[^0-9]'), "");
-      } else {
-        inputElement.value = inputElement.value.replaceAll(new RegExp(r'[^a-zA-Z0-9\._\ ,~!@#$%^&*()_+`\-=\[\]\\{}\|;:,./<>?]'), "_");
+
+      inputElement.value = inputElement.value.replaceAll(new RegExp(r'[^a-zA-Z0-9\._\ ,~!@#$%^&*()_+`\-=\[\]\\{}\|;:,./<>?]'), "_");
+
+      if(inputElement.value.length > 0 && inputElement.classes.contains("number")) { // number
+        if(inputElement.classes.contains("decimal")) { // decimal number
+          inputElement.value = inputElement.value[0] + inputElement.value.substring(1).replaceAll(new RegExp("[\-]"), "");
+          if(inputElement.value.indexOf(".") != inputElement.value.lastIndexOf(".")) {
+            // there is more than one decimal, remove the extras
+            inputElement.value =
+              inputElement.value.substring(0, inputElement.value.indexOf(".") + 1) +
+              inputElement.value.substring(inputElement.value.indexOf(".")).replaceAll(".", "");
+          }
+        } else { // integer number
+          inputElement.value = inputElement.value.replaceAll(".", "");
+          inputElement.value = inputElement.value[0] + inputElement.value.substring(1).replaceAll(new RegExp("[\-\.]"), "");
+        }
+
+        if(inputElement.classes.contains("positive")) {
+          inputElement.value = inputElement.value.replaceAll("-", "");
+        }
       }
       
       inputElement.setSelectionRange(position, position);
