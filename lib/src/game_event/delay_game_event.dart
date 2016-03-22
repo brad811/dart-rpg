@@ -36,11 +36,6 @@ class DelayGameEvent implements GameEvent {
   // Editor functions
   
   @override
-  List<String> getAttributes() {
-    return ["milliseconds"];
-  }
-  
-  @override
   String getType() => type;
   
   @override

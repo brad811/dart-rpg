@@ -119,11 +119,6 @@ class TextGameEvent implements GameEvent {
   // Editor functions
   
   @override
-  List<String> getAttributes() {
-    return ["picture_id", "text"];
-  }
-  
-  @override
   String getType() => type;
   
   @override

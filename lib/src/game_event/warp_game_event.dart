@@ -47,11 +47,6 @@ class WarpGameEvent extends GameEvent {
   // Editor functions
   
   @override
-  List<String> getAttributes() {
-    return ["character", "new_map", "x", "y", "layer", "direction"];
-  }
-  
-  @override
   String getType() => type;
   
   @override

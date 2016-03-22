@@ -169,19 +169,6 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
   // Editor functions
   
   @override
-  List<String> getAttributes() {
-    //TODO: List<String> attrs = ["cancel_event"];
-    List<String> attrs = [];
-    
-    for(int i=0; i<choiceGameEventChains.keys.length; i++) {
-      attrs.add("choice_name_${i}");
-      attrs.add("chain_name_${i}");
-    }
-    
-    return attrs;
-  }
-  
-  @override
   String getType() => type;
   
   @override

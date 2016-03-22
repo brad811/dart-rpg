@@ -34,11 +34,6 @@ class SwitchPlayerGameEvent implements GameEvent {
   // Editor functions
   
   @override
-  List<String> getAttributes() {
-    return ["character"];
-  }
-  
-  @override
   String getType() => type;
   
   @override

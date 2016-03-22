@@ -64,11 +64,6 @@ class MoveGameEvent implements GameEvent {
   // Editor functions
   
   @override
-  List<String> getAttributes() {
-    return ["direction", "distance"];
-  }
-  
-  @override
   String getType() => type;
   
   @override

@@ -41,11 +41,6 @@ class ChainGameEvent implements GameEvent {
   // Editor functions
   
   @override
-  List<String> getAttributes() {
-    return ["game_event_chain", "make_default"];
-  }
-  
-  @override
   String getType() => type;
   
   @override

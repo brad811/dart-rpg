@@ -39,8 +39,6 @@ class GameEvent implements InputHandler {
   
   // Editor functions
   
-  List<String> getAttributes() => [];
-  
   String getType() => type;
   
   static GameEvent buildGameEvent(String type, String prefix) {

@@ -95,11 +95,6 @@ class StoreGameEvent implements GameEvent {
   // Editor functions
   
   @override
-  List<String> getAttributes() {
-    return [];
-  }
-  
-  @override
   String getType() => type;
   
   @override

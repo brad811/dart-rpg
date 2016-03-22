@@ -68,11 +68,6 @@ class FadeGameEvent implements GameEvent {
   // Editor functions
   
   @override
-  List<String> getAttributes() {
-    return ["fade_type"];
-  }
-  
-  @override
   String getType() => type;
   
   @override

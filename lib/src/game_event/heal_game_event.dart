@@ -42,11 +42,6 @@ class HealGameEvent implements GameEvent {
   void handleKeys(List<int> keyCodes) { /* TODO */ }
   
   // Editor functions
-
-  @override
-  List<String> getAttributes() {
-    return ["character", "amount"];
-  }
   
   @override
   String getType() => type;

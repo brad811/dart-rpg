@@ -56,12 +56,6 @@ class StatChangeGameEvent implements GameEvent {
   // Editor functions
   
   @override
-  List<String> getAttributes() {
-    // TODO
-    return [];
-  }
-  
-  @override
   String getType() => type;
   
   @override
