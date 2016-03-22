@@ -1476,6 +1476,36 @@ class MapEditor extends Component {
         )
       );
   }
+
+  static Map exportTile(List<List<List<Tile>>> mapTiles, int x, int y, int k) {
+    if(mapTiles[y][x][k] is Tile) {
+      if(mapTiles[y][x][k].sprite.id == -1) {
+        return null;
+      } else {
+        Map jsonObject = {};
+        jsonObject["id"] = mapTiles[y][x][k].sprite.id;
+        if(mapTiles[y][x][k].solid)
+          jsonObject["solid"] = true;
+        if(mapTiles[y][x][k].layered == true)
+          jsonObject["layered"] = true;
+        
+        // if we're on the ground layer
+        if(k == 0) {
+          // check if any layer on this tile is an encounter tile
+          for(int l=0; l<World.layers.length; l++) {
+            if(mapTiles[y][x][l] is EncounterTile) {
+              jsonObject["encounter"] = true;
+              break;
+            }
+          }
+        }
+        
+        return jsonObject;
+      }
+    } else {
+      return null;
+    }
+  }
   
   static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {
     exportJson["maps"] = {};
@@ -1492,33 +1522,7 @@ class MapEditor extends Component {
         for(int x=0; x<mapTiles[0].length; x++) {
           jsonMap[y].add([]);
           for(int k=0; k<mapTiles[0][0].length; k++) {
-            if(mapTiles[y][x][k] is Tile) {
-              if(mapTiles[y][x][k].sprite.id == -1) {
-                jsonMap[y][x].add(null);
-              } else {
-                Map jsonObject = {};
-                jsonObject["id"] = mapTiles[y][x][k].sprite.id;
-                if(mapTiles[y][x][k].solid)
-                  jsonObject["solid"] = true;
-                if(mapTiles[y][x][k].layered == true)
-                  jsonObject["layered"] = true;
-                
-                // if we're on the ground layer
-                if(k == 0) {
-                  // check if any layer on this tile is an encounter tile
-                  for(int l=0; l<World.layers.length; l++) {
-                    if(mapTiles[y][x][l] is EncounterTile) {
-                      jsonObject["encounter"] = true;
-                      break;
-                    }
-                  }
-                }
-                
-                jsonMap[y][x].add(jsonObject);
-              }
-            } else {
-              jsonMap[y][x].add(null);
-            }
+            jsonMap[y][x].add(exportTile(mapTiles, x, y, k));
           }
         }
       }
