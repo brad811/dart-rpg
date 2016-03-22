@@ -149,7 +149,7 @@ canvas {
 #left_half {
 	background-color: #ddddff;
 	float: left;
-	overflow: scroll;
+	overflow: auto;
 }
 
 #right_half {
@@ -171,7 +171,7 @@ canvas {
 #settings_container_right {
 	width: 532px;
 	height: 100%;
-	overflow: scroll;
+	overflow: auto;
 }
 
 #right_half_container {
@@ -215,7 +215,7 @@ canvas {
 	background-color: #fff;
 	left: 50%;
 	margin-left: -200px;
-	overflow: scroll;
+	overflow: auto;
 	display: none;
 }
 
@@ -224,7 +224,7 @@ canvas {
 	width: 532px;
 	float: left;
 	margin-bottom: 10px;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 #editor_tabs_container, .object_editor_tabs_container {
@@ -260,7 +260,7 @@ canvas {
 	background-color: #eee;
 	height: 100%;
 	width: 516px;
-	overflow-y: scroll;
+	overflow-y: auto;
 	padding: 8px;
 	float: left;
 }
@@ -399,7 +399,7 @@ textarea {
 }
 
 #object_editor_inner_main_area .tab {
-	overflow-x: scroll;
+	overflow-x: auto;
 	height: 100%;
 }
 
@@ -420,7 +420,6 @@ textarea {
 	padding-top: 30px;
 	width: 100%;
 	height: 100%;
-	overflow: scroll;
 }
 
 #settings_tab {
@@ -432,7 +431,8 @@ textarea {
 	background-color: #eee;
 	height: 100%;
 	width: 100%;
-	overflow-y: scroll;
+	overflow-y: auto;
+	overflow-x: auto;
 	margin: 0;
 }
 
@@ -455,7 +455,7 @@ textarea {
 
 #screen_editor_left {
 	float: left;
-	overflow: scroll;
+	overflow: auto;
 }
 
 #screen_editor_right {
