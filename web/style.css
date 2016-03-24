@@ -26,6 +26,16 @@ canvas {
 	padding: 10px;
 }
 
+#undo_redo_container {
+	line-height: 30px;
+	padding: 0 10px 0 10px;
+	margin-left: 50px;
+}
+
+#undo_redo_container button {
+	margin-left: 10px;
+}
+
 #game_storage_container {
 	float: right;
 	line-height: 30px;

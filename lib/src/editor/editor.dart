@@ -38,6 +38,10 @@ class Editor extends Component {
 
   static String exportJsonString = "";
 
+  static List<String> undoList = [];
+  static int maxUndoListLength = 20;
+  static int undoPosition = 0;
+
   getInitialState() => {
     'gameLoaded': false,
     'doneSettingUp': false,
@@ -53,6 +57,10 @@ class Editor extends Component {
     Main.world = new World(() {
       Main.world.loadGame(() {
         this.setState({'gameLoaded': true});
+
+        undoList = [];
+        undoPosition = 0;
+
         Editor.export();
       });
     });
@@ -132,6 +140,11 @@ class Editor extends Component {
                 'className': 'tab_header ' + (state['selectedTab'] == 'settings' ? 'selected' : ''),
                 'onClick': (MouseEvent e) { setState({'selectedTab': 'settings'}); }
               }, "Settings"),
+
+              span({'id': 'undo_redo_container'},
+                button({'onClick': (_) { this.undo(); }}, i({'className': 'fa fa-undo'}), " Undo"),
+                button({'onClick': (_) { this.redo(); }}, i({'className': 'fa fa-undo fa-flip-horizontal'}), " Redo")
+              ),
               
               div({'id': 'game_storage_container'},
                 gameStorage({'update': update})
@@ -195,6 +208,32 @@ class Editor extends Component {
       Editor.export();
     }
   }
+
+  void undo() {
+    if(undoPosition <= 1) {
+      print("Can't undo any more!");
+      return;
+    }
+
+    undoPosition--;
+    Editor.exportJsonString = undoList[undoPosition - 1];
+    Editor.loadGame(() {
+      this.setState({});
+    });
+  }
+
+  void redo() {
+    if(undoPosition == undoList.length) {
+      print("Can't redo any more!");
+      return;
+    }
+
+    undoPosition++;
+    Editor.exportJsonString = undoList[undoPosition - 1];
+    Editor.loadGame(() {
+      this.setState({});
+    });
+  }
   
   static void export() {
     print("Exporting...");
@@ -204,8 +243,29 @@ class Editor extends Component {
     ObjectEditor.export(exportJson);
     ScreenEditor.export(exportJson);
     Settings.export(exportJson);
+
+    String newExportJsonString = JSON.encode(exportJson);
+
+    // if there was a change, add to the undo list
+    if(Editor.exportJsonString != JSON.encode(exportJson)) {
+      // if in the middle of the undo list, cut off everything after current position
+      if(undoPosition < undoList.length) {
+        undoList = undoList.sublist(0, undoPosition);
+      }
+
+      // add the new json to the undo list
+      undoList.add(newExportJsonString);
+
+      // trim the undo list if it's too long
+      if(undoList.length > maxUndoListLength) {
+        undoList = undoList.sublist(undoList.length - maxUndoListLength, undoList.length);
+      }
+
+      // set the undo position to the end
+      undoPosition = undoList.length;
+    }
     
-    Editor.exportJsonString = JSON.encode(exportJson);
+    Editor.exportJsonString = newExportJsonString;
 
     TextAreaElement exportJsonTextarea = querySelector("#export_json");
     if(exportJsonTextarea != null) {
