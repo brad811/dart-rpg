@@ -490,12 +490,20 @@ textarea {
 	background-color: #fff;
 }
 
+#tile_info {
+	min-width: 220px;
+}
+
 #tile_info table {
 	width: 100%;
 }
 
 #tile_info table tr td {
 	vertical-align: top;
+}
+
+#tile_info .tile_info_sprite_picker_container {
+	text-align: center;
 }
 
 #tile_info .tile_info_layer_name {

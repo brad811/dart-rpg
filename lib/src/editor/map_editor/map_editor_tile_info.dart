@@ -216,7 +216,7 @@ class MapEditorTileInfo extends Component {
               )
             ),
             tr({},
-              td({},
+              td({'className': 'tile_info_sprite_picker_container'},
                 Editor.generateSpritePickerHtml("tile_info_layer_${i}_sprite_id", sizeX == 1 && sizeY == 1 ? mapTiles[y][x][i].sprite.id : 0)
               ),
               td({'className': 'tile_info_checkboxes'},
