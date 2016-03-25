@@ -15,6 +15,7 @@ import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 import 'package:dart_rpg/src/editor/object_editor/object_editor.dart';
 import 'package:dart_rpg/src/editor/screen_editor.dart';
 import 'package:dart_rpg/src/editor/settings.dart';
+import 'package:dart_rpg/src/editor/undo_redo.dart';
 
 import 'package:react/react.dart';
 
@@ -25,6 +26,7 @@ var objectEditor = registerComponent(() => new ObjectEditor());
 var screenEditor = registerComponent(() => new ScreenEditor());
 var settings = registerComponent(() => new Settings());
 var gameStorage = registerComponent(() => new GameStorage());
+var undoRedo = registerComponent(() => new UndoRedo());
 
 class Editor extends Component {
   static List<String> editorTabs = ["map_editor", "object_editor", "screen_editor", "settings"];
@@ -41,6 +43,7 @@ class Editor extends Component {
   static List<String> undoList = [];
   static int maxUndoListLength = 20;
   static int undoPosition = 0;
+  static UndoRedo undoRedoObject;
 
   getInitialState() => {
     'gameLoaded': false,
@@ -75,6 +78,8 @@ class Editor extends Component {
       handleResize(null);
 
       this.setState({'doneSettingUp': true});
+    } else {
+      undoRedoObject = ref('undoRedo');
     }
   }
 
@@ -141,10 +146,7 @@ class Editor extends Component {
                 'onClick': (MouseEvent e) { setState({'selectedTab': 'settings'}); }
               }, "Settings"),
 
-              span({'id': 'undo_redo_container'},
-                button({'onClick': (_) { this.undo(); }}, i({'className': 'fa fa-undo'}), " Undo"),
-                button({'onClick': (_) { this.redo(); }}, i({'className': 'fa fa-undo fa-flip-horizontal'}), " Redo")
-              ),
+              undoRedo({'ref': 'undoRedo', 'undo': this.undo, 'redo': this.redo}),
               
               div({'id': 'game_storage_container'},
                 gameStorage({'update': update})
@@ -263,6 +265,8 @@ class Editor extends Component {
 
       // set the undo position to the end
       undoPosition = undoList.length;
+
+      undoRedoObject.setState({});
     }
     
     Editor.exportJsonString = newExportJsonString;
