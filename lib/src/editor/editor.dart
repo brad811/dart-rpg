@@ -217,9 +217,12 @@ class Editor extends Component {
       return;
     }
 
+    String curMapBefore = Main.world.curMap;
+
     undoPosition--;
     Editor.exportJsonString = undoList[undoPosition - 1];
     Editor.loadGame(() {
+      Main.world.curMap = curMapBefore;
       this.setState({});
     });
   }
@@ -230,9 +233,12 @@ class Editor extends Component {
       return;
     }
 
+    String curMapBefore = Main.world.curMap;
+
     undoPosition++;
     Editor.exportJsonString = undoList[undoPosition - 1];
     Editor.loadGame(() {
+      Main.world.curMap = curMapBefore;
       this.setState({});
     });
   }
