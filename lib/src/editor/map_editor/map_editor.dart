@@ -428,14 +428,15 @@ class MapEditor extends Component {
       // user clicked away from selected tiles, so hide tile info
       tileInfo.style.display = "none";
 
-      lastTileInfoX = -1;
-      lastTileInfoY = -1;
-
       MapEditor.updateMap(
         oldPoint: new Point(lastTileInfoX, lastTileInfoY),
         newPoint: new Point(lastTileInfoX, lastTileInfoY),
         size: new Point(lastTileInfoSizeX, lastTileInfoSizeY)
       );
+
+      lastTileInfoX = -1;
+      lastTileInfoY = -1;
+      
       return;
     }
 
