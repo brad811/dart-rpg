@@ -13,6 +13,24 @@ import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 import 'package:react/react.dart';
 
 class MapEditorSigns extends Component {
+  List<Function> callbacks = [];
+
+  componentDidMount(Element rootNode) {
+    callCallbacks();
+  }
+
+  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+    callCallbacks();
+  }
+
+  void callCallbacks() {
+    if(callbacks != null) {
+      for(Function callback in callbacks) {
+        callback();
+      }
+    }
+  }
+
   update() {
     setState({});
     MapEditor.updateMap();
@@ -54,13 +72,10 @@ class MapEditorSigns extends Component {
             })
           ),
           td({},
-            Editor.generateInput({
-              'id': 'sign_${i}_pic',
-              'type': 'text',
-              'className': 'number',
-              'value': MapEditor.signs[Main.world.curMap][i].textEvent.pictureSpriteId,
-              'onChange': onInputChange
-            })
+            Editor.generateSpritePickerHtml(
+              "sign_${i}_pic",
+              MapEditor.signs[Main.world.curMap][i].textEvent.pictureSpriteId
+            )
           ),
           td({},
             textarea({
@@ -79,6 +94,15 @@ class MapEditorSigns extends Component {
           )
         )
       );
+
+      callbacks.add(() {
+        Editor.initSpritePicker(
+          "sign_${i}_pic",
+          MapEditor.signs[Main.world.curMap][i].textEvent.pictureSpriteId,
+          3, 3,
+          onInputChange
+        );
+      });
     }
 
     return
