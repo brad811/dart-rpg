@@ -167,7 +167,7 @@ class ObjectEditorBattlerTypes extends Component {
   }
 
   JsObject getAttacksTab() {
-    if(state['selected'] == -1 || World.battlerTypes.values.length == 0) {
+    if(state['selected'] == -1 || World.battlerTypes.values.length == 0 || state['selected'] >= World.battlerTypes.values.length) {
       return div({});
     }
 

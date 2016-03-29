@@ -178,7 +178,7 @@ class ObjectEditorGameEvents extends Component {
   getGameEventsTab() {
     callbacks = [];
 
-    if(state['selected'] == -1 || World.gameEventChains.values.length == 0) {
+    if(state['selected'] == -1 || World.gameEventChains.values.length == 0 || state['selected'] >= World.gameEventChains.values.length) {
       return div({});
     }
 

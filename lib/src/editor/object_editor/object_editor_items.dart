@@ -158,7 +158,7 @@ class ObjectEditorItems extends Component {
   }
 
   getGameEventTab() {
-    if(state['selected'] == -1 || World.items.values.length == 0) {
+    if(state['selected'] == -1 || World.items.values.length == 0 || state['selected'] >= World.items.values.length) {
       return div({});
     }
 
