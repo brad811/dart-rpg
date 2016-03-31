@@ -18,8 +18,9 @@ class ChainGameEvent implements GameEvent {
   
   String gameEventChain = "";
   bool makeDefault = false;
+  bool runImmediately = false;
   
-  ChainGameEvent(this.gameEventChain, this.makeDefault, [this.callback]);
+  ChainGameEvent(this.gameEventChain, this.makeDefault, this.runImmediately, [this.callback]);
   
   void trigger(Interactable interactable, [Function function]) {
     List<GameEvent> gameEvents = World.gameEventChains[gameEventChain];
@@ -28,8 +29,12 @@ class ChainGameEvent implements GameEvent {
         interactable.setGameEventChain(gameEventChain, 0);
       }
       
-      Main.focusObject = null;
-      Interactable.chainGameEvents(interactable, gameEvents).trigger(interactable);
+      if(runImmediately) {
+        Main.focusObject = null;
+        Interactable.chainGameEvents(interactable, gameEvents).trigger(interactable);
+      } else {
+        Main.focusObject = Main.player;
+      }
     } else {
       callback();
     }
@@ -50,7 +55,8 @@ class ChainGameEvent implements GameEvent {
     tableRows.add(
       tr({},
         td({}, "Game Event Chain"),
-        td({}, "Make Default")
+        td({}, "Make Default"),
+        td({}, "Run Immediately")
       )
     );
 
@@ -82,6 +88,14 @@ class ChainGameEvent implements GameEvent {
             'checked': makeDefault,
             'onChange': onInputChange
           })
+        ),
+        td({},
+          input({
+            'id': '${prefix}_run_immediately',
+            'type': 'checkbox',
+            'checked': runImmediately,
+            'onChange': onInputChange
+          })
         )
       )
     );
@@ -92,7 +106,8 @@ class ChainGameEvent implements GameEvent {
   static GameEvent buildGameEvent(String prefix) {
     ChainGameEvent chainGameEvent = new ChainGameEvent(
         Editor.getSelectInputStringValue("#${prefix}_game_event_chain"),
-        Editor.getCheckboxInputBoolValue("#${prefix}_make_default")
+        Editor.getCheckboxInputBoolValue("#${prefix}_make_default"),
+        Editor.getCheckboxInputBoolValue("#${prefix}_run_immediately")
       );
     
     return chainGameEvent;
@@ -105,6 +120,7 @@ class ChainGameEvent implements GameEvent {
     gameEventJson["type"] = type;
     gameEventJson["gameEventChain"] = gameEventChain;
     gameEventJson["makeDefault"] = makeDefault;
+    gameEventJson["runImmediately"] = runImmediately;
     
     return gameEventJson;
   }
