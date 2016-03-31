@@ -141,6 +141,8 @@ class MapEditor extends Component {
               EventTile eventTile = new EventTile(
                   mapEventTile.gameEventChain,
                   mapEventTile.runOnce,
+                  mapEventTile.runOnEnter,
+                  mapEventTile.runOnInteract,
                   new Sprite(
                     mapEventTile.sprite.id,
                     mapEventTile.sprite.posX,

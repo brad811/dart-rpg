@@ -9,8 +9,10 @@ class InteractableTile extends Tile implements InputHandler {
   dynamic handler;
   String gameEventChain;
   
-  InteractableTile(bool solid, Sprite sprite, void handler(List<int> keyCodes)) : super(solid, sprite) {
-    this.handler = handler;
+  InteractableTile(bool solid, Sprite sprite, void handler(List<int> keyCodes), [layered]) : super(solid, sprite, layered) {
+    if(handler != null) {
+      this.handler = handler;
+    }
   }
   
   void interact() {}

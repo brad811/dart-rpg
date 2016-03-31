@@ -550,6 +550,8 @@ class World {
                 mapTiles[y][x][k] = new EventTile(
                   curTile['event']['gameEventChain'],
                   curTile['event']['runOnce'],
+                  curTile['event']['runOnEnter'],
+                  curTile['event']['runOnInteract'],
                   new Sprite.int(curTile['id'], x, y)
                   // TODO: layered
                 );

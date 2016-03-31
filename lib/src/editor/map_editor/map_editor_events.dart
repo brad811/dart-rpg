@@ -71,7 +71,7 @@ class MapEditorEvents extends Component {
   void addNewEvent(MouseEvent e) {
     if(World.gameEventChains.keys.length > 0) {
       MapEditor.events[Main.world.curMap].add(
-        new EventTile(World.gameEventChains.keys.first, false, new Sprite.int(0, 0, 0), false)
+        new EventTile(World.gameEventChains.keys.first, false, false, false, new Sprite.int(0, 0, 0), false)
       );
       update();
     }
@@ -85,6 +85,8 @@ class MapEditorEvents extends Component {
         MapEditor.events[Main.world.curMap][i] = new EventTile(
           Editor.getSelectInputStringValue("#map_event_${i}_game_event_chain"),
           Editor.getCheckboxInputBoolValue("#map_event_${i}_run_once"),
+          Editor.getCheckboxInputBoolValue("#map_event_${i}_run_on_enter"),
+          Editor.getCheckboxInputBoolValue("#map_event_${i}_run_on_interact"),
           new Sprite(
             0,
             Editor.getTextInputDoubleValue('#map_event_${i}_posx', 0.0),
@@ -109,6 +111,8 @@ class MapEditorEvents extends Component {
         td({}, "Y"),
         td({}, "Game Event Chain"),
         td({}, "Run Once"),
+        td({}, "Run On Enter"),
+        td({}, "Run On Interact"),
         td({})
       )
     ];
@@ -160,6 +164,22 @@ class MapEditorEvents extends Component {
             })
           ),
           td({},
+            input({
+              'id': 'map_event_${i}_run_on_enter',
+              'type': 'checkbox',
+              'checked': MapEditor.events[Main.world.curMap][i].runOnEnter,
+              'onChange': onInputChange
+            })
+          ),
+          td({},
+            input({
+              'id': 'map_event_${i}_run_on_interact',
+              'type': 'checkbox',
+              'checked': MapEditor.events[Main.world.curMap][i].runOnInteract,
+              'onChange': onInputChange
+            })
+          ),
+          td({},
             button({
               'id': 'delete_event_${i}',
               'onClick': Editor.generateConfirmDeleteFunction(MapEditor.events[Main.world.curMap], i, "event", update)
@@ -193,7 +213,9 @@ class MapEditorEvents extends Component {
       if(jsonMap[y][x][0] != null) {
         jsonMap[y][x][0]["event"] = {
           "gameEventChain": event.gameEventChain,
-          "runOnce": event.runOnce
+          "runOnce": event.runOnce,
+          "runOnEnter": event.runOnEnter,
+          "runOnInteract": event.runOnInteract
         };
       }
     }
