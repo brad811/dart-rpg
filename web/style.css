@@ -231,7 +231,7 @@ canvas {
 
 .sprite_picker_container {
 	height: 256px;
-	width: 532px;
+	width: 516px;
 	float: left;
 	margin-bottom: 10px;
 	overflow-y: auto;
@@ -480,14 +480,14 @@ textarea {
 
 .tool_selector {
 	width: 50px;
-	height: 50px;
+	height: 40px;
 	float: left;
 	margin-bottom: 10px;
 	text-align: center;
 	vertical-align: middle;
 	margin-right: 10px;
-	line-height: 50px;
 	cursor: pointer;
+	padding-top: 10px;
 	
 	background-color: #ccc;
 }

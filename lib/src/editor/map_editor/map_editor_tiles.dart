@@ -243,27 +243,27 @@ class MapEditorTiles extends Component {
           'id': 'tool_selector_select',
           'className': 'tool_selector ' + (MapEditor.selectedTool == "select" ? 'selected' : ''),
           'onClick': (MouseEvent e) { MapEditor.selectTool("select"); update(); }
-        }, "Select"),
+        }, i({'className': 'fa fa-crosshairs'}), br({}), "Select"),
         div({
           'id': 'tool_selector_brush',
           'className': 'tool_selector ' + (MapEditor.selectedTool == "brush" ? 'selected' : ''),
           'onClick': (MouseEvent e) { MapEditor.selectTool("brush"); update(); }
-        }, "Brush"),
+        }, i({'className': 'fa fa-paint-brush'}), br({}), "Brush"),
         div({
           'id': 'tool_selector_erase',
           'className': 'tool_selector ' + (MapEditor.selectedTool == "erase" ? 'selected' : ''),
           'onClick': (MouseEvent e) { MapEditor.selectTool("erase"); update(); }
-        }, "Erase"),
+        }, i({'className': 'fa fa-eraser'}), br({}), "Erase"),
         div({
           'id': 'tool_selector_fill',
           'className': 'tool_selector ' + (MapEditor.selectedTool == "fill" ? 'selected' : ''),
           'onClick': (MouseEvent e) { MapEditor.selectTool("fill"); update(); }
-        }, "Fill"),
+        }, i({'className': 'fa fa-tint'}), br({}), "Fill"),
         div({
           'id': 'tool_selector_stamp',
           'className': 'tool_selector ' + (MapEditor.selectedTool == "stamp" ? 'selected' : ''),
           'onClick': (MouseEvent e) { MapEditor.selectTool("stamp"); update(); }
-        }, "Stamp"),
+        }, i({'className': 'fa fa-th'}), br({}), "Stamp"),
         br({'className': 'breaker'}),
 
         div({'className': 'sprite_picker_container'},
