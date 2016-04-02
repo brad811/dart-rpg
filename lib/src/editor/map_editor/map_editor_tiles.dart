@@ -1,5 +1,6 @@
 library dart_rpg.map_editor_tiles;
 
+import 'dart:async';
 import 'dart:html';
 import 'dart:js';
 
@@ -26,6 +27,9 @@ class MapEditorTiles extends Component {
   CanvasElement mapEditorSelectedSpriteCanvas;
   CanvasRenderingContext2D mapEditorSelectedSpriteCanvasContext;
 
+  static CanvasElement mapEditorSpriteSelectorCanvas;
+  static CanvasRenderingContext2D mapEditorSpriteSelectorCanvasContext;
+
   static List<String> availableTools = ["select", "brush", "erase", "fill", "stamp"];
 
   componentDidMount(Element rootNode) {
@@ -40,6 +44,18 @@ class MapEditorTiles extends Component {
     );
 
     updateSelectedSpriteCanvas();
+
+    mapEditorSpriteSelectorCanvas = querySelector('#editor_sprite_canvas');
+    mapEditorSpriteSelectorCanvasContext = mapEditorSpriteSelectorCanvas.getContext("2d");
+
+    // resize the sprite picker to match the loaded sprite sheet image
+    Main.fixImageSmoothing(
+      mapEditorSpriteSelectorCanvas,
+      (Main.spritesImage.width * Sprite.spriteScale).round(),
+      (Main.spritesImage.height * Sprite.spriteScale).round()
+    );
+    
+    renderSpriteSelector();
   }
 
   shouldComponentUpdate(Map nextProps, Map nextState) {
@@ -76,6 +92,127 @@ class MapEditorTiles extends Component {
     MapEditor.brushLayered = Editor.getCheckboxInputBoolValue("#brushLayered");
     MapEditor.brushEncounter = Editor.getCheckboxInputBoolValue("#brushEncounter");
     update();
+  }
+
+  void renderSpriteSelector() {
+    // draw background of sprite picker
+    mapEditorSpriteSelectorCanvasContext.fillStyle = "#ff00ff";
+    mapEditorSpriteSelectorCanvasContext.fillRect(
+      0, 0,
+      Sprite.scaledSpriteSize*Sprite.spriteSheetWidth,
+      Sprite.scaledSpriteSize*Sprite.spriteSheetHeight
+    );
+
+    int
+      maxCol = Sprite.spriteSheetWidth,
+      col = 0,
+      row = 0;
+    for(int y=0; y<Sprite.spriteSheetHeight; y++) {
+      for(int x=0; x<Sprite.spriteSheetWidth; x++) {
+        MapEditor.renderStaticSprite(mapEditorSpriteSelectorCanvasContext, y*Sprite.spriteSheetWidth + x, col, row);
+        col++;
+        if(col >= maxCol) {
+          row++;
+          col = 0;
+        }
+      }
+    }
+  }
+
+  void handleSpriteSelectorCanvasMouseDown(SyntheticMouseEvent se) {
+    MouseEvent e = se.nativeEvent;
+
+    e.preventDefault();
+
+    int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
+    int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+
+    int startX = x;
+    int startY = y;
+
+    int lastX = -1, lastY = -1;
+
+    int minX = x, minY = y, sizeX = 1, sizeY = 1;
+
+    StreamSubscription
+      mouseMoveStream,
+      onMouseUpListener,
+      onMouseLeaveListener;
+
+    mouseMoveStream = mapEditorSpriteSelectorCanvas.onMouseMove.listen((MouseEvent e) {
+      e.preventDefault();
+
+      // add the tile and re-render
+      int newX = (e.offset.x/Sprite.scaledSpriteSize).floor();
+      int newY = (e.offset.y/Sprite.scaledSpriteSize).floor();
+
+      if(newX == lastX && newY == lastY) {
+        return;
+      }
+
+      lastX = newX;
+      lastY = newY;
+
+      if(newX < startX) {
+        minX = newX;
+        sizeX = 1 + startX - newX;
+      } else if(newX > startX) {
+        minX = startX;
+        sizeX = 1 + newX - startX;
+      } else {
+        minX = startX;
+        sizeX = 1;
+      }
+
+      if(newY < startY) {
+        minY = newY;
+        sizeY = 1 + startY - newY;
+      } else if(newY > startY) {
+        minY = startY;
+        sizeY = 1 + newY - startY;
+      } else {
+        minY = startY;
+        sizeY = 1;
+      }
+
+      renderSpriteSelector();
+      MapEditor.outlineSelectedTiles(mapEditorSpriteSelectorCanvasContext, minX, minY, sizeX, sizeY);
+    });
+
+    Function finish = (MouseEvent e) {
+      mouseMoveStream.cancel();
+      onMouseUpListener.cancel();
+      onMouseLeaveListener.cancel();
+
+      MapEditor.selectedTile = minY*Sprite.spriteSheetWidth + minX;
+      MapEditor.previousSelectedTile = minY*Sprite.spriteSheetWidth + minX;
+
+      if(sizeX > 1 || sizeY > 1) {
+        MapEditor.selectTool("stamp");
+      } else if(MapEditor.selectedTool == "select" || MapEditor.selectedTool == "erase") {
+        MapEditor.selectTool("brush");
+      }
+
+      update();
+
+      renderSpriteSelector();
+      MapEditor.outlineSelectedTiles(mapEditorSpriteSelectorCanvasContext, minX, minY, sizeX, sizeY);
+
+      // populate the stamp tiles with tiles from the sprite sheet
+      MapEditor.stampTiles = [[]];
+
+      for(int y=0; y<sizeY; y++) {
+        MapEditor.stampTiles[0].add([]);
+        for(int x=0; x<sizeX; x++) {
+          MapEditor.stampTiles[0][y].add(
+            MapEditor.selectedTile + y * Sprite.spriteSheetWidth + x
+          );
+        }
+      }
+    };
+
+    onMouseUpListener = mapEditorSpriteSelectorCanvas.onMouseUp.listen(finish);
+    onMouseLeaveListener = mapEditorSpriteSelectorCanvas.onMouseLeave.listen(finish);
   }
 
   render() {
@@ -128,6 +265,15 @@ class MapEditorTiles extends Component {
           'onClick': (MouseEvent e) { MapEditor.selectTool("stamp"); update(); }
         }, "Stamp"),
         br({'className': 'breaker'}),
+
+        div({'className': 'sprite_picker_container'},
+          canvas({
+            'id': 'editor_sprite_canvas',
+            'width': 256,
+            'height': 256,
+            'onMouseDown': handleSpriteSelectorCanvasMouseDown
+          })
+        ),
 
         table({'className': 'editor_table'}, tbody({},
           tr({},

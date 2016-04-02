@@ -38,13 +38,9 @@ var mapEditorEvents = registerComponent(() => new MapEditorEvents());
 var mapEditorTileInfo = registerComponent(() => new MapEditorTileInfo());
 
 class MapEditor extends Component {
-  static CanvasElement
-    mapEditorCanvas,
-    mapEditorSpriteSelectorCanvas;
+  static CanvasElement mapEditorCanvas;
   
-  static CanvasRenderingContext2D
-    mapEditorCanvasContext,
-    mapEditorSpriteSelectorCanvasContext;
+  static CanvasRenderingContext2D mapEditorCanvasContext;
   
   static int
     mapEditorCanvasWidth = 100,
@@ -166,9 +162,6 @@ class MapEditor extends Component {
     mapEditorCanvas = querySelector('#editor_main_canvas');
     mapEditorCanvasContext = mapEditorCanvas.getContext("2d");
     
-    mapEditorSpriteSelectorCanvas = querySelector('#editor_sprite_canvas');
-    mapEditorSpriteSelectorCanvasContext = mapEditorSpriteSelectorCanvas.getContext("2d");
-    
     if(window.devicePixelRatio != 1.0) {
       ElementList<Element> canvasElements = querySelectorAll("canvas");
       
@@ -185,15 +178,6 @@ class MapEditor extends Component {
       layerVisible.add(true);
     }
     
-    // resize the sprite picker to match the loaded sprite sheet image
-    Main.fixImageSmoothing(
-      MapEditor.mapEditorSpriteSelectorCanvas,
-      (Main.spritesImage.width * Sprite.spriteScale).round(),
-      (Main.spritesImage.height * Sprite.spriteScale).round()
-    );
-    
-    renderSpriteSelector();
-    
     tooltip = querySelector('#tooltip');
     tileInfo = querySelector('#tile_info');
 
@@ -206,31 +190,6 @@ class MapEditor extends Component {
 
   void update() {
     setState({});
-  }
-
-  void renderSpriteSelector() {
-    // draw background of sprite picker
-    mapEditorSpriteSelectorCanvasContext.fillStyle = "#ff00ff";
-    mapEditorSpriteSelectorCanvasContext.fillRect(
-      0, 0,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetWidth,
-      Sprite.scaledSpriteSize*Sprite.spriteSheetHeight
-    );
-
-    int
-      maxCol = Sprite.spriteSheetWidth,
-      col = 0,
-      row = 0;
-    for(int y=0; y<Sprite.spriteSheetHeight; y++) {
-      for(int x=0; x<Sprite.spriteSheetWidth; x++) {
-        renderStaticSprite(mapEditorSpriteSelectorCanvasContext, y*Sprite.spriteSheetWidth + x, col, row);
-        col++;
-        if(col >= maxCol) {
-          row++;
-          col = 0;
-        }
-      }
-    }
   }
 
   void handleResize(Event e) {
@@ -257,104 +216,6 @@ class MapEditor extends Component {
         callback();
       }
     });
-  }
-
-  void handleSpriteSelectorCanvasMouseDown(SyntheticMouseEvent se) {
-    MouseEvent e = se.nativeEvent;
-
-    e.preventDefault();
-
-    int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
-    int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
-
-    int startX = x;
-    int startY = y;
-
-    int lastX = -1, lastY = -1;
-
-    int minX = x, minY = y, sizeX = 1, sizeY = 1;
-
-    StreamSubscription
-      mouseMoveStream,
-      onMouseUpListener,
-      onMouseLeaveListener;
-
-    mouseMoveStream = mapEditorSpriteSelectorCanvas.onMouseMove.listen((MouseEvent e) {
-      e.preventDefault();
-
-      // add the tile and re-render
-      int newX = (e.offset.x/Sprite.scaledSpriteSize).floor();
-      int newY = (e.offset.y/Sprite.scaledSpriteSize).floor();
-
-      if(newX == lastX && newY == lastY) {
-        return;
-      }
-
-      lastX = newX;
-      lastY = newY;
-
-      if(newX < startX) {
-        minX = newX;
-        sizeX = 1 + startX - newX;
-      } else if(newX > startX) {
-        minX = startX;
-        sizeX = 1 + newX - startX;
-      } else {
-        minX = startX;
-        sizeX = 1;
-      }
-
-      if(newY < startY) {
-        minY = newY;
-        sizeY = 1 + startY - newY;
-      } else if(newY > startY) {
-        minY = startY;
-        sizeY = 1 + newY - startY;
-      } else {
-        minY = startY;
-        sizeY = 1;
-      }
-
-      renderSpriteSelector();
-      outlineSelectedTiles(mapEditorSpriteSelectorCanvasContext, minX, minY, sizeX, sizeY);
-    });
-
-    Function finish = (MouseEvent e) {
-      mouseMoveStream.cancel();
-      onMouseUpListener.cancel();
-      onMouseLeaveListener.cancel();
-
-      selectedTile = minY*Sprite.spriteSheetWidth + minX;
-      previousSelectedTile = minY*Sprite.spriteSheetWidth + minX;
-
-      if(sizeX > 1 || sizeY > 1) {
-        MapEditor.selectTool("stamp");
-      } else if(selectedTool == "select" || selectedTool == "erase") {
-        MapEditor.selectTool("brush");
-      }
-
-      renderSpriteSelector();
-      outlineSelectedTiles(mapEditorSpriteSelectorCanvasContext, minX, minY, sizeX, sizeY);
-
-      // populate the stamp tiles with tiles from the sprite sheet
-      MapEditor.stampTiles = [[]];
-
-      for(int y=0; y<sizeY; y++) {
-        MapEditor.stampTiles[0].add([]);
-        for(int x=0; x<sizeX; x++) {
-          MapEditor.stampTiles[0][y].add(
-            selectedTile + y * Sprite.spriteSheetWidth + x
-          );
-        }
-      }
-
-      if(state['selectedTab'] == 'tiles') {
-        update();
-      }
-    };
-
-    onMouseUpListener = mapEditorSpriteSelectorCanvas.onMouseUp.listen(finish);
-    onMouseLeaveListener = mapEditorSpriteSelectorCanvas.onMouseLeave.listen(finish);
   }
 
   void handleMainCanvasMouseDown(SyntheticMouseEvent se) {
@@ -1408,16 +1269,6 @@ class MapEditor extends Component {
         ),
         td({'id': 'right_half'},
           table({'id': 'right_half_container'}, tbody({},
-            tr({},
-              td({'className': 'sprite_picker_container'},
-                canvas({
-                  'id': 'editor_sprite_canvas',
-                  'width': 256,
-                  'height': 256,
-                  'onMouseDown': handleSpriteSelectorCanvasMouseDown
-                })
-              )
-            ),
             tr({},
               td({'className': 'tab_headers'},
                 div({
