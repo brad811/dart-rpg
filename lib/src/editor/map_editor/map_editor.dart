@@ -1378,7 +1378,7 @@ class MapEditor extends Component {
     } else if(state['selectedTab'] == "battlers") {
       selectedTab = mapEditorBattlers({'update': props['update']});
     } else if(state['selectedTab'] == "events") {
-      selectedTab = mapEditorEvents({'update': props['update']});
+      selectedTab = mapEditorEvents({'update': props['update'], 'goToEditObject': props['goToEditObject']});
     }
 
     return

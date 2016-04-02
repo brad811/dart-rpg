@@ -30,6 +30,10 @@ class ObjectEditorGameEvents extends Component {
   };
 
   componentDidMount(Element rootNode) {
+    if(Editor.selectedSubTab == "game_event_chains" && Editor.selectedSubItemNumber != -1) {
+      setState({'selected': Editor.selectedSubItemNumber});
+      querySelector('#game_event_chain_row_${Editor.selectedSubItemNumber}').scrollIntoView();
+    }
   }
 
   componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {

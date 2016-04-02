@@ -40,6 +40,12 @@ class MapEditorEvents extends Component {
     });
   }
 
+  Function goToEditGameEventsFunction(int i) {
+    return (MouseEvent e) {
+      props['goToEditObject']('game_event_chains', i);
+    };
+  }
+
   static void shift(int xAmount, int yAmount) {
     for(EventTile event in MapEditor.events[Main.world.curMap]) {
       if(event == null)
@@ -153,7 +159,17 @@ class MapEditorEvents extends Component {
               'id': 'map_event_${i}_game_event_chain',
               'value': MapEditor.events[Main.world.curMap][i].gameEventChain,
               'onChange': onInputChange
-            }, options)
+            }, options),
+            button({
+                'onClick': goToEditGameEventsFunction(
+                  World.gameEventChains.keys.toList().indexOf(
+                    MapEditor.events[Main.world.curMap][i].gameEventChain
+                  )
+                )
+              },
+              span({'className': 'fa fa-pencil-square-o'}),
+              " Edit Game Event"
+            )
           ),
           td({},
             input({
