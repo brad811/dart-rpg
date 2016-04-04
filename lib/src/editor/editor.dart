@@ -218,12 +218,37 @@ class Editor extends Component {
     }
 
     String curMapBefore = Main.world.curMap;
+    String selectedTabBefore = this.state['selectedTab'];
+
+    String mapEditorSelectedTabBefore;
+    if(ref('mapEditor') != null) {
+      mapEditorSelectedTabBefore = ref('mapEditor').state['selectedTab'];
+    }
+
+    String objectEditorSelectedTabBefore;
+    if(ref('objectEditor') != null) {
+      objectEditorSelectedTabBefore = ref('objectEditor').state['selectedTab'];
+    }
 
     undoPosition--;
     Editor.exportJsonString = undoList[undoPosition - 1];
     Editor.loadGame(() {
       Main.world.curMap = curMapBefore;
-      this.setState({});
+      this.setState({
+        'selectedTab': selectedTabBefore
+      });
+
+      if(ref('mapEditor') != null) {
+        ref('mapEditor').setState({
+          'selectedTab': mapEditorSelectedTabBefore
+        });
+      }
+
+      if(ref('objectEditor') != null) {
+        ref('objectEditor').setState({
+          'selectedTab': objectEditorSelectedTabBefore
+        });
+      }
     });
   }
 
