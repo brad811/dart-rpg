@@ -615,6 +615,8 @@ class Editor extends Component {
               inputElement.value.substring(0, inputElement.value.indexOf(".") + 1) +
               inputElement.value.substring(inputElement.value.indexOf(".")).replaceAll(".", "");
           }
+
+          inputElement.value = (double.parse(inputElement.value) * 10 / 10).toString().substring(0, 12);
         } else { // integer number
           inputElement.value = inputElement.value.replaceAll(".", "");
           inputElement.value = inputElement.value[0] + inputElement.value.substring(1).replaceAll(new RegExp("[\-\.]"), "");
