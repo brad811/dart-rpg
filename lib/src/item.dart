@@ -16,13 +16,13 @@ class Item {
   
   final String gameEventChain;
   
-  Item([
-    this.pictureId = 237,
-    this.name = "Item",
-    this.basePrice = 100,
-    this.description = "This is an item!",
+  Item(
+    this.pictureId,
+    this.name,
+    this.basePrice,
+    this.description,
     this.gameEventChain
-  ]);
+  );
   
   GameEvent use(Battler target, GameEvent callback) {
     if(gameEventChain == null || World.gameEventChains[gameEventChain] == null) {
