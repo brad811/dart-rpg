@@ -86,7 +86,8 @@ class ChainGameEvent implements GameEvent {
             'id': '${prefix}_make_default',
             'type': 'checkbox',
             'checked': makeDefault,
-            'onChange': onInputChange
+            'onChange': onInputChange,
+            'readOnly': readOnly
           })
         ),
         td({},
@@ -94,7 +95,8 @@ class ChainGameEvent implements GameEvent {
             'id': '${prefix}_run_immediately',
             'type': 'checkbox',
             'checked': runImmediately,
-            'onChange': onInputChange
+            'onChange': onInputChange,
+            'readOnly': readOnly
           })
         )
       )
