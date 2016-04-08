@@ -98,6 +98,7 @@ class Editor extends Component {
     });
   }
 
+  @override
   render() {
     if(!this.state['gameLoaded']) {
       return div({'id': 'editor_loading_screen'}, "Loading game...");
