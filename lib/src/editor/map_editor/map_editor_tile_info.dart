@@ -256,7 +256,7 @@ class MapEditorTileInfo extends Component {
       hr({}),
       "X: ${x}", br({}),
       "Y: ${y}", br({}),
-      new JsArray.from(tileRows)
+      tileRows
     );
   }
 }
