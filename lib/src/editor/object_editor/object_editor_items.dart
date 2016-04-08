@@ -19,15 +19,18 @@ class ObjectEditorItems extends Component {
   List<Function> callbacks = [];
   bool shouldScrollIntoView = false;
 
+  @override
   getInitialState() => {
     'selected': -1
   };
 
-  componentDidMount(Element rootNode) {
+  @override
+  componentDidMount() {
     initSpritePickers();
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     initSpritePickers();
     callCallbacks();
 
@@ -37,7 +40,7 @@ class ObjectEditorItems extends Component {
     }
   }
 
-  initSpritePickers() {
+  void initSpritePickers() {
     for(int i=0; i<World.items.keys.length; i++) {
       Editor.initSpritePicker(
         "item_${i}_picture_id",
@@ -60,6 +63,7 @@ class ObjectEditorItems extends Component {
     setState({});
   }
 
+  @override
   render() {
     callbacks = [];
     
@@ -157,7 +161,7 @@ class ObjectEditorItems extends Component {
       );
   }
 
-  getGameEventTab() {
+  JsObject getGameEventTab() {
     if(state['selected'] == -1 || World.items.values.length == 0 || state['selected'] >= World.items.values.length) {
       return div({});
     }

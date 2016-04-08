@@ -79,10 +79,12 @@ class MapEditor extends Component {
 
   StreamSubscription resizeListener;
 
+  @override
   getInitialState() => {
     'selectedTab': 'maps'
   };
 
+  @override
   componentWillMount() {
     if(!specialTilesLoaded) {
       loadSpecialTiles();
@@ -155,7 +157,8 @@ class MapEditor extends Component {
     specialTilesLoaded = true;
   }
 
-  componentDidMount(Element rootNode) {
+  @override
+  componentDidMount() {
     resizeListener = window.onResize.listen(handleResize);
     handleResize(null);
 
@@ -184,7 +187,8 @@ class MapEditor extends Component {
     updateMap();
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     updateMap();
   }
 
@@ -1224,6 +1228,7 @@ class MapEditor extends Component {
     }
   }
 
+  @override
   render() {
     JsObject selectedTab;
     if(state['selectedTab'] == "maps") {

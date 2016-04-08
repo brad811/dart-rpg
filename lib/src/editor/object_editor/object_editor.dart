@@ -21,10 +21,12 @@ var objectEditorItems = registerComponent(() => new ObjectEditorItems());
 var objectEditorGameEvents = registerComponent(() => new ObjectEditorGameEvents());
 
 class ObjectEditor extends Component {
+  @override
   getInitialState() => {
     'selectedTab': 'attacks'
   };
 
+  @override
   componentWillMount() {
     if(Editor.selectedSubTab != '' || Editor.selectedSubItemNumber != -1) {
       setState({
@@ -33,11 +35,13 @@ class ObjectEditor extends Component {
     }
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     Editor.selectedSubTab = '';
     Editor.selectedSubItemNumber = -1;
   }
 
+  @override
   render() {
     JsObject selectedTab;
 

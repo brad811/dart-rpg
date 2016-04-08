@@ -10,7 +10,8 @@ class ScreenEditor extends Component {
   static CanvasElement screenCanvas;
   static CanvasRenderingContext2D ctx;
 
-  componentDidMount(Element rootNode) {
+  @override
+  componentDidMount() {
     screenCanvas = querySelector("#screen_editor_canvas");
     ctx = screenCanvas.getContext("2d");
 
@@ -26,7 +27,8 @@ class ScreenEditor extends Component {
     resizeFunction(null);
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     setUpCanvas();
   }
 
@@ -41,6 +43,7 @@ class ScreenEditor extends Component {
     setState({});
   }
 
+  @override
   render() {
     return tr({'id': 'screen_editor_tab'}, [
       td({'id': 'screen_editor_left'},

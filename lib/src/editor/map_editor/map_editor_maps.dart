@@ -53,6 +53,7 @@ class MapEditorMaps extends Component {
     update();
   }
 
+  @override
   render() {
     List<JsObject> tableRows = [
       tr({},

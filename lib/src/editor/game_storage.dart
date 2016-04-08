@@ -14,6 +14,7 @@ class GameStorage extends Component {
     setState({});
   }
 
+  @override
   render() {
     List<JsObject> options = [];
     window.localStorage.keys.forEach((String key) {

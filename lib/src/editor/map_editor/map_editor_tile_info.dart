@@ -14,6 +14,7 @@ import 'package:dart_rpg/src/editor/map_editor/map_editor.dart';
 import 'package:react/react.dart';
 
 class MapEditorTileInfo extends Component {
+  @override
   getInitialState() => {
     'x': 0,
     'y': 0,
@@ -21,7 +22,7 @@ class MapEditorTileInfo extends Component {
     'sizeY': 0
   };
 
-  setTile(int x, int y, int sizeX, int sizeY) {
+  void setTile(int x, int y, int sizeX, int sizeY) {
     this.setState({
       'x': x,
       'y': y,
@@ -30,7 +31,8 @@ class MapEditorTileInfo extends Component {
     });
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     int
       x = state['x'],
       y = state['y'],
@@ -162,6 +164,7 @@ class MapEditorTileInfo extends Component {
     MapEditor.selectedTile = selectedTileBefore;
   }
 
+  @override
   render() {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
 

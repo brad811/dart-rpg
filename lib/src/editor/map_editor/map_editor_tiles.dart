@@ -32,7 +32,8 @@ class MapEditorTiles extends Component {
 
   static List<String> availableTools = ["select", "brush", "erase", "fill", "stamp"];
 
-  componentDidMount(Element rootNode) {
+  @override
+  componentDidMount() {
     mapEditorSelectedSpriteCanvas = querySelector('#editor_selected_sprite_canvas');
     mapEditorSelectedSpriteCanvasContext = mapEditorSelectedSpriteCanvas.getContext("2d");
     
@@ -72,7 +73,8 @@ class MapEditorTiles extends Component {
     setState({});
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     updateSelectedSpriteCanvas();
   }
 
@@ -215,6 +217,7 @@ class MapEditorTiles extends Component {
     onMouseLeaveListener = mapEditorSpriteSelectorCanvas.onMouseLeave.listen(finish);
   }
 
+  @override
   render() {
     List<JsObject> layerRows = [];
     for(int i=World.layers.length-1; i>=0; i--) {

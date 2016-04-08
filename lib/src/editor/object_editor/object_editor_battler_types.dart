@@ -22,16 +22,19 @@ class ObjectEditorBattlerTypes extends Component {
   //   but still have a pretty display name like "Bob"
   bool shouldScrollIntoView = false;
 
+  @override
   getInitialState() => {
     'selected': -1,
     'selectedAdvancedTab': 'stats'
   };
 
-  componentDidMount(Element rootNode) {
+  @override
+  componentDidMount() {
     initSpritePickers();
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     initSpritePickers();
     if(state['selected'] > World.battlerTypes.length - 1) {
       setState({
@@ -264,6 +267,7 @@ class ObjectEditorBattlerTypes extends Component {
     return div({'className': state['selectedAdvancedTab'] == 'attacks' ? '' : 'hidden'}, elements);
   }
 
+  @override
   render() {
     List<JsObject> tableRows = [];
 

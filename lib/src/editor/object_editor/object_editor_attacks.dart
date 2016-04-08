@@ -17,6 +17,7 @@ import 'package:react/react.dart';
 class ObjectEditorAttacks extends Component {
   bool shouldScrollIntoView = false;
 
+  @override
   getInitialState() => {
     'selected': -1
   };
@@ -25,7 +26,8 @@ class ObjectEditorAttacks extends Component {
     this.setState({});
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     if(state['selected'] > World.attacks.keys.length - 1) {
       setState({
         'selected': World.attacks.keys.length - 1
@@ -55,6 +57,7 @@ class ObjectEditorAttacks extends Component {
     update();
   }
 
+  @override
   render() {
     List<JsObject> tableRows = [
       tr({},

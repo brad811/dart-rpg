@@ -21,7 +21,8 @@ class Settings extends Component {
   static Map<String, DivElement> tabHeaderDivs = {};
   static String previousImageLocation;
 
-  componentDidMount(Element rootNode) {
+  @override
+  componentDidMount() {
     settingsCanvas = querySelector("#editor_sprite_settings_canvas");
     ctx = settingsCanvas.getContext("2d");
     setUpSpriteCanvas();
@@ -49,6 +50,7 @@ class Settings extends Component {
     debounceUpdateCanvas();
   }
 
+  @override
   render() {
     return
       tr({'id': 'settings_tab'}, [

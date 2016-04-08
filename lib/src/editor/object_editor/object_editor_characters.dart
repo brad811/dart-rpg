@@ -25,12 +25,14 @@ class ObjectEditorCharacters extends Component {
   List<Function> callbacks = [];
   bool shouldScrollIntoView = false;
 
+  @override
   getInitialState() => {
     'selected': -1,
     'selectedAdvancedTab': 'inventory'
   };
 
-  componentDidMount(Element rootNode) {
+  @override
+  componentDidMount() {
     initSpritePickers();
 
     if(Editor.selectedSubTab == "characters" && Editor.selectedSubItemNumber != -1) {
@@ -39,6 +41,7 @@ class ObjectEditorCharacters extends Component {
     }
   }
 
+  @override
   componentWillUpdate(Map newProps, Map newState) {
     if(state['selected'] > World.characters.length - 1) {
       setState({
@@ -52,7 +55,8 @@ class ObjectEditorCharacters extends Component {
     }
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     initSpritePickers();
     callCallbacks();
 
@@ -109,6 +113,7 @@ class ObjectEditorCharacters extends Component {
     update();
   }
 
+  @override
   render() {
     List<JsObject> tableRows = [];
 

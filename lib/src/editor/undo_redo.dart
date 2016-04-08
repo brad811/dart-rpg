@@ -5,6 +5,7 @@ import 'package:dart_rpg/src/editor/editor.dart';
 import 'package:react/react.dart';
 
 class UndoRedo extends Component {
+  @override
   render() {
     return
       span({'id': 'undo_redo_container'},

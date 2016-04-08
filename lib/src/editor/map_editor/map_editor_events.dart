@@ -109,6 +109,7 @@ class MapEditorEvents extends Component {
     update();
   }
 
+  @override
   render() {
     List<JsObject> tableRows = [
       tr({},

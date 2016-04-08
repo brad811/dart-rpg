@@ -59,6 +59,7 @@ class MapEditorBattlers extends Component {
     update();
   }
 
+  @override
   void render() {
     double totalChance = 0.0;
     for(int i=0; i<Main.world.maps[Main.world.curMap].battlerChances.length; i++) {

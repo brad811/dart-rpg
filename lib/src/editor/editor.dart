@@ -56,7 +56,8 @@ class Editor extends Component {
 
   static int gameLoadedTimestamp = 0;
 
-  componentDidMount(Element rootNode) {
+  @override
+  componentDidMount() {
     Main.world = new World(() {
       Main.world.loadGame(() {
         this.setState({'gameLoaded': true});
@@ -69,7 +70,8 @@ class Editor extends Component {
     });
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     if(!this.state['doneSettingUp']) {
       if(resizeListener != null) {
         resizeListener.cancel();

@@ -15,11 +15,13 @@ import 'package:react/react.dart';
 class MapEditorSigns extends Component {
   List<Function> callbacks = [];
 
-  componentDidMount(Element rootNode) {
+  @override
+  componentDidMount() {
     callCallbacks();
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     callCallbacks();
   }
 
@@ -31,12 +33,13 @@ class MapEditorSigns extends Component {
     }
   }
 
-  update() {
+  void update() {
     setState({});
     MapEditor.updateMap();
     Editor.debounceExport();
   }
 
+  @override
   render() {
     List<JsObject> tableRows = [
       tr({},

@@ -25,18 +25,21 @@ class ObjectEditorGameEvents extends Component {
   List<Function> callbacks = [];
   bool shouldScrollIntoView = false;
 
+  @override
   getInitialState() => {
     'selected': -1
   };
 
-  componentDidMount(Element rootNode) {
+  @override
+  componentDidMount() {
     if(Editor.selectedSubTab == "game_event_chains" && Editor.selectedSubItemNumber != -1) {
       setState({'selected': Editor.selectedSubItemNumber});
       querySelector('#game_event_chain_row_${Editor.selectedSubItemNumber}').scrollIntoView();
     }
   }
 
-  componentDidUpdate(Map prevProps, Map prevState, Element rootNode) {
+  @override
+  componentDidUpdate(Map prevProps, Map prevState) {
     callCallbacks();
     if(state['selected'] > World.gameEventChains.length - 1) {
       setState({
@@ -91,7 +94,8 @@ class ObjectEditorGameEvents extends Component {
     update();
   }
 
-  void render() {
+  @override
+  render() {
     List tableRows = [];
 
     tableRows.add(
@@ -179,7 +183,7 @@ class ObjectEditorGameEvents extends Component {
       );
   }
 
-  getGameEventsTab() {
+  JsObject getGameEventsTab() {
     callbacks = [];
 
     if(state['selected'] == -1 || World.gameEventChains.values.length == 0 || state['selected'] >= World.gameEventChains.values.length) {

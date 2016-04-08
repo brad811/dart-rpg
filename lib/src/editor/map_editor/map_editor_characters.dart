@@ -53,6 +53,7 @@ class MapEditorCharacters extends Component {
     };
   }
 
+  @override
   render() {
     List<JsObject> tableRows = [
       tr({},

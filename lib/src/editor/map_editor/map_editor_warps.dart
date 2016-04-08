@@ -19,6 +19,7 @@ class MapEditorWarps extends Component {
     Editor.debounceExport();
   }
 
+  @override
   render() {
     List<JsObject> tableRows = [
       tr({}, [
