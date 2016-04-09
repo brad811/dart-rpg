@@ -77,16 +77,16 @@ class ObjectEditor extends Component {
     }
 
     return
-      tr({'id': 'object_editor_tab'}, [
-        td({'colSpan': 2}, [
-          div({'id': 'object_editor_inner_container'}, [
+      tr({'id': 'object_editor_tab'},
+        td({'colSpan': 2, 'className': 'object_editor_tab_cell'},
+          div({'id': 'object_editor_inner_container'},
             div({'id': 'object_editor_tab_headers_container'}, tabHeaders),
             br({'className': 'breaker hidden'}),
             div({'id': 'object_editor_inner_main_area'}, selectedTab),
             textarea({'id': 'export_json_object_editor'})
-          ])
-        ])
-      ]);
+          )
+        )
+      );
   }
   
   static void export(Map<String, Map<String, Map<String, Object>>> exportJson) {
