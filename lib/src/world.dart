@@ -642,6 +642,8 @@ class World {
 
       return;
     }
+
+    Main.player = new Player([].toSet());
     
     for(String characterLabel in charactersObject.keys) {
       Character character = parseCharacter(charactersObject, characterLabel);
@@ -708,7 +710,7 @@ class World {
     character.setGameEventChain(charactersObject[characterLabel]["gameEventChain"], 0);
     
     if(charactersObject[characterLabel]["player"] == true) {
-      Main.player = new Player([character]);
+      Main.player.characters.add(character);
     }
     
     return character;
