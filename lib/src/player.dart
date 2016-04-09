@@ -15,9 +15,14 @@ import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 class Player implements InputHandler {
   bool inputEnabled = true;
   
-  Character character;
+  Set<Character> characters;
+  int curCharacterNum = 0;
   
-  Player(this.character);
+  Player(this.characters);
+
+  Character getCurCharacter() {
+    return characters.elementAt(curCharacterNum);
+  }
   
   @override
   void handleKeys(List<int> keyCodes) {
@@ -30,26 +35,28 @@ class Player implements InputHandler {
     if(keyCodes.contains(Input.START)) {
       Gui.showStartMenu();
     }
+
+    Character curCharacter = getCurCharacter();
     
     if(keyCodes.contains(Input.BACK))
-      character.curSpeed = character.runSpeed;
+      curCharacter.curSpeed = curCharacter.runSpeed;
     else
-      character.curSpeed = character.walkSpeed;
+      curCharacter.curSpeed = curCharacter.walkSpeed;
       
     if(keyCodes.contains(Input.LEFT)) {
-      character.move(Character.LEFT);
+      curCharacter.move(Character.LEFT);
       return;
     }
     if(keyCodes.contains(Input.RIGHT)) {
-      character.move(Character.RIGHT);
+      curCharacter.move(Character.RIGHT);
       return;
     }
     if(keyCodes.contains(Input.UP)) {
-      character.move(Character.UP);
+      curCharacter.move(Character.UP);
       return;
     }
     if(keyCodes.contains(Input.DOWN)) {
-      character.move(Character.DOWN);
+      curCharacter.move(Character.DOWN);
       return;
     }
   }
@@ -60,21 +67,23 @@ class Player implements InputHandler {
       if(character.map != Main.world.curMap)
         continue;
       
+      Character curCharacter = getCurCharacter();
+
       for(int i=1; i<=character.sightDistance; i++) {
         // check that character is facing the proper direction
         if(
           (
             character.direction == Character.UP &&
-            (Main.player.character.mapX == character.mapX && Main.player.character.mapY + i == character.mapY)
+            (curCharacter.mapX == character.mapX && curCharacter.mapY + i == character.mapY)
           ) || (
             character.direction == Character.DOWN &&
-            (Main.player.character.mapX == character.mapX && Main.player.character.mapY - i == character.mapY)
+            (curCharacter.mapX == character.mapX && curCharacter.mapY - i == character.mapY)
           ) || (
             character.direction == Character.LEFT &&
-            (Main.player.character.mapX + i == character.mapX && Main.player.character.mapY == character.mapY)
+            (curCharacter.mapX + i == character.mapX && curCharacter.mapY == character.mapY)
           ) || (
             character.direction == Character.RIGHT &&
-            (Main.player.character.mapX - i == character.mapX && Main.player.character.mapY == character.mapY)
+            (curCharacter.mapX - i == character.mapX && curCharacter.mapY == character.mapY)
           )
         ) {
           startCharacterEncounter(character);
@@ -113,21 +122,23 @@ class Player implements InputHandler {
         List<GameEvent> characterGameEvents = [];
         characterGameEvents.add(new GameEvent((callback) {
           int movementDirection, movementAmount;
+
+          Character curCharacter = getCurCharacter();
           
           // Find out which direction the character should move in
           // and how far the character needs to move
-          if(character.mapX > otherCharacter.mapX) {
+          if(curCharacter.mapX > otherCharacter.mapX) {
             movementDirection = Character.RIGHT;
-            movementAmount = character.mapX - otherCharacter.mapX;
-          } else if(character.mapX < otherCharacter.mapX) {
+            movementAmount = curCharacter.mapX - otherCharacter.mapX;
+          } else if(curCharacter.mapX < otherCharacter.mapX) {
             movementDirection = Character.LEFT;
-            movementAmount = otherCharacter.mapX - character.mapX;
-          } else if(character.mapY > otherCharacter.mapY) {
+            movementAmount = otherCharacter.mapX - curCharacter.mapX;
+          } else if(curCharacter.mapY > otherCharacter.mapY) {
             movementDirection = Character.DOWN;
-            movementAmount = character.mapY - otherCharacter.mapY;
-          } else if(character.mapY < otherCharacter.mapY) {
+            movementAmount = curCharacter.mapY - otherCharacter.mapY;
+          } else if(curCharacter.mapY < otherCharacter.mapY) {
             movementDirection = Character.UP;
-            movementAmount = otherCharacter.mapY - character.mapY;
+            movementAmount = otherCharacter.mapY - curCharacter.mapY;
           }
           
           // So the character end up next to the tile the player is in
@@ -140,7 +151,7 @@ class Player implements InputHandler {
           );
         }));
         
-        characterGameEvents[0].trigger(this.character);
+        characterGameEvents[0].trigger(getCurCharacter());
       })
     ];
     
@@ -148,14 +159,16 @@ class Player implements InputHandler {
   }
   
   void interact() {
-    if(character.direction == Character.LEFT && Main.world.isInteractable(character.mapX-1, character.mapY)) {
-      Main.world.interact(character.mapX-1, character.mapY);
-    } else if(character.direction == Character.RIGHT && Main.world.isInteractable(character.mapX+1, character.mapY)) {
-      Main.world.interact(character.mapX+1, character.mapY);
-    } else if(character.direction == Character.UP && Main.world.isInteractable(character.mapX, character.mapY-1)) {
-      Main.world.interact(character.mapX, character.mapY-1);
-    } else if(character.direction == Character.DOWN && Main.world.isInteractable(character.mapX, character.mapY+1)) {
-      Main.world.interact(character.mapX, character.mapY+1);
+    Character curCharacter = getCurCharacter();
+
+    if(curCharacter.direction == Character.LEFT && Main.world.isInteractable(curCharacter.mapX-1, curCharacter.mapY)) {
+      Main.world.interact(curCharacter.mapX-1, curCharacter.mapY);
+    } else if(curCharacter.direction == Character.RIGHT && Main.world.isInteractable(curCharacter.mapX+1, curCharacter.mapY)) {
+      Main.world.interact(curCharacter.mapX+1, curCharacter.mapY);
+    } else if(curCharacter.direction == Character.UP && Main.world.isInteractable(curCharacter.mapX, curCharacter.mapY-1)) {
+      Main.world.interact(curCharacter.mapX, curCharacter.mapY-1);
+    } else if(curCharacter.direction == Character.DOWN && Main.world.isInteractable(curCharacter.mapX, curCharacter.mapY+1)) {
+      Main.world.interact(curCharacter.mapX, curCharacter.mapY+1);
     }
   }
 }

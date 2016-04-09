@@ -30,22 +30,24 @@ class Tile extends Interactable {
     if(layered == true) {
       // Make sure the top tile is only rendered when appropriate
       // TODO: make this apply to all characters, not just the player?
+      Character curCharacter = Main.player.getCurCharacter();
+
       if(
           (
             ( // Player is walking down into the tile
-              (Main.player.character.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY &&
-              Main.player.character.mapY <= topSprite.posY &&
-              Main.player.character.direction == Character.DOWN
+              (curCharacter.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY &&
+              curCharacter.mapY <= topSprite.posY &&
+              curCharacter.direction == Character.DOWN
             ) || ( // Player is walking down out of the tile
-              (Main.player.character.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY &&
-              Main.player.character.mapY >= topSprite.posY &&
-              Main.player.character.direction == Character.DOWN
+              (curCharacter.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY &&
+              curCharacter.mapY >= topSprite.posY &&
+              curCharacter.direction == Character.DOWN
             ) || (
-              (Main.player.character.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY
+              (curCharacter.y/Sprite.scaledSpriteSize).ceil() == topSprite.posY
             )
           ) &&
           (
-            Main.player.character.x/Sprite.scaledSpriteSize - topSprite.posX <= 1.0
+            curCharacter.x/Sprite.scaledSpriteSize - topSprite.posX <= 1.0
           )
       ) {
         Main.world.maps[Main.world.curMap]

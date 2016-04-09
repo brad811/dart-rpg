@@ -36,7 +36,7 @@ class EventTile extends InteractableTile {
     if((runOnce && !hasRun) || !runOnce) {
       List<GameEvent> gameEvents = World.gameEventChains[gameEventChain];
       
-      Interactable.chainGameEvents(Main.player.character, gameEvents).trigger(Main.player.character);
+      Interactable.chainGameEvents(Main.player.getCurCharacter(), gameEvents).trigger(Main.player.getCurCharacter());
       
       hasRun = true;
     }

@@ -16,6 +16,7 @@ import 'package:dart_rpg/src/game_event/text_game_event.dart';
 import 'package:dart_rpg/src/game_event/quantity_choice_game_event.dart';
 
 // TODO: perhaps change to shop
+// TODO: should money belong to player instead of player's characters?
 
 class StoreGameEvent implements GameEvent {
   static final String type = "store";
@@ -36,19 +37,19 @@ class StoreGameEvent implements GameEvent {
     // TODO: decide which windows should be shown during quantity choice game event
     Gui.clear();
     
-    if(item != null && Main.player.character.inventory.money >= item.basePrice) {
+    if(item != null && Main.player.getCurCharacter().inventory.money >= item.basePrice) {
       // calculate min and max from number available and money available
       int max = math.min(
           character.inventory.getQuantity(item.name),
-          (Main.player.character.inventory.money/item.basePrice).floor()
+          (Main.player.getCurCharacter().inventory.money/item.basePrice).floor()
         );
       new QuantityChoiceGameEvent(1, max,
         callback: (int quantity) {
           GameEvent purchaseConfirm = new GameEvent((_) {
-            Main.player.character.inventory.money -= item.basePrice * quantity;
+            Main.player.getCurCharacter().inventory.money -= item.basePrice * quantity;
             character.inventory.money += item.basePrice * quantity;
             character.inventory.removeItem(item.name, quantity);
-            Main.player.character.inventory.addItem(item, quantity);
+            Main.player.getCurCharacter().inventory.addItem(item, quantity);
             
             new TextGameEvent(237, "Thank you! Here you go.", () {
               Gui.clear();
@@ -79,7 +80,7 @@ class StoreGameEvent implements GameEvent {
           GuiItemsMenu.trigger(character, purchaseItem, true, character);
         }),
         price: item.basePrice).trigger(character);
-    } else if(item != null && Main.player.character.inventory.money < item.basePrice) {
+    } else if(item != null && Main.player.getCurCharacter().inventory.money < item.basePrice) {
       new TextGameEvent(237, "You don't have enough money to buy this item.", () {
         Gui.clear();
         GuiItemsMenu.trigger(character, purchaseItem, true, character);

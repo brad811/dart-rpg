@@ -92,7 +92,7 @@ class BattleScreen extends GameScreen {
   void drawExperienceBar() {
     Main.ctx.setFillColorRgb(85, 85, 85);
     double ratio =
-      (Main.player.character.battler.displayExperience - friendly.curLevelExperience()) /
+      (Main.player.getCurCharacter().battler.displayExperience - friendly.curLevelExperience()) /
       (friendly.nextLevelExperience() - friendly.curLevelExperience());
     Main.ctx.fillRect(
       11*Sprite.scaledSpriteSize - Sprite.spriteScale, 10.5*Sprite.scaledSpriteSize,

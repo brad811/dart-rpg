@@ -65,7 +65,7 @@ class World {
   World(Function callback) {
     loadGame(() {
       // move to the start map
-      curMap = Main.player.character.map;
+      curMap = Main.player.getCurCharacter().map;
       
       callback();
     });
@@ -142,8 +142,9 @@ class World {
       if(properties.containsKey("sightDistance"))
         character.sightDistance = properties["sightDistance"];
       
+      // TODO: checkbox for default curCharacter
       if(properties.containsKey("player") && properties["player"] == true) {
-        Main.player.character = character;
+        Main.player.characters.add(character);
       }
     });
   }
@@ -300,7 +301,7 @@ class World {
       if(character.sightDistance.toString() != originalCharacterJson["sightDistance"])
         characterJson["sightDistance"] = character.sightDistance.toString();
       
-      if(Main.player.character.label == character.label) {
+      if(Main.player.getCurCharacter().label == character.label) {
         if(originalCharacterJson["player"] != true)
           characterJson["player"] = true;
       } else if(originalCharacterJson["player"] == true) {
@@ -707,7 +708,7 @@ class World {
     character.setGameEventChain(charactersObject[characterLabel]["gameEventChain"], 0);
     
     if(charactersObject[characterLabel]["player"] == true) {
-      Main.player = new Player(character);
+      Main.player = new Player([character]);
     }
     
     return character;
@@ -754,7 +755,7 @@ class World {
         } else if(gameEvents[i]["type"] == "heal") {
           Character character = World.characters[gameEvents[i]["character"]];
           if(character == null)
-            character = Main.player.character;
+            character = Main.player.getCurCharacter();
           
           HealGameEvent healGameEvent = new HealGameEvent(
               character,
@@ -913,13 +914,15 @@ class World {
     if(maps[curMap] == null)
       return;
     
+    Character curCharacter = Main.player.getCurCharacter();
+
     for(
-        var y=math.max(Main.player.character.mapY-(viewYSize/2+1).round(), 0);
-        y<Main.player.character.mapY+(viewYSize/2+1).round() && y<maps[curMap].tiles.length;
+        var y=math.max(curCharacter.mapY-(viewYSize/2+1).round(), 0);
+        y<curCharacter.mapY+(viewYSize/2+1).round() && y<maps[curMap].tiles.length;
         y++) {
       for(
-          var x=math.max(Main.player.character.mapX-(viewXSize/2).round(), 0);
-          x<Main.player.character.mapX+(viewXSize/2+2).round() && x<maps[curMap].tiles[y].length;
+          var x=math.max(curCharacter.mapX-(viewXSize/2).round(), 0);
+          x<curCharacter.mapX+(viewXSize/2+2).round() && x<maps[curMap].tiles[y].length;
           x++) {
         for(int layer = 0; layer < World.layers.length; layer++) {
           if(maps[curMap].tiles[y][x][layer] is Tile) {

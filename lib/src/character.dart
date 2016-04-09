@@ -172,7 +172,7 @@ class Character extends Interactable {
         
         if(motionX == 0) {
           mapX -= 1;
-          if(this == Main.player.character) {
+          if(this == Main.player.getCurCharacter()) {
             Main.player.checkForBattle();
           }
         }
@@ -192,7 +192,7 @@ class Character extends Interactable {
         
         if(motionX == 0) {
           mapX += 1;
-          if(this == Main.player.character) {
+          if(this == Main.player.getCurCharacter()) {
             Main.player.checkForBattle();
           }
         }
@@ -212,7 +212,7 @@ class Character extends Interactable {
         
         if(motionY == 0) {
           mapY -= 1;
-          if(this == Main.player.character) {
+          if(this == Main.player.getCurCharacter()) {
             Main.player.checkForBattle();
           }
         }
@@ -232,7 +232,7 @@ class Character extends Interactable {
         
         if(motionY == 0) {
           mapY += 1;
-          if(this == Main.player.character) {
+          if(this == Main.player.getCurCharacter()) {
             Main.player.checkForBattle();
           }
         }
@@ -301,13 +301,13 @@ class Character extends Interactable {
       Interactable.chainGameEvents(this, gameEvents).trigger(this);
     } else if(battler != null) {
       // talking to a player can make them face you and battle you
-      if(Main.player.character.mapX < mapX)
+      if(Main.player.getCurCharacter().mapX < mapX)
         direction = LEFT;
-      else if(Main.player.character.mapX > mapX)
+      else if(Main.player.getCurCharacter().mapX > mapX)
         direction = RIGHT;
-      else if(Main.player.character.mapY < mapY)
+      else if(Main.player.getCurCharacter().mapY < mapY)
         direction = UP;
-      else if(Main.player.character.mapY > mapY)
+      else if(Main.player.getCurCharacter().mapY > mapY)
         direction = DOWN;
       
       Main.player.checkForBattle();

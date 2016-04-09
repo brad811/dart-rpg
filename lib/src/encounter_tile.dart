@@ -24,7 +24,7 @@ class EncounterTile extends Tile {
   
   void enter(Character character) {
     // only the player can trigger encounters
-    if(character != Main.player.character) {
+    if(character != Main.player.getCurCharacter()) {
       return;
     }
     
@@ -45,11 +45,11 @@ class EncounterTile extends Tile {
       Main.player.inputEnabled = false;
       battler.reset();
       
-      Main.player.character.motionCallback = () {
+      Main.player.getCurCharacter().motionCallback = () {
         Gui.fadeLightAction((){},(){
           Gui.fadeDarkAction((){}, (){
             Main.battle = new Battle(
-                Main.player.character.battler,
+                Main.player.getCurCharacter().battler,
                 battler
             );
             

@@ -24,7 +24,7 @@ class SwitchPlayerGameEvent implements GameEvent {
   @override
   void trigger(Interactable interactable, [Function function]) {
     Character character = World.characters[characterLabel];
-    Main.player.character = character;
+    Main.player.characters = [character].toSet();
     callback();
   }
   

@@ -50,8 +50,8 @@ class ObjectEditorCharacters extends Component {
     }
 
     // handle player character being deleted
-    if(World.characters[Main.player.character.label] == null) {
-      Main.player.character = World.characters[World.characters.keys.first];
+    if(!World.characters.values.contains(Main.player.getCurCharacter())) {
+      Main.player.characters = [World.characters[World.characters.keys.first]].toSet();
     }
   }
 
@@ -167,7 +167,7 @@ class ObjectEditorCharacters extends Component {
             input({
               'id': 'character_${i}_player',
               'type': 'checkbox',
-              'checked': Main.player.character.label == World.characters.keys.elementAt(i),
+              'checked': Main.player.getCurCharacter().label == World.characters.keys.elementAt(i),
               'onChange': onInputChange
             }),
             "Player"
@@ -605,7 +605,7 @@ class ObjectEditorCharacters extends Component {
           newCharacters[newLabel] = character;
           
           if(selectedPlayer == "character_${i}_player") {
-            Main.player.character = character;
+            Main.player.characters.add(character);
           } else if(selectedPlayer != "") {
             (querySelector("#character_${i}_player") as CheckboxInputElement).checked = false;
           }
@@ -666,7 +666,7 @@ class ObjectEditorCharacters extends Component {
       characterJson["battlerLevel"] = character.battler.level.toString();
       characterJson["sightDistance"] = character.sightDistance.toString();
       
-      if(Main.player.character.label == character.label) {
+      if(Main.player.characters.contains(character)) {
         characterJson["player"] = true;
       }
       

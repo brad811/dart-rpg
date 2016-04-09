@@ -51,7 +51,7 @@ class TitleScreen extends GameScreen {
   
   void loadGame(callback) {
     Main.world.loadGameProgress();
-    Main.world.curMap = Main.player.character.map;
+    Main.world.curMap = Main.player.getCurCharacter().map;
     Main.onTitleScreen = false;
     Main.focusObject = Main.player;
   }

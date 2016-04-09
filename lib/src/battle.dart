@@ -75,7 +75,7 @@ class Battle extends Interactable {
     
     Function itemsConfirm = (Item selectedItem) {
       GameEvent itemUseConfirm = new GameEvent((Function callback) {
-        Main.player.character.inventory.removeItem(selectedItem.name);
+        Main.player.getCurCharacter().inventory.removeItem(selectedItem.name);
         
         selectedItem.use(friendly, new GameEvent((_) {
           // TODO: only show health change if health-changing item was used?
@@ -104,7 +104,7 @@ class Battle extends Interactable {
     
     GameEvent items = new GameEvent((Function callback) {
       Gui.clear();
-      GuiItemsMenu.trigger(Main.player.character, itemsConfirm);
+      GuiItemsMenu.trigger(Main.player.getCurCharacter(), itemsConfirm);
     });
     
     // TODO: make running possibly fail
@@ -201,16 +201,16 @@ class Battle extends Interactable {
   void friendlyDie() {
     Gui.fadeDarkAction(() {
       Main.inBattle = false;
-      new HealGameEvent(Main.player.character, 9999, () {
+      new HealGameEvent(Main.player.getCurCharacter(), 9999, () {
         Gui.clear();
-        Main.world.curMap = Main.player.character.startMap;
-        Main.player.character.warp(
-          Main.player.character.startMap,
-          Main.player.character.startX, Main.player.character.startY, Main.player.character.layer,
+        Main.world.curMap = Main.player.getCurCharacter().startMap;
+        Main.player.getCurCharacter().warp(
+          Main.player.getCurCharacter().startMap,
+          Main.player.getCurCharacter().startX, Main.player.getCurCharacter().startY, Main.player.getCurCharacter().layer,
           Character.DOWN
         );
         Main.focusObject = Main.player;
-      }).trigger(Main.player.character);
+      }).trigger(Main.player.getCurCharacter());
     });
   }
   

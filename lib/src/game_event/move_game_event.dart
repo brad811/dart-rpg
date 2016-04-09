@@ -29,7 +29,7 @@ class MoveGameEvent implements GameEvent {
     Character character;
     
     if(characterLabel == "____player") {
-      character = Main.player.character;
+      character = Main.player.getCurCharacter();
     } else {
       character = World.characters[characterLabel];
     }

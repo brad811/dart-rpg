@@ -87,7 +87,7 @@ class HealGameEvent implements GameEvent {
     String characterLabel = Editor.getSelectInputStringValue("#${prefix}_character");
     
     if(characterLabel == "____player") {
-      character = Main.player.character;
+      character = Main.player.getCurCharacter();
     } else {
       character = World.characters[characterLabel];
     }

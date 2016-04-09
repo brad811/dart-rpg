@@ -32,7 +32,7 @@ class Item {
       gameEvents.addAll(World.gameEventChains[gameEventChain]);
       gameEvents.add(callback);
       
-      return Interactable.chainGameEvents(Main.player.character, gameEvents);
+      return Interactable.chainGameEvents(Main.player.getCurCharacter(), gameEvents);
     }
   }
 }

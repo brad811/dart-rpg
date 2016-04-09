@@ -29,8 +29,8 @@ class WarpGameEvent extends GameEvent {
   void trigger(Interactable interactable, [Function function]) {
     Character character;
     
-    if(characterLabel == "____player" || characterLabel == Main.player.character.label) {
-      character = Main.player.character;
+    if(characterLabel == "____player" || characterLabel == Main.player.getCurCharacter().label) {
+      character = Main.player.getCurCharacter();
       Main.world.curMap = newMap;
     } else {
       character = World.characters[characterLabel];
