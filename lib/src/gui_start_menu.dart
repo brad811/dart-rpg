@@ -4,6 +4,7 @@ import 'package:dart_rpg/src/battler.dart';
 import 'package:dart_rpg/src/font.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
+import 'package:dart_rpg/src/gui_party_menu.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
 
@@ -15,6 +16,7 @@ class GuiStartMenu {
   static ChoiceGameEvent start = new ChoiceGameEvent.custom(
     Main.player.getCurCharacter(),
     ChoiceGameEvent.generateChoiceMap("start_menu", {
+      "Party": [party],
       "Stats": [stats],
       "Powers": [exit],
       "Items": [items],
@@ -22,9 +24,15 @@ class GuiStartMenu {
       "Exit": [exit]
     }),
     15, 0,
-    5, 6,
+    5, 7,
     cancelEvent: exit
   );
+
+  static GameEvent party = new GameEvent((Function a) {
+    GuiPartyMenu.trigger(() {
+      start.trigger(Main.player.getCurCharacter());
+    });
+  });
   
   static GameEvent items = new GameEvent((Function a) {
     GuiItemsMenu.trigger(Main.player.getCurCharacter(), (Item item) {
