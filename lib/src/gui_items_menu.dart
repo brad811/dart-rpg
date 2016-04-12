@@ -73,7 +73,7 @@ class GuiItemsMenu {
       if(itemChoice.curChoice < character.inventory.itemNames().length) {
         String selectedItemName = character.inventory.itemNames()[itemChoice.curChoice];
         selectedItem = character.inventory.getItem(selectedItemName);
-        Sprite curSprite = new Sprite.int(selectedItem.pictureId, 13, 1);
+        Sprite curSprite = new Sprite(selectedItem.pictureId, 13.5, 0.75);
         descriptionWindow = () {
           Gui.renderWindow(10, 0, itemDescriptionWindowWidth, 10);
           

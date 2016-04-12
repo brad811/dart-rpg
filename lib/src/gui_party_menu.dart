@@ -61,7 +61,7 @@ class GuiPartyMenu {
       
       if(characterChoice.curChoice < Main.player.characters.length) {
         selectedCharacter = Main.player.characters.toList().elementAt(characterChoice.curChoice);
-        Sprite curSprite = new Sprite.int(selectedCharacter.pictureId, 13, 1);
+        Sprite curSprite = new Sprite(selectedCharacter.pictureId, 13.5, 0.75);
         descriptionWindow = () {
           Gui.renderWindow(10, 0, characterDescriptionWindowWidth, 10);
           
