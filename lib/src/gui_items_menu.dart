@@ -15,7 +15,7 @@ class GuiItemsMenu {
     textY = 9.0;
   
   static final int
-    itemDescriptionWindowWidth = 9;
+    itemDescriptionWindowWidth = 10;
   
   static Item selectedItem;
   static Function selectCallback;
@@ -92,7 +92,7 @@ class GuiItemsMenu {
           
           // TODO: perhaps calculate these values only once to save CPU cycles
           Font.renderStaticText(
-              textX + 10 - (selectedItem.basePrice.toString().length / 1.75),
+              textX + 12 - (selectedItem.basePrice.toString().length / 1.75),
               textY + Gui.verticalLineSpacing*6,
               priceText
           );

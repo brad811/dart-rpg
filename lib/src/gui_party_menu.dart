@@ -14,7 +14,7 @@ class GuiPartyMenu {
     textY = 9.0;
   
   static final int
-    characterDescriptionWindowWidth = 9;
+    characterDescriptionWindowWidth = 10;
   
   static Character selectedCharacter;
   static Function selectCallback;
