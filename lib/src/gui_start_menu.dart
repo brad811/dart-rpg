@@ -30,6 +30,7 @@ class GuiStartMenu {
 
   static GameEvent party = new GameEvent((Function a) {
     GuiPartyMenu.trigger(() {
+      Gui.clear();
       start.trigger(Main.player.getCurCharacter());
     });
   });
