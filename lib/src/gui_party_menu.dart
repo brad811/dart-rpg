@@ -66,7 +66,8 @@ class GuiPartyMenu {
           Gui.renderWindow(10, 0, characterDescriptionWindowWidth, 10);
           
           // TODO: calculate max lines based on window height
-          List<String> textLines = Gui.splitText("Wheeee stats or something", characterDescriptionWindowWidth);
+          //List<String> textLines = Gui.splitText("Wheeee stats or something", characterDescriptionWindowWidth);
+          List<String> textLines = ["Name: ${selectedCharacter.name}"];
           for(int i=0; i<textLines.length && i<8; i++) {
             Font.renderStaticText(textX, textY + Gui.verticalLineSpacing*i, textLines[i]);
           }
