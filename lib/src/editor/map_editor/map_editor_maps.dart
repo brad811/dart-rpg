@@ -56,7 +56,7 @@ class MapEditorMaps extends Component {
   @override
   render() {
     List<JsObject> tableRows = [
-      tr({},
+      tr({'key': 'map_editor_maps_headers'},
         td({}, "Num"),
         td({}, "Name"),
         td({}, "X Size"),
@@ -74,15 +74,16 @@ class MapEditorMaps extends Component {
           td({},
             button({
               'id': 'map_select_${i}',
+              'key': 'map_select_${i}',
               'onClick': (MouseEvent e) { props['changeMap'](key); }
             }, i)
           );
       } else {
-        mapButton = td({}, i);
+        mapButton = td({'key': 'map_select_${i}'}, i);
       }
 
       tableRows.add(
-        tr({},
+        tr({'key': 'map_editor_maps_row_${i}'},
           mapButton,
           td({},
             Editor.generateInput({

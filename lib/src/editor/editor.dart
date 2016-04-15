@@ -663,6 +663,7 @@ class Editor extends Component {
 
     return input({
       'id': obj['id'],
+      'key': obj['id'],
       'type': obj['type'],
       'className': obj['className'],
       valueFieldName: Editor.lastElementId == obj['id'] ? Editor.lastValue : obj[valueFieldName],
