@@ -1254,7 +1254,8 @@ class MapEditor extends Component {
             mapEditorTileInfo({
               'ref': 'tileInfo',
               'update': props['update'],
-              'showTileInfo': showTileInfo
+              'showTileInfo': showTileInfo,
+              'changeTile': changeTile
             })
           ),
           canvas({

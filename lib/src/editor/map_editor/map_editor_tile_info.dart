@@ -150,7 +150,7 @@ class MapEditorTileInfo extends Component {
                 )
             );
 
-            props['changeTile'](x2, y2, i, solid, layered, encounter);
+            props['changeTile'](mapTiles[y2][x2][i].sprite.id, x2, y2, i, solid, layered, encounter);
           }
         }
       }
