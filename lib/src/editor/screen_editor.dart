@@ -27,7 +27,7 @@ class ScreenEditor extends Component {
     screenCanvas = querySelector("#screen_editor_canvas");
     ctx = screenCanvas.getContext("2d");
 
-    setUpCanvas();
+    setUpScreenCanvas();
 
     // TODO: do this with CSS instead
     Function resizeFunction = (Event e) {
@@ -41,10 +41,10 @@ class ScreenEditor extends Component {
 
   @override
   componentDidUpdate(Map prevProps, Map prevState) {
-    setUpCanvas();
+    setUpScreenCanvas();
   }
 
-  setUpCanvas() {
+  void setUpScreenCanvas() {
     Main.fixImageSmoothing(screenCanvas, Main.canvasWidth, Main.canvasHeight);
 
     ctx.fillStyle = "#ff00ff";
@@ -89,6 +89,16 @@ class ScreenEditor extends Component {
         ),
         td({'id': 'screen_editor_right'},
           table({'id': 'right_half_container'}, tbody({},
+            tr({},
+              td({'className': 'sprite_picker_container'},
+                canvas({
+                  'id': 'editor_sprite_canvas',
+                  'width': 256,
+                  'height': 256,
+                  'onMouseDown': null//handleSpriteSelectorCanvasMouseDown
+                })
+              )
+            ),
             tr({},
               td({'className': 'tab_headers'},
                 div({
