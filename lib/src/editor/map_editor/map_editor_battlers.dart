@@ -135,7 +135,7 @@ class MapEditorBattlers extends Component {
     return
       div({'id': 'battlers_tab', 'className': 'tab'},
         div({'id': 'battlers_container'},
-          button({'id': 'add_battler_button', 'onClick': addNewBattler}, span({'className': 'fa fa-plus-circle'}), " Add new battler"),
+          button({'id': 'add_battler_button', 'onClick': addNewBattler}, span({'className': 'fa fa-plus-circle'}), " Add battler to map"),
           hr({}),
           div({'id': 'battlers_container'},
             table(

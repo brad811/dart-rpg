@@ -209,7 +209,7 @@ class MapEditorEvents extends Component {
     return
       div({'id': 'events_tab', 'className': 'tab'},
         div({'id': 'events_container'}, [
-          button({'id': 'add_event_button', 'onClick': this.addNewEvent}, span({'className': 'fa fa-plus-circle'}), " Add new event"),
+          button({'id': 'add_event_button', 'onClick': this.addNewEvent}, span({'className': 'fa fa-plus-circle'}), " Add event to map"),
           hr({}),
           table({'className': 'editor_table'}, tbody({}, tableRows))
         ])
