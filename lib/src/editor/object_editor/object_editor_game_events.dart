@@ -130,7 +130,9 @@ class ObjectEditorGameEvents extends Component {
           td({},
             button({
               'id': 'delete_game_event_chain_${i}',
-              'onClick': Editor.generateConfirmDeleteFunction(World.gameEventChains, key, "game event chain", removeDeleted)
+              'onClick': Editor.generateConfirmDeleteFunction(
+                World.gameEventChains, key, "game event chain", removeDeleted, atLeastOneRequired: true
+              )
             }, span({'className': 'fa fa-trash'}), " Delete")
           )
         ])

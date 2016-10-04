@@ -728,104 +728,108 @@ class World {
   void parseGameEventChains(Map<String, List<Map<String, String>>> gameEventChainsObject) {
     World.gameEventChains = {};
     
-    if(gameEventChainsObject == null) {
-      return;
-    }
-    
-    gameEventChainsObject.forEach((String key, List<Map<String, String>> gameEvents) {
-      List<GameEvent> gameEventChain = [];
-      for(int i=0; i<gameEvents.length; i++) {
-        if(gameEvents[i]["type"] == "text") {
-          TextGameEvent textGameEvent = new TextGameEvent(
-              gameEvents[i]["pictureId"] as int,
-              gameEvents[i]["text"]
+    if(gameEventChainsObject != null) {
+      gameEventChainsObject.forEach((String key, List<Map<String, String>> gameEvents) {
+        List<GameEvent> gameEventChain = [];
+        for(int i=0; i<gameEvents.length; i++) {
+          if(gameEvents[i]["type"] == "text") {
+            TextGameEvent textGameEvent = new TextGameEvent(
+                gameEvents[i]["pictureId"] as int,
+                gameEvents[i]["text"]
+              );
+            
+            gameEventChain.add(textGameEvent);
+          } else if(gameEvents[i]["type"] == "move") {
+            MoveGameEvent moveGameEvent = new MoveGameEvent(
+                gameEvents[i]["character"],
+                gameEvents[i]["direction"] as int,
+                gameEvents[i]["distance"] as int,
+                gameEvents[i]["run"] as bool
+              );
+            
+            gameEventChain.add(moveGameEvent);
+          } else if(gameEvents[i]["type"] == "delay") {
+            DelayGameEvent delayGameEvent = new DelayGameEvent(
+                gameEvents[i]["milliseconds"] as int
+              );
+            
+            gameEventChain.add(delayGameEvent);
+          } else if(gameEvents[i]["type"] == "fade") {
+            FadeGameEvent fadeGameEvent = new FadeGameEvent(
+                gameEvents[i]["fadeType"] as int
+              );
+            
+            gameEventChain.add(fadeGameEvent);
+          } else if(gameEvents[i]["type"] == "heal") {
+            Character character = World.characters[gameEvents[i]["character"]];
+            if(character == null)
+              character = Main.player.getCurCharacter();
+            
+            HealGameEvent healGameEvent = new HealGameEvent(
+                character,
+                gameEvents[i]["amount"] as int
+              );
+            
+            gameEventChain.add(healGameEvent);
+          } else if(gameEvents[i]["type"] == "store") {
+            StoreGameEvent storeGameEvent = new StoreGameEvent();
+            
+            gameEventChain.add(storeGameEvent);
+          } else if(gameEvents[i]["type"] == "battle") {
+            BattleGameEvent battleGameEvent = new BattleGameEvent();
+            
+            gameEventChain.add(battleGameEvent);
+          } else if(gameEvents[i]["type"] == "chain") {
+            ChainGameEvent chainGameEvent = new ChainGameEvent(
+                gameEvents[i]["gameEventChain"],
+                gameEvents[i]["makeDefault"] as bool == true,
+                gameEvents[i]["runImmediately"] as bool == true
+              );
+            
+            gameEventChain.add(chainGameEvent);
+          } else if(gameEvents[i]["type"] == "choice") {
+            ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(
+                gameEvents[i]["choices"] as Map<String, String>
+              );
+            
+            gameEventChain.add(choiceGameEvent);
+          } else if(gameEvents[i]["type"] == "warp") {
+            WarpGameEvent warpGameEvent = new WarpGameEvent(
+                gameEvents[i]["character"],
+                gameEvents[i]["newMap"],
+                gameEvents[i]["x"] as int,
+                gameEvents[i]["y"] as int,
+                gameEvents[i]["layer"] as int,
+                gameEvents[i]["direction"] as int
+              );
+            
+            gameEventChain.add(warpGameEvent);
+          } else if(gameEvents[i]["type"] == "switch_player") {
+            SwitchPlayerGameEvent switchPlayerGameEvent = new SwitchPlayerGameEvent(
+              gameEvents[i]["character"]
             );
-          
-          gameEventChain.add(textGameEvent);
-        } else if(gameEvents[i]["type"] == "move") {
-          MoveGameEvent moveGameEvent = new MoveGameEvent(
-              gameEvents[i]["character"],
-              gameEvents[i]["direction"] as int,
-              gameEvents[i]["distance"] as int,
-              gameEvents[i]["run"] as bool
-            );
-          
-          gameEventChain.add(moveGameEvent);
-        } else if(gameEvents[i]["type"] == "delay") {
-          DelayGameEvent delayGameEvent = new DelayGameEvent(
-              gameEvents[i]["milliseconds"] as int
-            );
-          
-          gameEventChain.add(delayGameEvent);
-        } else if(gameEvents[i]["type"] == "fade") {
-          FadeGameEvent fadeGameEvent = new FadeGameEvent(
-              gameEvents[i]["fadeType"] as int
-            );
-          
-          gameEventChain.add(fadeGameEvent);
-        } else if(gameEvents[i]["type"] == "heal") {
-          Character character = World.characters[gameEvents[i]["character"]];
-          if(character == null)
-            character = Main.player.getCurCharacter();
-          
-          HealGameEvent healGameEvent = new HealGameEvent(
-              character,
-              gameEvents[i]["amount"] as int
-            );
-          
-          gameEventChain.add(healGameEvent);
-        } else if(gameEvents[i]["type"] == "store") {
-          StoreGameEvent storeGameEvent = new StoreGameEvent();
-          
-          gameEventChain.add(storeGameEvent);
-        } else if(gameEvents[i]["type"] == "battle") {
-          BattleGameEvent battleGameEvent = new BattleGameEvent();
-          
-          gameEventChain.add(battleGameEvent);
-        } else if(gameEvents[i]["type"] == "chain") {
-          ChainGameEvent chainGameEvent = new ChainGameEvent(
-              gameEvents[i]["gameEventChain"],
-              gameEvents[i]["makeDefault"] as bool == true,
-              gameEvents[i]["runImmediately"] as bool == true
-            );
-          
-          gameEventChain.add(chainGameEvent);
-        } else if(gameEvents[i]["type"] == "choice") {
-          ChoiceGameEvent choiceGameEvent = new ChoiceGameEvent(
-              gameEvents[i]["choices"] as Map<String, String>
-            );
-          
-          gameEventChain.add(choiceGameEvent);
-        } else if(gameEvents[i]["type"] == "warp") {
-          WarpGameEvent warpGameEvent = new WarpGameEvent(
-              gameEvents[i]["character"],
-              gameEvents[i]["newMap"],
-              gameEvents[i]["x"] as int,
-              gameEvents[i]["y"] as int,
-              gameEvents[i]["layer"] as int,
-              gameEvents[i]["direction"] as int
-            );
-          
-          gameEventChain.add(warpGameEvent);
-        } else if(gameEvents[i]["type"] == "switch_player") {
-          SwitchPlayerGameEvent switchPlayerGameEvent = new SwitchPlayerGameEvent(
-            gameEvents[i]["character"]
-          );
 
-          gameEventChain.add(switchPlayerGameEvent);
-        } else if(gameEvents[i]["type"] == "inventory") {
-          InventoryGameEvent inventoryGameEvent = new InventoryGameEvent(
-            gameEvents[i]["character"],
-            gameEvents[i]["item"],
-            gameEvents[i]["quantity"] as int
-          );
+            gameEventChain.add(switchPlayerGameEvent);
+          } else if(gameEvents[i]["type"] == "inventory") {
+            InventoryGameEvent inventoryGameEvent = new InventoryGameEvent(
+              gameEvents[i]["character"],
+              gameEvents[i]["item"],
+              gameEvents[i]["quantity"] as int
+            );
 
-          gameEventChain.add(inventoryGameEvent);
+            gameEventChain.add(inventoryGameEvent);
+          }
+          
+          World.gameEventChains[key] = gameEventChain;
         }
-        
-        World.gameEventChains[key] = gameEventChain;
-      }
-    });
+      });
+    }
+
+    if(gameEventChains.length == 0) {
+      gameEventChains["New game event chain"] = [
+        new TextGameEvent(0, "New text game event")
+      ];
+    }
   }
   
   void chainCharacterMovement(Character character, List<int> directions, Function callback) {
