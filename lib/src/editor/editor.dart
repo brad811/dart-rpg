@@ -6,6 +6,7 @@ import 'dart:html';
 import 'dart:js';
 import 'dart:math' as math;
 
+import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/world.dart';
@@ -331,6 +332,8 @@ class Editor extends Component {
           target.remove(key);
         else if(target is List)
           target.removeAt(key);
+        else if(target is Inventory)
+          target.removeItem(key, target.getQuantity(key));
         else
           print("Warning: invalid target passed to generateConfirmDeleteFunction!");
 

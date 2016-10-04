@@ -339,7 +339,9 @@ class ObjectEditorCharacters extends Component {
           td({},
             button({
               'id': 'delete_character_${state['selected']}_item_${j}',
-              'onClick': Editor.generateConfirmDeleteFunction(World.characters.values.elementAt(state['selected']), curItemName, "inventory item", update)
+              'onClick': Editor.generateConfirmDeleteFunction(
+                World.characters.values.elementAt(state['selected']).inventory, curItemName, "inventory item", update
+              )
             }, span({'className': 'fa fa-trash'}), " Delete")
           )
         )
@@ -507,13 +509,19 @@ class ObjectEditorCharacters extends Component {
   }
   
   void addInventoryItem(MouseEvent e) {
+    bool itemFound = false;
     Character selectedCharacter = World.characters.values.elementAt(state['selected']);
     for(int i=0; i<World.items.keys.length; i++) {
       if(!selectedCharacter.inventory.itemNames().contains(World.items.keys.elementAt(i))) {
         // add the first possible item that is not already in the character's inventory
         selectedCharacter.inventory.addItem(World.items.values.elementAt(i));
+        itemFound = true;
         break;
       }
+    }
+
+    if(!itemFound) {
+      window.alert("There are no items that can be added.");
     }
     
     update();
