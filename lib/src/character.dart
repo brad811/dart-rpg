@@ -292,7 +292,7 @@ class Character extends Interactable {
   }
   
   void interact() {
-    if(getGameEventChain() == "")
+    if(getGameEventChain() == "" || World.gameEventChains[getGameEventChain()] == null)
       return;
 
     List<GameEvent> gameEvents = World.gameEventChains[getGameEventChain()].sublist(getGameEventChainOffset());
