@@ -5,6 +5,7 @@ import 'dart:js';
 
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sprite.dart';
+import 'package:dart_rpg/src/tile.dart';
 import 'package:dart_rpg/src/warp_tile.dart';
 
 import 'package:dart_rpg/src/editor/editor.dart';
@@ -41,15 +42,31 @@ class MapEditorWarps extends Component {
     }
 
     for(int i=0; i<MapEditor.warps[Main.world.curMap].length; i++) {
+      WarpTile curWarp = MapEditor.warps[Main.world.curMap][i];
+      int warpPosX = curWarp.sprite.posX.round();
+      int warpPosY = curWarp.sprite.posY.round();
+
+      List<List<List<Tile>>> curMapTiles = Main.world.maps[Main.world.curMap].tiles;
+
+      JsObject warning = null;
+      if(
+        warpPosX < 0 || warpPosY < 0 ||
+        curMapTiles.length <= warpPosY || curMapTiles[warpPosY] == null ||
+        curMapTiles[warpPosY].length <= warpPosX || curMapTiles[warpPosY][warpPosX] == null ||
+        curMapTiles[warpPosY][warpPosX].length == 0 || curMapTiles[warpPosY][warpPosX][0] == null
+      ) {
+        warning = span({'className': 'fa fa-exclamation-triangle', 'style': {'color': 'red'}});
+      }
+
       tableRows.add(
         tr({}, [
-          td({}, i),
+          td({}, warning, i),
           td({},
             Editor.generateInput({
               'id': 'warp_${i}_posx',
               'type': 'text',
               'className':'number',
-              'value': MapEditor.warps[Main.world.curMap][i].sprite.posX.round(),
+              'value': curWarp.sprite.posX.round(),
               'onChange': onInputChange
             })
           ),
@@ -58,7 +75,7 @@ class MapEditorWarps extends Component {
               'id': 'warp_${i}_posy',
               'type': 'text',
               'className':'number',
-              'value': MapEditor.warps[Main.world.curMap][i].sprite.posY.round(),
+              'value': curWarp.sprite.posY.round(),
               'onChange': onInputChange
             })
           ),
@@ -73,7 +90,7 @@ class MapEditorWarps extends Component {
               'id': 'warp_${i}_dest_x',
               'type': 'text',
               'className':'number',
-              'value': MapEditor.warps[Main.world.curMap][i].destX,
+              'value': curWarp.destX,
               'onChange': onInputChange
             })
           ),
@@ -82,7 +99,7 @@ class MapEditorWarps extends Component {
               'id': 'warp_${i}_dest_y',
               'type': 'text',
               'className':'number',
-              'value': MapEditor.warps[Main.world.curMap][i].destY,
+              'value': curWarp.destY,
               'onChange': onInputChange
             })
           ),
