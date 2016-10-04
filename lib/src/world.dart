@@ -410,16 +410,24 @@ class World {
   void parseAttacks(Map<String, Map> attacksObject) {
     attacks = {};
     
-    if(attacksObject == null) {
-      return;
+    if(attacksObject != null) {
+      for(String attackName in attacksObject.keys) {
+        attacks[attackName] = new Attack(
+          attackName,
+          int.parse(attacksObject[attackName]["category"]),
+          attacksObject[attackName]["type"],
+          int.parse(attacksObject[attackName]["power"])
+        );
+      }
     }
-    
-    for(String attackName in attacksObject.keys) {
+
+    if(attacks.length == 0) {
+      String attackName = "New Attack";
       attacks[attackName] = new Attack(
         attackName,
-        int.parse(attacksObject[attackName]["category"]),
-        attacksObject[attackName]["type"],
-        int.parse(attacksObject[attackName]["power"])
+        Attack.CATEGORY_PHYSICAL,
+        World.types.keys.first,
+        1
       );
     }
   }
@@ -427,24 +435,25 @@ class World {
   void parseTypes(Map<String, Map> typesObject) {
     types = {};
     
-    if(typesObject == null) {
+    if(typesObject != null) {
+      for(String typeName in typesObject.keys) {
+        types[typeName] = new GameType(
+          typeName
+        );
+        
+        // add effectiveness pairings
+        for(int i=0; i<typesObject[typeName]["effectiveness"].length; i++) {
+          String defendingType = typesObject[typeName]["effectiveness"].keys.elementAt(i);
+          
+          types[typeName].setEffectiveness(defendingType, typesObject[typeName]["effectiveness"][defendingType]);
+        }
+      }
+    }
+
+    if(types.length == 0) {
       types = {
         "normal": new GameType("normal")
       };
-      return;
-    }
-    
-    for(String typeName in typesObject.keys) {
-      types[typeName] = new GameType(
-        typeName
-      );
-      
-      // add effectiveness pairings
-      for(int i=0; i<typesObject[typeName]["effectiveness"].length; i++) {
-        String defendingType = typesObject[typeName]["effectiveness"].keys.elementAt(i);
-        
-        types[typeName].setEffectiveness(defendingType, typesObject[typeName]["effectiveness"][defendingType]);
-      }
     }
   }
   
