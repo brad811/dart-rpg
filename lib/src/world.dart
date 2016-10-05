@@ -634,7 +634,7 @@ class World {
         "player",
         0, 0, 0, 0,
         2, 4,
-        layer: 0,
+        layer: 1,
         sizeX: 1,
         sizeY: 2,
         solid: true
