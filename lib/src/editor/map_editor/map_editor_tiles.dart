@@ -288,19 +288,19 @@ class MapEditorTiles extends Component {
               input({
                 'id': 'brushSolid',
                 'type': 'checkbox',
-                'value': MapEditor.brushSolid,
+                'checked': MapEditor.brushSolid,
                 'onChange': onTileBrushAttributeChange
               }), "Solid",  br({}),
               input({
                 'id': 'brushLayered',
                 'type': 'checkbox',
-                'value': MapEditor.brushLayered,
+                'checked': MapEditor.brushLayered,
                 'onChange': onTileBrushAttributeChange
               }), "Layered", br({}),
               input({
                 'id': 'brushEncounter',
                 'type': 'checkbox',
-                'value': MapEditor.brushEncounter,
+                'checked': MapEditor.brushEncounter,
                 'onChange': onTileBrushAttributeChange
               }), "Encounter"
             )
