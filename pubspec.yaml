@@ -2,4 +2,4 @@ name: dart_rpg
 description: A browser-based 2d rpg
 dependencies:
   browser: any
-  react: 1.0.0
+  react: 3.0.0
