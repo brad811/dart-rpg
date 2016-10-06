@@ -225,8 +225,12 @@ class Editor extends Component {
     String selectedTabBefore = this.state['selectedTab'];
 
     String mapEditorSelectedTabBefore;
+    int scrollTop, scrollLeft;
     if(ref('mapEditor') != null) {
       mapEditorSelectedTabBefore = ref('mapEditor').state['selectedTab'];
+
+      scrollTop = querySelector("#left_half").scrollTop;
+      scrollLeft = querySelector("#left_half").scrollLeft;
     }
 
     String objectEditorSelectedTabBefore;
@@ -245,7 +249,11 @@ class Editor extends Component {
       if(ref('mapEditor') != null) {
         ref('mapEditor').setState({
           'selectedTab': mapEditorSelectedTabBefore
-        });
+        }, () {
+            querySelector("#left_half").scrollTop = scrollTop;
+            querySelector("#left_half").scrollLeft = scrollLeft;
+          }
+        );
       }
 
       if(ref('objectEditor') != null) {
@@ -264,11 +272,22 @@ class Editor extends Component {
 
     String curMapBefore = Main.world.curMap;
 
+    int scrollTop, scrollLeft;
+    if(ref('mapEditor') != null) {
+      scrollTop = querySelector("#left_half").scrollTop;
+      scrollLeft = querySelector("#left_half").scrollLeft;
+    }
+
     undoPosition++;
     Editor.exportJsonString = undoList[undoPosition - 1];
     Editor.loadGame(() {
       Main.world.curMap = curMapBefore;
-      this.setState({});
+      this.setState({},
+        () {
+          querySelector("#left_half").scrollTop = scrollTop;
+          querySelector("#left_half").scrollLeft = scrollLeft;
+        }
+      );
     });
   }
   
