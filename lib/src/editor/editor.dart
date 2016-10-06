@@ -573,15 +573,19 @@ class Editor extends Component {
     }
     
     if(e.target is InputElement) {
-      InputElement target = e.target;
+      InputElement inputElement = e.target;
 
-      if(target.value == "") {
-        target.value = "no_name";
+      int position = inputElement.selectionStart;
+
+      if(inputElement.value == "") {
+        inputElement.value = "no_name";
       }
       
-      if(target.id.contains(match)) {
-        target.value = getUniqueName(target.value, objects);
+      if(inputElement.id.contains(match)) {
+        inputElement.value = getUniqueName(inputElement.value, objects);
       }
+
+      inputElement.setSelectionRange(position, position);
     }
   }
 
