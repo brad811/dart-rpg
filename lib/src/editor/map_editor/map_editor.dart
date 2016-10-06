@@ -70,6 +70,9 @@ class MapEditor extends Component {
     brushLayered = false,
     brushEncounter = false;
 
+  static Function moveCallback = null;
+  static StreamSubscription bodyMoveListener = null;
+
   static List<List<List<int>>> stampTiles = [];
 
   static Map<String, List<WarpTile>> warps = {};
@@ -227,13 +230,22 @@ class MapEditor extends Component {
 
     e.preventDefault();
 
-    if(selectedTool == "select") {
-      handleMainCanvasSelectMouseDown(e);
-      return;
-    }
-
     int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
     int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
+
+    if(selectedTool == "select") {
+      handleMainCanvasSelectMouseDown(x, y);
+      return;
+    } else if(selectedTool == "move") {
+      if(moveCallback != null) {
+        moveCallback(x, y);
+        MapEditor.updateMap();
+      } else {
+        print("moveCallback was null!");
+      }
+
+      return;
+    }
 
     changeTile(
       selectedTile,
@@ -290,7 +302,7 @@ class MapEditor extends Component {
     });
   }
 
-  void handleMainCanvasSelectMouseDown(MouseEvent e) {
+  void handleMainCanvasSelectMouseDown(int x, int y) {
     if(tileInfo.getComputedStyle().getPropertyValue("display") != "none") {
       // user clicked away from selected tiles, so hide tile info
       tileInfo.style.display = "none";
@@ -308,9 +320,6 @@ class MapEditor extends Component {
     }
 
     shouldHover = false;
-
-    int x = (e.offset.x/Sprite.scaledSpriteSize).floor();
-    int y = (e.offset.y/Sprite.scaledSpriteSize).floor();
 
     int startX = x;
     int startY = y;
@@ -478,7 +487,7 @@ class MapEditor extends Component {
       size: new Point(width, height)
     );
 
-    if(selectedTool != "select") {
+    if(selectedTool != "select" && selectedTool != "move") { // select and move tools should not show change previews
       for(int i=0; i<width; i++) {
         for(int j=0; j<height; j++) {
           // render the tile as it would appear with the selected tile applied to the selected layer
@@ -1226,6 +1235,31 @@ class MapEditor extends Component {
         }
       }
     }
+  }
+
+  static startMoveMode(String selector, Function callback) {
+    querySelector(selector).style.color = "#00aa00";
+    querySelector("body").style.cursor = "move";
+
+    MapEditor.previousSelectedTool = MapEditor.selectedTool;
+
+    MapEditor.selectedTool = "move";
+
+    MapEditor.bodyMoveListener = querySelector("body").onClick.listen((MouseEvent e) {
+      MapEditor.endMoveMode(selector);
+    });
+
+    MapEditor.moveCallback = callback;
+  }
+
+  static endMoveMode(String selector) {
+    bodyMoveListener.cancel();
+
+    // TODO: check if null
+    querySelector(selector).style.color = null;
+    querySelector("body").style.cursor = null;
+
+    MapEditor.selectedTool = MapEditor.previousSelectedTool;
   }
 
   @override

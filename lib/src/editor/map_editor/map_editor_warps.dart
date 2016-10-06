@@ -27,6 +27,7 @@ class MapEditorWarps extends Component {
         td({}, "Num"),
         td({}, "X"),
         td({}, "Y"),
+        td({}),
         td({}, "Dest Map"),
         td({}, "Dest X"),
         td({}, "Dest Y"),
@@ -78,6 +79,12 @@ class MapEditorWarps extends Component {
               'value': curWarp.sprite.posY.round(),
               'onChange': onInputChange
             })
+          ),
+          td({},
+            button({
+              'id': 'move_warp_${i}',
+              'onClick': (MouseEvent e) { moveWarp(i); }
+            }, span({'className': 'fa fa-crosshairs'}))
           ),
           td({},
             select({
@@ -133,6 +140,29 @@ class MapEditorWarps extends Component {
     );
     
     update();
+  }
+
+  void moveWarp(int i) {
+    print("Moving warp: ${i}");
+
+    MapEditor.startMoveMode(
+      "#move_warp_${i}",
+      (int x, int y) {
+        WarpTile warpTile = MapEditor.warps[Main.world.curMap][i];
+
+        if(warpTile.sprite != null) {
+          warpTile.sprite.posX = x.toDouble();
+          warpTile.sprite.posY = y.toDouble();
+        }
+        
+        if(warpTile.topSprite != null) {
+          warpTile.topSprite.posX = x.toDouble();
+          warpTile.topSprite.posY = y.toDouble();
+        }
+
+        update();
+      }
+    );
   }
   
   void onInputChange(Event e) {
