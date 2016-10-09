@@ -241,6 +241,10 @@ class Editor extends Component {
     undoPosition--;
     Editor.exportJsonString = undoList[undoPosition - 1];
     Editor.loadGame(() {
+      // make sure the last edited field's value updates
+      Editor.lastElementId = null;
+      Editor.lastValue = null;
+
       Main.world.curMap = curMapBefore;
       this.setState({
         'selectedTab': selectedTabBefore
@@ -261,6 +265,8 @@ class Editor extends Component {
           'selectedTab': objectEditorSelectedTabBefore
         });
       }
+
+      handleResize(null); // make sure divs don't collapse to height 0
     });
   }
 
@@ -281,11 +287,22 @@ class Editor extends Component {
     undoPosition++;
     Editor.exportJsonString = undoList[undoPosition - 1];
     Editor.loadGame(() {
+      // make sure the last edited field's value updates
+      Editor.lastElementId = null;
+      Editor.lastValue = null;
+      
       Main.world.curMap = curMapBefore;
       this.setState({},
         () {
-          querySelector("#left_half").scrollTop = scrollTop;
-          querySelector("#left_half").scrollLeft = scrollLeft;
+          if(ref('mapEditor') != null) {
+            Element leftHalf = querySelector("#left_half");
+            if(leftHalf != null) {
+              leftHalf.scrollTop = scrollTop;
+              leftHalf.scrollLeft = scrollLeft;
+            }
+          }
+
+          handleResize(null); // make sure divs don't collapse to height 0
         }
       );
     });
