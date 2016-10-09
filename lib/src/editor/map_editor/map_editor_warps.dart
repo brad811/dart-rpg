@@ -89,6 +89,7 @@ class MapEditorWarps extends Component {
           td({},
             select({
               'id': 'warp_${i}_dest_map',
+              'value': curWarp.destMap,
               'onChange': onInputChange
             }, destMapOptions)
           ),
