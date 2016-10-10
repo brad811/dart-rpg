@@ -657,7 +657,13 @@ class MapEditor extends Component {
     List<List<List<Tile>>> mapTiles = Main.world.maps[Main.world.curMap].tiles;
 
     for(int j=0; j<MapEditor.stampTiles[0].length; j++) {
+      if(y+j >= mapTiles.length)
+        break;
+
       for(int i=0; i<MapEditor.stampTiles[0][j].length; i++) {
+        if(x+i >= mapTiles[y+j].length)
+          break;
+
         // MapEditor.stampTiles[k][j][i]
         if(MapEditor.stampTiles[0][j][i] == null) {
           mapTiles[y+j][x+i][layer] = null;
