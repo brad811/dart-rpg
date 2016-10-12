@@ -1293,9 +1293,9 @@ class MapEditor extends Component {
     } else if(state['selectedTab'] == "map_characters") {
       selectedTab = mapEditorCharacters({'update': props['update'], 'goToEditObject': props['goToEditObject']});
     } else if(state['selectedTab'] == "warps") {
-      selectedTab = mapEditorWarps({'update': props['update'], 'startMoveMode': startMoveMode, 'endMoveMode': endMoveMode});
+      selectedTab = mapEditorWarps({'update': props['update'], 'startMoveMode': startMoveMode});
     } else if(state['selectedTab'] == "signs") {
-      selectedTab = mapEditorSigns({'update': props['update']});
+      selectedTab = mapEditorSigns({'update': props['update'], 'startMoveMode': startMoveMode});
     } else if(state['selectedTab'] == "battlers") {
       selectedTab = mapEditorBattlers({'update': props['update']});
     } else if(state['selectedTab'] == "events") {

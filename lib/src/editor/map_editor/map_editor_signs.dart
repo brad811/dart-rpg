@@ -46,9 +46,10 @@ class MapEditorSigns extends Component {
         td({}, "Num"),
         td({}, "X"),
         td({}, "Y"),
+        td({}), // move sign button
         td({}, "Pic"),
         td({}, "Text"),
-        td({})
+        td({}) // delete sign button
       )
     ];
 
@@ -74,6 +75,15 @@ class MapEditorSigns extends Component {
               'onChange': onInputChange
             })
           ),
+
+          td({},
+            // move warp button
+            button({
+              'id': 'move_sign_${i}',
+              'onClick': (MouseEvent e) { moveSign(i); }
+            }, span({'className': 'fa fa-crosshairs'}))
+          ),
+
           td({},
             Editor.generateSpritePickerHtml(
               "sign_${i}_pic",
@@ -121,6 +131,28 @@ class MapEditorSigns extends Component {
   void addNewSign(MouseEvent e) {
     MapEditor.signs[Main.world.curMap].add( new Sign(false, new Sprite.int(0, 0, 0), 234, "Text") );
     props['update']();
+  }
+
+  void moveSign(int i) {
+    props['startMoveMode'](
+      "#move_sign_${i}",
+      Main.world.curMap,
+      (int x, int y) {
+        Sign sign = MapEditor.signs[Main.world.curMap][i];
+
+        if(sign.sprite != null) {
+          sign.sprite.posX = x.toDouble();
+          sign.sprite.posY = y.toDouble();
+        }
+        
+        if(sign.topSprite != null) {
+          sign.topSprite.posX = x.toDouble();
+          sign.topSprite.posY = y.toDouble();
+        }
+
+        update();
+      }
+    );
   }
   
   void onInputChange(Event e) {
