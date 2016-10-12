@@ -72,6 +72,7 @@ class MapEditor extends Component {
 
   static Function moveCallback = null;
   static StreamSubscription bodyMoveListener = null;
+  static String moveModeMapBefore = null;
 
   static List<List<List<int>>> stampTiles = [];
 
@@ -238,6 +239,10 @@ class MapEditor extends Component {
       return;
     } else if(selectedTool == "move") {
       if(moveCallback != null) {
+        if(moveModeMapBefore != null && moveModeMapBefore != Main.world.curMap) {
+          changeMap(moveModeMapBefore);
+        }
+
         moveCallback(x, y);
         MapEditor.updateMap();
       } else {
@@ -1243,7 +1248,13 @@ class MapEditor extends Component {
     }
   }
 
-  static startMoveMode(String selector, Function callback) {
+  startMoveMode(String selector, String map, Function callback) {
+    // change map if needed
+    if(map != Main.world.curMap) {
+      moveModeMapBefore = Main.world.curMap;
+      changeMap(map);
+    }
+
     querySelector(selector).style.color = "#00aa00";
     querySelector("body").style.cursor = "move";
 
@@ -1252,14 +1263,18 @@ class MapEditor extends Component {
     MapEditor.selectedTool = "move";
 
     MapEditor.bodyMoveListener = querySelector("body").onClick.listen((MouseEvent e) {
-      MapEditor.endMoveMode(selector);
+      endMoveMode(selector);
     });
 
     MapEditor.moveCallback = callback;
   }
 
-  static endMoveMode(String selector) {
+  endMoveMode(String selector) {
     bodyMoveListener.cancel();
+
+    if(moveModeMapBefore != null && moveModeMapBefore != Main.world.curMap) {
+      changeMap(moveModeMapBefore);
+    }
 
     // TODO: check if null
     querySelector(selector).style.color = null;
@@ -1278,7 +1293,7 @@ class MapEditor extends Component {
     } else if(state['selectedTab'] == "map_characters") {
       selectedTab = mapEditorCharacters({'update': props['update'], 'goToEditObject': props['goToEditObject']});
     } else if(state['selectedTab'] == "warps") {
-      selectedTab = mapEditorWarps({'update': props['update']});
+      selectedTab = mapEditorWarps({'update': props['update'], 'startMoveMode': startMoveMode, 'endMoveMode': endMoveMode});
     } else if(state['selectedTab'] == "signs") {
       selectedTab = mapEditorSigns({'update': props['update']});
     } else if(state['selectedTab'] == "battlers") {
