@@ -83,6 +83,28 @@ class MapEditorEvents extends Component {
     }
   }
 
+  void moveEvent(int i) {
+    props['startMoveMode'](
+      "#move_event_${i}",
+      Main.world.curMap,
+      (int x, int y) {
+        EventTile eventTile = MapEditor.events[Main.world.curMap][i];
+
+        if(eventTile.sprite != null) {
+          eventTile.sprite.posX = x.toDouble();
+          eventTile.sprite.posY = y.toDouble();
+        }
+        
+        if(eventTile.topSprite != null) {
+          eventTile.topSprite.posX = x.toDouble();
+          eventTile.topSprite.posY = y.toDouble();
+        }
+
+        update();
+      }
+    );
+  }
+
   void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     
@@ -116,6 +138,7 @@ class MapEditorEvents extends Component {
         td({}, "Num"),
         td({}, "X"),
         td({}, "Y"),
+        td({}), // move event button
         td({}, "Game Event Chain"),
         td({}, "Run Once"),
         td({}, "Run On Enter"),
@@ -154,6 +177,13 @@ class MapEditorEvents extends Component {
               'value': MapEditor.events[Main.world.curMap][i].sprite.posY.round(),
               'onChange': onInputChange
             })
+          ),
+          td({},
+            // move event button
+            button({
+              'id': 'move_event_${i}',
+              'onClick': (MouseEvent e) { moveEvent(i); }
+            }, span({'className': 'fa fa-crosshairs'}))
           ),
           td({},
             select({
