@@ -1326,7 +1326,7 @@ class MapEditor extends Component {
     } else if(state['selectedTab'] == "tiles") {
       selectedTab = mapEditorTiles({'selectedTile': state['selectedTile']});
     } else if(state['selectedTab'] == "map_characters") {
-      selectedTab = mapEditorCharacters({'update': props['update'], 'goToEditObject': props['goToEditObject']});
+      selectedTab = mapEditorCharacters({'update': props['update'], 'goToEditObject': props['goToEditObject'], 'moveInteractable': moveInteractable});
     } else if(state['selectedTab'] == "warps") {
       selectedTab = mapEditorWarps({'update': props['update'], 'moveInteractable': moveInteractable});
     } else if(state['selectedTab'] == "signs") {

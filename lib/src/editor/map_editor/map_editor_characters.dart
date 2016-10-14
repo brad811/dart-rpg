@@ -61,6 +61,7 @@ class MapEditorCharacters extends Component {
         td({}, "Label"),
         td({}, "X"),
         td({}, "Y"),
+        td({}), // move character button
         td({}, "Layer"),
         td({}, "Direction"),
         td({}, "Solid"),
@@ -68,13 +69,12 @@ class MapEditorCharacters extends Component {
       )
     ];
 
-    int i = -1;
+    for(int i=0; i<World.characters.length; i++) {
+      String key = World.characters.keys.elementAt(i);
+      Character character = World.characters.values.elementAt(i);
 
-    World.characters.forEach((String key, Character character) {
-      i += 1;
-      
       if(character.map != Main.world.curMap)
-        return;
+        continue;
 
       List<JsObject> layerOptions = [];
       for(int layer=0; layer<World.layers.length; layer++) {
@@ -113,6 +113,15 @@ class MapEditorCharacters extends Component {
               'onChange': onInputChange
             })
           ),
+
+          td({},
+            // move character button
+            button({
+              'id': 'move_character_${i}',
+              'onClick': (MouseEvent e) { props['moveInteractable'](character, '#move_character_${i}'); }
+            }, span({'className': 'fa fa-crosshairs'}))
+          ),
+
           td({},
             select({
               'id': 'map_character_${i}_layer',
@@ -143,7 +152,7 @@ class MapEditorCharacters extends Component {
           )
         )
       );
-    });
+    }
 
     return
       div({'id': 'map_characters_tab', 'className': 'tab'},
