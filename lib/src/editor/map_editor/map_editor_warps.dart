@@ -85,7 +85,7 @@ class MapEditorWarps extends Component {
             // move warp button
             button({
               'id': 'move_warp_${i}',
-              'onClick': (MouseEvent e) { moveWarp(i); }
+              'onClick': (MouseEvent e) { props['moveInteractable'](curWarp, '#move_warp_${i}'); }
             }, span({'className': 'fa fa-crosshairs'}))
           ),
           td({},
@@ -117,7 +117,7 @@ class MapEditorWarps extends Component {
             // move warp dest button
             button({
               'id': 'move_warp_dest_${i}',
-              'onClick': (MouseEvent e) { moveWarpDest(i, curWarp.destMap); }
+              'onClick': (MouseEvent e) { props['moveInteractable'](curWarp, '#move_warp_dest_${i}', curWarp.destMap); }
             }, span({'className': 'fa fa-crosshairs'}))
           ),
           td({},
@@ -150,43 +150,6 @@ class MapEditorWarps extends Component {
     );
     
     update();
-  }
-
-  void moveWarp(int i) {
-    props['startMoveMode'](
-      "#move_warp_${i}",
-      Main.world.curMap,
-      (int x, int y) {
-        WarpTile warpTile = MapEditor.warps[Main.world.curMap][i];
-
-        if(warpTile.sprite != null) {
-          warpTile.sprite.posX = x.toDouble();
-          warpTile.sprite.posY = y.toDouble();
-        }
-        
-        if(warpTile.topSprite != null) {
-          warpTile.topSprite.posX = x.toDouble();
-          warpTile.topSprite.posY = y.toDouble();
-        }
-
-        update();
-      }
-    );
-  }
-
-  void moveWarpDest(int i, String destMap) {
-    props['startMoveMode'](
-      "#move_warp_dest_${i}",
-      destMap,
-      (int x, int y) {
-        WarpTile warpTile = MapEditor.warps[Main.world.curMap][i];
-
-        warpTile.destX = x;
-        warpTile.destY = y;
-
-        update();
-      }
-    );
   }
   
   void onInputChange(Event e) {

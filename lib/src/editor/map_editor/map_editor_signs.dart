@@ -54,6 +54,8 @@ class MapEditorSigns extends Component {
     ];
 
     for(int i=0; i<MapEditor.signs[Main.world.curMap].length; i++) {
+      Sign curSign = MapEditor.signs[Main.world.curMap][i];
+
       tableRows.add(
         tr({},
           td({}, i),
@@ -62,7 +64,7 @@ class MapEditorSigns extends Component {
               'id': 'sign_${i}_posx',
               'type': 'text',
               'className': 'number',
-              'value': MapEditor.signs[Main.world.curMap][i].sprite.posX.round(),
+              'value': curSign.sprite.posX.round(),
               'onChange': onInputChange
             })
           ),
@@ -71,7 +73,7 @@ class MapEditorSigns extends Component {
               'id': 'sign_${i}_posy',
               'type': 'text',
               'className': 'number',
-              'value': MapEditor.signs[Main.world.curMap][i].sprite.posY.round(),
+              'value': curSign.sprite.posY.round(),
               'onChange': onInputChange
             })
           ),
@@ -80,20 +82,20 @@ class MapEditorSigns extends Component {
             // move warp button
             button({
               'id': 'move_sign_${i}',
-              'onClick': (MouseEvent e) { moveSign(i); }
+              'onClick': (MouseEvent e) { props['moveInteractable'](curSign, '#move_sign_${i}'); }
             }, span({'className': 'fa fa-crosshairs'}))
           ),
 
           td({},
             Editor.generateSpritePickerHtml(
               "sign_${i}_pic",
-              MapEditor.signs[Main.world.curMap][i].textEvent.pictureSpriteId
+              curSign.textEvent.pictureSpriteId
             )
           ),
           td({},
             textarea({
               'id': 'sign_${i}_text',
-              'value': MapEditor.signs[Main.world.curMap][i].textEvent.text,
+              'value': curSign.textEvent.text,
               'onChange': onInputChange
             })
           ),
@@ -111,7 +113,7 @@ class MapEditorSigns extends Component {
       callbacks.add(() {
         Editor.initSpritePicker(
           "sign_${i}_pic",
-          MapEditor.signs[Main.world.curMap][i].textEvent.pictureSpriteId,
+          curSign.textEvent.pictureSpriteId,
           3, 3,
           onInputChange
         );
@@ -131,28 +133,6 @@ class MapEditorSigns extends Component {
   void addNewSign(MouseEvent e) {
     MapEditor.signs[Main.world.curMap].add( new Sign(false, new Sprite.int(0, 0, 0), 234, "Text") );
     props['update']();
-  }
-
-  void moveSign(int i) {
-    props['startMoveMode'](
-      "#move_sign_${i}",
-      Main.world.curMap,
-      (int x, int y) {
-        Sign sign = MapEditor.signs[Main.world.curMap][i];
-
-        if(sign.sprite != null) {
-          sign.sprite.posX = x.toDouble();
-          sign.sprite.posY = y.toDouble();
-        }
-        
-        if(sign.topSprite != null) {
-          sign.topSprite.posX = x.toDouble();
-          sign.topSprite.posY = y.toDouble();
-        }
-
-        update();
-      }
-    );
   }
   
   void onInputChange(Event e) {

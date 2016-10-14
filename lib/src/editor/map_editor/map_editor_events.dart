@@ -83,28 +83,6 @@ class MapEditorEvents extends Component {
     }
   }
 
-  void moveEvent(int i) {
-    props['startMoveMode'](
-      "#move_event_${i}",
-      Main.world.curMap,
-      (int x, int y) {
-        EventTile eventTile = MapEditor.events[Main.world.curMap][i];
-
-        if(eventTile.sprite != null) {
-          eventTile.sprite.posX = x.toDouble();
-          eventTile.sprite.posY = y.toDouble();
-        }
-        
-        if(eventTile.topSprite != null) {
-          eventTile.topSprite.posX = x.toDouble();
-          eventTile.topSprite.posY = y.toDouble();
-        }
-
-        update();
-      }
-    );
-  }
-
   void onInputChange(Event e) {
     Editor.enforceValueFormat(e);
     
@@ -149,6 +127,8 @@ class MapEditorEvents extends Component {
 
     // TODO: this is broken until "events" is populated!
     for(int i=0; i<MapEditor.events[Main.world.curMap].length; i++) {
+      EventTile curEventTile = MapEditor.events[Main.world.curMap][i];
+
       List<JsObject> options = [];
 
       World.gameEventChains.keys.forEach((String gameEventChain) {
@@ -165,7 +145,7 @@ class MapEditorEvents extends Component {
               'id': 'map_event_${i}_posx',
               'type': 'text',
               'className': 'number',
-              'value': MapEditor.events[Main.world.curMap][i].sprite.posX.round(),
+              'value': curEventTile.sprite.posX.round(),
               'onChange': onInputChange
             })
           ),
@@ -174,7 +154,7 @@ class MapEditorEvents extends Component {
               'id': 'map_event_${i}_posy',
               'type': 'text',
               'className': 'number',
-              'value': MapEditor.events[Main.world.curMap][i].sprite.posY.round(),
+              'value': curEventTile.sprite.posY.round(),
               'onChange': onInputChange
             })
           ),
@@ -182,19 +162,19 @@ class MapEditorEvents extends Component {
             // move event button
             button({
               'id': 'move_event_${i}',
-              'onClick': (MouseEvent e) { moveEvent(i); }
+              'onClick': (MouseEvent e) { props['moveInteractable'](curEventTile, '#move_event_${i}'); }
             }, span({'className': 'fa fa-crosshairs'}))
           ),
           td({},
             select({
               'id': 'map_event_${i}_game_event_chain',
-              'value': MapEditor.events[Main.world.curMap][i].gameEventChain,
+              'value': curEventTile.gameEventChain,
               'onChange': onInputChange
             }, options),
             button({
                 'onClick': goToEditGameEventsFunction(
                   World.gameEventChains.keys.toList().indexOf(
-                    MapEditor.events[Main.world.curMap][i].gameEventChain
+                    curEventTile.gameEventChain
                   )
                 )
               },
@@ -206,7 +186,7 @@ class MapEditorEvents extends Component {
             input({
               'id': 'map_event_${i}_run_once',
               'type': 'checkbox',
-              'checked': MapEditor.events[Main.world.curMap][i].runOnce,
+              'checked': curEventTile.runOnce,
               'onChange': onInputChange
             })
           ),
@@ -214,7 +194,7 @@ class MapEditorEvents extends Component {
             input({
               'id': 'map_event_${i}_run_on_enter',
               'type': 'checkbox',
-              'checked': MapEditor.events[Main.world.curMap][i].runOnEnter,
+              'checked': curEventTile.runOnEnter,
               'onChange': onInputChange
             })
           ),
@@ -222,7 +202,7 @@ class MapEditorEvents extends Component {
             input({
               'id': 'map_event_${i}_run_on_interact',
               'type': 'checkbox',
-              'checked': MapEditor.events[Main.world.curMap][i].runOnInteract,
+              'checked': curEventTile.runOnInteract,
               'onChange': onInputChange
             })
           ),

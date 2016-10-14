@@ -7,6 +7,7 @@ import 'dart:js';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/event_tile.dart';
+import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/sign.dart';
 import 'package:dart_rpg/src/sprite.dart';
@@ -1248,7 +1249,7 @@ class MapEditor extends Component {
     }
   }
 
-  startMoveMode(String selector, String map, Function callback) {
+  void startMoveMode(String selector, String map, Function callback) {
     // change map if needed
     if(map != Main.world.curMap) {
       moveModeMapBefore = Main.world.curMap;
@@ -1269,7 +1270,7 @@ class MapEditor extends Component {
     MapEditor.moveCallback = callback;
   }
 
-  endMoveMode(String selector) {
+  void endMoveMode(String selector) {
     bodyMoveListener.cancel();
 
     if(moveModeMapBefore != null && moveModeMapBefore != Main.world.curMap) {
@@ -1283,6 +1284,40 @@ class MapEditor extends Component {
     MapEditor.selectedTool = MapEditor.previousSelectedTool;
   }
 
+  void moveInteractable(Interactable interactable, String selector, [String map]) {
+    bool isDestination = true;
+    if(map == null) {
+      map = Main.world.curMap;
+      isDestination = false;
+    }
+
+    startMoveMode(
+      selector,
+      map,
+      (int x, int y) {
+        if(interactable is WarpTile && isDestination) {
+          interactable.destX = x;
+          interactable.destY = y;
+        } else if(interactable is Tile) {
+          if(interactable.sprite != null) {
+            interactable.sprite.posX = x.toDouble();
+            interactable.sprite.posY = y.toDouble();
+          }
+          
+          if(interactable.topSprite != null) {
+            interactable.topSprite.posX = x.toDouble();
+            interactable.topSprite.posY = y.toDouble();
+          }
+        } else if(interactable is Character) {
+          // move the character the proper way, only modifying the x and y values
+          interactable.warp(interactable.map, x, y, interactable.layer, interactable.direction);
+        }
+
+        update();
+      }
+    );
+  }
+
   @override
   render() {
     JsObject selectedTab;
@@ -1293,13 +1328,13 @@ class MapEditor extends Component {
     } else if(state['selectedTab'] == "map_characters") {
       selectedTab = mapEditorCharacters({'update': props['update'], 'goToEditObject': props['goToEditObject']});
     } else if(state['selectedTab'] == "warps") {
-      selectedTab = mapEditorWarps({'update': props['update'], 'startMoveMode': startMoveMode});
+      selectedTab = mapEditorWarps({'update': props['update'], 'moveInteractable': moveInteractable});
     } else if(state['selectedTab'] == "signs") {
-      selectedTab = mapEditorSigns({'update': props['update'], 'startMoveMode': startMoveMode});
+      selectedTab = mapEditorSigns({'update': props['update'], 'moveInteractable': moveInteractable});
     } else if(state['selectedTab'] == "battlers") {
       selectedTab = mapEditorBattlers({'update': props['update']});
     } else if(state['selectedTab'] == "events") {
-      selectedTab = mapEditorEvents({'update': props['update'], 'goToEditObject': props['goToEditObject'], 'startMoveMode': startMoveMode});
+      selectedTab = mapEditorEvents({'update': props['update'], 'goToEditObject': props['goToEditObject'], 'moveInteractable': moveInteractable});
     }
 
     return
