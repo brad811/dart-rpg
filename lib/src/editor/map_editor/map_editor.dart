@@ -244,6 +244,7 @@ class MapEditor extends Component {
           changeMap(moveModeMapBefore);
         }
 
+        moveModeMapBefore = null;
         moveCallback(x, y);
         MapEditor.updateMap();
       } else {
