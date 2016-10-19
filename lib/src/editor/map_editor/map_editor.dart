@@ -1296,6 +1296,9 @@ class MapEditor extends Component {
       selector,
       map,
       (int x, int y) {
+        Editor.lastElementId = null;
+        Editor.lastValue = null;
+        
         if(interactable is WarpTile && isDestination) {
           interactable.destX = x;
           interactable.destY = y;
