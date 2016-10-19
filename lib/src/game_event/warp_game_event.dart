@@ -127,7 +127,7 @@ class WarpGameEvent extends GameEvent {
               'type': 'text',
               'className': 'number',
               'value': x,
-              'readOnly': readOnly,
+              'readOnly': readOnly ? 'disabled' : '',
               'onChange': onInputChange
             })
           ),
@@ -137,7 +137,7 @@ class WarpGameEvent extends GameEvent {
               'type': 'text',
               'className': 'number',
               'value': y,
-              'readOnly': readOnly,
+              'readOnly': readOnly ? 'disabled' : '',
               'onChange': onInputChange
             })
           ),

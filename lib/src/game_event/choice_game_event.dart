@@ -199,7 +199,7 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
               'type': 'text',
               'id': '${prefix}_choice_name_${i}',
               'value': choiceName,
-              'readOnly': readOnly,
+              'readOnly': readOnly ? 'disabled' : '',
               'onChange': onInputChange
             })
           ),

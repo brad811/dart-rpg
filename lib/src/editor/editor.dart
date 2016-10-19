@@ -716,7 +716,8 @@ class Editor extends Component {
         Editor.lastValue = Editor.getValueBefore(e);
         obj['onChange'](e);
       },
-      'onFocus': (_) { lastElementId = obj['id']; lastValue = obj[valueFieldName]; }
+      'onFocus': (_) { lastElementId = obj['id']; lastValue = obj[valueFieldName]; },
+      'disabled': obj['disabled']
     });
   }
   

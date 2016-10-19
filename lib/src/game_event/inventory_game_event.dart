@@ -100,7 +100,7 @@ class InventoryGameEvent implements GameEvent {
             'type': 'text',
             'className': 'number',
             'value': quantity,
-            'readOnly': readOnly,
+            'readOnly': readOnly ? 'disabled' : '',
             'onChange': onInputChange
           })
         )

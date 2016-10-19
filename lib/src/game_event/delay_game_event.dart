@@ -51,7 +51,7 @@ class DelayGameEvent implements GameEvent {
             'className': 'number',
             'id': '${prefix}_milliseconds',
             'value': milliseconds,
-            'readOnly': readOnly,
+            'readOnly': readOnly ? 'disabled' : '',
             'onChange': onInputChange
           })
         )

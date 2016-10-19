@@ -116,7 +116,7 @@ class MoveGameEvent implements GameEvent {
             'type': 'text',
             'className': 'number',
             'value': distance,
-            'readOnly': readOnly,
+            'disabled': readOnly ? 'disabled' : '',
             'onChange': onInputChange
           })
         ),
@@ -125,7 +125,7 @@ class MoveGameEvent implements GameEvent {
             'id': '${prefix}_run',
             'type': 'checkbox',
             'checked': run,
-            'readOnly': readOnly,
+            'disabled': readOnly ? 'disabled' : '',
             'onChange': onInputChange
           })
         )

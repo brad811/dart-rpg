@@ -74,7 +74,7 @@ class HealGameEvent implements GameEvent {
             'type': 'text',
             'className': 'number',
             'value': amount,
-            'readOnly': readOnly,
+            'readOnly': readOnly ? 'disabled' : '',
             'onChange': onInputChange
           })
         )
