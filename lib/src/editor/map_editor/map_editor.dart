@@ -1318,6 +1318,7 @@ class MapEditor extends Component {
         }
 
         update();
+        Editor.export();
       }
     );
   }
