@@ -101,8 +101,8 @@ class TextGameEvent implements GameEvent {
   }
   
   @override
-  void handleKeys(List<int> keyCodes) {
-    if(keyCodes.contains(Input.CONFIRM) || keyCodes.contains(Input.BACK)) {
+  void handleKeys(List<InputCode> keyCodes) {
+    if(keyCodes.contains(InputCode.CONFIRM) || keyCodes.contains(InputCode.BACK)) {
       continueText();
     }
   }

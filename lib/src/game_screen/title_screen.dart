@@ -29,8 +29,11 @@ class TitleScreen extends GameScreen implements InputHandler {
   static int mode = -1;
 
   @override
-  void handleKeys(List<int> keyCodes) {
-    if(keyCodes.length != 1 && mode != 0)
+  void handleKeys(List<InputCode> keyCodes) {
+  }
+
+  void handleButtons(List<int> buttons) {
+    if(buttons.length != 1 && mode != 0)
       return;
 
     if(Input.lastGamepad == null || Input.lastGamepad.length == 0 || mode == -1)
@@ -40,25 +43,25 @@ class TitleScreen extends GameScreen implements InputHandler {
     if(mode == 0) {
       buttonText = "CONFIRM";
     } else if(mode == 1) {
-      Input.CONFIRM_BUTTON = keyCodes[0];
+      Input.gamepadConfigs[Input.lastGamepad].mappings[buttons[0]] = InputCode.CONFIRM;
       buttonText = "BACK";
     } else if(mode == 2) {
-      Input.BACK_BUTTON = keyCodes[0];
+      Input.gamepadConfigs[Input.lastGamepad].mappings[buttons[0]] = InputCode.BACK;
       buttonText = "LEFT";
     } else if(mode == 3) {
-      Input.LEFT_BUTTON = keyCodes[0];
+      Input.gamepadConfigs[Input.lastGamepad].mappings[buttons[0]] = InputCode.LEFT;
       buttonText = "RIGHT";
     } else if(mode == 4) {
-      Input.RIGHT_BUTTON = keyCodes[0];
+      Input.gamepadConfigs[Input.lastGamepad].mappings[buttons[0]] = InputCode.RIGHT;
       buttonText = "UP";
     } else if(mode == 5) {
-      Input.UP_BUTTON = keyCodes[0];
+      Input.gamepadConfigs[Input.lastGamepad].mappings[buttons[0]] = InputCode.UP;
       buttonText = "DOWN";
     } else if(mode == 6) {
-      Input.DOWN_BUTTON = keyCodes[0];
+      Input.gamepadConfigs[Input.lastGamepad].mappings[buttons[0]] = InputCode.DOWN;
       buttonText = "START";
     } else if(mode == 7) {
-      Input.START_BUTTON = keyCodes[0];
+      Input.gamepadConfigs[Input.lastGamepad].mappings[buttons[0]] = InputCode.START;
       mode = -1;
       Gui.clear();
       this.trigger();

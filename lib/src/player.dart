@@ -25,37 +25,37 @@ class Player implements InputHandler {
   }
   
   @override
-  void handleKeys(List<int> keyCodes) {
+  void handleKeys(List<InputCode> keyCodes) {
     if(!inputEnabled)
       return;
     
-    if(keyCodes.contains(Input.CONFIRM))
+    if(keyCodes.contains(InputCode.CONFIRM))
       interact();
     
-    if(keyCodes.contains(Input.START)) {
+    if(keyCodes.contains(InputCode.START)) {
       Gui.showStartMenu();
     }
 
     Character curCharacter = getCurCharacter();
     
-    if(keyCodes.contains(Input.BACK))
+    if(keyCodes.contains(InputCode.BACK))
       curCharacter.curSpeed = curCharacter.runSpeed;
     else
       curCharacter.curSpeed = curCharacter.walkSpeed;
       
-    if(keyCodes.contains(Input.LEFT)) {
+    if(keyCodes.contains(InputCode.LEFT)) {
       curCharacter.move(Character.LEFT);
       return;
     }
-    if(keyCodes.contains(Input.RIGHT)) {
+    if(keyCodes.contains(InputCode.RIGHT)) {
       curCharacter.move(Character.RIGHT);
       return;
     }
-    if(keyCodes.contains(Input.UP)) {
+    if(keyCodes.contains(InputCode.UP)) {
       curCharacter.move(Character.UP);
       return;
     }
-    if(keyCodes.contains(Input.DOWN)) {
+    if(keyCodes.contains(InputCode.DOWN)) {
       curCharacter.move(Character.DOWN);
       return;
     }

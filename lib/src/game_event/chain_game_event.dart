@@ -2,6 +2,7 @@ library dart_rpg.chain_game_event;
 
 import "dart:js";
 
+import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 import 'package:dart_rpg/src/world.dart';
@@ -41,7 +42,7 @@ class ChainGameEvent implements GameEvent {
   }
   
   @override
-  void handleKeys(List<int> keyCodes) { /* TODO */ }
+  void handleKeys(List<InputCode> keyCodes) { /* TODO */ }
   
   // Editor functions
   

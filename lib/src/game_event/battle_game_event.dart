@@ -5,6 +5,7 @@ import 'dart:js';
 import 'package:dart_rpg/src/battle.dart';
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/gui.dart';
+import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/main.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -42,7 +43,7 @@ class BattleGameEvent implements GameEvent {
   }
   
   @override
-  void handleKeys(List<int> keyCodes) {}
+  void handleKeys(List<InputCode> keyCodes) {}
   
   // Editor functions
   

@@ -2,6 +2,7 @@ library dart_rpg.game_event;
 
 import 'dart:js';
 
+import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable.dart';
 
@@ -35,7 +36,7 @@ class GameEvent implements InputHandler {
     }
   }
   
-  void handleKeys(List<int> keyCodes) {}
+  void handleKeys(List<InputCode> keyCodes) {}
   
   // Editor functions
   
