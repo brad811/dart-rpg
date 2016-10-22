@@ -117,8 +117,8 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
   }
   
   @override
-  void handleKeys(List<InputCode> keyCodes) {
-    if(keyCodes.contains(InputCode.UP)) {
+  void handleInput(List<InputCode> inputCodes) {
+    if(inputCodes.contains(InputCode.UP)) {
       curChoice--;
       if(curChoice < 0) {
         curChoice = choiceGameEventChains.keys.toList().length - 1;
@@ -126,7 +126,7 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
       
       if(onChangeEvent != null)
         onChangeEvent.trigger(interactable);
-    } else if(keyCodes.contains(InputCode.DOWN)) {
+    } else if(inputCodes.contains(InputCode.DOWN)) {
       curChoice++;
       if(curChoice > choiceGameEventChains.keys.toList().length - 1) {
         curChoice = 0;
@@ -134,14 +134,14 @@ class ChoiceGameEvent implements GameEvent, InputHandler {
       
       if(onChangeEvent != null)
         onChangeEvent.trigger(interactable);
-    } else if(keyCodes.contains(InputCode.CONFIRM)) {
+    } else if(inputCodes.contains(InputCode.CONFIRM)) {
       if(remove)
         Gui.removeWindow(window);
       
       List<GameEvent> choice = World.gameEventChains[choiceGameEventChains.values.toList()[curChoice]];
       
       Interactable.chainGameEvents(interactable, choice).trigger(interactable);
-    } else if(keyCodes.contains(InputCode.BACK) && cancelEvent != null) {
+    } else if(inputCodes.contains(InputCode.BACK) && cancelEvent != null) {
       Gui.removeWindow(window);
       
       Interactable.chainGameEvents(interactable, [cancelEvent]).trigger(interactable);

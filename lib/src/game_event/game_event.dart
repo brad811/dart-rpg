@@ -36,7 +36,7 @@ class GameEvent implements InputHandler {
     }
   }
   
-  void handleKeys(List<InputCode> keyCodes) {}
+  void handleInput(List<InputCode> inputCodes) {}
   
   // Editor functions
   

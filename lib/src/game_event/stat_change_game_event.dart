@@ -3,6 +3,7 @@ library dart_rpg.stat_change_game_event;
 import 'dart:js';
 
 import 'package:dart_rpg/src/battler.dart';
+import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/interactable.dart';
 
 import 'package:dart_rpg/src/game_event/game_event.dart';
@@ -51,7 +52,7 @@ class StatChangeGameEvent implements GameEvent {
   }
   
   @override
-  void handleKeys(List<int> keyCodes) { /* TODO */ }
+  void handleInput(List<InputCode> inputCodes) { /* TODO */ }
   
   // Editor functions
   

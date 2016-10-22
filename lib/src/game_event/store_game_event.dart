@@ -6,6 +6,7 @@ import 'dart:math' as math;
 import 'package:dart_rpg/src/character.dart';
 import 'package:dart_rpg/src/gui.dart';
 import 'package:dart_rpg/src/gui_items_menu.dart';
+import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/item.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -91,7 +92,7 @@ class StoreGameEvent implements GameEvent {
   }
   
   @override
-  void handleKeys(List<int> keyCodes) { /* TODO */ }
+  void handleInput(List<InputCode> inputCodes) { /* TODO */ }
   
   // Editor functions
   

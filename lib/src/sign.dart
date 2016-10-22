@@ -1,5 +1,6 @@
 library dart_rpg.sign;
 
+import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/input_handler.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/main.dart';
@@ -13,8 +14,9 @@ class Sign extends InteractableTile implements InputHandler {
     textEvent = new TextGameEvent(pictureSpriteId, text, close);
   }
   
-  void handleKeys(List<int> keyCodes) {
-    textEvent.handleKeys(keyCodes);
+  @override
+  void handleInput(List<InputCode> inputCodes) {
+    textEvent.handleInput(inputCodes);
   }
   
   void interact() {

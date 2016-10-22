@@ -29,7 +29,7 @@ class TitleScreen extends GameScreen implements InputHandler {
   static int mode = -1;
 
   @override
-  void handleKeys(List<InputCode> keyCodes) {
+  void handleInput(List<InputCode> inputCodes) {
   }
 
   void handleButtons(List<int> buttons) {

@@ -12,6 +12,7 @@ import 'package:dart_rpg/src/encounter_tile.dart';
 import 'package:dart_rpg/src/event_tile.dart';
 import 'package:dart_rpg/src/game_map.dart';
 import 'package:dart_rpg/src/game_type.dart';
+import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/interactable_tile.dart';
 import 'package:dart_rpg/src/inventory.dart';
 import 'package:dart_rpg/src/item.dart';
@@ -846,7 +847,7 @@ class World {
   
   void addInteractableObject(
       int spriteId, int posX, int posY, int layer, int sizeX, int sizeY, bool solid,
-      void handler(List<int> keyCodes)) {
+      void handler(List<InputCode> inputCodes)) {
     for(var y=0; y<sizeY; y++) {
       for(var x=0; x<sizeX; x++) {
         maps[curMap].tiles[posY+y][posX+x][layer] = new InteractableTile(

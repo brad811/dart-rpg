@@ -86,7 +86,7 @@ class Input {
         validInputs.addAll(gamepadConfigs[gamepad.id].getValidButtons());
       });
 
-      focusObject.handleKeys(validInputs);
+      focusObject.handleInput(validInputs);
     } else {
       List<int> validButtons = [];
       validGamepads.forEach((Gamepad gamepad) {

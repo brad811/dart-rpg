@@ -42,7 +42,7 @@ class ChainGameEvent implements GameEvent {
   }
   
   @override
-  void handleKeys(List<InputCode> keyCodes) { /* TODO */ }
+  void handleInput(List<InputCode> inputCodes) { /* TODO */ }
   
   // Editor functions
   

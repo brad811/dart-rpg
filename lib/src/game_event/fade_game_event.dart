@@ -3,6 +3,7 @@ library dart_rpg.fade_game_event;
 import 'dart:js';
 
 import 'package:dart_rpg/src/gui.dart';
+import 'package:dart_rpg/src/input.dart';
 import 'package:dart_rpg/src/interactable.dart';
 import 'package:dart_rpg/src/main.dart';
 
@@ -63,7 +64,7 @@ class FadeGameEvent implements GameEvent {
   }
   
   @override
-  void handleKeys(List<int> keyCodes) { /* TODO */ }
+  void handleInput(List<InputCode> inputCodes) { /* TODO */ }
   
   // Editor functions
   
