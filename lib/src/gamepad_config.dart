@@ -20,13 +20,40 @@ class GamepadConfig {
     List<int> buttons = [], validButtons = [];
     List<GamepadButton> gamepadButtons = gamepad.buttons;
 
-    for(int i=0; i<gamepadButtons.length; i++) {
+    // iterate through gamepad buttons
+    int i = 0;
+    for(; i<gamepadButtons.length; i++) {
       if(gamepadButtons[i].pressed) {
         Input.lastGamepad = gamepad.id;
         buttons.add(i);
       } else if(!releasedButtons.contains(i)) {
         releasedButtons.add(i);
       }
+    }
+
+    // iterate through gamepad axes
+    for(int j=0; j<gamepad.axes.length; j++) {
+      i++;
+
+      if(gamepad.axes[j] == 1) {
+        Input.lastGamepad = gamepad.id;
+        buttons.add(i);
+        if(!releasedButtons.contains(i+1))
+          releasedButtons.add(i+1);
+      } else if(gamepad.axes[j] == -1) {
+        Input.lastGamepad = gamepad.id;
+        buttons.add(i+1);
+        if(!releasedButtons.contains(i))
+          releasedButtons.add(i);
+      } else {
+        if(!releasedButtons.contains(i))
+          releasedButtons.add(i);
+
+        if(!releasedButtons.contains(i+1))
+          releasedButtons.add(i+1);
+      }
+
+      i++;
     }
 
     validButtons = [];

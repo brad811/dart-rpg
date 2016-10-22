@@ -33,7 +33,7 @@ class TitleScreen extends GameScreen implements InputHandler {
   }
 
   void handleButtons(List<int> buttons) {
-    if(buttons.length != 1 && mode != 0)
+    if(buttons.length == 0 && mode != 0)
       return;
 
     if(Input.lastGamepad == null || Input.lastGamepad.length == 0 || mode == -1)
