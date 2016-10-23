@@ -659,6 +659,14 @@ class World {
       Character character = parseCharacter(charactersObject, characterLabel);
       characters[characterLabel] = character;
     }
+
+    if(Main.player.characters.length == 0) {
+      if(characters["player"] != null) {
+        Main.player.characters.add(characters["player"]);
+      } else {
+        Main.player.characters.add(characters.values.first);
+      }
+    }
   }
   
   Character parseCharacter(Map<String, Map> charactersObject, String characterLabel) {
