@@ -1,7 +1,7 @@
 library dart_rpg.gui;
 
 import 'dart:html';
-import 'dart:math' as math;
+//import 'dart:math' as math;
 
 import 'package:dart_rpg/src/game_event/delayed_game_event.dart';
 import 'package:dart_rpg/src/gui_start_menu.dart';
@@ -91,7 +91,7 @@ class Gui {
     Main.ctx.fillRect(0, 0, scaledWidth, scaledHeight);
 
     /*
-    // TODO: this causes a security error when loading an external image file as the sprite sheet
+    // this causes a security error when loading an external image file as the sprite sheet
     ImageData imageData = Main.ctx.getImageData(0, 0, scaledWidth, scaledHeight);
     
     for(int y=0; y<scaledHeight; y++) {
