@@ -10,7 +10,7 @@ import 'package:dart_rpg/src/sprite.dart';
 import 'package:dart_rpg/src/game_event/text_game_event.dart';
 
 class Gui {
-  static final int
+  static const int
     // sprite IDs for the window frame
     WINDOW_TOP_LEFT = 231,
     WINDOW_TOP_MIDDLE = 232,
@@ -64,6 +64,33 @@ class Gui {
       scaledWidth = (Main.canvasWidth * window.devicePixelRatio).round(),
       scaledHeight = (Main.canvasHeight * window.devicePixelRatio).round();
     
+    switch(fadeOutLevel) {
+      case FADE_WHITE_FULL:
+        Main.ctx.setFillColorRgb(255, 255, 255, 1.0);
+        break;
+      case FADE_WHITE_MED:
+        Main.ctx.setFillColorRgb(255, 255, 255, 0.6);
+        break;
+      case FADE_WHITE_LOW:
+        Main.ctx.setFillColorRgb(255, 255, 255, 0.3);
+        break;
+      case FADE_NORMAL:
+        Main.ctx.setFillColorRgb(0, 0, 0, 0.0);
+        break;
+      case FADE_BLACK_LOW:
+        Main.ctx.setFillColorRgb(0, 0, 0, 0.3);
+        break;
+      case FADE_BLACK_MED:
+        Main.ctx.setFillColorRgb(0, 0, 0, 0.6);
+        break;
+      case FADE_BLACK_FULL:
+        Main.ctx.setFillColorRgb(0, 0, 0, 1.0);
+        break;
+    }
+
+    Main.ctx.fillRect(0, 0, scaledWidth, scaledHeight);
+
+    /*
     // TODO: this causes a security error when loading an external image file as the sprite sheet
     ImageData imageData = Main.ctx.getImageData(0, 0, scaledWidth, scaledHeight);
     
@@ -79,6 +106,7 @@ class Gui {
     }
     
     Main.ctx.putImageData(imageData, 0, 0);
+    */
   }
   
   // fade to black and then back to normal, and then perform an action
