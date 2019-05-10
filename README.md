@@ -36,4 +36,4 @@ A browser-based 2d rpg and game editor
 - option to allow characters as party members
 - in game save / load options
 
-Copyright 2015-2016 Brad Jewell
+Copyright 2015-2019 Brad Jewell

@@ -27,7 +27,9 @@ class MapEditorBattlers extends Component {
       try {
         String battlerTypeName = Editor.getSelectInputStringValue('#map_battler_${i}_type');
         int battlerTypeLevel = Editor.getTextInputIntValue('#map_battler_${i}_level', 1);
-        double battlerTypeChance = Editor.getTextInputDoubleValue('#map_battler_${i}_chance', 1.0);
+        double battlerTypeChance = double.parse(
+          Editor.getTextInputDoubleValue('#map_battler_${i}_chance', 1.0).toStringAsFixed(9)
+        );
         
         Battler battler = new Battler(
           null,
