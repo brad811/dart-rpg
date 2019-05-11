@@ -277,7 +277,8 @@ class ObjectEditorBattlerTypes extends Component {
         td({}, "Sprite Id"),
         td({}, "Name"),
         td({}, "Type"),
-        td({}, "Rarity")
+        td({}, "Rarity"),
+        td({})
       )
     );
 

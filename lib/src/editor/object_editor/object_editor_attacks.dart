@@ -65,7 +65,8 @@ class ObjectEditorAttacks extends Component {
         td({}, "Name"),
         td({}, "Category"),
         td({}, "Type"),
-        td({}, "Power")
+        td({}, "Power"),
+        td({})
       )
     ];
 

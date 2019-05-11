@@ -149,6 +149,7 @@ canvas {
 
 .editor_table td {
 	padding: 5px !important;
+	border-bottom: 2px solid #ccc;
 }
 
 #editor_tabs {
@@ -462,6 +463,10 @@ textarea {
 .object_editor_tabs_container td {
 	text-align: center;
 	padding: 5px !important;
+}
+
+.object_editor_tabs_container div > table:not(.game_event_chain_table) > tbody > tr > td {
+	border-bottom: 2px solid #ccc;
 }
 
 #battler_type_stats_container td {

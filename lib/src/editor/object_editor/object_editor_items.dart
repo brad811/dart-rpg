@@ -73,7 +73,8 @@ class ObjectEditorItems extends Component {
         td({}, "Picture Id"),
         td({}, "Name"),
         td({}, "Base Price"),
-        td({}, "Description")
+        td({}, "Description"),
+        td({})
       ])
     ];
 
